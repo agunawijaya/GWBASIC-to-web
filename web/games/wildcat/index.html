@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wildcatter — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari WILDCAT.BAS (A. Vanchura, 17 Juli 1982): simulasi pengeboran minyak yang petunjuknya mengarahkan pemain ke pilihan terburuk, dan sepertiga tabel datanya tidak pernah bisa dibaca. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="wildcat.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap w-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="w-stage">
+        <div class="w-crt">
+          <svg id="svg" class="w-svg" viewBox="0 0 760 470"
+               role="img" aria-label="Peta Boom County dan penampang sumur"></svg>
+        </div>
+
+        <div class="w-panel" id="panel"></div>
+        <div class="w-log" id="log" aria-live="polite"></div>
+
+        <div class="w-row--kecil">
+          <button class="btn btn--ghost btn--sm" id="mulai" type="button">Permainan baru</button>
+          <label>Benih
+            <input type="number" id="benih" min="0" max="999999" step="1" value="1982"
+                   class="w-angka"></label>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">296 baris BASIC</span>
+      <span class="ruleset__k">peta 10&times;10, 60 % kosong</span>
+      <span class="ruleset__k">10 sumur, modal $1 juta</span>
+      <span class="ruleset__k ruleset__k--mangsa">zona dalam = laba harapan 5&times;</span>
+      <span class="ruleset__k ruleset__k--bahaya">petunjuknya menyesatkan</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Kas</span>
+        <span class="stat__value mono" id="s-kas">$1,000,000</span></div>
+      <div class="stat"><span class="stat__label">Sumur</span>
+        <span class="stat__value mono" id="s-sumur">0 / 10</span></div>
+      <div class="stat"><span class="stat__label">Zona</span>
+        <span class="stat__value mono" id="s-tipe">—</span></div>
+      <div class="stat"><span class="stat__label">Pay zone</span>
+        <span class="stat__value mono" id="s-zona">—</span></div>
+      <div class="stat"><span class="stat__label">Kedalaman</span>
+        <span class="stat__value mono" id="s-dalam">—</span></div>
+      <div class="stat"><span class="stat__label">Biaya bor</span>
+        <span class="stat__value mono" id="s-biaya">$0</span></div>
+      <div class="stat"><span class="stat__label">Situs tersisa</span>
+        <span class="stat__value mono" id="s-situs">—</span></div>
+      <div class="stat"><span class="stat__label">Rekor Anda</span>
+        <span class="stat__value mono" id="s-rekor">—</span></div>
+      <div class="stat"><span class="stat__label">Benih</span>
+        <span class="stat__value mono" id="s-benih">1982</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <p class="w-lead">
+        Anda pemilik perusahaan pengeboran independen dengan pinjaman
+        <strong>$1.000.000</strong> dan <strong>sepuluh sumur</strong>. Pilih
+        situs di peta Boom County, baca laporan geologinya, bor, dan putuskan
+        apakah mau merekah.
+      </p>
+      <ol class="howto__steps">
+        <li><strong>Peta itu sendiri sudah laporan geologi.</strong> Enam puluh
+            persen petak sengaja dibuat kosong (baris 2030) dan namanya
+            <em>tidak dicetak sama sekali</em> &mdash; jadi hanya petak bernama
+            yang punya prospek. Rata-rata tinggal <strong>40 situs</strong> dari
+            100.</li>
+        <li><strong>Tiga jenis zona, dan itulah satu-satunya yang menentukan
+            peluang</strong>: dangkal 4.000&ndash;7.000 ft (75 % ada tanda),
+            sedang 7.500&ndash;10.000 (50 %), dalam 10.500&ndash;15.000 (25 %).
+            Anda baru tahu jenisnya <em>sesudah</em> memilih.</li>
+        <li><strong>Angka kedalaman yang Anda ketik tidak mengubah peluang
+            apa pun.</strong> Baris 580 membaca <code>HIT(TYPE,TRY)</code> dengan
+            <code>TRY</code> acak &mdash; kedalaman tidak muncul di situ. Lihat
+            panel "Undian gratis".</li>
+        <li>Tiap situs memberi <strong>dua kali undian</strong>: sekali di
+            kedalaman awal, sekali lagi kalau Anda memilih menggali lebih dalam.
+            Sesudah itu Anda harus pindah situs.</li>
+        <li>Ada tanda minyak/gas &rarr; Anda harus <strong>merekah</strong>
+            ($10 per kaki kedalaman) sebelum berproduksi. Menolak merekah
+            membuang seluruh biaya bor tanpa hasil.</li>
+        <li>Biaya bor <strong>$30/ft</strong>, tapi lihat panel &mdash; ada
+            <strong>500 kaki gratis</strong> di tiap sumur.</li>
+        <li>Habis modal sebelum sepuluh sumur = bangkrut, dan laporan akhirnya
+            mencetak kerugian <strong>persis $1.000.000</strong> berapa pun sisa
+            kas Anda.</li>
+      </ol>
+    </details>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel w-bad">
+      <p class="eyebrow">Petunjuknya mengarahkan Anda ke pilihan terburuk</p>
+      <p class="w-note">Layar petunjuk, baris 2500&ndash;2520:</p>
+<pre class="w-code">2500 "The deeper you drill a well, the less chance
+2510  you have of finding oil or gas, but the chance
+2520  of finding huge strikes increases. Shallow wells
+      are more likely to produce."</pre>
+      <p class="w-note">
+        Semua kalimat itu <strong>benar</strong>. Tapi kalimat terakhirnya
+        membujuk ke arah yang salah. Ini nilai harapan tiap zona, dihitung
+        halaman ini dari tabel <code>HIT</code> dan <code>PAY</code> di
+        <code>DATA</code>:
+      </p>
+      <table class="w-tbl2">
+        <thead><tr><th>Zona</th><th>Ada tanda</th><th>E[kotor]</th>
+          <th>Biaya khas</th><th>E[laba]</th></tr></thead>
+        <tbody id="b-tabel"></tbody>
+      </table>
+      <p class="w-note">
+        Zona <strong>dalam</strong> kering tiga dari empat kali &mdash; dan laba
+        harapannya tetap <strong>lima kali</strong> zona dangkal. Yang lebih
+        tajam: zona <strong>sedang tidak pernah masuk akal</strong>. Ia lebih
+        mahal daripada dangkal <em>dan</em> laba harapannya lebih kecil.
+        Seratus situs di peta, dan sekitar <strong>14 %</strong> di antaranya
+        adalah pilihan yang secara matematis tidak pernah benar.
+      </p>
+      <p class="w-kecil">
+        Sebaran situs: kosong <b id="b-kosong">—</b>, lalu dangkal / sedang /
+        dalam <b id="b-situs">—</b>.
+      </p>
+    </div>
+
+    <div class="panel w-warn">
+      <p class="eyebrow">Undian gratis di baris 850</p>
+<pre class="w-code">850 IF DPT&gt;=DT THEN 880
+…
+920 CSF=CSF+30*(DPT-DT):DT=DPT:GOTO 510</pre>
+      <p class="w-note">
+        Perhatikan tanda <code>&gt;=</code>. Mengetik kedalaman yang
+        <strong>sama persis</strong> dengan kedalaman sekarang lolos ujian,
+        lalu baris 920 menambahkan <code>30&times;0 = $0</code> ke biaya dan
+        mengembalikan alur ke 510 &mdash; yang segera mengundi
+        <code>TRY</code> baru.
+      </p>
+      <p class="w-note">
+        Itu <strong>undian kedua gratis</strong>. Dan ia bekerja karena peluang
+        di program ini <em>tidak pernah</em> membaca kedalaman:
+        <code>PAYOFF = HIT(TYPE, TRY)</code>. Yang menentukan hanya jenis
+        zonanya. Pemain yang mengira "lebih dalam = lebih berisiko" membayar
+        $30 per kaki untuk sesuatu yang tidak mengubah apa pun.
+      </p>
+    </div>
+
+    <div class="panel w-good">
+      <p class="eyebrow">Satu larik datar yang sebenarnya tabel dua kolom</p>
+<pre class="w-code">1010 HIT=FIX(FIX(RND*10)*2)+1
+1020 OPD=PAY(HIT,PAYOFF,TYPE)
+1030 GSP=PAY(HIT+1,PAYOFF,TYPE)*1000</pre>
+      <p class="w-note">
+        <code>FIX(FIX(RND*10)*2)+1</code> hanya bisa menghasilkan bilangan
+        <strong>ganjil</strong> 1, 3, 5, … 19. Jadi dua puluh angka di tiap
+        baris <code>DATA</code> sebenarnya <strong>sepuluh pasang</strong>:
+        indeks ganjil = barel minyak per hari, indeks berikutnya = ribu kaki
+        kubik gas per hari.
+      </p>
+<pre class="w-code">2200 DATA 54,0, 13,240, 0,370, 112,0, 41,600,
+          0,514, 70,112, 95,0, 0,301, 62,98</pre>
+      <p class="w-note">
+        Dibaca berpasangan, isinya masuk akal seketika: ada sumur minyak murni
+        (54, 0), ada sumur gas murni (0, 370), ada yang keduanya (13, 240).
+        Dibaca sebagai dua puluh angka lepas, ia tidak berarti apa-apa.
+      </p>
+    </div>
+
+    <div class="panel w-warn">
+      <p class="eyebrow">Sepertiga tabelnya tidak pernah bisa dibaca</p>
+      <table class="w-tbl2">
+        <tbody>
+          <tr><td>Nilai di seluruh <code>PAY(20,5,3)</code></td>
+              <td><b id="b-semua">—</b></td></tr>
+          <tr><td>Yang tidak mungkin terbaca</td><td><b id="b-mati">—</b></td></tr>
+          <tr><td>Bagian</td><td><b id="b-persen">—</b></td></tr>
+        </tbody>
+      </table>
+      <p class="w-note">
+        Dua sebab, dan keduanya rapi. Pertama, <code>PAYOFF = 1</code> berarti
+        kering dan baris 590 tidak pernah sampai ke tabel &mdash; jadi seluruh
+        <code>PAY(&middot;,1,&middot;)</code> mati (60 nilai). Kedua, tabel
+        <code>HIT</code> untuk zona <b>dalam</b> hanya berisi angka 1, 2, dan 5
+        &mdash; tidak ada 3 maupun 4 &mdash; sehingga
+        <code>PAY(&middot;,3,3)</code> dan <code>PAY(&middot;,4,3)</code> tidak
+        punya jalan masuk (40 nilai lagi).
+      </p>
+      <p class="w-note">
+        Dan <strong>keseratus nilai itu nol</strong>. Itu bukan kebetulan: ia
+        tanda bahwa penulisnya sadar. Ia butuh larik berbentuk persegi
+        3&times;5&times;20 supaya <code>READ</code> tiga gelung bersarang jalan,
+        jadi sel yang mustahil diisi nol sebagai ganjalan. Bentuk larik
+        mendikte data, bukan sebaliknya &mdash; keluhan yang sama dengan
+        39 array bernomor di <a href="../lander/index.html">LANDER</a>.
+      </p>
+    </div>
+
+    <div class="panel w-warn">
+      <p class="eyebrow">Lima ratus kaki gratis, tiap sumur</p>
+<pre class="w-code">480 MAP(C,0)=1 : CSF=SZN*30 : DT=SZN+500</pre>
+      <p class="w-note">
+        Anda ditagih untuk <code>SZN</code> kaki, dan mata bornya berada di
+        <code>SZN+500</code> kaki. Lima ratus kaki &mdash; <strong>$15.000</strong>
+        &mdash; tidak pernah ditagih. Laporan geologinya bahkan mengumumkannya
+        terang-terangan di baris 1700: <em>"Target Zone Starts At SZN+500 Ft."</em>
+      </p>
+      <p class="w-kecil">
+        Nilai harapan di tabel paling atas sudah memakai biaya yang
+        <em>sebenarnya ditagih</em>, bukan biaya yang seharusnya.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Dua kali <code>RANDOMIZE</code>, tetap enam puluh permainan</p>
+<pre class="w-code">70 RANDOMIZE(VAL(RIGHT$(TIME$,2)))
+80 RANDOMIZE(RND*30000)</pre>
+      <p class="w-note">
+        Penulisnya jelas merasa satu benih dari detik jam terlalu sedikit, dan
+        mencoba memperlebarnya: benih kedua diambil dari bilangan acak pertama,
+        dikali 30.000. Tapi bilangan pertama itu <strong>sepenuhnya ditentukan</strong>
+        oleh benih pertama. Enam puluh detik masuk, enam puluh permainan keluar
+        &mdash; hanya tersebar lebih jauh.
+      </p>
+      <p class="w-kecil">
+        Keluarga yang sama dengan <a href="../lander/index.html">LANDER</a>
+        (60 medan), <a href="../attack/index.html">ATTACK</a> (benih kehilangan
+        faktor 60), dan <a href="../batship/index.html">BATSHIP</a> (86.400
+        waktu &rarr; 7.152 benih). Yang membedakan WILDCAT: di sini penulisnya
+        <strong>sudah menyadari masalahnya</strong> dan obatnya tidak bekerja.
+      </p>
+    </div>
+
+    <div class="panel w-good">
+      <p class="eyebrow">Saksi ketiga untuk segmen video</p>
+<pre class="w-code">1810 IF (PEEK(1040) AND 48)=48 THEN DEF SEG=45056
+     ELSE DEF SEG=47104</pre>
+      <p class="w-note">
+        45056 = <code>&amp;HB000</code> (monokrom), 47104 =
+        <code>&amp;HB800</code> (CGA) &mdash; dan pemetaannya
+        <strong>benar</strong>. WILDCAT jadi saksi ketiga, sesudah
+        <a href="../sub/index.html">SUB</a> dan MAZE, bahwa
+        <code>WHATMONF.BAS</code> di disket yang sama memetakannya
+        <em>terbalik</em>. Tiga berkas independen mengalahkan satu.
+      </p>
+      <p class="w-kecil">
+        Peta Boom County-nya sendiri digambar dengan <code>POKE</code>
+        aksara garis-kotak langsung ke memori layar, 12 bita per petak
+        (enam kolom &times; dua bita).
+      </p>
+    </div>
+
+    <p class="faint w-links">
+      <a href="../../docs/wildcat-bisnis.html"><b>Dokumen analisis bisnis</b></a> &middot;
+      <a href="../../docs/wildcat.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/WILDCAT.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/WILDCAT.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="wildcat-data.js"></script>
+<script src="wildcat.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+timer ISR: INT 1Ch every 20000 instructions, once the program hooks it
+poll patience: 3 (a flush loop sees an empty keyboard)
+format    : MZ, 3584-byte header, 786 relocations applied; entry CS:IP 0000:001A -> image offset 0x1A
+start-up: 150,000,000 instructions, stopped: budget exhausted at 1257:2D74 (image 0x0051e4) [73 c2 3c 22 74 04 3c 20]
+  last inside: 0x6c0a -> 0x6c0c -> 0x6c0d -> 0x6c04 -> 0x4388 -> 0x4389 -> 0x4300 -> 0x4301
+  interrupts requested: 10h, 16h, 21h
+  ports written: 0x40, 0x61
+  timer interrupts delivered: 7,496
+  keyboard: 1 reads, 435 of 436 keys unused
+executed 2,816 distinct addresses -> C:/Users/aguna/Downloads/Personal/Games/old_games/decompile/trace/hopper-files.map

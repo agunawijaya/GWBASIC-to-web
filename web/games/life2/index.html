@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Game of Life — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari LIFE2.BAS (John Sigle, 1983): Game of Life dengan algoritma daftar sel hidup — biayanya sebanding populasi, bukan luas papan. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="life2.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap l-layout">
+
+  <section class="stack">
+    <div class="screen screen--scanlines">
+      <div class="l-stage">
+        <div class="l-gridwrap"><div id="grid" class="l-grid"></div></div>
+        <div class="m-transport">
+          <button class="btn btn--primary" id="run" type="button">Jalankan</button>
+          <button class="btn btn--ghost" id="step" type="button">Satu generasi</button>
+          <button class="btn btn--ghost" id="clear" type="button">Kosongkan</button>
+          <label class="l-speed">Kecepatan
+            <input type="range" id="speed" min="1" max="30" value="10">
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" id="presets"></div>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Generasi</span>
+        <span class="stat__value" id="sGen">0</span></div>
+      <div class="stat stat--good"><span class="stat__label">Populasi</span>
+        <span class="stat__value" id="sPop">0</span></div>
+      <div class="stat"><span class="stat__label">Sel diperiksa</span>
+        <span class="stat__value" id="sVisit">0</span></div>
+      <div class="stat"><span class="stat__label">Luas papan</span>
+        <span class="stat__value">1638</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara memakai</summary>
+      <p class="l-lead">
+        <strong>Ini bukan permainan.</strong> Tidak ada lawan, tidak ada skor,
+        dan tidak ada yang bisa dimenangkan atau dikalahkan. Conway
+        menyebutnya <em>permainan tanpa pemain</em>: Anda hanya menentukan
+        keadaan awal, lalu aturannya berjalan sendiri dan Anda melihat apa
+        yang terjadi. Yang Anda &ldquo;mainkan&rdquo; adalah
+        <strong>pola awalnya</strong>.
+      </p>
+      <ol class="howto__steps">
+        <li><strong>Gambar pola awal</strong> &mdash; klik atau seret di
+            papan. Atau pakai tombol pola siap pakai di atas.</li>
+        <li><strong>Jalankan</strong>, atau maju <strong>satu generasi</strong>
+            untuk melihat aturannya bekerja selangkah demi selangkah.</li>
+        <li>Tiap generasi, tiap sel melihat <strong>delapan tetangganya</strong>.
+            Sel hidup dengan <strong>2 atau 3</strong> tetangga hidup bertahan
+            &mdash; kurang dari itu mati kesepian, lebih dari itu mati sesak.
+            Sel mati dengan <strong>tepat 3</strong> tetangga hidup menjadi
+            hidup.</li>
+        <li>Itu saja aturannya, dan semuanya <strong>pasti</strong> &mdash;
+            tidak ada unsur acak sama sekali. Pola awal yang sama selalu
+            menghasilkan akhir yang sama.</li>
+      </ol>
+      <p>
+        Yang menarik seluruhnya ada di pola awal. <strong>Blinker</strong> dan
+        <strong>Kodok</strong> berdenyut selamanya di tempat;
+        <strong>Glider</strong> berjalan menyeberangi papan;
+        <strong>Pentomino R</strong> &mdash; cuma lima sel &mdash; bergolak
+        lama sekali sebelum tenang; <strong>Meriam glider</strong> memuntahkan
+        glider tanpa henti. Coretan asal-asalan hampir selalu mati dalam
+        beberapa generasi, dan di situlah orang menyimpulkan programnya rusak.
+      </p>
+    </details>
+
+    <p class="l-note">
+      <kbd>&larr;</kbd> <kbd>&uarr;</kbd> <kbd>&rarr;</kbd> <kbd>&darr;</kbd>
+      memindahkan kursor, <kbd>M</kbd> menyalakan sel, <kbd>Spasi</kbd>
+      memadamkan &mdash; persis seperti aslinya (baris 2033&ndash;2044).
+    </p>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel">
+      <p class="eyebrow">Yang membuat program 1983 ini istimewa</p>
+      <p class="l-note">
+        Cara paling lurus menghitung satu generasi adalah memindai seluruh
+        papan: 21 &times; 78 = <strong>1638</strong> sel, setiap generasi,
+        selamanya. Di prosesor 4,77 MHz itu terasa.
+      </p>
+      <p class="l-note">
+        LIFE2 tidak melakukan itu. Ia menyimpan <strong>daftar sel yang
+        hidup</strong> (<code>CLIST</code>) dan hanya memeriksa sel-sel itu
+        beserta tetangganya. Papan kosong tidak menghabiskan waktu sama sekali.
+      </p>
+      <div class="l-bars">
+        <div class="l-bar"><span>Diperiksa</span>
+          <div class="l-bar__t"><div class="l-bar__f" id="barVisit"></div></div>
+          <b id="barVisitN">0</b></div>
+        <div class="l-bar"><span>Pindai penuh</span>
+          <div class="l-bar__t"><div class="l-bar__f l-bar__f--full"></div></div>
+          <b>1638</b></div>
+      </div>
+      <p class="l-note" id="ratio">Gambar sesuatu untuk melihat perbandingannya.</p>
+      <p class="l-note">
+        Biayanya sebanding dengan <strong>populasi</strong>, bukan dengan luas
+        papan. Untuk sebuah <em>glider</em> berisi 5 sel, itu selisih puluhan
+        kali lipat.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Komentar terbaik di seluruh koleksi</p>
+<pre class="l-code">52  C=0:R=0:CUR=0:NXT=1:NN=0:CR=0:RN=0   'Mention early for efficiency</pre>
+      <p class="l-note">
+        Baris yang terlihat tidak berguna &mdash; menyetel nol ke variabel yang
+        memang sudah nol. Komentarnya menjelaskan hal yang <strong>tidak
+        terbaca dari kodenya</strong>: GW-BASIC menyimpan variabel menurut
+        urutan pertama kali disebut, dan mencarinya secara berurutan. Menyebut
+        variabel yang paling sering dipakai lebih dulu menaruhnya di depan
+        tabel.
+      </p>
+      <p class="l-note">
+        Itu contoh sempurna komentar yang baik: ia tidak mengulang apa yang
+        dilakukan kode, ia menjelaskan <em>kenapa baris ini ada</em>.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Dua papan yang bertukar peran</p>
+<pre class="l-code">55  DIM G(NROWS+1,NCOLS+1,1)
+376 SWAP CUR,NXT</pre>
+      <p class="l-note">
+        Dimensi ketiga berukuran dua: generasi sekarang dan generasi
+        berikutnya. Menukar peran keduanya cukup dengan menukar dua angka
+        &mdash; tidak ada satu pun sel yang disalin.
+      </p>
+      <p class="l-note">
+        Namanya <em>double buffering</em>, dan itu teknik yang sama yang
+        dipakai kartu grafis Anda sekarang untuk menggambar tanpa kedip.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/life2.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/LIFE2.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/LIFE2.BAS">Kode sumber 1983</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="life2.js"></script>
+</body>
+</html>

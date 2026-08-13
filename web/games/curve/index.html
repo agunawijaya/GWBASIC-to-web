@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Least Squares Curve Fitting — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari CURVE.BAS (Feldman &amp; Rugg, 1982): pencocokan kurva kuadrat terkecil, dengan penyelesai Gauss yang disalin-tempel dari SIMEQN. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="curve.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap c-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="c-stage">
+        <p class="c-judul">- LEAST SQUARES CURVE FITTING -</p>
+
+        <label class="c-note" for="data">Satu pasang <code>X,Y</code> per baris:</label>
+        <textarea class="c-data" id="data" spellcheck="false"></textarea>
+
+        <div class="c-opt">
+          <label>Degree of polynomial
+            <input type="range" id="deg" min="0" max="7" value="2">
+            <span id="degv">2</span></label>
+          <button class="btn btn--primary" id="go" type="button">Fit</button>
+          <button class="btn btn--ghost btn--sm" id="contoh" type="button">Data contoh</button>
+        </div>
+
+        <p id="msg"></p>
+        <div id="plot"></div>
+        <div id="out"></div>
+
+        <div class="c-opt">
+          <label>Determine specific point &mdash; X=
+            <input type="number" id="xq" step="any" value="3.5"></label>
+          <b id="yq" class="c-judul"></b>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">kuadrat terkecil</span>
+      <span class="ruleset__k">derajat 0&ndash;7</span>
+      <span class="ruleset__k">maks 100 titik</span>
+    </p>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara memakai</summary>
+      <p class="c-lead">
+        Ini <strong>bukan permainan</strong> &mdash; ia alat. Diberi sekumpulan
+        titik, ia mencari <strong>polinom yang paling dekat dengan
+        semuanya</strong>: kurva yang membuat jumlah kuadrat jarak tegak
+        sekecil mungkin.
+      </p>
+      <ol class="howto__steps">
+        <li>Ketik pasangan <code>X,Y</code>, satu per baris. Batas aslinya
+            <strong>100 pasang</strong>, dan itu dipertahankan.</li>
+        <li>Pilih <strong>derajat</strong> polinomnya: 0 garis datar, 1 garis
+            lurus, 2 parabola, dan seterusnya sampai 7 &mdash; batas aslinya.</li>
+        <li>Tekan <strong>Fit</strong>. Anda dapat tabel koefisien, grafiknya,
+            dan angka kecocokan.</li>
+        <li><strong>Garis merah putus-putus</strong> di grafik adalah
+            <em>sisa</em> &mdash; jarak tegak tiap titik ke kurvanya. Itulah
+            besaran yang dikuadratkan dan dijumlahkan; kuadrat terkecil
+            membuat jumlah itu sekecil mungkin.</li>
+        <li>Naikkan derajatnya dan lihat sisanya mengecil. Naikkan terus dan
+            kurvanya mulai <strong>mengejar derau</strong> alih-alih polanya
+            &mdash; itu namanya <em>overfitting</em>, dan mata Anda akan
+            melihatnya sebelum angkanya memberi tahu.</li>
+      </ol>
+      <p>
+        Kotak <strong>Determine specific point</strong> di bawah grafik adalah
+        mode aslinya (baris 690&ndash;730): ketik X, dapat Y. Di 1982 itu
+        satu-satunya cara "melihat" kurvanya.
+      </p>
+    </details>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel c-warn">
+      <p class="eyebrow">Dua puluh satu baris yang sama, di dua program</p>
+      <p class="c-note">
+        Baris <strong>780&ndash;980</strong> program ini sama persis dengan
+        baris <strong>390&ndash;590</strong> di
+        <a href="../simeqn/index.html">SIMEQN</a> &mdash; kata demi kata, hanya
+        nomor barisnya berbeda.
+      </p>
+      <p class="c-note">
+        Feldman &amp; Rugg menulis satu penyelesai persamaan linear, lalu
+        menyalinnya ke program kedua. Bukan karena malas &mdash; karena
+        <strong>tidak ada cara lain</strong>. BASIC 1982 tidak punya
+        <code>INCLUDE</code>, tidak punya pustaka, tidak punya modul.
+      </p>
+      <p class="c-note">
+        Di port ini keduanya memanggil <code>_shared/gauss.js</code>. Itu
+        satu-satunya perbedaan struktural yang berarti antara versi 1982 dan
+        versi ini &mdash; dan ia bukan perbaikan atas penulisnya, melainkan
+        atas <strong>bahasanya</strong>.
+      </p>
+    </div>
+
+    <div class="panel c-good">
+      <p class="eyebrow">Matriks yang dibangun dari jumlah indeksnya</p>
+<pre class="c-code">450 FOR J=1 TO D2:P(J)=0:FOR K=1 TO NP
+460 P(J)=P(J)+X(K)^J:NEXT:NEXT:P(0)=NP
+510 FOR J=1 TO N:FOR K=1 TO N:A(J,K)=P(J+K-2)</pre>
+      <p class="c-note">
+        Baris 510 adalah intinya: <code>A(j,k) = P(j+k&minus;2)</code>. Tiap
+        elemen matriks ditentukan oleh <strong>jumlah indeksnya saja</strong>
+        &mdash; matriks Hankel.
+      </p>
+      <p class="c-note">
+        Akibatnya seluruh matriks (d+1)&times;(d+1) dibangun dari
+        <strong>2d+1 angka</strong>, bukan dari (d+1)&sup2;. Untuk derajat 7:
+        15 jumlah pangkat, bukan 64 elemen.
+      </p>
+      <p class="c-note">
+        Dan <code>P(j)</code> itu sendiri cuma
+        <strong>&Sigma;&nbsp;x<sup>j</sup></strong> &mdash; satu sapuan atas
+        data, sekali. Seluruh kuadrat terkecil polinomial dibangun dari
+        jumlah-jumlah pangkat, dan itulah kenapa ia bisa muat di 89 baris.
+      </p>
+    </div>
+
+    <div class="panel c-warn">
+      <p class="eyebrow">&ldquo;Percent Goodness of Fit&rdquo; bukan R&sup2;</p>
+<pre class="c-code">600 T=100*SQR(1-T/G)</pre>
+      <p class="c-note">
+        <code>T</code> jumlah kuadrat sisa, <code>G</code> jumlah kuadrat
+        simpangan terhadap rata-rata. Jadi <code>1&minus;T/G</code> adalah
+        <strong>R&sup2;</strong> &mdash; dan yang dicetak adalah
+        <strong>akarnya</strong>, dikali seratus. Yaitu |R|, koefisien
+        korelasi.
+      </p>
+      <table class="c-tbl2">
+        <thead><tr><th>R&sup2; sebenarnya</th><th>Yang dicetak</th></tr></thead>
+        <tbody>
+          <tr><td>0,81</td><td><b>90,0</b></td></tr>
+          <tr><td>0,64</td><td><b>80,0</b></td></tr>
+          <tr><td>0,25</td><td><b>50,0</b></td></tr>
+        </tbody>
+      </table>
+      <p class="c-note">
+        Angkanya <strong>selalu terdengar lebih bagus</strong> daripada yang
+        sebenarnya, dan tidak ada satu pun baris di program yang menyebut nama
+        besaran itu. Halaman ini menampilkan keduanya berdampingan, supaya
+        selisihnya terlihat alih-alih tersembunyi.
+      </p>
+      <p class="c-note">
+        Bukan kesalahan hitung &mdash; keduanya besaran yang sah. Yang hilang
+        cuma <strong>namanya</strong>, dan tanpa nama, pembaca tidak punya cara
+        tahu yang mana yang sedang ia baca.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Grafik yang tidak boleh ada</p>
+<pre class="c-code">130 REM: Any BASIC, any CRT.</pre>
+      <p class="c-note">
+        Aslinya <strong>tidak punya grafik sama sekali</strong>. Grafik berarti
+        <code>SCREEN 1</code>, dan <code>SCREEN 1</code> tidak ada di semua
+        mesin &mdash; jadi baris 130 melarangnya.
+      </p>
+      <p class="c-note">
+        Gantinya adalah mode <em>"Determine specific points"</em> (baris
+        690&ndash;730): ketik X, dapat Y, satu per satu. Itulah cara "melihat"
+        kurva pada 1982 &mdash; dengan mengintipnya lewat lubang kunci, satu
+        titik pada satu waktu.
+      </p>
+      <p class="c-note">
+        Grafik di halaman ini <strong>penyimpangan</strong>, dan alasannya:
+        seluruh guna mencocokkan kurva adalah melihat apakah kurvanya masuk
+        akal, dan mata mengerjakan itu dalam sekejap sementara tabel angka
+        butuh menit. Mode aslinya tetap disediakan di bawah grafik.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/curve.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/CURVE.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/CURVE.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/gauss.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="curve.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+/* ===========================================================================
+   wizard.css — hanya palet lokal WIZARD.
+
+   Tata letaknya ada di `_shared/zot.css`, karena TEMPLE memakai tata letak
+   yang sama. Yang membedakan kedua halaman cuma warna: kastel Zot dingin
+   dan berbatu, kuil Loth ungu-hijau. Itu perbedaan yang benar untuk dipisah
+   — sama seperti yang dilakukan Belew, yang tidak menyentuh strukturnya
+   sama sekali dan hanya mengganti kata-katanya.
+   =========================================================================== */
+
+.zot-peta { background: #05070e; }
+.zot-judul { color: #e6d9ff; }
+.zot-log { color: #cfe0d4; background: #070c10; }

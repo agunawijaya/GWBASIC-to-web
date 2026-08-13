@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Serpent — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari SERPENT.BAS (6 Oktober 1982): ular yang tubuhnya tidak disimpan di larik mana pun — glif gambar-garis di layar ITULAH senarai berantainya. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="serpent.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap n-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="n-stage">
+        <div class="n-crt" id="crt">
+          <svg id="ular" class="n-svg" viewBox="0 0 400 250"
+               role="img" aria-label="Papan permainan Serpent"></svg>
+          <div class="n-scr" id="layar" hidden></div>
+          <p class="n-pesan" id="pesan"></p>
+        </div>
+
+        <div class="n-row">
+          <button class="btn btn--primary" id="mulai" type="button">Mulai</button>
+          <button class="btn btn--ghost" id="jeda" type="button" disabled>Jeda</button>
+          <button class="btn btn--ghost btn--sm" id="mode" type="button"
+                  aria-pressed="false">Tampilan glif</button>
+          <button class="btn btn--ghost btn--sm" id="ekor" type="button"
+                  aria-pressed="false">Lihat penghapus ekor</button>
+        </div>
+
+        <div class="n-row n-row--kecil">
+          <label>Langkah per detik
+            <input type="range" id="hz" min="4" max="24" step="1" value="10">
+            <span class="mono" id="hzv"></span></label>
+          <label class="n-cek"><input type="checkbox" id="bunyi" checked> Bunyi</label>
+          <label>Mulai dengan
+            <select id="awal">
+              <option value="0" selected>0 kodok beracun</option>
+              <option value="1">1 kodok beracun</option>
+              <option value="2">2 kodok beracun</option>
+            </select></label>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">64 baris BASIC</span>
+      <span class="ruleset__k">0 larik untuk tubuh ular</span>
+      <span class="ruleset__k">6 glif = 6 arah</span>
+      <span class="ruleset__k ruleset__k--mangsa">kodok hijau +25</span>
+      <span class="ruleset__k">40×25 aksara</span>
+      <span class="ruleset__k ruleset__k--bahaya">kodok beracun mematikan</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Skor</span>
+        <span class="stat__value mono" id="s-skor">0</span></div>
+      <div class="stat"><span class="stat__label">Nyawa</span>
+        <span class="stat__value mono" id="s-nyawa">3</span></div>
+      <div class="stat"><span class="stat__label">Panjang</span>
+        <span class="stat__value mono" id="s-panjang">10</span></div>
+      <div class="stat"><span class="stat__label">Apel</span>
+        <span class="stat__value mono" id="s-apel">0 / 5</span></div>
+      <div class="stat"><span class="stat__label">Labirin</span>
+        <span class="stat__value mono" id="s-labirin">0</span></div>
+      <div class="stat stat--warn"><span class="stat__label">Kodok beracun</span>
+        <span class="stat__value mono" id="s-musuh">0</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <p class="n-lead">
+        Ular biasa &mdash; dengan satu hal yang sama sekali tidak biasa:
+        <strong>tubuhnya tidak disimpan di mana pun.</strong> Glif gambar-garis
+        yang Anda lihat di layar <em>itulah</em> senarai berantainya, dan
+        penghapus ekor membacanya untuk tahu ke mana ular dulu berbelok.
+      </p>
+      <ol class="howto__steps">
+        <li>Panah <kbd>&larr;</kbd> <kbd>&rarr;</kbd> <kbd>&uarr;</kbd>
+            <kbd>&darr;</kbd>, atau angka <kbd>4</kbd> <kbd>6</kbd>
+            <kbd>8</kbd> <kbd>2</kbd> &mdash; aslinya <strong>hanya</strong>
+            yang angka, dan programnya sampai memaksa NumLock menyala untuk
+            itu.</li>
+        <li>Ada <strong>dua yang bisa dimakan</strong>:
+            <span class="n-apel">apel ö</span> diam di tempat, <strong>+10</strong>;
+            <span class="n-mangsa">kodok hijau</span> melompat-lompat,
+            <strong>+25</strong> dan tubuh bertambah dua &mdash; sasaran
+            bergerak memang lebih sulit. Apel selalu diganti begitu dimakan,
+            <strong>kodok tidak</strong>: hanya <strong>dua ekor</strong> tiap
+            ronde, jadi kejar selagi ada.</li>
+        <li>Tiap <strong>5 apel</strong> menambah satu petak labirin; tiap
+            <strong>5 labirin</strong> menambah satu
+            <span class="n-bahaya">kodok beracun</span>.</li>
+        <li>Petak labirin itu digambar sebagai <strong>ladang berpagar</strong>,
+            dan pembagian rupanya mengikuti aturan aslinya persis:
+            <strong>pagarnya membunuh, tanahnya tidak.</strong> Pagar adalah
+            glif <code>│</code> dan <code>─</code> (kode 179 dan 196, di dalam
+            rentang mematikan); tanah adalah kode <strong>28</strong>, di luar
+            rentang. Jadi ladangnya benar-benar bisa dimasuki &mdash; ia
+            kandang dua ruang, terbuka di sisi atas dan bawah, dengan satu
+            galar melintang di tengah yang tidak boleh dilewati.</li>
+        <li><strong>Kodok beracun BUKAN mangsa &mdash; menyentuhnya
+            mematikan.</strong> Itu aturan aslinya, baris 650:
+            <code>IF S=162 THEN 860</code>. Ia berwarna ungu bercak gelap dan
+            berlingkar denyut, pola peringatan yang sama dengan kodok panah
+            beracun sungguhan &mdash; sengaja dibuat sejauh mungkin dari kodok
+            hijau yang boleh dimakan. Kodok pertama baru muncul setelah
+            <strong>25 apel</strong>; pemilih <em>Mulai dengan</em> ada supaya
+            Anda tidak perlu menunggu selama itu.</li>
+        <li>Tekan <strong>Lihat penghapus ekor</strong> untuk menyorot sel yang
+            sedang dibaca penghapus. <strong>Tampilan glif</strong> menukar
+            ularnya kembali ke aksara aslinya.</li>
+      </ol>
+      <p>
+        Ular yang Anda lihat <strong>digambar dengan menelusuri rantai
+        glif</strong> &mdash; persis cara penghapus ekor bekerja. Jadi
+        bentuknya bukan hiasan di atas simulasi: ia
+        <strong>gambar dari senarai berantainya</strong>, dan setiap
+        lengkungan tubuhnya adalah satu glif sudut yang benar-benar tersimpan
+        di petak layar.
+      </p>
+    </details>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel n-good">
+      <p class="eyebrow">Ular tanpa larik ular</p>
+      <p class="n-note">
+        Cari larik tubuh di 64 baris program ini. Tidak ada. Satu-satunya larik
+        yang dideklarasikan adalah empat ini, dan semuanya berindeks
+        <strong>1&ndash;2</strong>:
+      </p>
+<pre class="n-code">530 …PX(1)=2:PY(1)=24:PX1(1)=1:PY1(1)=-1
+    PX(2)=39:PY(2)=24:PX1(2)=-1:PY1(2)=-1</pre>
+      <p class="n-note">
+        Itu posisi dan arah <strong>dua musuh</strong>, bukan tubuh ular.
+        Variabel <code>LE</code> cuma pencacah panjang.
+      </p>
+      <p class="n-note">
+        Lalu bagaimana ekornya tahu jalan? <strong>Ia membaca layar.</strong>
+      </p>
+<pre class="n-code">690 S=SCREEN(EY,EX):LOCATE EY,EX:PRINT " ";
+700 IF S=179 THEN EY=EY+Y2 ELSE IF S=196 THEN EX=EX+X2
+710 IF S=191 THEN IF X2=1 THEN X2=0:Y2=1:EY=EY+Y2 ELSE …
+720 IF S=192 THEN …
+730 IF S=217 THEN …
+740 IF S=218 THEN …</pre>
+      <table class="n-tbl n-tbl--kiri" id="tbl-glif"></table>
+      <p class="n-note">
+        Enam glif, enam aturan. <strong>Glif sudut memberi tahu penghapus ke
+        mana ular dulu berbelok</strong> &mdash; jadi bentuk tubuhnya hidup
+        sepenuhnya sebagai aksara di memori layar, dan penghapus ekor adalah
+        penelusur senarai berantai yang simpulnya adalah piksel.
+      </p>
+      <p class="n-note">
+        <strong>Yang dihemat:</strong> pada ular panjang 200, larik koordinat
+        butuh 200 pasangan bilangan &mdash; di BASIC 1982 itu 3.200 bita untuk
+        larik presisi ganda. Layar teks 40&times;25 yang <em>sudah ada</em>
+        menyimpan bentuk yang sama secara gratis.
+      </p>
+    </div>
+
+    <div class="panel n-warn">
+      <p class="eyebrow">Yang membunuh bukan dinding, melainkan rentang kode</p>
+<pre class="n-code">630 S=SCREEN(HY,HX):IF S&lt;219 AND S&gt;178 OR S=235 THEN 860</pre>
+      <p class="n-note">
+        Tidak ada daftar &ldquo;benda mematikan&rdquo;. Yang ada satu
+        <strong>rentang kode aksara</strong>: 179&ndash;218, ditambah 235.
+      </p>
+      <table class="n-tbl" id="tbl-mati"></table>
+      <p class="n-note">
+        Keenam glif tubuh kebetulan semuanya jatuh di rentang itu, dan
+        <code>█</code> (219) tepat di luarnya &mdash; jadi dinding batas layar
+        <strong>tidak</strong> membunuh lewat baris ini. Tepi layar ditangani
+        terpisah di baris 620.
+      </p>
+      <p class="n-note">
+        Ini <em>berhasil</em>, tapi rapuh dengan cara yang khas: menambahkan
+        hiasan apa pun yang kode aksaranya jatuh di 179&ndash;218 akan
+        mematikan pemain tanpa alasan yang terlihat. Dan
+        <code>S=235</code> (<code>δ</code>) &mdash; tidak ada apa pun di
+        program ini yang menggambar aksara itu. Sisa dari versi sebelumnya
+        yang tidak pernah dibersihkan.
+      </p>
+    </div>
+
+    <div class="panel n-warn">
+      <p class="eyebrow">Program yang menyalakan NumLock Anda</p>
+<pre class="n-code">500 …DEF SEG=0:POKE 1047,32</pre>
+      <p class="n-note">
+        Alamat 1047 adalah <code>0040:0017</code> &mdash; bita bendera papan
+        ketik BIOS. Bit ke-5 (nilai 32) adalah <strong>NumLock</strong>.
+      </p>
+      <p class="n-note">
+        Kenapa? Karena arahnya dibaca begini:
+      </p>
+<pre class="n-code">570 A=VAL(INKEY$)
+580 IF A=4 … 590 IF A=6 … 600 IF A=2 … 610 IF A=8</pre>
+      <p class="n-note">
+        <code>VAL(INKEY$)</code> hanya menghasilkan angka kalau tombolnya
+        <em>mengetik angka</em>. Panah papan tuts angka mengetik angka
+        <strong>hanya saat NumLock menyala</strong> &mdash; jadi program ini
+        menyalakannya sendiri, dengan menulis langsung ke memori BIOS.
+      </p>
+      <p class="n-note">
+        Sebuah permainan yang mengubah keadaan perangkat keras pemakainya
+        supaya kendalinya berfungsi, dan tidak pernah mengembalikannya.
+        <a href="../attack/index.html">ATTACK</a> melakukan hal yang sama
+        &mdash; bahkan <strong>dua kali</strong>, lewat dua cara berbeda, di
+        program yang sama.
+      </p>
+    </div>
+
+    <div class="panel n-good">
+      <p class="eyebrow">Layar sebagai struktur data — kemunculan keempat</p>
+      <p class="n-note">
+        Membaca kembali apa yang digambar adalah teknik yang berulang di
+        koleksi ini, dan tiap kali untuk keperluan yang berbeda:
+      </p>
+      <table class="n-tbl n-tbl--kiri">
+        <thead><tr><th>Program</th><th>Yang dibaca dari layar</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../space/index.html">SPACE</a></td>
+              <td>latar, supaya <code>PUT…XOR</code> bisa menghapus dirinya sendiri</td></tr>
+          <tr><td><a href="../meteor/index.html">METEOR</a></td>
+              <td>sasaran &mdash; <code>SCREEN(Y,X)=219</code> berarti kena</td></tr>
+          <tr><td><strong>SERPENT</strong></td>
+              <td><strong>bentuk tubuhnya sendiri</strong>, sebagai senarai berantai</td></tr>
+          <tr><td>PAC-GAL <span class="n-kecil">(dari EXE)</span></td>
+              <td>tabrakan labirin &mdash; <code>SCREEN(r, c*2+1)</code></td></tr>
+        </tbody>
+      </table>
+      <p class="n-note">
+        Yang membuat SERPENT paling jauh: tiga yang lain <em>menanyakan</em>
+        keadaan ke layar. SERPENT <strong>menyimpan strukturnya di sana</strong>
+        &mdash; dan tanpa layar itu, programnya tidak punya ular sama sekali.
+      </p>
+    </div>
+
+    <div class="panel n-warn">
+      <p class="eyebrow">Harga dari menyimpan dunia di layar</p>
+      <p class="n-note">
+        Kalau layar adalah satu-satunya salinan keadaan, maka
+        <strong>tiap <code>PRINT " "</code> adalah penghapus objek</strong>
+        &mdash; dan tidak ada tempat lain yang masih tahu apa yang barusan
+        hilang. Baris 760 menghapus sel yang ditinggalkan musuh:
+      </p>
+<pre class="n-code">760 LOCATE PY(PL),PX(PL):PRINT " ";
+790 …IF S1&lt;219 AND S1&gt;178 THEN PY1(PL)=-PY1(PL)</pre>
+      <p class="n-note">
+        Musuh hanya berbalik untuk rentang 179&ndash;218. Apel berkode
+        <strong>148</strong>, di luar rentang &mdash; jadi musuh menginjaknya,
+        lalu menghapusnya saat pergi.
+      </p>
+      <p class="n-note">
+        Akibatnya <strong>rondenya terkunci</strong>: baris 560 menaruh tepat
+        lima apel, baris 640 hanya maju setelah <code>AP</code> mencapai 5, dan
+        apel yang dimakan tidak diganti satu per satu. Kurang satu apel berarti
+        <code>AP</code> mentok di 4 selamanya. Baris 560 punya jalan keduanya:
+        lima undian tanpa pemeriksaan, jadi dua apel bisa jatuh di sel yang
+        sama &mdash; kira-kira 1 dari 95 ronde.
+      </p>
+      <p class="n-note">
+        Dua-duanya <strong>cacat 1982</strong>, dan dua-duanya diperbaiki di
+        sini. Ditemukan oleh pemilik koleksi saat bermain.
+        <a href="../../docs/serpent.md">Rinciannya di §6d.</a>
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Kesulitan yang naik dua tingkat</p>
+<pre class="n-code">640 …AP=AP+1:IF AP&lt;5 THEN 750 ELSE …DL=DL+1:
+    IF DL=5 THEN DL=0:P=P+1:GOTO 530 ELSE 530</pre>
+      <table class="n-tbl" id="tbl-naik"></table>
+      <p class="n-note">
+        Dua pencacah bersarang: apel menambah labirin, labirin menambah musuh.
+        Jadi musuh kedua baru muncul setelah <strong>25 apel</strong>, dan
+        <code>DL</code> dikembalikan ke nol setiap kali &mdash; layarnya
+        dibersihkan dari labirin, lalu diisi lagi dari awal.
+      </p>
+      <p class="n-note">
+        Musuhnya pun memantul dengan cara yang sama: baris 790&ndash;800
+        membaca <code>SCREEN</code> di depan langkahnya untuk memutuskan
+        berbalik. <strong>Tidak ada yang tahu di mana dinding berada</strong>
+        &mdash; semuanya bertanya ke layar.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/serpent.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/SERPENT.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/SERPENT.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/input.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="serpent.js"></script>
+</body>
+</html>

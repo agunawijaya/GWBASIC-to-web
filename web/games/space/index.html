@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IBM Space — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari SPACE.BAS (IBM, 1981-82): demo grafis CGA yang seluruh sprite-nya dibuat dalam satu baris, dan dihapus dengan perintah yang sama yang menggambarnya. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="space.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap s-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="s-stage">
+        <p class="s-judul">SPACE &mdash; Version 1.10</p>
+        <svg id="layar" class="s-svg" viewBox="0 0 320 200" role="img"
+             aria-label="layar demo SPACE"></svg>
+
+        <div class="s-row">
+          <button class="btn btn--primary" id="go" type="button">Jalankan</button>
+          <button class="btn btn--ghost btn--sm" id="xor" type="button"
+                  aria-pressed="true">XOR: nyala</button>
+          <label><input type="checkbox" id="bunyi" checked> tangga kromatik</label>
+        </div>
+
+        <div class="s-row">
+          <div>
+            <p class="s-note">Sprite-nya, diam:</p>
+            <div id="contoh"></div>
+          </div>
+          <p class="s-note">
+            Satu elips pipih, dua diagonal, satu garis mendatar &mdash;
+            seluruhnya dibuat di <strong>baris 1430</strong>, lalu dipotret
+            dengan <code>GET</code>.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">57 baris, nol GOSUB</span>
+      <span class="ruleset__k">sprite dari satu baris</span>
+      <span class="ruleset__k">XOR menggambar &amp; menghapus</span>
+    </p>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara memakai</summary>
+      <p class="s-lead">
+        Ini <strong>bukan permainan</strong> dan bukan alat &mdash; ia
+        <strong>demo</strong>. IBM mengirimkannya untuk memperlihatkan apa
+        yang bisa dilakukan kartu grafis warna, dan itu saja tugasnya.
+      </p>
+      <ol class="howto__steps">
+        <li>Tekan <strong>Jalankan</strong>. Sebuah sprite muncul di tempat
+            acak, bertahan sesaat, lalu hilang &mdash; berulang, dengan tangga
+            nada kromatik di tiap kemunculan.</li>
+        <li>Layarnya dibagi <strong>tiga pita warna</strong> (baris 1440).
+            Perhatikan bahwa sprite yang sama <strong>tampak berbeda</strong>
+            di tiap pita &mdash; itu bukan cacat, itu peragaannya.</li>
+        <li>Matikan <strong>XOR</strong> dan lihat bedanya: sprite jadi
+            memakai warnanya sendiri di mana pun ia mendarat, dan
+            <em>tidak bisa lagi menghapus dirinya sendiri</em>.</li>
+      </ol>
+      <p>
+        Aslinya berjalan sampai Anda menekan <kbd>Esc</kbd>. Di sini tombol
+        yang sama juga menghentikannya.
+      </p>
+    </details>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel s-good">
+      <p class="eyebrow">Satu baris yang memuat seluruh sistem grafis CGA</p>
+<pre class="s-code">1430 CLS:CIRCLE(160,100),30,1,,,0.45:PAINT(160,100),1,1:
+     DRAW"bm160,100e30bm160,100h30":LINE (130,100)-(190,100),2:
+     GET(130,70)-(190,130),I</pre>
+      <table class="s-tbl">
+        <tbody>
+          <tr><td><code>CIRCLE …,0.45</code></td><td>elips — parameter terakhir <b>rasio aspek</b></td></tr>
+          <tr><td><code>PAINT</code></td><td>isi dari titik tengah sampai ketemu batas</td></tr>
+          <tr><td><code>DRAW "bm…e30…h30"</code></td><td>dua diagonal; <code>bm</code> = pindah tanpa menggambar</td></tr>
+          <tr><td><code>LINE</code></td><td>garis mendatar</td></tr>
+          <tr><td><code>GET</code></td><td><b>potret</b> seluruh hasilnya ke larik <code>I(800)</code></td></tr>
+        </tbody>
+      </table>
+      <p class="s-note">
+        Lima perintah grafis berbeda, satu baris, dan hasilnya sebuah
+        <strong>sprite</strong>. Setelah baris ini, gambarnya tidak pernah
+        dibuat ulang &mdash; ia cuma ditempelkan.
+      </p>
+      <p class="s-note">
+        <code>DIM I(800)</code> di baris 1410 bukan tebakan: daerah
+        61&times;61 piksel pada 2 bit per piksel adalah 930 bita, dan larik
+        integer 800 elemen menyediakan 1.600. Ukurannya dihitung, bukan
+        dibulatkan.
+      </p>
+    </div>
+
+    <div class="panel s-good">
+      <p class="eyebrow">XOR: menggambar dan menghapus dengan perintah yang sama</p>
+<pre class="s-code">1480 K1=RND*259:K2=RND*138:PUT(K1,K2),I,<b>XOR</b>:
+     FOR I1=1 TO 150:NEXT:PUT(K1,K2),I,<b>XOR</b>:NEXT</pre>
+      <p class="s-note">
+        <code>PUT … XOR</code> menggambar sprite dengan <strong>meng-XOR-kan
+        bitnya</strong> ke layar. Mengulanginya di tempat yang sama
+        mengembalikan layar persis seperti semula:
+      </p>
+      <div class="s-bits" id="bits"></div>
+      <p class="s-note">
+        Jadi <strong>satu perintah melayani dua pekerjaan yang
+        berlawanan</strong>, dan latar belakangnya tidak perlu disimpan sama
+        sekali. Itulah cara menggerakkan benda di layar sebelum ada
+        <em>buffer</em> ganda: gambar, tunggu, gambar lagi.
+      </p>
+      <p class="s-note">
+        Harganya terlihat: sprite yang di-XOR di atas latar berwarna
+        <strong>tidak memakai warnanya sendiri</strong> &mdash; ia memakai
+        warna hasil XOR. Baris 1440 sengaja membagi layar jadi tiga pita, dan
+        sprite yang sama tampak berbeda di tiap pita. <strong>Itu bukan cacat;
+        itu peragaan.</strong>
+      </p>
+      <p class="s-note">
+        Di port ini padanannya <code>mix-blend-mode: difference</code>. Untuk
+        warna murni CGA hasilnya sama dengan XOR bit.
+      </p>
+    </div>
+
+    <div class="panel s-warn">
+      <p class="eyebrow">Empat puluh dua baris yang sama dengan PIECHART</p>
+      <p class="s-note">
+        Baris <strong>940&ndash;1299</strong> program ini hampir seluruhnya
+        identik dengan <a href="../piechart/index.html">PIECHART</a>: layar
+        pembuka berlogo IBM, pemeriksaan kartu grafis lewat
+        <code>PEEK(&amp;H410)</code>, uji Advanced BASIC lewat
+        <code>PLAY "p16"</code>, dan penanganan keluar.
+      </p>
+      <table class="s-tbl">
+        <thead><tr><th>Baris 940&ndash;1299</th><th></th></tr></thead>
+        <tbody>
+          <tr><td>Jumlah baris</td><td><b>45</b> / 44</td></tr>
+          <tr><td>Identik</td><td><b>42</b></td></tr>
+          <tr><td>Berbeda</td><td>nama program (2&times;), baris penulis</td></tr>
+        </tbody>
+      </table>
+      <p class="s-note">
+        Sebuah <strong>kerangka program</strong> yang disalin-tempel antarjudul
+        &mdash; dan yang menyalinnya adalah <strong>IBM</strong>, bukan
+        penulis perorangan.
+      </p>
+      <p class="s-note">
+        Sepupunya di koleksi ini: penyelesai Gauss yang sama persis di
+        <a href="../simeqn/index.html">SIMEQN</a> dan
+        <a href="../curve/index.html">CURVE</a>. Bedanya, yang itu
+        <em>algoritma</em>; yang ini <em>seluruh cangkang program</em>.
+      </p>
+      <p class="s-note">
+        Penyebabnya sama: BASIC 1982 tidak punya cara berbagi kode
+        antarprogram. Kalau dua program butuh layar pembuka yang sama,
+        satu-satunya jalan adalah mengetiknya dua kali &mdash; dan
+        mempertahankan keduanya tetap sama selamanya.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Rasio aspek, untuk kedua kalinya</p>
+      <table class="s-tbl">
+        <thead><tr><th>Program</th><th>Nilai</th><th>Maksudnya</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../piechart/index.html">PIECHART</a></td><td><code>5/6</code></td>
+              <td>supaya lingkaran <b>terlihat bulat</b></td></tr>
+          <tr><td><strong>SPACE</strong></td><td><code>0.45</code></td>
+              <td>supaya elipsnya <b>terlihat pipih</b></td></tr>
+        </tbody>
+      </table>
+      <p class="s-note">
+        Angka yang sama jenisnya, dua maksud yang <strong>berlawanan</strong>.
+        Yang satu <em>koreksi perangkat keras</em>; yang lain
+        <em>keputusan rupa</em>.
+      </p>
+      <p class="s-note">
+        Dan itu sebabnya keduanya diperlakukan berbeda di port ini: 5/6
+        <strong>dibuang</strong> karena piksel sekarang persegi (lihat
+        <a href="../../docs/piechart.md">piechart.md §3</a>), sementara 0,45
+        <strong>dipertahankan</strong> &mdash; tanpa itu, stasiun ruang
+        angkasanya jadi bola.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/space.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/SPACE.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/SPACE.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="space.js"></script>
+</body>
+</html>

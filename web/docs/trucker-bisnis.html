@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Delgado Freight Lines — dokumen analisis bisnis</title>
+<meta name="description" content="Dokumen analisis bisnis untuk usaha angkutan truk Los Angeles-New York 1982: logika kecepatan optimal, pemilihan rute, menghindari denda, dan tips lapangan. Diturunkan dari operasi TRUCKER.">
+<link rel="stylesheet" href="../_shared/tokens.css">
+<link rel="stylesheet" href="../_shared/base.css">
+<link rel="stylesheet" href="trucker-bisnis.css">
+</head>
+<body>
+<div id="topbar-host"></div>
+<main class="wrap k-wrap">
+  <article class="k-isi">
+    <h1>Delgado Freight Lines — dokumen analisis bisnis</h1>
+    <blockquote><strong>Wawancara lapangan</strong> · Los Angeles, Maret 1982 Narasumber: <strong>Ray Delgado</strong>, pemilik-pengemudi, armada satu unit Penyusun: analis bisnis, atas permintaan calon pemberi pinjaman  Dokumen ini bukan dokumen teknis. Tidak ada kode, tidak ada nama variabel, tidak ada nomor baris. Isinya bagaimana usaha angkutan jarak jauh ini sebenarnya berjalan — dan setiap angka di dalamnya berasal dari operasi yang nyata, bukan dari perkiraan.  <strong>Untuk pembaca yang sedang belajar:</strong> di akhir tiap bagian ada kotak <em>Dari bisnis ke mekanik</em>. Di situ ditunjukkan bagaimana aturan bisnisnya berubah menjadi mekanik permainan — dan, yang lebih penting, **apa yang hilang** dalam penerjemahan itu. Bagian terakhir itu yang paling mahal nilainya bagi perancang game.</blockquote>
+    <hr>
+    <h2>1 · Usaha ini dalam satu paragraf</h2>
+    <p>Ray memiliki satu unit tractor-trailer. Ia mengambil muatan di terminal Los Angeles dan mengantarkannya ke New York — sekitar 2.700 sampai 3.100 mil, tergantung rute. Pendapatannya dihitung <strong>per pon muatan</strong>, dan seluruh biaya perjalanan ditanggungnya sendiri. Selisihnya laba. Satu perjalanan memakan tiga sampai lima hari.</p>
+    <p>Ia bukan sopir gajian. Setiap keputusan di jalan — kecepatan, rute, kapan mengisi bahan bakar, kapan tidur — adalah keputusan <strong>keuangan</strong>, dan akibatnya langsung masuk ke kantongnya sendiri.</p>
+    <figure class="n-gbr"><svg class="n-svg" viewBox="0 0 1000 380" role="img"><defs><marker id="mata" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="n-mata"/></marker></defs><rect class="n-kotak" x="20" y="30" width="130" height="46" rx="6"/>
+<text class="n-teks" x="85" y="51.0">Terminal</text>
+<text class="n-teks" x="85" y="65.0">Los Angeles</text>
+<path class="n-belah" d="M260.0 20 L330 53.0 L260.0 86 L190 53.0 Z"/>
+<text class="n-teks" x="260.0" y="58.0">Pilih muatan</text>
+<rect class="n-kotak" x="370" y="30" width="120" height="46" rx="6"/>
+<text class="n-teks" x="430" y="51.0">Tentukan</text>
+<text class="n-teks" x="430" y="65.0">berat</text>
+<rect class="n-kotak" x="530" y="30" width="140" height="46" rx="6"/>
+<text class="n-teks" x="600" y="51.0">Beli bahan</text>
+<text class="n-teks" x="600" y="65.0">bakar &amp; ban</text>
+<path class="n-belah" d="M775.0 20 L840 53.0 L775.0 86 L710 53.0 Z"/>
+<text class="n-teks" x="775.0" y="58.0">Pilih rute</text>
+<rect class="n-kotak" x="340" y="160" width="170" height="46" rx="6"/>
+<text class="n-teks" x="425" y="181.0">Perjalanan:</text>
+<text class="n-teks" x="425" y="195.0">keputusan tiap jam</text>
+<rect class="n-kotak" x="560" y="160" width="140" height="46" rx="6"/>
+<text class="n-teks" x="630" y="181.0">Gudang</text>
+<text class="n-teks" x="630" y="195.0">New York</text>
+<path class="n-belah" d="M805.0 150 L870 183.0 L805.0 216 L740 183.0 Z"/>
+<text class="n-teks" x="805.0" y="188.0">Laba?</text>
+<rect class="n-kotak n-buruk" x="340" y="270" width="170" height="46" rx="6"/>
+<text class="n-teks" x="425" y="298.0">Bangkrut</text>
+<path class="n-panah" marker-end="url(#mata)" d="M150.0 53.0 L170.0 53.0 L170.0 53.0 L190.0 53.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M330.0 53.0 L350.0 53.0 L350.0 53.0 L370.0 53.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M490.0 53.0 L510.0 53.0 L510.0 53.0 L530.0 53.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M670.0 53.0 L690.0 53.0 L690.0 53.0 L710.0 53.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M775.0 86.0 L775.0 120.0 L425.0 120.0 L425.0 160.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M510.0 183.0 L535.0 183.0 L535.0 183.0 L560.0 183.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M700.0 183.0 L720.0 183.0 L720.0 183.0 L740.0 183.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M805.0 216.0 L805.0 293.0 L510.0 293.0"/>
+<text class="n-label" x="805.0" y="287.0">rugi</text>
+<path class="n-panah" marker-end="url(#mata)" d="M870.0 183.0 L895.0 183.0 L895.0 350.0 L260.0 350.0 L260.0 86.0"/>
+<text class="n-label" x="895.0" y="344.0">laba, muat lagi</text></svg></figure>
+    <hr>
+    <h2>2 · Pendapatan: tiga jenis muatan, tiga watak risiko</h2>
+    <p>Ray bisa memilih satu dari tiga muatan. Tarifnya berbeda, tapi <strong>yang sebenarnya membedakan bukan tarifnya melainkan risikonya.</strong></p>
+    <table class="k-tabel"><thead><tr><th>muatan</th><th>tarif</th><th>tenggat</th><th>risiko khas</th></tr></thead><tbody><tr><td><strong>Jeruk segar</strong></td><td>6,50 ¢/pon</td><td>tidak ada denda telat</td><td><strong>membusuk.</strong> Unit pendingin bisa rusak; berhenti terlalu lama merusak muatan</td></tr><tr><td><strong>Angkutan umum</strong></td><td>5,00 ¢/pon</td><td><strong>95 jam</strong></td><td>denda <strong>10 %</strong> kalau terlambat</td></tr><tr><td><strong>Surat pos</strong></td><td>4,75 ¢/pon</td><td>tidak ada</td><td><strong>tidak ada.</strong> Bayar apa adanya</td></tr></tbody></table>
+    <p>Pada muatan 40.000 pon:</p>
+    <table class="k-tabel"><thead><tr><th>muatan</th><th>pendapatan kotor</th></tr></thead><tbody><tr><td>Jeruk (utuh)</td><td>$2.600</td></tr><tr><td>Angkutan umum</td><td>$2.000</td></tr><tr><td>Angkutan umum (telat)</td><td>$1.800</td></tr><tr><td>Surat pos</td><td>$1.900</td></tr></tbody></table>
+    <p>Jeruk membayar <strong>30 % lebih tinggi</strong> daripada angkutan umum. Tapi jeruk yang busuk tidak dibayar sama sekali — ia dibuang, dan Ray justru <strong>membayar $50</strong> untuk membuangnya. Kerusakan sebagian dipotong <strong>5 % per tingkat kerusakan</strong>.</p>
+    <blockquote><strong>Ray:</strong> *&quot;Jeruk itu taruhan. Kalau lancar, itu perjalanan terbaik dalam sebulan. Kalau kena satu masalah saja di gurun dengan pendingin mati, saya pulang membawa utang. Surat pos tidak pernah membuat saya kaya, tapi surat pos tidak pernah membuat saya bangkrut.&quot;*</blockquote>
+    <p><strong>Aturan keputusannya</strong>, sebagaimana Ray sendiri merumuskannya:</p>
+    <figure class="n-gbr"><svg class="n-svg" viewBox="0 0 840 440" role="img"><defs><marker id="mata" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="n-mata"/></marker></defs><path class="n-belah" d="M400.0 10 L500 46.0 L400.0 82 L300 46.0 Z"/>
+<text class="n-teks" x="400.0" y="44.0">Truk prima?</text>
+<text class="n-teks" x="400.0" y="58.0">Cuaca baik?</text>
+<rect class="n-kotak n-baik" x="60" y="150" width="170" height="50" rx="6"/>
+<text class="n-teks" x="145" y="180.0">JERUK</text>
+<path class="n-belah" d="M400.0 150 L500 186.0 L400.0 222 L300 186.0 Z"/>
+<text class="n-teks" x="400.0" y="184.0">Punya</text>
+<text class="n-teks" x="400.0" y="198.0">cadangan kas?</text>
+<rect class="n-kotak" x="600" y="150" width="190" height="50" rx="6"/>
+<text class="n-teks" x="695" y="180.0">ANGKUTAN UMUM</text>
+<rect class="n-kotak n-aman" x="600" y="300" width="190" height="50" rx="6"/>
+<text class="n-teks" x="695" y="330.0">SURAT POS</text>
+<rect class="n-catatan" x="45" y="260" width="200" height="42" rx="6"/>
+<text class="n-teks" x="145" y="286.0">6,5 c/pon, bisa nihil</text>
+<rect class="n-catatan" x="600" y="225" width="190" height="40" rx="6"/>
+<text class="n-teks" x="695" y="250.0">5,0 c/pon, tenggat 95 jam</text>
+<rect class="n-catatan" x="600" y="375" width="190" height="40" rx="6"/>
+<text class="n-teks" x="695" y="400.0">4,75 c/pon, tanpa risiko</text>
+<path class="n-panah" marker-end="url(#mata)" d="M300.0 46.0 L265.0 46.0 L265.0 175.0 L230.0 175.0"/>
+<text class="n-label" x="265.0" y="169.0">ya</text>
+<path class="n-panah" marker-end="url(#mata)" d="M400.0 82.0 L400.0 116.0 L400.0 116.0 L400.0 150.0"/>
+<text class="n-label" x="400.0" y="110.0">tidak</text>
+<path class="n-panah" marker-end="url(#mata)" d="M500.0 186.0 L550.0 186.0 L550.0 175.0 L600.0 175.0"/>
+<text class="n-label" x="550.0" y="169.0">ya</text>
+<path class="n-panah" marker-end="url(#mata)" d="M400.0 222.0 L400.0 325.0 L600.0 325.0"/>
+<text class="n-label" x="400.0" y="319.0">tidak</text>
+<path class="n-panah" marker-end="url(#mata)" d="M145.0 200.0 L145.0 230.0 L145.0 230.0 L145.0 260.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M695.0 200.0 L695.0 212.5 L695.0 212.5 L695.0 225.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M695.0 350.0 L695.0 362.5 L695.0 362.5 L695.0 375.0"/></svg></figure>
+    <blockquote><strong>Dari bisnis ke mekanik.</strong> Tiga muatan itu menjadi <strong>tiga profil risiko</strong> yang bisa dipilih pemain di awal — cara paling murah memberi permainan tingkat kesulitan tanpa mengubah satu pun aturan lainnya. Yang <strong>hilang</strong>: di dunia nyata harga jeruk berfluktuasi, dan ada kontrak, langganan, serta reputasi. Di sini tarifnya tetap selamanya, dan tidak ada pelanggan yang mengingat Anda. Perancang yang ingin usaha ini terasa hidup harus menambahkan ingatan itu sendiri.</blockquote>
+    <hr>
+    <h2>3 · Muatan: satu-satunya tuas yang menaikkan pendapatan</h2>
+    <p>Pendapatan = tarif × berat. Tarifnya tidak bisa ditawar. Jadi satu-satunya cara menaikkan pendapatan adalah <strong>membawa lebih berat</strong> — dan di situlah letak jebakannya.</p>
+    <ul><li>Di bawah <strong>25.000 pon</strong>, usaha ini tidak layak jalan. *&quot;Tidak ada nafkah dari setengah muatan.&quot;*</li><li>Batas hukumnya <strong>40.000 pon</strong>.</li><li>Trailer secara fisik masih muat sampai <strong>50.000 pon</strong>.</li></ul>
+    <p>Antara 40.000 dan 50.000 itulah godaannya: tambahan 10.000 pon berarti tambahan <strong>$650</strong> pada muatan jeruk. Tapi jembatan timbang di jalan menimbang truk <strong>beserta muatan, bahan bakar, dan pengemudi</strong> — dan batasnya <strong>60.000 pon</strong>.</p>
+    <pre class="k-kode">berat tertimbang = 19.000 (truk kosong)
+                 + muatan
+                 + 7 × sisa galon bahan bakar
+                 + pengemudi &amp; barang bawaan</pre>
+    <p>Dendanya <strong>$200 ditambah 2–5 sen per pon kelebihan</strong>. Pada 50.000 pon dengan tangki penuh, timbangan membaca sekitar 70.000 pon — kelebihan 10.000 pon, denda antara <strong>$400 dan $700</strong>. Tambahan pendapatan $650 lenyap dalam satu kali penimbangan.</p>
+    <blockquote><strong>Perhatikan yang halus:</strong> bahan bakar ikut ditimbang, <strong>7 pon per galon</strong>. Artinya truk yang baru mengisi penuh lebih berat 1.300 pon daripada truk yang hampir kering. Waktu mengisi bahan bakar ikut menentukan apakah Anda lolos timbangan.</blockquote>
+    <blockquote><strong>Dari bisnis ke mekanik.</strong> Ini contoh <strong>batas lunak</strong> yang bagus: aturannya memberi tahu Anda batasnya 40.000, tapi tidak mencegah Anda melewatinya — hanya menghukum kalau tertangkap. Perancang yang menutup pilihan itu sama sekali akan menghapus keputusan paling menarik di seluruh permainan. Yang <strong>hilang</strong>: di dunia nyata kelebihan muatan merusak ban, rem, dan poros secara kumulatif. Di sini ia hanya berbahaya di jembatan timbang.</blockquote>
+    <hr>
+    <h2>4 · Struktur biaya</h2>
+    <table class="k-tabel"><thead><tr><th>pos</th><th>besaran</th><th>sifat</th></tr></thead><tbody><tr><td>Bahan bakar awal (tangki ~190 galon)</td><td>$190</td><td>tetap, di muka</td></tr><tr><td>Ban baru</td><td>$200 / buah</td><td>pilihan</td></tr><tr><td>Ban vulkanisir</td><td>$100 / buah</td><td>pilihan, lebih cepat aus</td></tr><tr><td>Angsuran truk, asuransi, pajak</td><td><strong>$85 × hari + $85</strong></td><td><strong>tetap per hari</strong></td></tr><tr><td>Bahan bakar di jalan</td><td>harga pompa × galon</td><td>berubah</td></tr><tr><td>Tol</td><td>$0 – $7,90 per titik</td><td>tetap per rute</td></tr><tr><td>Denda ngebut</td><td>naik tiap pelanggaran</td><td>risiko</td></tr><tr><td>Denda kelebihan muatan</td><td>$200 + 2–5 ¢/pon</td><td>risiko</td></tr><tr><td>Ban pecah (ada cadangan)</td><td>1–2 jam</td><td>risiko</td></tr><tr><td>Ban pecah (tanpa cadangan)</td><td><strong>$400 + 4 jam</strong></td><td>risiko</td></tr><tr><td>Kehabisan bahan bakar</td><td><strong>$200 + 0–4 jam</strong></td><td>kelalaian</td></tr><tr><td>Pendingin rusak (jeruk)</td><td>$100 + 2 jam</td><td>risiko</td></tr></tbody></table>
+    <p><strong>Pos yang paling sering diremehkan adalah <code>$85 per hari</code>.</strong> Ia berjalan terus, apakah truk bergerak atau tidak. Tidur delapan jam di rest area berbiaya <strong>$28</strong> meskipun Ray tidak mengeluarkan sesen pun. Menunggu enam jam di terowongan yang tertimbun longsor berbiaya <strong>$21</strong> sebelum menghitung apa pun yang lain.</p>
+    <blockquote><strong>Ray:</strong> *&quot;Orang mengira musuh saya adalah harga solar. Bukan. Musuh saya adalah kalender. Truk yang parkir itu truk yang tetap menagih.&quot;*</blockquote>
+    <blockquote><strong>Dari bisnis ke mekanik.</strong> Biaya tetap per hari adalah **jam pasir yang tidak terlihat**. Ia menciptakan tekanan waktu tanpa perlu ada tenggat, dan itu sebabnya bahkan muatan surat pos — yang tidak punya tenggat sama sekali — tetap terasa mendesak. Perancang yang ingin ketegangan tanpa penghitung waktu di layar bisa meniru ini.</blockquote>
+    <hr>
+    <h2>5 · Logika kecepatan optimal — dan hasilnya mengejutkan</h2>
+    <p>Ini keputusan yang diambil Ray paling sering: <strong>setiap jam, berapa cepat.</strong></p>
+    <h3>5.1 Kurva efisiensi bahan bakar</h3>
+    <p>Konsumsi truknya mengikuti pola yang sangat tegas:</p>
+    <pre class="k-kode">mil per galon = 4,5 − 0,2 × |55 − kecepatan|      (dasar 2,0)</pre>
+    <p>Artinya efisiensi memuncak <strong>tepat di 55 MPH</strong> pada <strong>4,5 mpg</strong>, dan turun <strong>0,2 mpg untuk setiap MPH menjauh dari 55 — ke arah mana pun.</strong> Terlalu pelan sama borosnya dengan terlalu cepat.</p>
+    <table class="k-tabel"><thead><tr><th>kecepatan</th><th>mpg</th><th>galon/jam</th><th>biaya bahan bakar per mil*</th></tr></thead><tbody><tr><td>35</td><td>2,00</td><td>17,5</td><td>$0,500</td></tr><tr><td>45</td><td>2,50</td><td>18,0</td><td>$0,400</td></tr><tr><td>50</td><td>3,50</td><td>14,3</td><td>$0,286</td></tr><tr><td><strong>55</strong></td><td><strong>4,50</strong></td><td><strong>12,2</strong></td><td><strong>$0,222</strong></td></tr><tr><td>60</td><td>3,50</td><td>17,1</td><td>$0,286</td></tr><tr><td>65</td><td>2,50</td><td>26,0</td><td>$0,400</td></tr><tr><td>70</td><td>2,00</td><td>35,0</td><td>$0,500</td></tr><tr><td>75</td><td>2,00</td><td>37,5</td><td>$0,500</td></tr></tbody></table>
+    <p>\* pada $1,00 per galon</p>
+    <figure class="g-gbr"><svg class="g-svg" viewBox="0 0 760 320" role="img" aria-label="Efisiensi bahan bakar terhadap kecepatan">
+<text class="g-judul" x="62" y="20">Efisiensi bahan bakar terhadap kecepatan</text>
+<text class="g-sub" x="62" y="36">Puncaknya tepat di 55 MPH. Terlalu pelan sama borosnya dengan terlalu cepat.</text>
+<line class="g-kisi" x1="62" y1="268.0" x2="736.0" y2="268.0"/>
+<text class="g-sumbu g-kanan" x="54" y="272.0">0.0</text>
+<line class="g-kisi" x1="62" y1="212.5" x2="736.0" y2="212.5"/>
+<text class="g-sumbu g-kanan" x="54" y="216.5">1.2</text>
+<line class="g-kisi" x1="62" y1="157.0" x2="736.0" y2="157.0"/>
+<text class="g-sumbu g-kanan" x="54" y="161.0">2.5</text>
+<line class="g-kisi" x1="62" y1="101.5" x2="736.0" y2="101.5"/>
+<text class="g-sumbu g-kanan" x="54" y="105.5">3.8</text>
+<line class="g-kisi" x1="62" y1="46.0" x2="736.0" y2="46.0"/>
+<text class="g-sumbu g-kanan" x="54" y="50.0">5.0</text>
+<line class="g-kisiT" x1="136.9" y1="46" x2="136.9" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="136.9" y="286">40</text>
+<line class="g-kisiT" x1="286.7" y1="46" x2="286.7" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="286.7" y="286">50</text>
+<line class="g-kisiT" x1="436.4" y1="46" x2="436.4" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="436.4" y="286">60</text>
+<line class="g-kisiT" x1="586.2" y1="46" x2="586.2" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="586.2" y="286">70</text>
+<line class="g-kisiT" x1="736.0" y1="46" x2="736.0" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="736.0" y="286">80</text>
+<text class="g-sumbu g-tengah" x="399.0" y="312">kecepatan (MPH)</text>
+<text class="g-sumbu" x="4" y="36">mpg</text>
+<path class="g-garis g-a" d="M62.0 179.2 L136.9 179.2 L211.8 157.0 L286.7 112.6 L361.6 68.2 L436.4 112.6 L511.3 157.0 L586.2 179.2 L661.1 179.2 L736.0 179.2"/>
+<circle class="g-titik g-a" cx="62.0" cy="179.2" r="3"/>
+<circle class="g-titik g-a" cx="136.9" cy="179.2" r="3"/>
+<circle class="g-titik g-a" cx="211.8" cy="157.0" r="3"/>
+<circle class="g-titik g-a" cx="286.7" cy="112.6" r="3"/>
+<circle class="g-titik g-a" cx="361.6" cy="68.2" r="3"/>
+<circle class="g-titik g-a" cx="436.4" cy="112.6" r="3"/>
+<circle class="g-titik g-a" cx="511.3" cy="157.0" r="3"/>
+<circle class="g-titik g-a" cx="586.2" cy="179.2" r="3"/>
+<circle class="g-titik g-a" cx="661.1" cy="179.2" r="3"/>
+<circle class="g-titik g-a" cx="736.0" cy="179.2" r="3"/>
+<rect class="g-kunci g-a" x="546" y="18" width="14" height="4"/>
+<text class="g-legenda" x="566" y="22">mil per galon</text>
+</svg></figure>
+    <p>Kurvanya berbentuk <strong>tenda simetris</strong> — bukan kurva menurun seperti yang biasanya diduga orang. Berjalan 45 MPH sama mahalnya dengan berjalan 65 MPH.</p>
+    <h3>5.2 Risiko ditilang</h3>
+    <p>Polisi baru menaruh perhatian kalau Ray lebih dari <strong>10 MPH di atas batas</strong>. Di atas itu, peluang dihentikan <strong>per jam</strong> naik secara kuadratik:</p>
+    <pre class="k-kode">peluang per jam = (kelebihan − 5)² ÷ 900      (maksimum 100 %)</pre>
+    <table class="k-tabel"><thead><tr><th>kecepatan (batas 55)</th><th>kelebihan</th><th>peluang ditilang / jam</th></tr></thead><tbody><tr><td>65</td><td>10</td><td>0 %</td></tr><tr><td>70</td><td>15</td><td>11 %</td></tr><tr><td>75</td><td>20</td><td>25 %</td></tr><tr><td>80</td><td>25</td><td>44 %</td></tr><tr><td>85</td><td>30</td><td>69 %</td></tr><tr><td>90</td><td>35</td><td><strong>100 %</strong></td></tr></tbody></table>
+    <figure class="g-gbr"><svg class="g-svg" viewBox="0 0 760 320" role="img" aria-label="Peluang ditilang per jam">
+<text class="g-judul" x="62" y="20">Peluang ditilang per jam</text>
+<text class="g-sub" x="62" y="36">Nol sampai 10 MPH di atas batas, lalu naik kuadratik sampai kepastian di 90.</text>
+<line class="g-kisi" x1="62" y1="268.0" x2="736.0" y2="268.0"/>
+<text class="g-sumbu g-kanan" x="54" y="272.0">0</text>
+<line class="g-kisi" x1="62" y1="212.5" x2="736.0" y2="212.5"/>
+<text class="g-sumbu g-kanan" x="54" y="216.5">25</text>
+<line class="g-kisi" x1="62" y1="157.0" x2="736.0" y2="157.0"/>
+<text class="g-sumbu g-kanan" x="54" y="161.0">50</text>
+<line class="g-kisi" x1="62" y1="101.5" x2="736.0" y2="101.5"/>
+<text class="g-sumbu g-kanan" x="54" y="105.5">75</text>
+<line class="g-kisi" x1="62" y1="46.0" x2="736.0" y2="46.0"/>
+<text class="g-sumbu g-kanan" x="54" y="50.0">100</text>
+<line class="g-kisiT" x1="146.2" y1="46" x2="146.2" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="146.2" y="286">60</text>
+<line class="g-kisiT" x1="314.8" y1="46" x2="314.8" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="314.8" y="286">70</text>
+<line class="g-kisiT" x1="483.2" y1="46" x2="483.2" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="483.2" y="286">80</text>
+<line class="g-kisiT" x1="651.8" y1="46" x2="651.8" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="651.8" y="286">90</text>
+<text class="g-sumbu g-tengah" x="399.0" y="312">kecepatan (MPH), batas 55</text>
+<text class="g-sumbu" x="4" y="36">%</text>
+<path class="g-garis g-c" d="M62.0 268.0 L146.2 268.0 L230.5 268.0 L314.8 243.3 L399.0 212.5 L483.2 169.3 L567.5 113.8 L651.8 46.0 L736.0 46.0"/>
+<circle class="g-titik g-c" cx="62.0" cy="268.0" r="3"/>
+<circle class="g-titik g-c" cx="146.2" cy="268.0" r="3"/>
+<circle class="g-titik g-c" cx="230.5" cy="268.0" r="3"/>
+<circle class="g-titik g-c" cx="314.8" cy="243.3" r="3"/>
+<circle class="g-titik g-c" cx="399.0" cy="212.5" r="3"/>
+<circle class="g-titik g-c" cx="483.2" cy="169.3" r="3"/>
+<circle class="g-titik g-c" cx="567.5" cy="113.8" r="3"/>
+<circle class="g-titik g-c" cx="651.8" cy="46.0" r="3"/>
+<circle class="g-titik g-c" cx="736.0" cy="46.0" r="3"/>
+<rect class="g-kunci g-c" x="546" y="18" width="14" height="4"/>
+<text class="g-legenda" x="566" y="22">peluang / jam</text>
+</svg></figure>
+    <p>Dan dendanya <strong>naik tiap pelanggaran</strong>: pelanggaran pertama sekitar $40 dan satu jam menunggu; kedua sekitar $87 dan dua jam; ketiga lebih besar lagi. <strong>Pelanggaran keempat berarti tiga puluh hari penjara dan pencabutan izin — usahanya tamat.</strong></p>
+    <h3>5.3 Biaya total per mil</h3>
+    <p>Menggabungkan bahan bakar, biaya waktu ($85/hari = $3,54/jam), dan denda harapan:</p>
+    <table class="k-tabel"><thead><tr><th>kecepatan</th><th>bahan bakar</th><th>waktu</th><th>denda harapan</th><th><strong>total/mil</strong></th></tr></thead><tbody><tr><td>45</td><td>$0,400</td><td>$0,079</td><td>—</td><td><strong>$0,479</strong></td></tr><tr><td>50</td><td>$0,286</td><td>$0,071</td><td>—</td><td><strong>$0,357</strong></td></tr><tr><td><strong>55</strong></td><td><strong>$0,222</strong></td><td><strong>$0,064</strong></td><td>—</td><td><strong>$0,286</strong></td></tr><tr><td>60</td><td>$0,286</td><td>$0,059</td><td>—</td><td><strong>$0,345</strong></td></tr><tr><td>65</td><td>$0,400</td><td>$0,054</td><td>—</td><td><strong>$0,454</strong></td></tr><tr><td>70</td><td>$0,500</td><td>$0,051</td><td>$0,069</td><td><strong>$0,620</strong></td></tr><tr><td>75</td><td>$0,500</td><td>$0,047</td><td>$0,190</td><td><strong>$0,737</strong></td></tr></tbody></table>
+    <figure class="g-gbr"><svg class="g-svg" viewBox="0 0 760 320" role="img" aria-label="Biaya per mil terhadap kecepatan">
+<text class="g-judul" x="62" y="20">Biaya per mil terhadap kecepatan</text>
+<text class="g-sub" x="62" y="36">Minimum di 55 MPH. Pada 70 MPH biayanya dua kali lipat, hemat waktu hanya 21 %.</text>
+<line class="g-kisi" x1="62" y1="268.0" x2="736.0" y2="268.0"/>
+<text class="g-sumbu g-kanan" x="54" y="272.0">0.00</text>
+<line class="g-kisi" x1="62" y1="212.5" x2="736.0" y2="212.5"/>
+<text class="g-sumbu g-kanan" x="54" y="216.5">0.20</text>
+<line class="g-kisi" x1="62" y1="157.0" x2="736.0" y2="157.0"/>
+<text class="g-sumbu g-kanan" x="54" y="161.0">0.40</text>
+<line class="g-kisi" x1="62" y1="101.5" x2="736.0" y2="101.5"/>
+<text class="g-sumbu g-kanan" x="54" y="105.5">0.60</text>
+<line class="g-kisi" x1="62" y1="46.0" x2="736.0" y2="46.0"/>
+<text class="g-sumbu g-kanan" x="54" y="50.0">0.80</text>
+<line class="g-kisiT" x1="62.0" y1="46" x2="62.0" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="62.0" y="286">40</text>
+<line class="g-kisiT" x1="230.5" y1="46" x2="230.5" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="230.5" y="286">50</text>
+<line class="g-kisiT" x1="399.0" y1="46" x2="399.0" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="399.0" y="286">60</text>
+<line class="g-kisiT" x1="567.5" y1="46" x2="567.5" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="567.5" y="286">70</text>
+<line class="g-kisiT" x1="736.0" y1="46" x2="736.0" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="736.0" y="286">80</text>
+<text class="g-sumbu g-tengah" x="399.0" y="312">kecepatan (MPH)</text>
+<text class="g-sumbu" x="4" y="36">$ / mil</text>
+<path class="g-garis g-a" d="M62.0 129.2 L146.2 157.0 L230.5 188.7 L314.8 206.3 L399.0 188.7 L483.2 157.0 L567.5 129.2 L651.8 129.2 L736.0 129.2"/>
+<circle class="g-titik g-a" cx="62.0" cy="129.2" r="3"/>
+<circle class="g-titik g-a" cx="146.2" cy="157.0" r="3"/>
+<circle class="g-titik g-a" cx="230.5" cy="188.7" r="3"/>
+<circle class="g-titik g-a" cx="314.8" cy="206.3" r="3"/>
+<circle class="g-titik g-a" cx="399.0" cy="188.7" r="3"/>
+<circle class="g-titik g-a" cx="483.2" cy="157.0" r="3"/>
+<circle class="g-titik g-a" cx="567.5" cy="129.2" r="3"/>
+<circle class="g-titik g-a" cx="651.8" cy="129.2" r="3"/>
+<circle class="g-titik g-a" cx="736.0" cy="129.2" r="3"/>
+<rect class="g-kunci g-a" x="546" y="18" width="14" height="4"/>
+<text class="g-legenda" x="566" y="22">bahan bakar</text>
+<path class="g-garis g-b" d="M62.0 243.4 L146.2 246.2 L230.5 248.3 L314.8 250.1 L399.0 251.6 L483.2 252.9 L567.5 254.0 L651.8 254.9 L736.0 255.7"/>
+<circle class="g-titik g-b" cx="62.0" cy="243.4" r="3"/>
+<circle class="g-titik g-b" cx="146.2" cy="246.2" r="3"/>
+<circle class="g-titik g-b" cx="230.5" cy="248.3" r="3"/>
+<circle class="g-titik g-b" cx="314.8" cy="250.1" r="3"/>
+<circle class="g-titik g-b" cx="399.0" cy="251.6" r="3"/>
+<circle class="g-titik g-b" cx="483.2" cy="252.9" r="3"/>
+<circle class="g-titik g-b" cx="567.5" cy="254.0" r="3"/>
+<circle class="g-titik g-b" cx="651.8" cy="254.9" r="3"/>
+<circle class="g-titik g-b" cx="736.0" cy="255.7" r="3"/>
+<rect class="g-kunci g-b" x="546" y="34" width="14" height="4"/>
+<text class="g-legenda" x="566" y="38">waktu ($85/hari)</text>
+<path class="g-garis g-c" d="M62.0 268.0 L146.2 268.0 L230.5 268.0 L314.8 268.0 L399.0 268.0 L483.2 268.0 L567.5 249.0 L651.8 218.9 L736.0 170.8"/>
+<circle class="g-titik g-c" cx="62.0" cy="268.0" r="3"/>
+<circle class="g-titik g-c" cx="146.2" cy="268.0" r="3"/>
+<circle class="g-titik g-c" cx="230.5" cy="268.0" r="3"/>
+<circle class="g-titik g-c" cx="314.8" cy="268.0" r="3"/>
+<circle class="g-titik g-c" cx="399.0" cy="268.0" r="3"/>
+<circle class="g-titik g-c" cx="483.2" cy="268.0" r="3"/>
+<circle class="g-titik g-c" cx="567.5" cy="249.0" r="3"/>
+<circle class="g-titik g-c" cx="651.8" cy="218.9" r="3"/>
+<circle class="g-titik g-c" cx="736.0" cy="170.8" r="3"/>
+<rect class="g-kunci g-c" x="546" y="50" width="14" height="4"/>
+<text class="g-legenda" x="566" y="54">denda harapan</text>
+<path class="g-garis g-d" d="M62.0 104.7 L146.2 135.2 L230.5 169.1 L314.8 188.5 L399.0 172.3 L483.2 141.9 L567.5 96.3 L651.8 67.1 L736.0 19.8"/>
+<circle class="g-titik g-d" cx="62.0" cy="104.7" r="3"/>
+<circle class="g-titik g-d" cx="146.2" cy="135.2" r="3"/>
+<circle class="g-titik g-d" cx="230.5" cy="169.1" r="3"/>
+<circle class="g-titik g-d" cx="314.8" cy="188.5" r="3"/>
+<circle class="g-titik g-d" cx="399.0" cy="172.3" r="3"/>
+<circle class="g-titik g-d" cx="483.2" cy="141.9" r="3"/>
+<circle class="g-titik g-d" cx="567.5" cy="96.3" r="3"/>
+<circle class="g-titik g-d" cx="651.8" cy="67.1" r="3"/>
+<circle class="g-titik g-d" cx="736.0" cy="19.8" r="3"/>
+<rect class="g-kunci g-d" x="546" y="66" width="14" height="4"/>
+<text class="g-legenda" x="566" y="70">TOTAL</text>
+</svg></figure>
+    <p><strong>Kecepatan optimalnya 55 MPH, dan ia menang telak.</strong> Berjalan 70 MPH berbiaya <strong>dua kali lipat</strong> per mil — dan hanya menghemat waktu 21 %.</p>
+    <p>Yang membuat ini menarik secara bisnis: <strong>55 MPH adalah batas kecepatan nasional Amerika pada 1982</strong>, diberlakukan sejak krisis minyak 1974 justru dengan alasan efisiensi bahan bakar. Jadi struktur biaya usaha ini <strong>menjadikan mematuhi hukum sebagai strategi paling menguntungkan</strong> — bukan karena dendanya, tapi karena solarnya.</p>
+    <figure class="n-gbr"><svg class="n-svg" viewBox="0 0 850 710" role="img"><defs><marker id="mata" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="n-mata"/></marker></defs><rect class="n-kotak" x="300" y="10" width="220" height="44" rx="6"/>
+<text class="n-teks" x="410" y="37.0">Berapa cepat jam ini?</text>
+<path class="n-belah" d="M410.0 84 L520 120.0 L410.0 156 L300 120.0 Z"/>
+<text class="n-teks" x="410.0" y="118.0">Terlambat dari</text>
+<text class="n-teks" x="410.0" y="132.0">tenggat?</text>
+<rect class="n-kotak n-baik" x="40" y="240" width="200" height="54" rx="6"/>
+<text class="n-teks" x="140" y="265.0">55 MPH</text>
+<text class="n-teks" x="140" y="279.0">biaya minimum</text>
+<path class="n-belah" d="M700.0 230 L810 268.0 L700.0 306 L590 268.0 Z"/>
+<text class="n-teks" x="700.0" y="266.0">Muatan punya</text>
+<text class="n-teks" x="700.0" y="280.0">denda telat?</text>
+<path class="n-belah" d="M700.0 370 L830 408.0 L700.0 446 L570 408.0 Z"/>
+<text class="n-teks" x="700.0" y="406.0">Denda 10 % lebih besar</text>
+<text class="n-teks" x="700.0" y="420.0">dari tambahan biaya?</text>
+<rect class="n-kotak n-hati" x="600" y="500" width="200" height="54" rx="6"/>
+<text class="n-teks" x="700" y="525.0">Naikkan ke 65</text>
+<text class="n-teks" x="700" y="539.0">masih aman tilang</text>
+<path class="n-belah" d="M410.0 610 L520 648.0 L410.0 686 L300 648.0 Z"/>
+<text class="n-teks" x="410.0" y="646.0">Sudah 3 kali</text>
+<text class="n-teks" x="410.0" y="660.0">ditilang?</text>
+<rect class="n-kotak n-buruk" x="40" y="622" width="220" height="54" rx="6"/>
+<text class="n-teks" x="150" y="647.0">JANGAN.</text>
+<text class="n-teks" x="150" y="661.0">Keempat = usaha tamat</text>
+<rect class="n-kotak n-baik" x="600" y="626" width="200" height="46" rx="6"/>
+<text class="n-teks" x="700" y="654.0">Boleh, per jam</text>
+<path class="n-panah" marker-end="url(#mata)" d="M410.0 54.0 L410.0 69.0 L410.0 69.0 L410.0 84.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M300.0 120.0 L140.0 120.0 L140.0 240.0"/>
+<text class="n-label" x="140.0" y="114.0">tidak</text>
+<path class="n-panah" marker-end="url(#mata)" d="M520.0 120.0 L700.0 120.0 L700.0 230.0"/>
+<text class="n-label" x="700.0" y="114.0">ya</text>
+<path class="n-panah" marker-end="url(#mata)" d="M590.0 268.0 L415.0 268.0 L415.0 267.0 L240.0 267.0"/>
+<text class="n-label" x="415.0" y="261.0">surat pos</text>
+<path class="n-panah" marker-end="url(#mata)" d="M700.0 306.0 L700.0 338.0 L700.0 338.0 L700.0 370.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M700.0 446.0 L700.0 473.0 L700.0 473.0 L700.0 500.0"/>
+<text class="n-label" x="700.0" y="467.0">ya</text>
+<path class="n-panah" marker-end="url(#mata)" d="M570.0 408.0 L140.0 408.0 L140.0 294.0"/>
+<text class="n-label" x="140.0" y="402.0">tidak</text>
+<path class="n-panah" marker-end="url(#mata)" d="M700.0 554.0 L700.0 582.0 L410.0 582.0 L410.0 610.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M300.0 648.0 L280.0 648.0 L280.0 649.0 L260.0 649.0"/>
+<text class="n-label" x="280.0" y="643.0">ya</text>
+<path class="n-panah" marker-end="url(#mata)" d="M520.0 648.0 L560.0 648.0 L560.0 649.0 L600.0 649.0"/>
+<text class="n-label" x="560.0" y="643.0">tidak</text></svg></figure>
+    <blockquote><strong>Dari bisnis ke mekanik.</strong> Inilah cara membuat keputusan yang <strong>tampak</strong> sederhana (&quot;seberapa cepat?&quot;) menjadi kaya: tiga tekanan yang saling melawan, masing-masing dengan bentuk matematis berbeda — tenda simetris untuk bahan bakar, kuadratik untuk risiko, linier untuk waktu. Pemain tidak perlu tahu rumusnya; ia cukup merasakan bahwa 55 terasa benar dan 75 terasa gegabah.  Yang <strong>hilang</strong>: di dunia nyata, angin, tanjakan, dan muatan mengubah kurva itu terus-menerus. Di sini kurvanya tetap. Perancang yang ingin kedalaman tambahan bisa menggeser puncak tendanya menurut medan — dan itu perubahan kecil dengan akibat besar.</blockquote>
+    <hr>
+    <h2>6 · Logika pemilihan rute</h2>
+    <p>Tiga rute dari Los Angeles ke New York:</p>
+    <table class="k-tabel"><thead><tr><th>rute</th><th>jarak</th><th>titik</th><th>watak</th></tr></thead><tbody><tr><td><strong>Utara</strong> — I-15 / I-80 lewat Denver dan Omaha</td><td><strong>2.710 mil</strong></td><td>18</td><td>terpendek</td></tr><tr><td><strong>Tengah</strong> — I-40 lewat Albuquerque dan Oklahoma City</td><td><strong>2.850 mil</strong></td><td>21</td><td>menengah</td></tr><tr><td><strong>Selatan</strong> — I-10 / I-20 lewat El Paso, Dallas, Atlanta</td><td><strong>3.120 mil</strong></td><td>25</td><td>terpanjang</td></tr></tbody></table>
+    <figure class="g-gbr"><svg class="g-svg" viewBox="0 0 760 344" role="img">
+<text class="g-judul" x="62" y="20">Rute: jarak melawan risiko cuaca</text>
+<text class="g-sub" x="62" y="36">Yang terpendek justru paling sering kena badai salju. Itu yang membuat pilihannya nyata.</text>
+<line class="g-kisi" x1="90" y1="230.0" x2="690" y2="230.0"/>
+<line class="g-kisi" x1="90" y1="173.3" x2="690" y2="173.3"/>
+<line class="g-kisi" x1="90" y1="116.7" x2="690" y2="116.7"/>
+<line class="g-kisi" x1="90" y1="60.0" x2="690" y2="60.0"/>
+<rect class="g-batang g-c" x="180" y="198.8" width="52" height="31.2" rx="4"/>
+<text class="g-legenda g-tengah" x="206" y="190.8">2.710 mil</text>
+<text class="g-sumbu g-tengah" x="206" y="250">UTARA</text>
+<circle class="g-risiko" cx="192" cy="282" r="7"/>
+<circle class="g-risiko" cx="210" cy="282" r="7"/>
+<circle class="g-risiko" cx="228" cy="282" r="7"/>
+<text class="g-sumbu g-tengah" x="206" y="310">risiko badai</text>
+<rect class="g-batang g-b" x="360" y="159.2" width="52" height="70.8" rx="4"/>
+<text class="g-legenda g-tengah" x="386" y="151.2">2.850 mil</text>
+<text class="g-sumbu g-tengah" x="386" y="250">TENGAH</text>
+<circle class="g-risiko" cx="372" cy="282" r="7"/>
+<circle class="g-risiko" cx="390" cy="282" r="7"/>
+<text class="g-sumbu g-tengah" x="386" y="310">risiko badai</text>
+<rect class="g-batang g-a" x="540" y="82.7" width="52" height="147.3" rx="4"/>
+<text class="g-legenda g-tengah" x="566" y="74.7">3.120 mil</text>
+<text class="g-sumbu g-tengah" x="566" y="250">SELATAN</text>
+<circle class="g-risiko" cx="552" cy="282" r="7"/>
+<text class="g-sumbu g-tengah" x="566" y="310">risiko badai</text>
+<text class="g-sumbu" x="4" y="52">mil</text>
+</svg></figure>
+    <p>Selisih terpanjang ke terpendek <strong>410 mil</strong> — pada 4,5 mpg dan $1/galon, sekitar <strong>$91</strong> bahan bakar, ditambah 7,5 jam berkendara (<strong>$27</strong> biaya tetap). Jadi rute selatan berbiaya sekitar <strong>$118 lebih mahal</strong> sebelum menghitung apa pun yang lain.</p>
+    <p><strong>Tapi cuacanya tidak sama.</strong> Peluang badai salju berbeda tajam per rute, dan risikonya naik seiring jarak yang sudah ditempuh:</p>
+    <table class="k-tabel"><thead><tr><th>rute</th><th>ambang badai salju</th></tr></thead><tbody><tr><td>Utara</td><td><strong>paling rendah — paling sering kena</strong></td></tr><tr><td>Tengah</td><td>menengah</td></tr><tr><td>Selatan</td><td><strong>paling tinggi — paling jarang kena</strong></td></tr></tbody></table>
+    <p>Badai salju bukan gangguan kecil: dalam kondisi itu truk bisa keluar jalur ke parit — dan <strong>kecelakaan berarti kehilangan truk dan seluruh laba.</strong></p>
+    <blockquote><strong>Ray:</strong> *&quot;Rute utara paling pendek di atas peta. Di bulan Januari, peta itu bohong.&quot;*</blockquote>
+    <p>Ada satu lagi yang tidak terlihat di peta: <strong>besaran denda ngebut berbeda per rute.</strong> Rute selatan mengenakan denda dasar lebih tinggi daripada rute utara. Jadi rute yang paling aman dari cuaca justru paling mahal kalau Anda ngebut di sana.</p>
+    <figure class="n-gbr"><svg class="n-svg" viewBox="0 0 920 400" role="img"><defs><marker id="mata" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="n-mata"/></marker></defs><path class="n-belah" d="M430.0 10 L530 46.0 L430.0 82 L330 46.0 Z"/>
+<text class="n-teks" x="430.0" y="44.0">Musim dan</text>
+<text class="n-teks" x="430.0" y="58.0">cuaca?</text>
+<rect class="n-kotak n-aman" x="40" y="150" width="240" height="60" rx="6"/>
+<text class="n-teks" x="160" y="178.0">SELATAN 3.120 mil</text>
+<text class="n-teks" x="160" y="192.0">+$118, badai terendah</text>
+<path class="n-belah" d="M690.0 150 L790 188.0 L690.0 226 L590 188.0 Z"/>
+<text class="n-teks" x="690.0" y="193.0">Muatan?</text>
+<rect class="n-kotak n-hati" x="400" y="320" width="220" height="58" rx="6"/>
+<text class="n-teks" x="510" y="347.0">UTARA 2.710 mil</text>
+<text class="n-teks" x="510" y="361.0">terpendek, tercepat</text>
+<rect class="n-kotak" x="680" y="320" width="210" height="58" rx="6"/>
+<text class="n-teks" x="785" y="347.0">TENGAH 2.850 mil</text>
+<text class="n-teks" x="785" y="361.0">seimbang</text>
+<rect class="n-catatan" x="40" y="250" width="240" height="44" rx="6"/>
+<text class="n-teks" x="160" y="277.0">Jangan ngebut: denda tertinggi</text>
+<path class="n-panah" marker-end="url(#mata)" d="M330.0 46.0 L305.0 46.0 L305.0 180.0 L280.0 180.0"/>
+<text class="n-label" x="305.0" y="174.0">musim dingin</text>
+<path class="n-panah" marker-end="url(#mata)" d="M530.0 46.0 L560.0 46.0 L560.0 188.0 L590.0 188.0"/>
+<text class="n-label" x="560.0" y="182.0">cuaca baik</text>
+<path class="n-panah" marker-end="url(#mata)" d="M160.0 210.0 L160.0 230.0 L160.0 230.0 L160.0 250.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M690.0 226.0 L690.0 275.0 L510.0 275.0 L510.0 320.0"/>
+<text class="n-label" x="510.0" y="269.0">jeruk / ketat</text>
+<path class="n-panah" marker-end="url(#mata)" d="M790.0 188.0 L850.0 188.0 L850.0 290.0 L785.0 290.0 L785.0 320.0"/>
+<text class="n-label" x="850.0" y="284.0">surat pos</text></svg></figure>
+    <blockquote><strong>Dari bisnis ke mekanik.</strong> Tiga rute yang hanya berbeda <strong>jarak</strong> akan jadi pilihan hampa — selalu ambil yang terpendek. Yang membuatnya jadi keputusan nyata adalah <strong>sumbu kedua yang berlawanan arah</strong>: yang terpendek paling berbahaya. Ini pola perancangan yang bisa dipakai di mana saja — kalau sebuah pilihan terasa hampa, tambahkan sumbu yang melawan, jangan tambahkan pilihan keempat.  Yang <strong>hilang</strong>: rute nyata punya perbedaan tol, kepadatan, jam sibuk kota, dan ketersediaan rest area. Di sini tol memang berbeda per titik, tapi selebihnya sama.</blockquote>
+    <hr>
+    <h2>7 · Logika bahan bakar</h2>
+    <p>Tangki penuh <strong>190 galon</strong>. Pada 4,5 mpg, itu <strong>855 mil</strong> — jadi perjalanan 2.710 mil menuntut <strong>sekurang-kurangnya tiga kali pengisian</strong>. Pada 2,0 mpg (kalau Ray ngebut), jangkauannya jatuh ke <strong>380 mil</strong>, dan ia perlu <strong>tujuh kali</strong> berhenti.</p>
+    <p><strong>Kecepatan tidak hanya membakar uang — ia juga membakar waktu berhenti.</strong></p>
+    <p>Kehabisan bahan bakar di jalan berbiaya <strong>$200 untuk satu barel yang diantar</strong>, ditambah <strong>0–4 jam</strong> hilang, ditambah kerusakan muatan jeruk karena pendingin ikut mati. Itu tiga hukuman sekaligus untuk satu kelalaian.</p>
+    <blockquote><strong>Dan inilah yang paling menyusahkan menurut Ray:</strong> pengukur bahan bakarnya tidak akurat. Ia hanya memberi **perkiraan yang meleset sampai lima galon ke atas atau ke bawah**. Ray tidak pernah tahu persis isi tangkinya.  *&quot;Saya tidak pernah mengisi karena sudah waktunya. Saya mengisi karena jarumnya sudah cukup rendah untuk membuat saya tidak bisa tidur.&quot;*</blockquote>
+    <p>Aturan praktis yang ia pakai: <strong>isi setiap kali di bawah 50 galon</strong>, tidak pernah menunggu di bawah 20 — karena kesalahan pengukur 5 galon pada sisa 20 galon adalah selisih antara sampai dan tidak sampai.</p>
+    <blockquote><strong>Dari bisnis ke mekanik.</strong> Pengukur yang tidak akurat adalah **cara termurah membuat sumber daya terasa menegangkan**. Angka yang tepat menghasilkan perhitungan; angka yang berdesir menghasilkan kecemasan. Perancang yang ingin pemain merasakan ketidakpastian tidak perlu mengubah aturannya sama sekali — cukup mengaburkan informasinya.</blockquote>
+    <hr>
+    <h2>8 · Logika istirahat dan kelelahan</h2>
+    <p>Ray melacak dua hal berbeda: <strong>berapa lama sejak tidur terakhir</strong>, dan <strong>berapa panjang perjalanan ini secara keseluruhan</strong>.</p>
+    <table class="k-tabel"><thead><tr><th>jam sejak istirahat</th><th>kondisi</th></tr></thead><tbody><tr><td>&lt; 4</td><td>segar</td></tr><tr><td>&lt; 8</td><td>baik</td></tr><tr><td>&lt; 12</td><td>bosan</td></tr><tr><td>&lt; 16</td><td>lelah</td></tr><tr><td>&lt; 20</td><td>mengantuk</td></tr><tr><td>≥ 20</td><td><strong>kelelahan berat</strong></td></tr></tbody></table>
+    <p>Kelelahan berat bukan penalti kecil — ia <strong>penyebab kecelakaan langsung</strong>, dan kecelakaan berarti kehilangan truk beserta seluruh laba. Tertidur di belakang kemudi adalah salah satu dari enam sebab kecelakaan yang tercatat, bersama mengebut di atas 65, jalan licin, kabut, badai salju, dan pengemudi mabuk yang menabrak dari arah lain.</p>
+    <p>Perhitungan istirahatnya murni ekonomi: delapan jam tidur berbiaya <strong>$28</strong> biaya tetap. Satu kecelakaan berbiaya <strong>seluruhnya</strong>.</p>
+    <blockquote><strong>Dari bisnis ke mekanik.</strong> Kelelahan adalah <strong>sumber daya kelima</strong> setelah uang, bahan bakar, waktu, dan ban — dan satu-satunya yang dipulihkan dengan membelanjakan sumber daya lain (waktu). Struktur semacam ini, di mana satu sumber daya hanya bisa ditukar dengan sumber daya lain, adalah cara paling ringkas menciptakan dilema tanpa menambah aturan.</blockquote>
+    <hr>
+    <h2>9 · Daftar risiko</h2>
+    <table class="k-tabel"><thead><tr><th>risiko</th><th>pemicu</th><th>dampak</th><th>bisa dikurangi?</th></tr></thead><tbody><tr><td>Ban pecah</td><td>naik seiring jarak tempuh</td><td>1–2 jam, atau <strong>$400 + 4 jam</strong> tanpa cadangan</td><td>ya — beli <strong>tiga</strong> ban baru, yang ketiga jadi cadangan</td></tr><tr><td>Ditilang</td><td>kecepatan &gt; batas + 10</td><td>denda naik tiap kali; <strong>keempat = tamat</strong></td><td>ya — jangan lebih 10 di atas batas</td></tr><tr><td>Kelebihan muatan</td><td>&gt; 60.000 pon tertimbang</td><td>$200 + 2–5 ¢/pon</td><td>ya — muat ≤ 40.000, isi bahan bakar sesudah timbangan</td></tr><tr><td>Kehabisan bahan bakar</td><td>kelalaian</td><td>$200 + 0–4 jam + muatan jeruk rusak</td><td>ya — isi di bawah 50 galon</td></tr><tr><td>Muatan jeruk busuk</td><td>waktu + pendingin rusak</td><td><strong>pendapatan nol, bayar $50 buang</strong></td><td>sebagian</td></tr><tr><td>Terlambat (angkutan umum)</td><td>&gt; 95 jam</td><td>denda 10 %</td><td>ya</td></tr><tr><td>Badai salju</td><td>rute + jarak tempuh</td><td>kecelakaan → <strong>kehilangan segalanya</strong></td><td>ya — pilih rute selatan</td></tr><tr><td>Kelelahan</td><td>&gt; 20 jam tanpa istirahat</td><td>kecelakaan → <strong>kehilangan segalanya</strong></td><td>ya — tidur</td></tr><tr><td>Longsor terowongan</td><td>acak, satu titik</td><td>0–5 jam</td><td>tidak</td></tr><tr><td>Pengemudi mabuk</td><td>acak</td><td>kecelakaan</td><td><strong>tidak</strong></td></tr></tbody></table>
+    <p><strong>Empat risiko terakhir tidak bisa dihindari sepenuhnya.</strong> Itu disengaja: usaha ini tidak bisa dijalankan tanpa risiko sisa, dan bagian dari keahlian Ray adalah menerima itu alih-alih melawannya.</p>
+    <p>Perhatikan pola pada kolom terakhir: <strong>hampir semua yang bisa dikurangi dikurangi dengan mengeluarkan uang atau waktu di muka.</strong> Ban ketiga $200 mencegah kerugian $400. Tidur delapan jam $28 mencegah kehilangan truk. Itu seluruh filosofi usaha ini dalam satu kolom.</p>
+    <hr>
+    <h2>10 · Ukuran keberhasilan</h2>
+    <p>Ray menilai dirinya dengan <strong>laba bersih per perjalanan</strong> dan <strong>rata-rata berjalan</strong> dari seluruh perjalanan.</p>
+    <table class="k-tabel"><thead><tr><th>capaian</th><th>penilaian</th></tr></thead><tbody><tr><td>Laba &gt; $100</td><td><em>&quot;Kerja bagus&quot;</em></td></tr><tr><td>Laba &lt; $200 <strong>atau</strong> rata-rata &lt; $250</td><td><em>&quot;Anda lebih untung mencuci piring&quot;</em></td></tr><tr><td>Laba negatif</td><td>perjalanan buruk</td></tr><tr><td>Rata-rata negatif</td><td><strong>bangkrut</strong></td></tr></tbody></table>
+    <p>Ambang <strong>$250 rata-rata</strong> itu patut direnungkan. Pada muatan jeruk 40.000 pon yang sempurna — pendapatan $2.600 — laba $250 berarti biayanya $2.350. Dengan kata lain, <strong>usaha ini beroperasi pada margin sekitar 10 %</strong>, dan satu denda ngebut kedua ($87) menghapus sepertiga dari margin satu perjalanan.</p>
+    <blockquote><strong>Ray:</strong> *&quot;Selisih antara tahun yang baik dan tahun yang buruk itu bukan keberuntungan besar. Itu belasan keputusan kecil yang benar, diulang terus.&quot;*</blockquote>
+    <hr>
+    <h2>10b · Tips lapangan — untuk yang belum pernah menempuh ketiga rute</h2>
+    <p>Bagian ini bukan analisis. Ini yang akan dikatakan Ray kepada sopir baru pada malam sebelum perjalanan pertamanya.</p>
+    <h3>Sebelum berangkat</h3>
+    <ul><li><strong>Beli tiga ban baru, bukan dua.</strong> Yang ketiga jadi cadangan. Selisihnya $200 di muka; tanpa cadangan, satu ban pecah berbiaya $400 ditambah empat jam menunggu derek. Ban pecah <strong>pasti</strong> terjadi kalau perjalanannya cukup panjang — peluangnya naik seiring mil yang sudah ditempuh.</li><li><strong>Muat 40.000 pon, jangan lebih.</strong> Godaan 10.000 pon tambahan bernilai $650, tapi satu jembatan timbang menghapusnya. Trailer memang muat 50.000, tapi hukum tidak.</li><li><strong>Perjalanan pertama: ambil surat pos.</strong> Tarifnya terendah, tapi tidak ada tenggat dan tidak ada yang bisa busuk. Pelajari dulu medannya, baru bertaruh dengan jeruk.</li></ul>
+    <h3>Ketiga rute, dari kursi pengemudi</h3>
+    <p><strong>Utara</strong> (2.710 mil, I-15 lalu I-80) — Las Vegas, gurun Utah, lalu naik ke Denver dan turun ke dataran Nebraska. Terpendek, jalannya paling lengang, dan paling cepat kalau lancar. <strong>Tapi ia melintasi Rocky Mountains dan dataran tengah</strong>, dan itu rute yang paling sering kena badai salju. Ambil ini kalau cuacanya baik dan tenggatnya ketat.</p>
+    <p><strong>Tengah</strong> (2.850 mil, I-40) — Barstow, Flagstaff, Albuquerque, Amarillo, Oklahoma City, lalu St. Louis dan Pennsylvania Turnpike. Rute klasik. Tolnya banyak di paruh timur — Oklahoma Turnpike dan Pennsylvania Turnpike keduanya menagih. Risikonya menengah di segala hal. Kalau ragu, ambil ini.</p>
+    <p><strong>Selatan</strong> (3.120 mil, I-10 lalu I-20) — Phoenix, Tucson, El Paso, Dallas, lalu Atlanta dan naik ke pantai timur. Terpanjang, sekitar $118 lebih mahal. Tapi <strong>paling jarang kena badai salju</strong> — perbedaannya besar, bukan tipis. Di musim dingin, ini rute yang benar meskipun petanya bilang sebaliknya. Perhatikan: di sini denda ngebut paling mahal, jadi jangan tergoda mengejar selisih jaraknya dengan pedal gas.</p>
+    <blockquote>Satu jebakan di rute selatan: ada titik di perbatasan Louisiana yang <strong>menolak muatan berat</strong>, dan Anda dipaksa memutar 200 mil lewat jalan-jalan kabupaten Arkansas dengan batas 45 MPH. Itu menambah jarak <em>dan</em> memaksa Anda keluar dari kecepatan optimal.</blockquote>
+    <h3>Di jalan</h3>
+    <ul><li><strong>Pegang 55 MPH.</strong> Ini bukan nasihat moral, ini nasihat keuangan. Setiap MPH menjauh dari 55 — ke atas <strong>atau ke bawah</strong> — memakan 0,2 mil per galon.</li><li><strong>Isi bahan bakar setiap kali di bawah 50 galon.</strong> Jangan pernah menunggu di bawah 20. Pengukurnya meleset sampai lima galon, dan pada sisa 20 galon kesalahan lima galon adalah selisih antara sampai dan tidak.</li><li>**Isi bahan bakar <em>sesudah</em> jembatan timbang, bukan sebelum.** Bahan bakar ditimbang 7 pon per galon; tangki penuh menambah 1.300 pon di timbangan.</li><li><strong>Tidur sebelum jam ke-16, bukan sesudah.</strong> Setelah 20 jam tanpa istirahat Anda masuk kategori kelelahan berat, dan itu penyebab kecelakaan langsung. Delapan jam tidur berbiaya $28. Satu kecelakaan berbiaya seluruhnya.</li><li><strong>Sesudah tilang kedua, berhenti mengebut sama sekali.</strong> Yang ketiga mahal, yang keempat mencabut izin Anda dan mengakhiri usaha ini. Tidak ada muatan yang sepadan dengan itu.</li><li><strong>Kalau membawa jeruk, jangan berhenti lama.</strong> Setiap jam berdiri dengan pendingin mati merusak muatan, dan kerusakan tidak bisa dipulihkan.</li></ul>
+    <h3>Membaca cuaca</h3>
+    <p>Kondisi jalan berubah sepanjang perjalanan, dan risikonya <strong>naik seiring jarak yang sudah ditempuh</strong> — paruh kedua perjalanan selalu lebih berbahaya daripada paruh pertama, di rute mana pun. Kalau cuaca memburuk:</p>
+    <table class="k-tabel"><thead><tr><th>kondisi</th><th>yang harus dilakukan</th></tr></thead><tbody><tr><td>cerah &amp; kering</td><td>55 MPH, jalan terus</td></tr><tr><td>jalan basah / hujan</td><td>tetap 55, jangan lebih</td></tr><tr><td>salju ringan</td><td>turunkan sedikit, terima kerugian bahan bakarnya</td></tr><tr><td>kabut</td><td>turunkan; kecelakaan menabrak dari belakang terjadi di sini</td></tr><tr><td><strong>badai salju</strong></td><td><strong>berhenti.</strong> Tidak ada muatan yang sepadan dengan truk</td></tr></tbody></table>
+    <hr>
+    <h2>11 · Ringkasan untuk perancang game</h2>
+    <p>Apa yang membuat usaha ini bisa menjadi permainan yang baik, dan apa yang perlu ditambahkan sendiri:</p>
+    <p><strong>Yang sudah kuat:</strong></p>
+    <ol><li><strong>Satu keputusan berulang</strong> (berapa cepat) yang menyatukan tiga tekanan berbentuk matematis berbeda.</li><li><strong>Sumbu yang berlawanan</strong> pada pemilihan rute — terpendek = paling berbahaya.</li><li><strong>Biaya tetap per hari</strong> sebagai jam pasir tak terlihat.</li><li><strong>Informasi yang sengaja dikaburkan</strong> (pengukur bahan bakar) untuk mengubah perhitungan menjadi kecemasan.</li><li><strong>Hukuman bertingkat</strong> (denda ke-1, ke-2, ke-3, lalu tamat) yang membuat risiko terasa makin berat tanpa perlu diberitahu.</li><li><strong>Pencegahan berbiaya di muka</strong> — hampir semua risiko dikurangi dengan membayar lebih dulu.</li></ol>
+    <p><strong>Yang hilang, dan layak ditambahkan:</strong></p>
+    <ol><li><strong>Pelanggan tidak punya ingatan.</strong> Tidak ada reputasi, tidak ada kontrak berulang, tidak ada langganan yang hilang karena sering terlambat.</li><li><strong>Harga tidak pernah berubah.</strong> Tidak ada musim, tidak ada persaingan.</li><li><strong>Truknya tidak menua</strong> kecuali bannya. Tidak ada perawatan tertunda yang menagih di kemudian hari.</li><li><strong>Tidak ada pertumbuhan.</strong> Tidak bisa membeli unit kedua, tidak bisa mempekerjakan sopir. Ray akan selalu menjadi armada satu unit.</li></ol>
+    <p>Ketiadaan nomor empat itu yang paling menentukan wataknya: ini bukan permainan <strong>membangun kerajaan</strong>, melainkan permainan <strong>bertahan hidup</strong>. Setiap perjalanan dimulai dari nol, dan satu-satunya yang menumpuk adalah rata-rata laba dan catatan pelanggaran. Perancang yang menambahkan pertumbuhan akan mengubahnya menjadi permainan yang sama sekali berbeda — dan itu pilihan yang sah, asal disadari.</p>
+    <hr>
+    <p><em>Dokumen ini diturunkan dari operasi <code>TRUCKER</code> sebagaimana ia benar-benar berjalan. Angka, ambang, dan konsekuensinya nyata; yang ditambahkan hanyalah suaranya. Catatan teknis dan arsitekturnya ada di</em> <a href="../trucker.md"><code>trucker.md</code></a> — <em>dokumen yang sama sekali berbeda, untuk pembaca yang berbeda.</em></p>
+  </article>
+  <p class="k-kaki">Halaman ini dihasilkan dari <code>trucker-bisnis.md</code>.
+     Kurva dan grafiknya <b>dihitung dari rumus yang sama</b> dengan yang tertulis
+     di dokumennya, bukan digambar terpisah &mdash; jadi tabel dan grafik tidak
+     mungkin berbeda. Ubah dokumennya, lalu jalankan
+     <code>scripts/trucker-bisnis-html.py</code>.</p>
+  <p class="k-kaki"><a href="../games/trucker/index.html">&larr; Kembali ke TRUCKER</a>
+     &middot; <a href="trucker.md">Dokumen arsitektur</a></p>
+</main>
+<script src="../_shared/ui.js"></script>
+<script>
+  var tb = window.RETRO.ui.topbar({
+    title: 'Delgado Freight Lines', source: 'Dokumen analisis bisnis · TRUCKER'
+  });
+  document.getElementById('topbar-host').append(tb);
+  /* Topbar bersama menganggap dirinya dipasang dari web/games/<id>/, jadi
+     tautan pulangnya '../../index.html'. Halaman ini ada di web/docs/, satu
+     tingkat lebih dangkal -- tanpa koreksi ini tautannya 404. */
+  var pulang = document.querySelector('#topbar-host a[href$="index.html"]');
+  if (pulang) pulang.setAttribute('href', '../index.html');
+</script>
+</body>
+</html>

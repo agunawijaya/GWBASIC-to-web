@@ -1,0 +1,37 @@
+/* ===========================================================================
+   check.css — tambahan lokal CHECK. Layar 80x25 dan panelnya dari history.css.
+
+   Yang khas cuma satu: keping merah "programnya hilang" di baris aturan.
+   Sebuah program yang badannya tidak ada harus menyatakannya di tempat yang
+   dilihat lebih dulu daripada isinya.
+   =========================================================================== */
+
+.k-lead { font-size: var(--fs-sm); }
+.k-lead strong { color: var(--ink); }
+
+.k-hilang {
+  background: var(--acc-red-dim); color: var(--acc-red);
+  border-color: color-mix(in srgb, var(--acc-red) 45%, transparent);
+}
+
+.k-note { font-size: var(--fs-sm); color: var(--ink-dim); line-height: var(--lh); }
+.k-note + .k-note { margin-top: var(--s3); }
+.k-note strong { color: var(--ink); font-weight: 620; }
+.k-note code { font-family: var(--font-mono); font-size: .92em; color: var(--acc-blue); }
+
+.k-poin { margin: var(--s3) 0; padding-left: var(--s5); display: grid; gap: var(--s1); }
+.k-poin li { font-size: var(--fs-sm); color: var(--ink-dim); }
+.k-poin strong { color: var(--ink); }
+.k-poin code { font-family: var(--font-mono); font-size: .9em; color: var(--acc-blue); }
+
+.k-code {
+  font-family: var(--font-mono); font-size: var(--fs-xs);
+  background: var(--bg-sunken); border: 1px solid var(--line-soft);
+  border-radius: var(--r-sm); padding: var(--s3);
+  overflow-x: auto; color: var(--ink-dim); margin: var(--s3) 0; line-height: 1.6;
+}
+.k-code b { color: var(--acc-amber); font-weight: 700; }
+
+.k-good { border-left: 3px solid var(--acc-phosphor); }
+.k-warn { border-left: 3px solid var(--acc-amber); }
+.k-bad  { border-left: 3px solid var(--acc-red); }

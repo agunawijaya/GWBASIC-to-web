@@ -1,0 +1,114 @@
+/* ===========================================================================
+   crazy8.css — khusus Crazy Eights. Awalan `c-`.
+
+   Kartunya sendiri datang dari _shared/cards.css (ditetapkan SOLITAIR).
+   Yang ditambahkan di sini cuma yang benar-benar khas permainan ini:
+   meja, tangan yang bisa diklik, dan penanda warna aktif.
+   =========================================================================== */
+
+.c-layout {
+  display: grid; gap: var(--s5);
+  grid-template-columns: minmax(320px, 1fr) minmax(300px, 430px);
+  align-items: start; padding-block: var(--s6) var(--s8);
+}
+@media (max-width: 980px) { .c-layout { grid-template-columns: 1fr; } }
+
+.c-stage { display: grid; gap: var(--s4); justify-items: center; }
+
+.c-side { display: flex; align-items: center; gap: var(--s3);
+          font-size: var(--fs-xs); color: var(--ink-dim); }
+.c-side b { font-family: var(--font-mono); font-size: var(--fs-md); color: var(--ink); }
+
+/* Tangan komputer: tumpukan punggung yang saling menindih. Jumlahnya yang
+   penting, bukan kartunya — jadi ia dirapatkan sampai tinggal terbaca
+   sebagai "setebal ini". */
+.c-cpu { display: flex; }
+.c-cpu > .card { margin-right: -26px; }
+.c-cpu > .card:last-child { margin-right: 0; }
+
+/* Meja: tumpukan buangan di tengah, sisa dek di sebelahnya. */
+.c-table { display: flex; align-items: center; gap: var(--s5); }
+.c-stock { display: grid; justify-items: center; gap: 4px;
+           font-size: var(--fs-xs); color: var(--ink-dim); }
+.c-stock b { font-family: var(--font-mono); font-size: var(--fs-lg); color: var(--ink); }
+
+/* Warna yang sedang berlaku. Ia BUKAN selalu warna kartu teratas — sesudah
+   sebuah 8 dimainkan, kartunya tetap 8 tapi warnanya diganti (baris 2360).
+   Karena itu ia butuh penanda sendiri; membacanya dari kartu buangan akan
+   berbohong tepat di saat permainan paling menentukan. */
+.c-active {
+  font-size: 30px; line-height: 1;
+  width: 46px; height: 46px; display: grid; place-items: center;
+  border-radius: var(--r); border: var(--border); background: var(--bg-sunken);
+}
+.c-active--red   { color: var(--acc-red); }
+.c-active--black { color: var(--ink); }
+
+/* Tangan pemain. Kartu yang bisa dimainkan diberi tepi fosfor; yang tidak
+   diredupkan — bukan disembunyikan, karena melihat kartu yang tidak bisa
+   dipakai adalah bagian dari permainannya. */
+.c-hand { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.c-card { padding: 0; border: none; background: none; font: inherit;
+          cursor: pointer; transition: transform var(--t-fast) var(--ease); }
+.c-card--ok { box-shadow: 0 0 0 2px var(--acc-phosphor); }
+.c-card--ok:hover { transform: translateY(-6px); }
+.c-card--no { opacity: .45; }
+.c-card:focus-visible { outline: none; box-shadow: var(--glow); }
+
+/* Pemilih warna sesudah memainkan 8 — padanan "WHAT SUIT?" baris 2280. */
+.c-suits { display: flex; gap: var(--s2); min-height: 0; }
+.c-suit {
+  width: 42px; height: 42px; font-size: 22px; line-height: 1;
+  border-radius: var(--r); border: var(--border); background: var(--panel-2);
+  cursor: pointer;
+  transition: background var(--t-fast) var(--ease),
+              border-color var(--t-fast) var(--ease);
+}
+.c-suit:hover { background: var(--panel); border-color: var(--acc-phosphor); }
+.c-suit--red   { color: var(--acc-red); }
+.c-suit--black { color: var(--ink); }
+
+.c-say {
+  font-family: var(--font-mono); font-size: var(--fs-sm);
+  color: var(--acc-phosphor); min-height: 1.6em; text-align: center;
+}
+.c-say--bad { color: var(--acc-red); }
+.c-why { font-size: var(--fs-xs); color: var(--ink-dim); min-height: 1.4em; }
+
+/* --- panel kanan --------------------------------------------------------- */
+
+.c-code {
+  margin-top: var(--s3); padding: var(--s3);
+  border: var(--border); border-radius: var(--r);
+  background: var(--bg-sunken); color: var(--acc-amber);
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.7;
+  overflow-x: auto;
+}
+.c-code em { color: var(--ink-faint); font-style: normal; }
+
+.c-note { font-size: var(--fs-sm); color: var(--ink-dim); margin-top: var(--s2); }
+.c-warn { border-left: 3px solid var(--acc-amber); }
+.c-good { border-left: 3px solid var(--acc-phosphor); }
+
+.c-table-x { width: 100%; border-collapse: collapse; margin-top: var(--s3);
+             font-size: var(--fs-xs); }
+.c-table-x th, .c-table-x td { padding: 5px var(--s2); text-align: left;
+                               border-bottom: 1px solid var(--line-soft);
+                               vertical-align: top; }
+.c-table-x th { color: var(--ink-dim); font-weight: 600; }
+.c-table-x td:last-child, .c-table-x th:last-child {
+  text-align: right; font-family: var(--font-mono); }
+
+.c-bars { display: grid; gap: var(--s2); margin-top: var(--s3); }
+.c-bar { display: grid; grid-template-columns: 84px 1fr 48px;
+         gap: var(--s2); align-items: center; font-size: var(--fs-xs);
+         color: var(--ink-dim); }
+.c-bar__t { height: 8px; border-radius: 4px; background: var(--bg-sunken);
+            overflow: hidden; }
+.c-bar__f { height: 100%; background: var(--acc-phosphor); width: 0;
+            transition: width var(--t-fast) var(--ease); }
+.c-bar__f--full { background: var(--ink-faint); width: 100%; }
+.c-bar b { font-family: var(--font-mono); color: var(--ink); text-align: right; }
+
+.g-ok  { color: var(--acc-phosphor); font-weight: 700; }
+.g-bad { color: var(--acc-amber); font-weight: 700; }

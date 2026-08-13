@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Attack — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari ATTACK.BAS (7 Oktober 1982): seluruh lanskapnya satu string 190 aksara yang digulir MID$, bomnya selalu jatuh di kolom 3, dan benih acaknya kehilangan faktor 60 karena satu posisi meleset. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="attack.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap a-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="a-stage">
+        <div class="a-crt" id="crt">
+          <svg id="svg" class="a-svg" viewBox="0 0 640 500"
+               role="img" aria-label="Layar permainan Attack, 40 kolom kali 25 baris"></svg>
+          <pre class="a-glif" id="glif" hidden></pre>
+          <p class="a-pesan" id="pesan"></p>
+        </div>
+
+        <div class="a-row">
+          <button class="btn btn--primary" id="mulai" type="button">Mulai</button>
+          <button class="btn btn--primary" id="lanjut" type="button" hidden>Ronde berikutnya</button>
+          <button class="btn btn--ghost btn--sm" id="mode" type="button"
+                  aria-pressed="false">Mode 1982</button>
+        </div>
+
+        <div class="a-row a-pad">
+          <button class="btn btn--ghost btn--sm" id="b-atas" type="button">
+            <kbd>8</kbd> naik</button>
+          <button class="btn btn--ghost btn--sm" id="b-diam" type="button">
+            <kbd>5</kbd> datar</button>
+          <button class="btn btn--ghost btn--sm" id="b-bawah" type="button">
+            <kbd>2</kbd> turun</button>
+          <button class="btn btn--ghost btn--sm a-tbom" id="b-bom" type="button">
+            <kbd>4</kbd> bom <b class="a-n" id="n-bom">35</b></button>
+          <button class="btn btn--ghost btn--sm a-tlaser" id="b-laser" type="button">
+            <kbd>6</kbd> laser <b class="a-n" id="n-laser">60</b></button>
+        </div>
+
+        <div class="a-amunisi">
+          <span class="a-amunisi__label">Bom</span>
+          <span class="a-amunisi__jalur"><i id="bar-bom" class="a-amunisi__isi a-amunisi__isi--bom"></i></span>
+          <span class="a-amunisi__label">Laser</span>
+          <span class="a-amunisi__jalur"><i id="bar-laser" class="a-amunisi__isi a-amunisi__isi--laser"></i></span>
+        </div>
+
+        <div class="a-row a-row--kecil">
+          <label>Bingkai per detik
+            <input type="range" id="hz" min="4" max="30" step="1" value="12">
+            <span class="mono" id="hzv"></span></label>
+          <label class="a-cek"><input type="checkbox" id="bunyi" checked> Bunyi</label>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">204 baris BASIC</span>
+      <span class="ruleset__k">1 string = seluruh lanskap</span>
+      <span class="ruleset__k">149 bingkai per ronde</span>
+      <span class="ruleset__k ruleset__k--mangsa">pabrik (25−Y)×12</span>
+      <span class="ruleset__k ruleset__k--bahaya">benihnya kehilangan faktor 60</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">SCORE</span>
+        <span class="stat__value mono" id="s-skor">0</span></div>
+      <div class="stat"><span class="stat__label">Rekor</span>
+        <span class="stat__value mono" id="s-rekor">0</span></div>
+      <div class="stat"><span class="stat__label">BOMBS</span>
+        <span class="stat__value mono" id="s-bom">35</span></div>
+      <div class="stat"><span class="stat__label">LASERS</span>
+        <span class="stat__value mono" id="s-laser">60</span></div>
+      <div class="stat"><span class="stat__label">Arah</span>
+        <span class="stat__value mono" id="s-arah">datar</span></div>
+      <div class="stat"><span class="stat__label">Bingkai</span>
+        <span class="stat__value mono" id="s-bingkai">0 / 149</span></div>
+      <div class="stat"><span class="stat__label">Benih</span>
+        <span class="stat__value mono" id="s-benih">—</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <p class="a-lead">
+        Anda menerbangkan pembom dari kiri layar. Lanskapnya bergulir ke kiri
+        selama <strong>149 bingkai</strong>, lalu ronde selesai. Jatuhkan bom ke
+        bangunan, tembak pesawat musuh dengan laser, dan jangan menyentuh tanah.
+      </p>
+      <ol class="howto__steps">
+        <li><kbd>8</kbd> naik, <kbd>2</kbd> turun, <strong><kbd>5</kbd> untuk
+            mendatarkan</strong> &mdash; panah juga jalan. Ini
+            <strong>bukan</strong> tombol ditahan: ia <em>menyetel arah</em>,
+            dan pesawatnya terus bergerak sampai Anda menekan <kbd>5</kbd>.
+            Tombol yang sedang berlaku disorot, dan arahnya juga tertulis di
+            papan angka.</li>
+        <li><strong>Kenapa begitu?</strong> Bukan selera: <code>INKEY$</code>
+            tidak punya kejadian <em>tombol-dilepas</em>, jadi "tahan untuk
+            bergerak" mustahil di BASIC DOS. Yang bisa dilakukan hanya menyetel
+            arah dan menyediakan rem. Tiap program aksi di koleksi ini
+            menyelesaikannya dengan caranya sendiri &mdash;
+            <a href="../meteor/index.html">METEOR</a> memakai tombol apa pun
+            selain panah sebagai rem, dan <a href="../serpent/index.html">SERPENT</a>
+            tidak punya rem sama sekali.</li>
+        <li><kbd>4</kbd> menjatuhkan bom, <kbd>6</kbd> menembak laser.
+            <strong>Keduanya ada batasnya</strong> &mdash; <strong>35 bom</strong>
+            dan <strong>60 laser</strong>, terpampang di tombolnya dan di bilah
+            di bawahnya. Itu aslinya: baris 1840 berbunyi <em>"YOU ARE ALLOTED
+            35 BOMBS AND 60 LASERS"</em>, dan baris 600 menampilkannya
+            terus-menerus di layar. Dan <strong>tidak diisi ulang di ronde
+            berikutnya</strong> &mdash; baris 520 cuma dijalankan sekali.</li>
+        <li><strong>Laser hanya mengenai barisnya sendiri</strong>, persis satu
+            baris &mdash; itu baris 1130. Sinarnya <span class="a-im">merah tua
+            kalau meleset</span> dan <span class="a-ik">putih kalau kena</span>.
+            Dan <strong>satu tembakan paling banyak menjatuhkan satu
+            musuh</strong>: baris 1160 keluar dari gelung begitu ada yang kena,
+            jadi dua musuh sebaris berarti yang kedua selamat.</li>
+        <li><strong>Bomnya selalu jatuh di kolom 3.</strong> Yang Anda bidik
+            bukan tempat melainkan <em>waktu</em> &mdash; lanskapnyalah yang
+            bergerak melewati kolom itu. Lihat panel di sebelah.</li>
+        <li>Bom mengenai <span class="a-ip">pabrik</span> bernilai
+            <strong>(25 &minus; baris pesawat) &times; 12</strong>, jadi
+            <strong>makin tinggi makin besar</strong> &mdash; tapi makin lama
+            pula bomnya jatuh, dan makin jauh Anda harus memimpin sasaran.
+            Bangunan lain 10&ndash;39 acak. Musuh tertembak +20.</li>
+        <li>Melewati <span class="a-ia">garis atmosfer</span> di baris 5 membuat
+            Anda <strong>kehilangan kendali</strong> dan jatuh &mdash; laser dan
+            bom masih jalan. Menyentuh tanah, atau ditabrak musuh, selesai.</li>
+        <li>Skor di atas <strong>500</strong> di akhir ronde membuka ronde
+            berikutnya. Mati dengan skor di atas <strong>800</strong> tetap
+            dihitung berhasil &mdash; itu memang ada di baris 1295.</li>
+      </ol>
+      <p>
+        Tombol <strong>Mode 1982</strong> memperlihatkan petak 40&times;25-nya
+        sebagai aksara, seperti aslinya. Keduanya membaca petak yang sama.
+      </p>
+    </details>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel a-warn">
+      <p class="eyebrow">Sebuah program IBM yang mengebom pabrik Apple</p>
+      <p class="a-note">
+        Layar pembukanya berbunyi <strong>"IBM &mdash; General utility
+        programs"</strong>. Layar petunjuknya, baris 1820&ndash;1830:
+      </p>
+<pre class="a-code">1820 PRINT "  YOUR MISSION IS TO ATTACK AND DESTROY"
+1830 PRINT "THE APPLE COMPUTER MANUFACTURING PLANT."</pre>
+      <p class="a-note">
+        Bertanggal <strong>7 Oktober 1982</strong>, kode build
+        <code>MOD-5-5-M</code> &mdash; sehari sesudah
+        <a href="../serpent/index.html">SERPENT</a> (6 Oktober,
+        <code>USR-5-5-K</code>), dan layar pembukanya kerangka yang sama persis.
+        Ketiga berkas <em>Attack/Serpent/Zap'em</em> jelas satu tangan, satu
+        minggu.
+      </p>
+      <p class="a-note">
+        Sebagai artefak, ini yang paling jujur soal zamannya di seluruh koleksi:
+        perang IBM&ndash;Apple bukan gaya pemasaran belakangan, ia sudah jadi
+        tema permainan yang ditulis orang dalam untuk disket utilitas kantor.
+      </p>
+    </div>
+
+    <div class="panel a-good">
+      <p class="eyebrow">Seluruh lanskapnya satu string</p>
+<pre class="a-code">540 A$="_____/\_____/\__/\_______/\_/\____/\__/\___▄▄▄_…?"
+670 B$=MID$(A$,L+Z,40-Z)
+680 COLOR 6:LOCATE 23,1+Z:PRINT B$;</pre>
+      <p class="a-note">
+        Tidak ada larik medan, tidak ada peta. Ada <strong>satu string</strong>,
+        dan yang bergulir adalah jendela 40 kolom yang menggeser satu aksara per
+        bingkai.
+      </p>
+      <table class="a-tbl">
+        <tbody>
+          <tr><td>Panjang <code>A$</code></td><td><strong id="b-panjang">—</strong></td></tr>
+          <tr><td>Indeks terjauh tersentuh (L=149)</td><td>188</td></tr>
+          <tr><td>Aksara yang tak pernah terlihat</td><td>2</td></tr>
+          <tr><td class="a-ip">Pabrik &mdash; kode 210 &amp; 193</td><td><strong id="b-pabrik">—</strong></td></tr>
+          <tr><td>Bangunan lain &mdash; kode ≥169</td><td><strong id="b-bangunan">—</strong></td></tr>
+          <tr><td>Medan &mdash; <code>_</code> <code>/</code> <code>\</code></td><td><strong id="b-medan">—</strong></td></tr>
+        </tbody>
+      </table>
+      <p class="a-note">
+        Cacah itu <strong>dihitung halaman ini dari lanskapnya sendiri</strong>,
+        dan lanskapnya sendiri dibangkitkan langsung dari
+        <code>run/ATTACK.BAS</code> &mdash; tidak diketik ulang.
+      </p>
+      <p class="a-note">
+        Perhatikan <code>40-Z</code>. <code>Z</code> disetel ke 4 saat bom
+        meledak (baris 1530) dan turun satu per bingkai (660), jadi selama
+        berguncang <strong>jendelanya ikut menyempit</strong> &mdash; lanskapnya
+        tersentak mundur lalu menyusul. Guncangan layar, dengan satu variabel,
+        tanpa satu pun baris yang khusus menanganinya.
+      </p>
+    </div>
+
+    <div class="panel a-good">
+      <p class="eyebrow">Bomnya selalu jatuh di kolom 3</p>
+<pre class="a-code">1030 IF Y/2=INT(Y/2) THEN BY=Y+1 ELSE BY=Y   <span class="a-c">' selalu baris ganjil</span>
+1050 COLOR 2:LOCATE BY,<strong>3</strong>:PRINT "•";
+1080 …BY=BY+2…                                <span class="a-c">' dua baris per bingkai</span>
+1070 IF BY=21 THEN GOSUB 1450
+1460 BE=SCREEN(BY+2,<strong>3</strong>)                       <span class="a-c">' BACA LAYAR</span></pre>
+      <p class="a-note">
+        Kolomnya tetap <strong>3</strong>, selalu. Yang berubah cuma
+        <strong>kapan</strong> Anda menjatuhkannya &mdash; lanskapnyalah yang
+        bergerak melewati kolom itu. Ini permainan pewaktuan yang menyamar jadi
+        permainan membidik.
+      </p>
+      <p class="a-note">
+        Dan tukar-menukarnya utuh dalam dua baris. Lama jatuh =
+        <code>(21 &minus; BY) ÷ 2</code> bingkai, jadi dari ketinggian bomnya
+        lebih lama di udara dan sasarannya harus dipimpin lebih jauh. Imbalannya
+        naik persis sejalan:
+      </p>
+<pre class="a-code">1510 IF BE=210 OR BE=193 THEN SC=SC+(25-Y2)*12</pre>
+      <table class="a-tbl">
+        <thead><tr><th>Baris lepas (Y2)</th><th>Bingkai jatuh</th><th>Nilai pabrik</th></tr></thead>
+        <tbody>
+          <tr><td>21</td><td>0</td><td>48</td></tr>
+          <tr><td>15</td><td>3</td><td>120</td></tr>
+          <tr><td>7</td><td>7</td><td><strong>216</strong></td></tr>
+        </tbody>
+      </table>
+      <p class="a-note">
+        Tapi baris 7 tepat di bawah garis atmosfer di baris 5 &mdash; satu
+        langkah salah dan Anda kehilangan kendali sepenuhnya.
+      </p>
+    </div>
+
+    <div class="panel a-warn">
+      <p class="eyebrow">Benih acak yang kehilangan faktor enam puluh</p>
+<pre class="a-code">500 R1$=LEFT$(TIME$,2):R2$=RIGHT$(TIME$,2):R3$=MID$(TIME$,<strong>3</strong>,2)
+510 RANDOMIZE VAL(R1$+R2$+R3$)</pre>
+      <p class="a-note">
+        <code>TIME$</code> berbentuk <code>"HH:MM:SS"</code>. Indeks ke-3 adalah
+        <strong>titik dua</strong>, bukan menit.
+      </p>
+      <table class="a-tbl a-tbl--kiri">
+        <tbody>
+          <tr><td><code>R1$</code></td><td><code>"HH"</code></td><td>jam</td></tr>
+          <tr><td><code>R2$</code></td><td><code>"SS"</code></td><td>detik</td></tr>
+          <tr><td><code>R3$</code></td><td><code>":M"</code></td><td><strong>titik dua + satu digit menit</strong></td></tr>
+        </tbody>
+      </table>
+      <p class="a-note">
+        <code>VAL("HHSS:M")</code> berhenti di titik dua, jadi komponen ketiganya
+        <strong>tidak menyumbang apa pun</strong>:
+      </p>
+      <table class="a-tbl">
+        <tbody>
+          <tr><td>Terbaca &mdash; HH + SS</td><td>24 × 60 = <strong>1.440</strong></td></tr>
+          <tr><td>Dimaksud &mdash; HH + SS + MM</td><td>24 × 60 × 60 = <strong>86.400</strong></td></tr>
+          <tr><td>Yang hilang</td><td>faktor <strong>60</strong></td></tr>
+        </tbody>
+      </table>
+      <p class="a-note">
+        Satu posisi meleset. <a href="../flys/index.html">FLYS</a> di koleksi
+        yang sama menulis <code>MID$(TIME$,<strong>4</strong>,2)</code> dan
+        benar. Cacatnya <strong>dipertahankan</strong> di port ini &mdash; benih
+        yang dipakai ditampilkan di papan angka, jadi bisa diperiksa sendiri.
+      </p>
+    </div>
+
+    <div class="panel a-warn">
+      <p class="eyebrow">Dua POKE ke bita yang sama, lewat dua jalan berbeda</p>
+<pre class="a-code">520 …DEF SEG=&amp;H40 : POKE &amp;H17,&amp;H40   <span class="a-c">' 0040:0017 &lt;- 64  = CapsLock</span>
+625  DEF SEG=0    : POKE 1047,32     <span class="a-c">' 0000:0417 &lt;- 32  = NumLock</span></pre>
+      <p class="a-note">
+        <code>0x40:0x17</code> dan <code>0x0000:0x0417</code> adalah alamat
+        linear yang <strong>sama</strong> &mdash; 1047 desimal, bita bendera
+        papan ketik BIOS. Program ini menuliskannya dua kali lewat dua cara
+        pengalamatan yang berbeda.
+      </p>
+      <p class="a-note">
+        Dan keduanya <code>POKE</code> biasa, bukan OR. Jadi baris 625
+        <strong>menghapus CapsLock</strong> yang baru dinyalakan baris 520.
+        Tulisan pertamanya mati sebelum sempat berguna &mdash; kode mati yang
+        terlihat seperti bekerja.
+      </p>
+      <p class="a-note">
+        <a href="../serpent/index.html">SERPENT</a>, sehari sebelumnya, cuma
+        melakukan yang kedua. Kelihatannya baris 520 sisa percobaan yang tidak
+        ikut dibersihkan.
+      </p>
+    </div>
+
+    <div class="panel a-good">
+      <p class="eyebrow">Layar sebagai struktur data — kemunculan kelima</p>
+      <table class="a-tbl a-tbl--kiri">
+        <thead><tr><th>Program</th><th>Yang dibaca dari layar</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../space/index.html">SPACE</a></td><td>latar, supaya <code>PUT…XOR</code> bisa menghapus dirinya</td></tr>
+          <tr><td><a href="../meteor/index.html">METEOR</a></td><td>seluruh dunianya</td></tr>
+          <tr><td><a href="../serpent/index.html">SERPENT</a></td><td>bentuk tubuhnya sendiri</td></tr>
+          <tr><td><strong>ATTACK</strong></td><td><strong>nilai skor</strong> — <code>SCREEN(23,3)</code> menentukan berapa poin</td></tr>
+          <tr><td>PAC-GAL <span class="a-kecil">(dari EXE)</span></td><td>tabrakan labirin</td></tr>
+        </tbody>
+      </table>
+      <p class="a-note">
+        ATTACK yang paling tak terduga: yang lain menanyakan
+        <em>tabrakan</em>. ATTACK menanyakan <strong>harga</strong>. Bomnya tidak
+        tahu apa yang dikenainya sampai ia membaca aksara di bawahnya, lalu
+        rumus mana yang dipakai ditentukan oleh <em>kode aksara</em> itu.
+      </p>
+    </div>
+
+    <p class="faint a-links">
+      <a href="../../docs/attack.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/ATTACK.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/ATTACK.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/input.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="attack-data.js"></script>
+<script src="attack.js"></script>
+</body>
+</html>

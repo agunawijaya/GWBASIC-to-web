@@ -1,0 +1,8 @@
+poll patience: 3 (a flush loop sees an empty keyboard)
+format    : MZ, 9728-byte header, 2357 relocations applied; entry CS:IP 0000:001A -> image offset 0x1A
+start-up: 400,000,000 instructions, stopped: budget exhausted at 166C:2E4E (image 0x00940e) [72 13 3b 1e f4 05 77 0d]
+  last inside: 0x719c -> 0x719d -> 0x719f -> 0x9403 -> 0x9404 -> 0x9405 -> 0x9407 -> 0x940a
+  interrupts requested: 03h, 10h, 16h
+  ports written: 0x40, 0x61
+  keyboard: 224 reads, 0 of 224 keys unused
+executed 3,921 distinct addresses -> C:/Users/aguna/Downloads/Personal/Games/old_games/decompile/trace/3dttt-deep.map

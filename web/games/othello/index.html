@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Othello — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari OTHELLO.BAS (Patrick Leabo, 1982) — termasuk catatan penulisnya yang meminta pembaca menulis AI yang lebih baik. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="othello.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap o-layout">
+
+  <section class="stack">
+    <div class="screen screen--scanlines">
+      <div class="o-stage">
+        <div class="o-scores">
+          <div class="o-score o-score--b"><span id="nB">Anda</span><b id="sB">2</b></div>
+          <div class="o-score o-score--w"><span id="nW">IBM PC</span><b id="sW">2</b></div>
+        </div>
+        <div id="board"></div>
+        <p class="o-say" id="say">Giliran Anda. Kotak bertanda bisa dimainkan.</p>
+        <div class="m-transport">
+          <button class="btn btn--ghost" id="restart" type="button">Mulai ulang</button>
+          <button class="btn btn--ghost" id="pass" type="button" disabled>Lewati giliran</button>
+          <label class="o-opt"><input type="checkbox" id="expert" checked> Bobot posisi (mode ahli)</label>
+          <label class="o-opt"><input type="checkbox" id="window" checked> Jendela pencarian</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel o-warn">
+      <p class="eyebrow">Catatan penulisnya, baris 1025</p>
+<pre class="o-code">1000 REM  OTHELLO -- PET VERSION -- MODIFIED BY PATRICK   LEABO
+1010 REM                            TUCSON, ARIZONA
+1020 REM                                 3-82
+1025 REM <strong>NOT DONE YET BUT HAVE FUN -- PLEASE ADD A GOOD
+     ALGORITHM TO IT</strong></pre>
+      <p class="o-note">
+        Program ini dikirim ke dunia dengan pengakuan bahwa AI-nya
+        <strong>belum selesai</strong>, dan permintaan terbuka supaya siapa pun
+        yang menemukannya menuliskan yang lebih baik.
+      </p>
+      <p class="o-note">
+        Tahun 1982, sebelas tahun sebelum kata "open source" ada. Ia diketik di
+        baris komentar sebuah berkas yang disalin dari disket ke disket.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">AI-nya: satu langkah ke depan, dan itu saja</p>
+      <p class="o-note">
+        Tiap kotak kosong dinilai dengan berapa bidak yang terbalik kalau
+        dimainkan, lalu ditambah bobot menurut <em>letaknya</em>:
+      </p>
+      <table class="o-table">
+        <thead><tr><th>Baris/kolom</th><th>Bobot</th><th>Baris</th></tr></thead>
+        <tbody>
+          <tr><td>1 atau 8 &mdash; tepi</td><td class="o-plus">+2</td><td>1690&ndash;1700</td></tr>
+          <tr><td>2 atau 7 &mdash; sebelah tepi</td><td class="o-minus">&minus;2</td><td>1710&ndash;1720</td></tr>
+          <tr><td>3 atau 6 &mdash; dalam</td><td class="o-plus">+1</td><td>1730&ndash;1740</td></tr>
+        </tbody>
+      </table>
+      <p class="o-note">
+        Bobot itu benar secara strategi: tepi kuat, kotak sebelah tepi berbahaya
+        karena membuka jalan ke sudut. Tapi ia hanya <strong>satu langkah</strong>
+        &mdash; tidak ada penelusuran, tidak ada bayangan langkah lawan.
+      </p>
+      <p class="o-note">
+        Seri dipecah dengan lemparan koin (<code>IF RND(1)&gt;0.5</code>, baris
+        1770), jadi ia tidak selalu memainkan langkah yang sama.
+      </p>
+      <div class="o-weights" id="weights"></div>
+      <p class="o-note">Peta bobotnya, digambar dari kode yang sama.</p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Jendela pencarian yang membesar sendiri</p>
+<pre class="o-code">1070 XL=3:XH=6:YL=3:YH=6
+1620 FOR I=YL TO YH:FOR J=XL TO XH
+2940 IF I=YL THEN YL=YL-1:IF YL&lt;1 THEN YL=1
+2950 IF I=YH THEN YH=YH+1:IF YH&gt;8 THEN YH=8</pre>
+      <p class="o-note">
+        AI-nya tidak memindai seluruh 64 kotak. Ia mulai dari 4&times;4 di tengah,
+        dan jendelanya <strong>melebar satu</strong> setiap kali bidak diletakkan
+        tepat di batasnya.
+      </p>
+      <p class="o-note">
+        Dan itu <strong>benar</strong>, bukan sekadar hemat: langkah Othello
+        selalu bersebelahan dengan bidak yang sudah ada, jadi ia pasti berada di
+        dalam kotak pembatas ditambah satu &mdash; persis apa yang dijaga
+        jendela ini.
+      </p>
+      <p class="o-note">
+        Jendela sekarang: <strong><span id="win">3–6 × 3–6</span></strong>,
+        <span id="winPct">25%</span> dari papan.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/othello.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/OTHELLO.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/OTHELLO.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="othello.js"></script>
+</body>
+</html>

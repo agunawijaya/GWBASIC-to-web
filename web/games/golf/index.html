@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PC Golf — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari GOLF.BAS (A. Vanchura, 17 Juli 1982): tiga lapangan yang sebenarnya satu daftar 54 lubang, sebuah par 3 sepanjang 312 yard yang mustahil dicapai, dan bola masuk air yang dikenai tiga pukulan tapi diumumkan satu. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="golf.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap g-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="g-stage">
+        <div class="g-crt g-crt--samping">
+          <svg id="svg2" class="e-svg" viewBox="0 0 820 260"
+               role="img" aria-label="Tampilan samping: pemain mengayun dan lambungan bola"></svg>
+        </div>
+
+        <div class="g-crt">
+          <svg id="svg" class="g-svg" viewBox="0 0 820 300"
+               role="img" aria-label="Peta lubang golf dari atas"></svg>
+        </div>
+
+        <div class="g-panel" id="panel"></div>
+        <div class="g-log" id="log" aria-live="polite"></div>
+
+        <div class="g-row--kecil">
+          <label>Handicap
+            <input type="number" id="handicap" min="0" max="30" step="1" value="12"
+                   class="g-angka"></label>
+          <label>Kesulitan
+            <select id="kesulitan" class="g-angka">
+              <option value="0">0 — hook</option>
+              <option value="1">1 — slice</option>
+              <option value="2">2 — poor distance</option>
+              <option value="3" selected>3 — perfect player</option>
+              <option value="4">4 — sand trap play</option>
+              <option value="5">5 — poor putting</option>
+            </select></label>
+          <label>Lapangan
+            <select id="lapangan" class="g-angka">
+              <option value="1" selected>1 — Amateur Green Grass &lt;65&gt;</option>
+              <option value="2">2 — Down Hill &lt;69&gt;</option>
+              <option value="3">3 — Swamp Grass USA &lt;72&gt;</option>
+            </select></label>
+          <label>Benih
+            <input type="number" id="benih" min="0" max="999999" step="1" value="1982"
+                   class="g-angka"></label>
+          <label><input type="checkbox" id="bunyi" checked> Bunyi</label>
+          <label><input type="checkbox" id="animasi" checked> Animasi
+            <span class="g-kecil">(klik gambar untuk melompati)</span></label>
+          <button class="btn btn--ghost btn--sm" id="mulai" type="button">Ronde baru</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">361 baris BASIC</span>
+      <span class="ruleset__k">3 lapangan = 1 daftar 54 lubang</span>
+      <span class="ruleset__k">ketiganya par 72</span>
+      <span class="ruleset__k ruleset__k--mangsa">pukulan terjauh 311 yard</span>
+      <span class="ruleset__k ruleset__k--bahaya">air = 3 pukulan, diumumkan 1</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Lubang</span>
+        <span class="stat__value mono" id="s-hole">1 / 18</span></div>
+      <div class="stat"><span class="stat__label">Par</span>
+        <span class="stat__value mono" id="s-par">—</span></div>
+      <div class="stat"><span class="stat__label">Panjang</span>
+        <span class="stat__value mono" id="s-yard">—</span></div>
+      <div class="stat"><span class="stat__label">Pukulan</span>
+        <span class="stat__value mono" id="s-stk">0</span></div>
+      <div class="stat"><span class="stat__label">Sisa ke pin</span>
+        <span class="stat__value mono" id="s-sisa">—</span></div>
+      <div class="stat"><span class="stat__label">Total</span>
+        <span class="stat__value mono" id="s-total">0 (par 0)</span></div>
+      <div class="stat"><span class="stat__label">Pukulan terjauh Anda</span>
+        <span class="stat__value mono" id="s-maks">—</span></div>
+      <div class="stat"><span class="stat__label">Rekor Anda</span>
+        <span class="stat__value mono" id="s-rekor">—</span></div>
+      <div class="stat"><span class="stat__label">Benih</span>
+        <span class="stat__value mono" id="s-benih">1982</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <p class="g-lead">
+        Delapan belas lubang. Tiap pukulan: pilih tongkat, dan untuk besi pilih
+        <strong>persentase ayunan</strong>. Kayu selalu ayunan penuh. Di green,
+        pilih <strong>faktor putt</strong>.
+      </p>
+      <p class="g-note">
+        <strong>Dua gambar, dua pertanyaan.</strong> Yang atas menjawab
+        <em>apa yang barusan terjadi</em> &mdash; ayunan, lambungan, dan kartu
+        <span class="mono">CARRY / ROLL / APEX</span> di pojoknya. Yang bawah
+        menjawab <em>di mana saya sekarang</em>. Aslinya hanya mencetak angka
+        jarak; lambungannya dihitung dari nomor tongkat yang sama yang dipakai
+        rumus baris 530, dan <span class="mono">CARRY + ROLL</span> selalu
+        persis sama dengan angka <span class="mono">Shot Went &hellip; Yards</span>
+        di catatan. Matikan lewat kotak <strong>Animasi</strong>, atau klik
+        gambarnya untuk melompati satu tahap.
+      </p>
+      <ol class="howto__steps">
+        <li><strong>Handicap masuk ke rumus tiga kali</strong> (baris 530&ndash;540):
+            ia menambah jarak dasar, mengurangi hukuman tongkat, <em>dan</em>
+            melebarkan simpangan melenceng. Handicap 0 memukul sampai
+            <strong>311 yard</strong>; handicap 30 hanya <strong>220</strong>.</li>
+        <li><strong>Angka tongkat besar berarti jarak pendek.</strong> Besi
+            <i>n</i> masuk ke rumus sebagai <code>n + 9,5 &minus; 5</code>
+            (baris 350 lalu 500), jadi besi 9 adalah tongkat terpendek Anda
+            sesudah pitching wedge. Tabel lengkapnya di panel sebelah, dihitung
+            dari handicap yang sedang Anda pakai.</li>
+        <li><strong>Kiri dan kanan tiap lubang punya medannya sendiri</strong>,
+            dari <code>DATA</code>: fairway, deep rough, trees, adjacent
+            fairway, sand trap, <span style="color:#4a86c6">a big lake</span>,
+            atau <span style="color:#c0503f">out of bounds</span>. Dua yang
+            terakhir menjatuhkan pukulan penalti.</li>
+        <li><strong>Hook dan slice hanya berlaku kalau Anda memilihnya</strong>
+            sebagai kesulitan. Dengan "perfect player", bola yang melenceng jauh
+            tetap dianggap di fairway &mdash; baris 590 hanya bercabang ke kiri
+            atau kanan kalau <code>B</code> bernilai 0 atau 1.</li>
+        <li><strong>Putt yang terlalu keras memantul melewati lubang</strong>,
+            dan jaraknya dibalik jadi positif lagi (baris 1080). Enam putt di
+            satu green memaksa bola masuk (baris 920).</li>
+      </ol>
+    </details>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel g-bad2">
+      <p class="eyebrow">Sebuah par 3 yang mustahil dicapai</p>
+<pre class="g-code">530 DIST=INT(((30-A)*2.5+230-((30-A)*0.25+20)*F/2)+(RND*20))</pre>
+      <p class="g-note">
+        Masukkan pemain terbaik yang diterima program &mdash; handicap
+        <b>0</b> &mdash; dengan tongkat terpanjang (<code>F=1</code>, kayu 1,
+        yang selalu ayunan penuh) dan undian <code>RND</code> paling murah hati.
+        Hasilnya <b id="b-maks0">—</b>. Itu batas keras: tidak ada jalan lain
+        di seluruh program untuk memukul lebih jauh.
+      </p>
+      <p class="g-note">Sekarang lihat lubang par 3 yang lebih panjang dari itu:</p>
+      <ul class="g-note" id="b-mustahil"></ul>
+      <p class="g-note">
+        Selisihnya <b>satu yard</b>. Di lubang itu, birdie mustahil dan par
+        menuntut Anda memasukkan pukulan kedua dari luar green. Nama
+        lapangannya, <i>Swamp Grass USA</i>, mungkin memang niatnya begitu
+        &mdash; tapi angka 312 itu tidak mungkin dipilih dengan sengaja oleh
+        orang yang pernah menghitung batas rumusnya sendiri.
+      </p>
+      <table class="g-tbl">
+        <thead><tr><th>Tongkat</th><th>min</th><th>maks</th></tr></thead>
+        <tbody id="b-jarak"></tbody>
+      </table>
+      <p class="g-note">
+        Tabel ini dihitung ulang dari rumus baris 530 tiap kali Anda mengubah
+        handicap. Yang sedang berlaku: <b id="b-maks">—</b>.
+      </p>
+    </div>
+
+    <div class="panel g-good">
+      <p class="eyebrow">Tiga lapangan yang sebenarnya satu daftar</p>
+<pre class="g-code">1290 FOR D=1 TO ((C-1)*126):READ E:NEXT:RETURN
+1740 READ PAR,YARDS,LEFT,RIGHT,DIFF,LNG,FAC</pre>
+      <p class="g-note">
+        Tujuh angka per lubang &times; 18 lubang = <b>126</b>. Memilih lapangan
+        ke-<i>C</i> berarti <b>membuang</b> 126&times;(C&minus;1) angka pertama
+        dari aliran <code>DATA</code>. Jadi ketiga lapangan itu satu daftar
+        <b>54 lubang</b> yang dipotong tiga &mdash; bukan tiga berkas data.
+      </p>
+      <table class="g-tbl">
+        <thead><tr><th>Lapangan</th><th>Rating</th><th>Par</th><th>Yard</th>
+          <th>3/4/5</th></tr></thead>
+        <tbody id="b-lapangan"></tbody>
+      </table>
+      <p class="g-note">
+        Ketiganya <b>par 72</b>, dengan susunan yang persis sama: empat par 3,
+        sepuluh par 4, empat par 5. Yang berbeda hanya panjangnya &mdash; dan
+        panjangnya berbeda jauh: <b>6.347</b> &rarr; <b>7.470</b> &rarr;
+        <b>8.173</b> yard.
+      </p>
+      <p class="g-note">
+        Menu menyebut ketiganya <i>Rating</i> 65, 69, dan 72. Urutannya benar,
+        angkanya tidak: di golf sungguhan, <i>course rating</i> adalah skor
+        harapan pemain scratch, jadi rating <b>di bawah par</b> berarti lapangan
+        itu <em>lebih mudah</em> daripada parnya. Lapangan 8.173 yard akan
+        dinilai sekitar 78&ndash;80, bukan 72. Angka yang sebenarnya menerangkan
+        kesulitan &mdash; panjangnya &mdash; tidak pernah ditampilkan di menu.
+      </p>
+    </div>
+
+    <div class="panel g-bad2">
+      <p class="eyebrow">Bola masuk air dikenai tiga pukulan</p>
+<pre class="g-code">1390 LOCATE 2,1:STK=STK+1:IF B1&gt;5 THEN 1420
+…
+1420 PRINT"Shot Went Into "Z(B1):STK=STK+1: … :B1=1: … :GOTO 1390</pre>
+      <p class="g-note">
+        Telusuri satu bola yang masuk danau. Baris 1390 menambah satu pukulan,
+        lalu melompat ke 1420. Baris 1420 menambah satu <b>lagi</b>, menyetel
+        <code>B1=1</code>, dan melompat <b>kembali</b> ke 1390 &mdash; yang
+        menambah satu <b>lagi</b>, kali ini jatuh lolos karena
+        <code>B1</code> sudah 1.
+      </p>
+      <p class="g-note">
+        Tiga pukulan. Dan yang dicetak di layar berbunyi
+        <i>"Penalty Stroke Accessed"</i> &mdash; tunggal. Aturan golf sungguhan:
+        pukulannya sendiri plus satu penalti, jadi dua. Program ini mengambil
+        satu lebih banyak dan tidak memberitahu.
+      </p>
+      <p class="g-note">
+        <b>Dipertahankan</b> di port ini, dan dicatat di layar tiap kali
+        terjadi.
+      </p>
+    </div>
+
+    <div class="panel g-warn">
+      <p class="eyebrow">Benih yang diaduk selagi Anda berpikir</p>
+<pre class="g-code">1170 Z=INKEY$:IF Z="" THEN RANDOMIZE VAL(RIGHT$(TIME$,2)):GOTO 1170
+     ELSE RETURN</pre>
+      <p class="g-note">
+        Setiap kali program menunggu tombol, ia <b>menyemai ulang</b> pembangkit
+        acaknya &mdash; berkali-kali per detik, sampai Anda menekan sesuatu.
+        Jadi benih yang berlaku bukan waktu program dijalankan melainkan
+        <b>detik saat Anda menekan tombol</b>.
+      </p>
+      <p class="g-note">
+        Masih enam puluh nilai, tapi yang memilihnya sekarang <em>Anda</em>,
+        bukan jam mulai. Bandingkan dengan
+        <a href="../wildcat/index.html">WILDCAT</a> &mdash; penulis yang sama,
+        hari yang sama &mdash; yang mencoba melebarkan benihnya dengan
+        <code>RANDOMIZE(RND*30000)</code> dan tidak menambah satu bit pun.
+        Dua berkas, satu tangan, satu minggu: yang satu obatnya bekerja, yang
+        satu tidak.
+      </p>
+      <p class="g-note g-kecil">
+        Keluarga yang sama: <a href="../meteor/index.html">METEOR</a> mengaduk
+        benihnya selagi pemain berpikir dengan cara yang berbeda lagi
+        (<code>(R+511) MOD 32003</code>), dan orbitnya terbukti penuh.
+      </p>
+    </div>
+
+    <div class="panel g-warn">
+      <p class="eyebrow">Angka tongkat yang dikurangi dua kali</p>
+<pre class="g-code">350 IF Z="I" THEN PRINT" IRON";:F=F+9.5:GOTO 380
+500 GOSUB 1200:SWING=SWING/100:IF B1=5 THEN 660 ELSE F=F-5:GOTO 530</pre>
+      <p class="g-note">
+        Besi nomor <i>n</i> masuk sebagai <code>n+9,5</code>, lalu dikurangi 5
+        sesudah persentase ayunan dibaca &mdash; jadi yang sampai ke rumus
+        adalah <code>n+4,5</code>. Kayu tidak lewat baris 500 sama sekali
+        (baris 390 melompatinya), jadi kayu <i>n</i> masuk sebagai
+        <code>n</code> apa adanya.
+      </p>
+      <p class="g-note">
+        Akibatnya jurang di tengah tas: kayu 4 memukul jauh lebih jauh daripada
+        besi 1, dan tidak ada tongkat yang mengisi celahnya. Tabel jarak di
+        panel paling atas memperlihatkannya sebagai lompatan.
+      </p>
+    </div>
+
+    <p class="faint g-links">
+      <a href="../../docs/golf.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/GOLF.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/GOLF.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="golf-data.js"></script>
+<script src="golf-scene.js"></script>
+<script src="golf.js"></script>
+</body>
+</html>

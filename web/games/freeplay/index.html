@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Free Play — Classic DOS BASIC Games</title>
+<meta name="description" content="Papan tuts yang bisa dimainkan sendiri, lengkap dengan not balok bergulir dan penerjemah ke makro PLAY GW-BASIC. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="../../_shared/music.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<!-- Panggung sengaja DI LUAR grid dua kolom.
+     Papan tuts di sini merentang lima oktaf — 61 tuts. Dipaksakan ke kolom
+     selebar 660 px, tiap tuts putih tinggal 18 px dan hurufnya tidak terbaca.
+     Lebar penuh menyelesaikan itu tanpa satu pun aturan CSS baru. -->
+<div class="wrap" style="padding-top:var(--s6)">
+  <div class="screen screen--scanlines" id="stage">
+    <div class="m-stage m-tall">
+      <div id="staff"></div>
+      <div id="piano"></div>
+      <div class="m-transport">
+        <button class="btn btn--ghost" id="down" type="button" title="Turunkan satu oktaf">&minus; Oktaf</button>
+        <span class="m-now m-now--idle" id="base">C3</span>
+        <button class="btn btn--ghost" id="up" type="button" title="Naikkan satu oktaf">Oktaf +</button>
+        <span class="m-now m-now--idle" id="now">—</span>
+        <button class="btn btn--ghost" id="freeze" type="button" disabled>Jeda gulungan</button>
+        <span class="faint mono" id="count">0 nada</span>
+        <button class="btn btn--ghost" id="clear" type="button" disabled>Hapus rekaman</button>
+      </div>
+      <div class="picker" id="instruments"></div>
+    </div>
+  </div>
+</div>
+
+<main class="wrap m-layout">
+
+  <section class="stack">
+
+    <div class="panel">
+      <p class="eyebrow">Muat berkas MIDI</p>
+      <p class="m-note">
+        Berkas <code>.mid</code> dibaca langsung di peramban — tidak dikirim
+        ke mana pun, tidak butuh sambungan internet. Isinya ditampilkan di not
+        balok, bisa dimainkan, dan <strong>diterjemahkan jadi makro PLAY
+        GW-BASIC</strong> seperti permainan Anda sendiri.
+      </p>
+      <div class="m-transport">
+        <label class="btn btn--ghost" for="file">Pilih berkas .mid…</label>
+        <input type="file" id="file" accept=".mid,.midi,audio/midi" hidden>
+        <button class="btn btn--primary" id="playMidi" type="button" disabled>Mainkan</button>
+        <button class="btn btn--ghost" id="resetMidi" type="button" disabled>Ulang</button>
+        <button class="btn btn--ghost" id="dropMidi" type="button" disabled>Tutup</button>
+      </div>
+      <p class="m-note" id="midiInfo">Belum ada berkas dimuat.</p>
+      <p class="m-note">
+        Kanal 10 (perkusi) dilewati — di not balok ia hanya jadi deretan not
+        yang tidak berarti. Format SMPTE (untuk film) belum didukung.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Peta tuts</p>
+      <p class="m-note">
+        Dua baris papan ketik, masing-masing satu oktaf lebih tinggi dari yang
+        di bawahnya — susunan yang sama dipakai hampir semua perangkat lunak
+        musik. Huruf putih di tuts putih, huruf di tuts hitam adalah kres.
+      </p>
+      <div class="m-keymap" id="keymap"></div>
+      <p class="m-note">
+        <kbd>&larr;</kbd> <kbd>&rarr;</kbd> menggeser oktaf.
+        <kbd>Spasi</kbd> menjeda gulungan.
+      </p>
+      <p class="m-note">
+        Gulungan membeku sendiri setelah <strong>4 detik</strong> tanpa tuts
+        ditekan, supaya rekaman Anda tidak hanyut keluar layar. Angka itu
+        dipilih agar lebih panjang dari istirahat mana pun yang wajar dalam
+        sebuah lagu &mdash; jeda terpanjang di seluruh 83 program koleksi ini
+        cuma 0,5 detik &mdash; sehingga ritme yang terekam tetap jujur.
+        Diam lebih lama dari 4 detik akan tercatat sebagai 4 detik.
+      </p>
+    </div>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel">
+      <p class="eyebrow">Yang Anda mainkan, sebagai makro PLAY</p>
+      <p class="m-note">
+        Ini bukan hiasan. String di bawah adalah <strong>GW-BASIC yang sah</strong>:
+        salin, tempel ke <code>PLAY "…"</code> di BASICA, dan mesin 1981 akan
+        memainkan kembali apa yang barusan Anda tekan.
+      </p>
+      <pre class="m-macro" id="macro">T120</pre>
+      <div class="m-transport">
+        <button class="btn btn--primary" id="replay" type="button">Mainkan ulang</button>
+        <button class="btn btn--ghost" id="stopReplay" type="button" disabled>Berhenti</button>
+        <button class="btn btn--ghost" id="copy" type="button">Salin</button>
+      </div>
+      <p class="m-note">
+        Perhatikan apa yang hilang saat diterjemahkan: panjang nada dibulatkan
+        ke pecahan terdekat (1/1, 1/2, 1/4, 1/8, 1/16, 1/32), dan dua nada yang
+        ditekan bersamaan hanya tersisa satu. Makro <code>PLAY</code> memang
+        monofonik dan berketukan tetap — permainan bebas tidak.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Garis penanda ada di kanan</p>
+      <p class="m-note">
+        Di tiga halaman musik lainnya, lagunya sudah ada sejak awal: not
+        digambar lebih dulu di kanan, lalu berjalan ke arah garis. Anda melihat
+        <strong>masa depan</strong>.
+      </p>
+      <p class="m-note">
+        Di sini tidak ada masa depan untuk digambar — tidak ada yang tahu tuts
+        mana yang akan Anda tekan berikutnya. Jadi garisnya dipindah ke tepi
+        kanan: not lahir tepat di garis, lalu bergulir ke kiri menjadi
+        <strong>riwayat</strong>.
+      </p>
+      <p class="m-note">
+        Kode penggulungnya sama persis untuk kedua kasus. Yang berbeda cuma
+        satu angka: <code>playheadAt</code>.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Program baru, bukan port</p>
+      <p class="m-note">
+        Tidak ada berkas <code>.BAS</code> di balik halaman ini. Ia dibangun
+        dari potongan yang sudah dipakai empat halaman musik lain —
+        <code>audio.js</code>, <code>piano.js</code>, <code>staff.js</code> —
+        dan hampir tidak menambah kode baru.
+      </p>
+      <p class="m-note">
+        Itu ujian sesungguhnya untuk sebuah fondasi: bukan apakah ia melayani
+        program yang sudah ada, melainkan apakah program yang <em>belum
+        terpikirkan</em> bisa berdiri di atasnya.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/freeplay.md">Dokumen arsitektur</a> ·
+      <a href="../germfolk/index.html">GERMFOLK</a> ·
+      <a href="../octave/index.html">OCTAVE</a> ·
+      <a href="../dream/index.html">DREAM</a> ·
+      <a href="../notetabl/index.html">NOTETABL</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/piano.js"></script>
+<script src="../../_shared/staff.js"></script>
+<script src="../../_shared/midi.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="freeplay.js"></script>
+</body>
+</html>

@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nevada Dice — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari CRAPS.BAS (Friendlyware, 1982): dadu digambar sebagai satu string kendali, dan RANDOMIZE yang dipanggil di dalam lemparannya sendiri. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="../../_shared/dice.css">
+<link rel="stylesheet" href="craps.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap c-layout">
+
+  <section class="stack">
+    <div class="screen screen--scanlines">
+      <div class="c-stage">
+
+        <div class="dice-row" id="dice"></div>
+        <p class="c-say" id="say"></p>
+
+        <div class="c-sides">
+          <button class="c-side" data-side="pass" type="button" aria-pressed="true">PASS</button>
+          <button class="c-side" data-side="dont" type="button" aria-pressed="false">DON'T PASS</button>
+        </div>
+
+        <div class="c-betrow" id="betRow">
+          <label>How many chips?
+            <input type="number" id="bet" min="1" max="20" value="2"></label>
+          <button class="btn btn--primary" id="place" type="button">Place bet</button>
+        </div>
+
+        <div class="c-stack" id="stack"></div>
+
+        <div class="m-transport">
+          <button class="btn btn--primary hidden" id="roll" type="button">Roll</button>
+          <button class="btn hidden" id="next" type="button">Next round</button>
+          <button class="btn hidden" id="again" type="button">New game</button>
+        </div>
+
+        <div class="c-sell hidden" id="sell">
+          <span>You don't have any more money.<br>Would you like to sell your</span>
+          <b id="sellItem">Car</b>
+          <span>for <span id="sellVal">$2,000</span>?</span>
+          <div class="row">
+            <button class="btn" id="sellYes" type="button">Yes</button>
+            <button class="btn btn--ghost" id="sellNo" type="button">No</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">7 atau 11 &rarr; menang</span>
+      <span class="ruleset__k">2, 3, 12 &rarr; kalah</span>
+      <span class="ruleset__k">sisanya jadi POINT</span>
+      <span class="ruleset__k">bayaran 1 : 1</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat stat--good"><span class="stat__label">Uang</span>
+        <span class="stat__value" id="sCash">$2,000</span></div>
+      <div class="stat"><span class="stat__label">Taruhan</span>
+        <span class="stat__value" id="sBet">&mdash;</span></div>
+      <div class="stat"><span class="stat__label">Point</span>
+        <span class="stat__value" id="sPoint">&mdash;</span></div>
+      <div class="stat"><span class="stat__label">Lemparan</span>
+        <span class="stat__value" id="sLast">&mdash;</span></div>
+      <div class="stat"><span class="stat__label">Rekor</span>
+        <span class="stat__value" id="sBest">$0</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <ol class="howto__steps">
+        <li>Pilih sisi taruhan. <strong>PASS</strong> berarti Anda bertaruh
+            <em>bersama</em> dadu; <strong>DON'T PASS</strong> berarti
+            bertaruh <em>melawan</em> dadu &mdash; Anda menang persis saat
+            dadu kalah. Itu satu-satunya keputusan strategis di craps.</li>
+        <li>Pasang taruhan dalam keping (satu keping = $100), lalu
+            <strong>Roll</strong>. Lemparan pertama disebut
+            <em>coming out</em>.</li>
+        <li>Di lemparan pertama: <strong>7 atau 11</strong> adalah
+            <em>natural</em> &mdash; PASS menang. <strong>2, 3, atau 12</strong>
+            adalah <em>craps</em> &mdash; PASS kalah. Angka lain menjadi
+            <strong>POINT</strong> Anda.</li>
+        <li>Setelah POINT ditetapkan, teruslah melempar. Keluar
+            <strong>POINT lagi sebelum 7</strong> &rarr; PASS menang. Keluar
+            <strong>7 lebih dulu</strong> &rarr; PASS kalah. DON'T PASS
+            kebalikannya di kedua hal.</li>
+        <li>Bayarannya <strong>satu banding satu</strong>. Mulai dengan
+            $2.000; capai <strong>lebih dari $10.000</strong> dan Anda
+            memecahkan bank.</li>
+      </ol>
+      <p>
+        Kalau uang Anda habis, program 1982 ini <strong>menawarkan menjual
+        barang Anda</strong> supaya bisa terus bermain. Tawaran itu
+        dipertahankan apa adanya, termasuk urutan dan harganya &mdash; lihat
+        panel <em>&ldquo;Rumah seharga lima ratus dolar&rdquo;</em>.
+      </p>
+    </details>
+    <p class="faint">Sudah dijual: <span id="sSold">&mdash;</span></p>
+    <div class="row">
+      <button class="btn btn--ghost btn--sm" id="resetBest" type="button">Reset rekor</button>
+      <span class="faint">Dadu bersama dengan
+        <a href="../yahtzee/index.html">Yatzee</a>.</span>
+    </div>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel c-bad">
+      <p class="eyebrow"><code>RANDOMIZE</code> di dalam lemparannya sendiri</p>
+<pre class="c-code">1220 FOR B=1 TO 6                    <em>' enam bingkai animasi</em>
+1240 C=INT(RND(1)*6)+1               <em>' dadu pertama</em>
+1260 RANDOMIZE(VAL(RIGHT$(TIME$,2))*RND)
+1270 D=INT(RND(1)*6)+1               <em>' dadu kedua</em>
+1290 RANDOMIZE(VAL(RIGHT$(TIME$,2))) <em>' semai ulang LAGI</em>
+1310 NEXT</pre>
+      <p class="c-note">
+        <code>RANDOMIZE</code> menyetel keadaan pengacak dari benihnya. Jadi
+        sesudah baris 1290, keadaan pengacak <strong>sepenuhnya ditentukan
+        oleh detik pada jam</strong>.
+      </p>
+      <p class="c-note">
+        Dua akibat bisa diturunkan tanpa tahu isi <code>RND</code> sama sekali:
+      </p>
+      <table class="c-tbl">
+        <tbody>
+          <tr><td>Bingkai 2&ndash;6 masuk dengan keadaan yang sama</td>
+              <td>kelimanya menghasilkan dadu <strong>identik</strong></td></tr>
+          <tr><td>Hasil akhir = bingkai keenam</td>
+              <td>fungsi murni dari <strong>detik</strong></td></tr>
+        </tbody>
+      </table>
+      <p class="c-note">
+        Jadi &ldquo;animasi&rdquo; enam bingkai itu sebenarnya
+        <strong>diam selama lima bingkai terakhir</strong>, dan hanya ada
+        <strong>enam puluh lemparan</strong> yang mungkin di seluruh riwayat
+        program.
+      </p>
+      <p class="c-note">
+        <a href="../keno/index.html">KENO</a> menyemai ulang tiap permainan;
+        itu sudah cukup untuk menghancurkannya. CRAPS menyemai ulang
+        <strong>di dalam satu lemparan, dua kali</strong>. Ia mengubah
+        pengacak menjadi tabel yang diindeks jam dinding.
+      </p>
+      <p class="c-note">
+        Port ini menyemai <strong>sekali</strong> dari
+        <code>crypto.getRandomValues</code>, dan keenam bingkai animasinya
+        benar-benar berbeda.
+      </p>
+    </div>
+
+    <div class="panel c-good">
+      <p class="eyebrow">Sebuah dadu, satu <code>PRINT</code></p>
+<pre class="c-code">1420 A1=CHR$(201)+STRING$(2,205)+CHR$(187)
+     +CHR$(31)+STRING$(4,29)
+     +CHR$(186)+STRING$(2,28)+CHR$(186)
+     +CHR$(31)+STRING$(4,29)
+     +CHR$(200)+STRING$(2,205)+CHR$(188)</pre>
+      <p class="c-note">
+        Ini bukan sekadar sambungan karakter. <code>CHR$(31)</code> adalah
+        <strong>kursor turun</strong> dan <code>CHR$(29)</code> adalah
+        <strong>kursor kiri</strong> &mdash; keduanya karakter kendali, bukan
+        karakter yang tampil.
+      </p>
+      <p class="c-note">
+        Jadi string ini, saat di-<code>PRINT</code>, <strong>menggerakkan
+        kursornya sendiri</strong> turun dan mundur, lalu menggambar kotak
+        <strong>dua dimensi</strong> dari satu perintah tunggal.
+      </p>
+      <p class="c-note">
+        Namanya sekarang <em>escape sequence</em>, dan itulah cara kerja
+        <code>\033[2J</code> di terminal Unix sampai hari ini. Prinsipnya
+        persis sama, hanya dengan kode karakter CP437.
+      </p>
+      <table class="c-tbl">
+        <thead><tr><th>Program</th><th>Cara</th><th>Untuk</th></tr></thead>
+        <tbody>
+          <tr><td><strong>CRAPS</strong></td><td>gambar jadi, satu PRINT</td><td>6 gambar</td></tr>
+          <tr><td><a href="../crazy8/index.html">CRAZY8</a></td><td>dirakit dari data</td><td>52 gambar</td></tr>
+        </tbody>
+      </table>
+      <p class="c-note">
+        Dua jawaban yang berlawanan untuk soal yang sama, dan
+        <strong>keduanya benar untuk kebutuhannya sendiri</strong>: CRAPS cuma
+        punya enam gambar dan memilih kecepatan; CRAZY8 punya lima puluh dua
+        dan memilih satu rutin yang melayani semuanya.
+      </p>
+    </div>
+
+    <div class="panel c-bad">
+      <p class="eyebrow">Rumah seharga lima ratus dolar</p>
+      <p class="c-note">
+        Saat pemain kehabisan uang, program tidak berhenti. Ia
+        <strong>menawarkan menjual barang Anda</strong> (baris 1830&ndash;1990),
+        satu barang tiap kali bangkrut, menurut daftar tetap:
+      </p>
+      <table class="c-tbl">
+        <thead><tr><th>Barang</th><th>Nilai</th></tr></thead>
+        <tbody>
+          <tr><td>Car</td><td>$2.000</td></tr>
+          <tr><td>Boat</td><td>$2.000</td></tr>
+          <tr><td>Computer</td><td>$2.000</td></tr>
+          <tr><td>Motorcycle</td><td>$1.800</td></tr>
+          <tr><td>Stereo</td><td>$1.200</td></tr>
+          <tr><td>Golf Clubs</td><td>$600</td></tr>
+          <tr class="c-row--lose"><td><strong>House</strong></td><td><strong>$500</strong></td></tr>
+          <tr><td>Skate Board</td><td>$500</td></tr>
+        </tbody>
+      </table>
+      <p class="c-note">
+        <strong>Rumah bernilai $500</strong> &mdash; lebih murah daripada
+        sepeda motor, dan sama dengan papan luncur. Entah lelucon, entah
+        kecelakaan urutan; yang pasti tidak ada komentar yang menjelaskannya.
+      </p>
+      <p class="c-note">
+        Ini satu-satunya tempat di seluruh koleksi di mana sebuah program
+        meminta pemainnya mempertaruhkan sesuatu yang bukan uang permainan
+        &mdash; dan ia menuliskannya sebagai lelucon, pada 1982, di disket yang
+        dijual untuk keluarga.
+      </p>
+      <p class="c-note">
+        Dipertahankan apa adanya, termasuk urutan dan harganya. Menghapusnya
+        berarti menghapus satu-satunya kalimat jujur program ini tentang apa
+        yang sedang diajarkannya.
+      </p>
+    </div>
+
+    <div class="panel c-warn">
+      <p class="eyebrow">Satu baris yang nilainya tidak pernah dipakai</p>
+<pre class="c-code">640 G=G*2   <em>' taruhan digandakan sesudah menang</em></pre>
+      <p class="c-note">
+        Terlihat seperti aturan: menang, lalu taruhan naik dua kali lipat.
+        Tapi tiap ronde memanggil <code>GOSUB 1720</code> yang menanyakan
+        taruhan dari awal, dan baris 1750 menimpanya:
+      </p>
+<pre class="c-code">1750 A=INKEY$: <em>...</em> IF A=" " THEN G=VAL(A0):RETURN</pre>
+      <p class="c-note">
+        Nilai hasil penggandaan itu <strong>tidak pernah sempat dipakai</strong>.
+        Ia bukan bug &mdash; tidak ada yang rusak &mdash; melainkan
+        <strong>niat yang tertinggal</strong>: seseorang pernah merencanakan
+        taruhan yang naik sendiri, lalu memutuskan menanyakannya tiap ronde,
+        dan lupa menghapus barisnya.
+      </p>
+      <p class="c-note">
+        Sepupunya ada di <a href="../maxit1/index.html">MAXIT1</a>: rutin papan
+        Othello yang tertinggal di belakang <code>END</code>. Keduanya kode
+        mati yang ikut terkirim karena menghapusnya terasa lebih berisiko
+        daripada membiarkannya.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Sebaran dua dadu</p>
+      <p class="c-note">
+        Kenapa 7 menang dan 2 kalah bukan pilihan sembarangan &mdash; keduanya
+        ujung yang berlawanan dari sebaran yang sama:
+      </p>
+      <table class="c-tbl">
+        <thead><tr><th>Jumlah</th><th>Cara</th><th>Peluang</th></tr></thead>
+        <tbody id="distBody"></tbody>
+      </table>
+      <p class="c-note">
+        Tujuh punya <strong>enam</strong> cara keluar, lebih banyak daripada
+        angka mana pun. Itu sebabnya ia memenangkan lemparan pembuka
+        <em>dan</em> mematikan Anda sesudah POINT ditetapkan &mdash; angka yang
+        sama, dua peran yang berlawanan, dan itulah seluruh ketegangan craps.
+      </p>
+      <p class="c-note">
+        Baris 190&ndash;200 dan 280&ndash;290 menyandikan keseluruhannya dalam
+        <strong>empat baris</strong>. Aturan permainan judi paling terkenal di
+        dunia, dan ia muat di situ.
+      </p>
+    </div>
+
+    <div class="panel c-warn">
+      <p class="eyebrow">Sembilan baris yang sama persis</p>
+      <p class="c-note">
+        Sembilan baris pertama program ini adalah sembilan
+        <code>ON KEY(n) GOSUB 840</code> yang identik &mdash; versi panjang
+        dari apa yang bisa ditulis dalam satu <code>FOR</code>, yang justru
+        <em>dipakai</em> tepat di baris sebelumnya:
+      </p>
+<pre class="c-code">10 ON KEY(1) GOSUB 840   <em>' sembilan baris, satu tujuan yang sama</em>
+20 ON KEY(2) GOSUB 840
+   <em>... sampai ...</em>
+90 ON KEY(9) GOSUB 840
+100 FOR A=1 TO 9:KEY(A) ON:NEXT   <em>' lalu perulangan, di baris berikutnya</em></pre>
+      <p class="c-note">
+        Yang membuatnya menarik bukan pengulangannya, melainkan
+        <strong>baris 100</strong>. Penulisnya jelas tahu cara memakai
+        perulangan &mdash; ia memakainya tepat sesudahnya, untuk separuh
+        pekerjaan yang lain (<code>KEY(A) ON</code>), dengan
+        <code>A</code> sebagai variabel.
+      </p>
+      <p class="c-note">
+        Jadi ia memakai perulangan di tempat yang menerima variabel, dan
+        menulis tangan di tempat yang tidak. Simpulan yang paling masuk akal:
+        <code>ON KEY(<em>n</em>) GOSUB</code> menuntut angka harfiah,
+        sementara <code>KEY(<em>n</em>) ON</code> tidak.
+        <strong>Ini simpulan dari bentuk kodenya, bukan sesuatu yang
+        diverifikasi dengan menjalankan GW-BASIC.</strong>
+      </p>
+      <p class="c-note">
+        Pembandingnya <code>BIO.BAS</code>, yang juga menulis sembilan
+        <code>ON KEY</code> berturut &mdash; tapi di sana tujuannya
+        <strong>berbeda-beda</strong> (baris 30 ke 1680, baris 40&ndash;60 ke
+        480), jadi perulangan memang tidak akan menolong. Di CRAPS kesembilan
+        tujuannya sama.
+      </p>
+      <p class="c-note">
+        Layak dicatat karena mudah sekali dibaca sebagai kecerobohan
+        &mdash; dan mungkin bukan.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/craps.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/CRAPS.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/CRAPS.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/dice.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="craps.js"></script>
+</body>
+</html>

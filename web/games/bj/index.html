@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Blackjack (empat dek) — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari BJ.BAS (1980): blackjack sepatu empat dek dengan kartu potong acak, asuransi, split. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="../../_shared/cards.css">
+<link rel="stylesheet" href="../../_shared/blackjack.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap bj-layout">
+
+  <section class="stack">
+
+    <div class="screen">
+      <div class="bj-meja">
+
+        <div class="bj-sisi">
+          <div class="bj-sisi__label">Dealer</div>
+          <div id="bjBandar"></div>
+          <div class="bj-sisi__nilai" id="bjBandarNilai">&mdash;</div>
+        </div>
+
+        <p class="bj-pesan" id="bjPesan"></p>
+
+        <div class="bj-sisi">
+          <div id="bjPemain"></div>
+          <div class="bj-sisi__label">Anda</div>
+        </div>
+
+        <div class="bj-taruh">
+          <button class="btn btn--ghost btn--sm" id="bjTaruhTurun" type="button">&minus;</button>
+          <span class="bj-taruh__n" id="bjTaruh">$0</span>
+          <button class="btn btn--ghost btn--sm" id="bjTaruhNaik" type="button">+</button>
+        </div>
+
+        <div class="bj-aksi">
+          <button class="btn" id="bjBagi" type="button">Deal</button>
+          <button class="btn" id="bjHit" type="button">Hit</button>
+          <button class="btn" id="bjStand" type="button">Stand</button>
+          <button class="btn btn--ghost" id="bjGanda" type="button">Double Down</button>
+          <button class="btn btn--ghost" id="bjSplit" type="button">Split</button>
+          <button class="btn" id="bjLagi" type="button">Deal again</button>
+          <span id="bjAsuransi">
+            <button class="btn" id="bjAsuransiYa" type="button">Insurance: Yes</button>
+            <button class="btn btn--ghost" id="bjAsuransiTidak" type="button">No</button>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">4 dek (208 kartu)</span>
+      <span class="ruleset__k">kartu potong acak 175&ndash;199</span>
+      <span class="ruleset__k">blackjack 1,5:1</span>
+      <span class="ruleset__k">asuransi</span>
+      <span class="ruleset__k">taruhan kelipatan $5</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat stat--good"><span class="stat__label">Uang</span>
+        <span class="stat__value" id="bjKas">$0</span></div>
+      <div class="stat"><span class="stat__label">Menang</span>
+        <span class="stat__value" id="bjMenang">0</span></div>
+      <div class="stat"><span class="stat__label">Kalah</span>
+        <span class="stat__value" id="bjKalah">0</span></div>
+      <div class="stat"><span class="stat__label">Seri</span>
+        <span class="stat__value" id="bjSeri">0</span></div>
+      <div class="stat"><span class="stat__label">Sisa sepatu</span>
+        <span class="stat__value" id="bjSisa">208</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <ol class="howto__steps">
+        <li>Taruhan kelipatan <strong>$5</strong>, maksimal <strong>$200</strong> &mdash; aturan aslinya, baris 1010.</li>
+        <li>Kalau kartu terbuka bandar <strong>As</strong>, Anda ditawari <strong>asuransi</strong> sebesar setengah taruhan.</li>
+        <li>Sepatunya <strong>tidak dikocok tiap tangan</strong>. Perhatikan sisa kartunya di HUD.</li>
+      </ol>
+      <p>Karena sepatunya empat dek dan baru dikocok ulang setelah 175&ndash;199 kartu, kartu yang sudah keluar <strong>memang berpengaruh</strong> pada sisanya. Itu satu-satunya dari empat program yang begitu.</p>
+    </details>
+
+    <div class="row">
+      <button class="btn btn--ghost btn--sm" id="bjUlang" type="button">Mulai dari awal</button>
+      <span class="faint">Bandingkan: <a href="../21/index.html">21</a> &middot; <a href="../black/index.html">BLACK</a> &middot; <a href="../blackjck/index.html">BLACKJCK</a></span>
+    </div>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel">
+      <p class="eyebrow">Kartu potong yang letaknya acak</p>
+<pre class="bj-code">150 DIM P(15,12),Q(15),C(208),T(8),S(7),B(15),D(5)
+250 CZ = INT(RND(1)*25) + 175 : C = 1
+260 FOR II=1 TO 208 : CP=INT(RND*208)+1 : ...</pre>
+      <p class="bj-note">
+        <code>C(208)</code> adalah <strong>empat dek</strong>. Dan
+        <code>CZ</code> adalah <strong>kartu potong</strong>: sepatunya
+        dikocok ulang setelah 175&ndash;199 kartu terpakai, dan berapa
+        tepatnya <strong>diundi</strong>.
+      </p>
+      <p class="bj-note">
+        Itu persis alasan kasino sungguhan memakai kartu potong. Kalau
+        titiknya tetap, penghitung kartu tahu persis berapa kartu tersisa;
+        kalau diundi, ia tidak pernah tahu kapan hitungannya akan direset.
+      </p>
+      <p class="bj-note">
+        Dari empat program, hanya yang ini yang kartunya
+        <strong>berpengaruh antar tangan</strong>. Tiga lainnya mengocok ulang
+        setiap kali, jadi menghitung kartu tidak ada gunanya.
+      </p>
+    </div>
+
+    <div class="panel bj-warn">
+      <p class="eyebrow">Nilai tangan tanpa satu pun perulangan</p>
+<pre class="bj-code">130 DEF FNA(Q) = Q + 11*(Q&gt;=22)
+310 X1=X : IF X1&gt;10 THEN X1=10
+320 Q1=Q+X1 : IF Q&gt;=11 THEN 350
+330 IF X&gt;1 THEN Q=Q1-11*(Q1&gt;=11) : RETURN
+340 Q=Q+11 : RETURN
+350 Q=Q1-(Q&lt;=21 AND Q1&gt;21) : IF Q&gt;=33 THEN Q=-1</pre>
+      <p class="bj-note">
+        Kelihatan seperti akan salah pada banyak As &mdash; tiga As tampaknya
+        jadi 33&minus;11 = 22, bangkrut, padahal seharusnya 13.
+      </p>
+      <p class="bj-note">
+        <strong>Ternyata benar.</strong> Rahasianya baris 330: total 11 ke
+        atas disimpan <strong>digeser +11</strong>, dan
+        <code>FNA</code> membatalkan geseran itu. Nilai yang tersimpan
+        sekaligus membawa keterangan &ldquo;tangan ini lunak atau tidak&rdquo;
+        tanpa variabel tambahan.
+      </p>
+      <p class="bj-note">
+        Diuji menyeluruh atas <strong>5.229.042</strong> tangan 1&ndash;6
+        kartu terhadap aturan blackjack yang benar:
+        <strong>nol ketidakcocokan</strong>. Tiga As memberi 13, seperti
+        seharusnya.
+      </p>
+    </div>
+
+    <div class="panel bj-warn">
+      <p class="eyebrow">Sepatu kasino, pengocokan yang bias</p>
+<pre class="bj-code">260 FOR II=1 TO 208 : CP=INT(RND*208)+1 : SWAP C(II),C(CP)</pre>
+      <p class="bj-note">
+        Sekilas ini Fisher&ndash;Yates. Bukan. Fisher&ndash;Yates mengundi
+        dari <strong>sisa yang belum terpakai</strong>; baris ini mengundi
+        dari <strong>seluruh larik</strong> setiap kali &mdash; kesalahan
+        pengocokan paling terkenal yang ada.
+      </p>
+      <table class="bj-table">
+        <tbody>
+          <tr><td class="is-aneh">BJ baris 260</td><td class="is-aneh">&chi;&sup2; = 207.336 (n=208)</td></tr>
+          <tr><td>Fisher&ndash;Yates</td><td>&chi;&sup2; = 42.672</td></tr>
+          <tr><td>ambang 99,9%</td><td>43.759</td></tr>
+        </tbody>
+      </table>
+      <p class="bj-note">
+        Ironinya rapi: program ini satu-satunya yang berpikir seperti kasino
+        soal <strong>sepatu</strong> &mdash; empat dek, kartu potong yang
+        letaknya diundi. Penulisnya jelas paham keacakan itu penting. Lalu ia
+        mengocoknya dengan cara yang bias.
+      </p>
+      <p class="bj-note">
+        <strong>Kecanggihan di satu lapis tidak menular ke lapis di
+        bawahnya.</strong> Port ini memakai Fisher&ndash;Yates; kartu
+        potongnya dipertahankan utuh. Perbandingan empat cara mengocok di
+        koleksi ini ada di
+        <a href="../../docs/blackjack.md">dokumen arsitektur &sect;4</a>.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/blackjack.md">Dokumen arsitektur (keempatnya)</a> &middot;
+      <a href="../../../reviews/BJ.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/BJ.BAS">Kode sumber 1980</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/cards.js"></script>
+<script src="../../_shared/blackjack.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="bj.js"></script>
+</body>
+</html>

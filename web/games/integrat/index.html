@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Integral by Simpson's Rule — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari INTEGRAT.BAS (Feldman &amp; Rugg, 1982): integral numerik dengan aturan Simpson, di mana fungsinya adalah bagian dari programnya sendiri. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="integrat.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap i-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="i-stage">
+        <p class="i-judul">Integral by Simpson's Rule</p>
+
+        <div class="i-warnbox">
+          <b>WARNING!</b>
+          The subroutine at lines<br>
+          2000-2999 is assumed to<br>
+          define Y as a function of X
+        </div>
+        <p class="i-note">
+          Kotak itu digambar aslinya dengan karakter sudut CP437 (baris
+          180&ndash;250) &mdash; satu-satunya hiasan di seluruh program, dan ia
+          ada untuk alasan yang serius. Di sini rumusnya diketik di kotak di
+          bawah, bukan di baris 2000.
+        </p>
+
+        <div class="i-row">
+          <label>Y = <input type="text" id="fx" spellcheck="false"></label>
+        </div>
+        <div class="i-row">
+          <label>Lower limit of X <input type="number" id="lo" step="any"></label>
+          <label>Upper limit of X <input type="number" id="hi" step="any"></label>
+          <button class="btn btn--primary" id="go" type="button">Integrate</button>
+          <button class="btn btn--ghost" id="stop" type="button" disabled>Stop</button>
+        </div>
+
+        <div class="i-row">
+          <span>Contoh:</span>
+          <button class="btn btn--ghost btn--sm i-contoh" type="button"
+                  data-f="sin(x)" data-lo="0" data-hi="3.14159265358979"
+                  data-tepat="tepatnya 2">&int; sin x, 0..&pi;</button>
+          <button class="btn btn--ghost btn--sm i-contoh" type="button"
+                  data-f="4/(1+x^2)" data-lo="0" data-hi="1"
+                  data-tepat="tepatnya &pi;">&int; 4/(1+x&sup2;), 0..1</button>
+          <button class="btn btn--ghost btn--sm i-contoh" type="button"
+                  data-f="exp(-x^2)" data-lo="0" data-hi="3"
+                  data-tepat="tidak punya bentuk dasar">&int; e^&minus;x&sup2;, 0..3</button>
+          <button class="btn btn--ghost btn--sm i-contoh" type="button"
+                  data-f="sqr(x)" data-lo="0" data-hi="1"
+                  data-tepat="tepatnya 2/3 — turunannya tak hingga di 0">&int; &radic;x, 0..1</button>
+        </div>
+        <p class="i-note" id="tepat"></p>
+
+        <p id="msg"></p>
+        <table class="i-tbl">
+          <thead><tr><th># Segments</th><th>Integral</th><th>Selisih</th></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">aturan Simpson</span>
+      <span class="ruleset__k">segmen digandakan tiap baris</span>
+      <span class="ruleset__k">bobot 1, 4, 2, &hellip;, 4, 1</span>
+    </p>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara memakai</summary>
+      <p class="i-lead">
+        Ini <strong>bukan permainan</strong> &mdash; ia alat. Ia menghitung
+        luas di bawah sebuah kurva, secara numerik, untuk fungsi yang
+        <strong>tidak punya rumus integral</strong> atau yang rumusnya terlalu
+        merepotkan.
+      </p>
+      <ol class="howto__steps">
+        <li>Ketik rumusnya di kotak <strong>Y =</strong>. Pakai <code>x</code>
+            sebagai peubahnya. Tersedia <code>sin cos tan exp ln log sqr abs
+            sinh cosh tanh atan</code>, tetapan <code>pi</code> dan
+            <code>e</code>, serta <code>+ &minus; * / ^</code>.</li>
+        <li>Isi <strong>batas bawah</strong> dan <strong>batas atas</strong>,
+            lalu tekan <strong>Integrate</strong>.</li>
+        <li>Tabelnya menggandakan jumlah segmen tiap baris: 2, 4, 8, 16&hellip;
+            Tiap baris adalah <strong>taksiran yang lebih baik</strong>
+            daripada baris di atasnya.</li>
+        <li>Kolom <strong>Selisih</strong> menunjukkan seberapa jauh baris ini
+            berpindah dari baris sebelumnya. Saat ia berhenti mengecil, angkanya
+            sudah <strong>setepat yang bisa dicapai</strong> &mdash; baris itu
+            ditandai hijau.</li>
+        <li>Coba <strong>&radic;x</strong> dari 0: turunannya tak hingga di
+            titik 0, dan Anda akan melihat selisihnya mengecil
+            <strong>jauh lebih lambat</strong> daripada contoh lain. Aturan
+            Simpson mengandaikan kurvanya mulus, dan di situ ia tidak.</li>
+      </ol>
+      <p>
+        Tidak ada tombol "jawaban akhir", dan itu disengaja &mdash; aslinya
+        juga tidak punya. Anda yang memutuskan kapan cukup teliti.
+      </p>
+    </details>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel i-good">
+      <p class="eyebrow">Fungsinya adalah bagian dari programnya</p>
+<pre class="i-code">1970 REM ****
+1980 REM **** Enter Subroutine At Line 2000
+1990 REM ****
+2000 REM **** Y=F(X) Goes Here ************
+2999 RETURN</pre>
+      <p class="i-note">
+        Fungsi yang mau diintegralkan <strong>bukan masukan program</strong>.
+        Pemakai diharapkan <strong>menyunting baris 2000-an</strong>, mengetik
+        rumusnya sendiri, lalu menjalankan.
+      </p>
+      <p class="i-note">
+        Dari sudut pandang sekarang ini terlihat aneh. Sebetulnya inilah
+        <strong>callback</strong> &mdash; hanya saja mekanismenya menyunting
+        kode, karena BASIC tidak punya penunjuk fungsi.
+      </p>
+      <p class="i-note">
+        Rentang <strong>2000&ndash;2999</strong> yang dicadangkan adalah
+        <strong>kontrak antarmuka</strong>: <em>"kode Anda di sini, kode saya
+        di luar sini"</em>. Dan kotak berbingkai di layar pembuka ada karena
+        kontrak itu tidak bisa dipaksakan bahasanya &mdash; satu-satunya
+        penegaknya adalah pemakai yang membacanya.
+      </p>
+      <table class="i-tbl2">
+        <thead><tr><th>Idenya masih hidup di</th></tr></thead>
+        <tbody>
+          <tr><td><code>conftest.py</code> di pytest</td></tr>
+          <tr><td><code>Makefile</code> yang Anda tulis sendiri</td></tr>
+          <tr><td>blok <code>&lt;script&gt;</code> di halaman HTML</td></tr>
+        </tbody>
+      </table>
+      <p class="i-note">
+        Bedanya cuma: sekarang <strong>bahasanya membantu memisahkan
+        keduanya</strong>, jadi peringatan berbingkai itu tidak perlu dicetak
+        lagi.
+      </p>
+    </div>
+
+    <div class="panel i-warn">
+      <p class="eyebrow">Perulangan yang tidak pernah berhenti</p>
+<pre class="i-code">440 PRINT N,A
+450 N=N*2
+460 GOTO 320   <em>' selamanya</em></pre>
+      <p class="i-note">
+        Tidak ada syarat berhenti. Program menggandakan jumlah segmen
+        <strong>selamanya</strong>, mencetak satu baris tiap kali, sampai
+        pemakai menekan <kbd>Ctrl</kbd>+<kbd>Break</kbd>.
+      </p>
+      <p class="i-note">
+        Itu terdengar seperti kelalaian, dan mungkin memang bukan. Aturan
+        Simpson <strong>mendekati</strong> jawabannya, tidak pernah persis.
+        Berhenti pada suatu ambang berarti memutuskan berapa teliti
+        &ldquo;cukup teliti&rdquo; &mdash; dan program ini memilih
+        <strong>tidak memutuskan</strong>, lalu menyerahkannya ke mata pemakai.
+      </p>
+      <p class="i-note">
+        Angkanya berhenti berubah di digit yang Anda pedulikan; di situlah
+        Anda berhenti. Kolom <strong>Selisih</strong> di tabel adalah tambahan
+        di port ini &mdash; ia menunjukkan hal yang dulu harus dilihat sendiri
+        dengan membandingkan dua baris berturut.
+      </p>
+      <p class="i-note">
+        Perulangannya di sini <strong>dibatasi 20 langkah</strong> dan bisa
+        dihentikan. Bukan karena aturannya berubah, melainkan karena halaman
+        web tidak punya <kbd>Ctrl</kbd>+<kbd>Break</kbd>, dan tab yang
+        menggantung selamanya bukan perilaku yang jujur.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Bobot 1, 4, 2, 4, &hellip;, 4, 1</p>
+<pre class="i-code">330 X=L:GOSUB 2000:T=T+Y     <em>' ujung kiri, bobot 1</em>
+340 X=U:GOSUB 2000:T=T+Y     <em>' ujung kanan, bobot 1</em>
+380 Z=Z+Y:NEXT:T=T+4*Z       <em>' titik GANJIL, bobot 4</em>
+420 NEXT:T=T+2*Z             <em>' titik GENAP, bobot 2</em>
+430 A=DX*T/3</pre>
+      <p class="i-note">
+        Aturan Simpson mendekati kurva dengan <strong>parabola</strong>, bukan
+        garis lurus &mdash; satu parabola untuk tiap pasang segmen. Bobot
+        1&ndash;4&ndash;2&ndash;&hellip;&ndash;4&ndash;1 dibagi 3 adalah
+        akibat langsung dari itu.
+      </p>
+      <p class="i-note">
+        Itu sebabnya jumlah segmennya <strong>harus genap</strong>, dan
+        sebabnya program mulai dari <code>N=2</code> lalu menggandakannya
+        &mdash; menggandakan bilangan genap selalu menghasilkan bilangan genap.
+        Satu baris (<code>450 N=N*2</code>) menjaga syarat itu tanpa pernah
+        menyebutkannya.
+      </p>
+      <p class="i-note">
+        Untuk kurva yang mulus, menggandakan segmen membuat galatnya turun
+        sekitar <strong>enam belas kali</strong> tiap baris. Perhatikan kolom
+        Selisih pada contoh <em>sin x</em>: ia jatuh jauh lebih cepat daripada
+        pada contoh <em>&radic;x</em>, yang turunannya tak hingga di titik 0
+        dan melanggar andaian mulus itu.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Penafsir sendiri, bukan <code>eval()</code></p>
+      <p class="i-note">
+        Fungsi yang Anda ketik harus dievaluasi puluhan ribu kali.
+        <code>eval()</code> akan bekerja &mdash; dan ia juga akan menjalankan
+        <strong>apa pun</strong> yang diketik, termasuk yang ditempel orang
+        lain lewat tautan.
+      </p>
+      <p class="i-note">
+        Penafsir di <code>integrat.js</code> hanya mengenal angka,
+        <code>x</code>, tanda kurung, operator aritmetika, dan
+        <strong>daftar fungsi yang tertutup</strong>. Apa pun di luar itu
+        ditolak.
+      </p>
+      <p class="i-note">
+        Imbalan sampingannya: pesan galatnya lebih baik. <em>&ldquo;fungsi
+        tidak dikenal: sinus&rdquo;</em> lebih berguna daripada
+        <em>&ldquo;sinus is not defined&rdquo;</em> &mdash; karena ia tahu
+        sedang membaca rumus, bukan program.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/integrat.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/INTEGRAT.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/INTEGRAT.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="integrat.js"></script>
+</body>
+</html>

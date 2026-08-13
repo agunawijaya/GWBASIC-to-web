@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Spacewar — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari SPACEWAR.EXE (Bill Seiler, 1985) — assembly 8086 tulis tangan, satu-satunya di koleksi ini yang tidak pernah BASIC. Aturan mainnya dipanen kata demi kata dari dalam binernya. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="spacewar.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap w-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div id="layar">
+        <p class="w-pesan" id="pesan" role="status" hidden></p>
+      </div>
+    </div>
+
+    <div class="row">
+      <button class="btn" id="go">Mulai</button>
+      <button class="btn btn--ghost" id="jeda" disabled>Jeda</button>
+    </div>
+
+    <div class="row w-saklar">
+      <label class="w-tog"><input type="checkbox" id="t-kiri"> <span>Kiri robot</span></label>
+      <label class="w-tog"><input type="checkbox" id="t-kanan" checked> <span>Kanan robot</span></label>
+      <label class="w-tog"><input type="checkbox" id="t-planet" checked> <span>Lubang hitam</span></label>
+      <label class="w-tog"><input type="checkbox" id="t-gravitasi" checked> <span>Gravitasi</span></label>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">2 pemain</span>
+      <span class="ruleset__k">16 arah</span>
+      <span class="ruleset__k">foton &amp; faser</span>
+      <span class="ruleset__k">cloak &amp; hyperspace</span>
+    </p>
+
+    <div class="hud" id="hud"></div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <p class="w-lead">
+        Dua kapal, satu lubang hitam, satu papan ketik. Hancurkan kapal lawan sampai
+        seluruh <strong>SHIELD</strong>-nya habis. Semua angkanya &mdash; ongkos,
+        kerusakan, laju isi ulang &mdash; <strong>bukan karangan saya</strong>: itu
+        kalimat yang program 1985 itu sendiri cetak ke layar, dipanen dari dalam
+        <code>SPACEWAR.EXE</code>.
+      </p>
+      <div class="w-kunci" id="kunci"></div>
+      <p class="w-note">
+        Tata letak tombolnya juga dari sana. Pemain kanan memakai
+        <strong>papan angka</strong> &mdash; itu sebabnya barisnya
+        <kbd>7</kbd><kbd>8</kbd><kbd>9</kbd> di atas dan
+        <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> di bawah, bukan urut 1-2-3.
+      </p>
+    </details>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel">
+      <p class="eyebrow">Satu-satunya yang tidak pernah BASIC</p>
+      <p class="w-note">
+        Tiga EXE lain di koleksi ini BASIC yang di-compile: binernya menyeret
+        runtime 20&ndash;30 KB, dan ketahuan dari dua angka. SPACEWAR tidak.
+      </p>
+      <table class="w-tabel">
+        <thead><tr><th>&nbsp;</th><th>SPACEWAR</th><th>tiga lainnya</th></tr></thead>
+        <tbody>
+          <tr><td>Entri relokasi</td><td>5</td><td>786 &middot; 1.361 &middot; 2.357</td></tr>
+          <tr><td>String galat runtime BASIC</td><td>0</td><td>22 &middot; 22 &middot; 22</td></tr>
+          <tr><td>Ukuran berkas</td><td>22.528</td><td>37.760 &middot; 39.296 &middot; 57.472</td></tr>
+        </tbody>
+      </table>
+      <p class="w-note">
+        Lima relokasi berarti hampir tidak ada rujukan segmen yang perlu ditambal
+        saat dimuat &mdash; ciri program satu segmen yang ditulis tangan. Itu juga
+        yang membuatnya <strong>tidak punya <code>.bas</code></strong> untuk jadi
+        basis port: penyimpangan terbesar di seluruh koleksi.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Aturan mainnya, kata demi kata dari dalam biner</p>
+      <p class="w-note">
+        Enam belas baris di bawah ini tersimpan di offset
+        <code>0x3BD5</code>&ndash;<code>0x3F60</code>. Halaman ini tidak menyalinnya
+        dengan tangan &mdash; ia membacanya dari berkas dan menampilkannya apa adanya:
+      </p>
+      <pre class="w-instruksi" id="instruksi">—</pre>
+      <p class="w-note">
+        Setiap angka di panel skor kiri-kanan datang dari kalimat-kalimat itu.
+        Yang <em>tidak</em> ada di sana &mdash; kapasitas shield, laju kapal,
+        kecepatan torpedo &mdash; rekonstruksi, dan ditandai begitu di tabel
+        kepastian di bawah.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Program yang tidak mempercayai satu pun lapisan di atasnya</p>
+      <table class="w-tabel">
+        <tbody>
+          <tr><td>Panggilan interupsi, seluruh program</td><td>4</td></tr>
+          <tr><td>&mdash; di antaranya <code>INT 10h</code></td><td>3</td></tr>
+          <tr><td>Port papan ketik <code>60h</code>, langsung</td><td>ya</td></tr>
+          <tr><td>Port <code>3DAh</code> (tunggu retrace)</td><td>tidak dipakai</td></tr>
+          <tr><td>Port <code>61h</code> (speaker)</td><td>21 tempat</td></tr>
+        </tbody>
+      </table>
+      <p class="w-note">
+        Ketiga <code>INT 10h</code> itu seluruh urusannya dengan BIOS grafis:
+        ambil mode, pasang mode 6, pulihkan mode. Sisanya tulis langsung ke
+        <code>B800</code>. Papan ketik dibaca dari port <code>60h</code> mentah,
+        dan itu <strong>keharusan arsitektural</strong>: <code>INT 16h</code> tidak
+        bisa memberitahu tombol mana yang sedang <em>ditahan</em>, jadi permainan
+        dua pemain di satu papan ketik mustahil tanpa melewati BIOS.
+      </p>
+      <p class="w-note">
+        Ia juga mematikan motor floppy sendiri, mematikan konfigurasi Hercules
+        lewat port <code>3BFh</code>, dan memindahkan <strong>stack ke dalam tabel
+        vektor interupsi</strong> di <code>0000:0166</code> &mdash; memakai slot
+        vektor yang ia tahu tidak akan dipakai sebagai RAM.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Cara ia menolak jalan di perangkat keras yang salah</p>
+      <p class="w-note">
+        Ia tidak <em>bertanya</em> ke BIOS kartu grafis apa yang terpasang. Ia
+        menulis ke <code>B800:0000</code>, <code>:1000</code>, <code>:2000</code>,
+        <code>:3000</code> lalu membacanya kembali &mdash; empat alamat berjarak
+        4 KB. Kalau memorinya tidak berperilaku seperti VRAM 16 KB, ia pulihkan
+        mode video, cetak satu kalimat, dan keluar:
+      </p>
+      <p class="w-tolak" id="tolak">—</p>
+      <p class="w-note" id="farce">—</p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Benda di tengah: binernya bilang PLANET, layarnya lubang hitam</p>
+      <p class="w-note">
+        Ini <strong>pilihan, bukan temuan</strong>, dan pembedaan itu penting di
+        halaman yang seluruh isinya soal apa yang bisa dan tidak bisa dibuktikan.
+        Yang tertulis di binernya, dikutip apa adanya:
+      </p>
+      <p class="w-tolak">Touching the PLANET will drain your SHIELDS.</p>
+      <p class="w-note">
+        Rupanya diubah atas permintaan pemilik proyek, mengikuti Gargantua di
+        <em>Interstellar</em> (2014). <strong>Fisikanya tidak ikut berubah</strong>
+        &mdash; ia tetap satu titik massa dengan jari-jari, gravitasi, dan
+        pengurasan shield yang sama persis.
+      </p>
+      <p class="w-note">
+        Bahwa benda itu memang <strong>planet</strong> kini terbukti, bukan disimpulkan
+        dari teks bantuannya saja: sebuah tabel 16 bingkai lingkaran 32 &times; 32 di
+        <code>0x1840</code> digambar tepat di <strong>titik tengah layar (319, 99)</strong>,
+        digerbangi bit yang dibalik kotak menu berlabel <code>PLANET</code>. Ketiga
+        hal itu berhimpit dan tidak ada bacaan lain yang muat.
+      </p>
+      <table class="w-tabel">
+        <thead><tr><th>Kotak menu 1985</th><th>bit</th><th>saklar di sini</th></tr></thead>
+        <tbody>
+          <tr><td><code>ROBOT L</code></td><td>[0x1076].0</td><td>Kiri robot</td></tr>
+          <tr><td><code>ROBOT R</code></td><td>[0x1076].1</td><td>Kanan robot</td></tr>
+          <tr><td><code>PLANET</code></td><td>[0x2040].0</td><td>Lubang hitam</td></tr>
+          <tr><td><code>GRAVITY</code></td><td>[0x2040].1</td><td>Gravitasi</td></tr>
+          <tr><td><code>PAUSE</code></td><td>[0x170].0</td><td>tombol Jeda</td></tr>
+        </tbody>
+      </table>
+      <p class="w-note">
+        <code>EXIT</code> dan <code>PLAY</code> tidak berkotak &mdash; keduanya
+        perintah, bukan saklar. Itu sebabnya kotaknya lima, bukan tujuh.
+      </p>
+      <p class="w-note">
+        Yang membuat bentuk itu dikenali bukan bola hitamnya, melainkan tiga hal
+        sekaligus &mdash; dan ketiganya harus ada, atau yang keluar cuma bola hitam
+        biasa:
+      </p>
+      <table class="w-tabel">
+        <tbody>
+          <tr><td>Cakram akresi, dilihat hampir dari tepi</td><td>pipih mendatar</td></tr>
+          <tr><td>Cincin ter-lensa di atas dan di bawahnya</td><td>ciri utamanya</td></tr>
+          <tr><td>Bayangan pekat + cincin foton tipis</td><td>memeluk tepinya</td></tr>
+        </tbody>
+      </table>
+      <p class="w-note">
+        Lengkung atas-bawah itu bukan cincin kedua: ia <strong>sisi jauh dari
+        cakram yang sama</strong>, yang cahayanya dibelokkan gravitasi sampai
+        terlihat menekuk melewati atas dan bawah bayangannya. Urutan
+        menggambarnya juga tidak bebas &mdash; sisi jauh dulu, lalu bayangannya
+        menutupi yang di belakang, baru sisi dekat di atas segalanya. Kalau
+        cakramnya digambar sekaligus, ia tampak seperti cincin yang ditempel di
+        depan bola, bukan cakram yang mengelilinginya.
+      </p>
+      <p class="w-note">
+        Di seluruh gambar ini <strong>hanya ada satu tepi tegas: siluet
+        bayangannya</strong>. Cakram akresi bukan benda padat melainkan gas
+        bercahaya, jadi tiap bentuk terang di sini memakai dua gradien sekaligus
+        &mdash; satu mendatar untuk suhu dan pancaran Doppler, satu memusat
+        sebagai topeng kerapatan yang meredupkannya ke segala arah. Versi
+        sebelumnya menggambarnya sebagai elips bertepi tegas, dan itu salah
+        bendanya, bukan cuma salah bentuknya.
+      </p>
+      <p class="w-note">
+        Kapal yang masuk terlalu dalam <strong>tersedot</strong>: mengecil sambil
+        terpilin masuk, meregang ke arah lubangnya, memerah, lalu habis &mdash;
+        dan <em>tidak meledak</em>, karena ledakan berarti hancur di tempat
+        sedangkan yang terjadi justru sebaliknya. Pengurasan shield-nya sendiri
+        tetap seperti kalimat di binernya; animasi itu tambahan, bukan pengganti.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Yang belum terpecahkan — dan itu diukur, bukan disamarkan</p>
+      <p class="w-note">
+        Tabel sprite-nya <strong>sudah terpecahkan</strong> &mdash; dan bukan dengan
+        menebak lebar barisnya, melainkan dengan menemukan <strong>rutin yang
+        membacanya</strong>: <code>sub_4792</code>. Ia menjawab formatnya sekaligus:
+      </p>
+      <table class="w-tabel">
+        <tbody>
+          <tr><td><code>and ax, 0xf</code></td><td>16 entri</td></tr>
+          <tr><td><code>shl si, 7</code></td><td>strid 128</td></tr>
+          <tr><td><code>add si, 0x1840</code></td><td>basis tabel</td></tr>
+          <tr><td><code>mov cx, 0x20</code></td><td>32 baris</td></tr>
+          <tr><td><code>xchg al, ah</code></td><td>pasangan bita ditukar</td></tr>
+          <tr><td><code>add di, 0x1ffe</code></td><td>selang-seling bank mode 6</td></tr>
+        </tbody>
+      </table>
+      <p class="w-note">
+        Jadi tiap entri <strong>32 &times; 32 piksel</strong>, seluruh 128 bita
+        terpakai. Didekode begitu, isinya sebuah <strong>lingkaran</strong> dengan
+        satu tanda kecil yang berpindah tempat dari entri ke entri &mdash; enam
+        belas bingkai benda bundar yang berputar. Hampir pasti
+        <strong>PLANET</strong> yang disebut teks bantuannya sendiri.
+      </p>
+      <p class="w-note">
+        Artinya tabel itu <strong>tidak berisi kapal sama sekali</strong>. Rotasi 16
+        langkah di halaman ini karena itu <strong>pilihan rancangan</strong>, bukan
+        simpulan dari biner &mdash; dipertahankan karena enak dimainkan.
+      </p>
+      <p class="w-note">
+        Sebelum sampai ke sini saya <strong>dua kali salah baca</strong>, dan yang
+        kedua sempat saya kirim sebagai temuan. Sebabnya sepele dan diam:
+        <code>.asm</code> memakai offset citra sedangkan <code>.EXE</code> punya
+        header 512 bita di depannya, dan basisnya <code>0x1840</code> bukan
+        <code>0x1860</code>. Riwayat lengkapnya di
+        <a href="../../../decompile/NEGATIVE-RESULTS.md">NEGATIVE-RESULTS.md</a> &sect;22.
+      </p>
+      <p class="w-note">
+        Tapi <strong>tata letak pikselnya belum terpecahkan.</strong> Yang sudah
+        dicoba dan gagal, dicatat supaya tidak diulang:
+      </p>
+      <table class="w-tabel">
+        <tbody>
+          <tr><td>Render datar 32 &times; 16</td><td>gagal</td></tr>
+          <tr><td>Render datar 16 &times; 32</td><td>gagal</td></tr>
+          <tr><td>Dua separuh dijalin (interleave mode 6)</td><td>gagal</td></tr>
+          <tr><td>Pindai korelasi baris se-segmen data</td><td>gagal</td></tr>
+        </tbody>
+      </table>
+      <p class="w-note">
+        Yang <em>terlihat</em> dari percobaan jalin: 64 bita tiap entri terbelah
+        jadi dua separuh yang <strong>nyaris sama tapi tidak persis</strong>. Itu
+        konsisten dengan gambar-dan-mask, atau dengan dua varian ter-geser
+        (<em>pre-shifted</em>) &mdash; keduanya belum terbukti.
+      </p>
+      <p class="w-note">
+        Jadi <strong>bentuk kapal di halaman ini digambar sendiri</strong>, seperti
+        Hopper. Presedennya sama, dan alasannya sama: menyamarkan hasil yang belum
+        terpecahkan sebagai kesetiaan cuma cara halus untuk tidak mengakuinya.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Fontnya sendiri — dan rutin cetak yang membaca alamat kembalinya</p>
+      <p class="w-note">
+        Judul di bawah ini <strong>bukan huruf dari halaman ini</strong>. Ia digambar
+        dengan font milik <code>SPACEWAR.EXE</code>, dipanen dari
+        <code>0x22A0</code>: 16 bita per glif, 8 baris, diindeks ASCII.
+      </p>
+      <div class="w-font" id="font-judul"></div>
+      <p class="w-note">
+        Yang mencetaknya, <code>sub_4732</code>, memakai trik yang sudah lama
+        hilang: ia <strong>mengambil alamat kembalinya sendiri dari tumpukan</strong>,
+        membaca bita di sana sebagai teks, lalu mendorong balik alamat yang sudah
+        maju. Stringnya ditulis <em>di dalam aliran kode</em>, tepat sesudah
+        <code>call</code>-nya, dan rutinnya kembali ke titik sesudah penanda nol.
+      </p>
+      <table class="w-tabel">
+        <tbody>
+          <tr><td>Situs panggilan <code>sub_4732</code></td><td>37</td></tr>
+          <tr><td>Basis font</td><td><code>0x22A0</code></td></tr>
+          <tr><td>Ukuran glif</td><td>16 &times; 8</td></tr>
+          <tr><td>Langkah maju per huruf</td><td>10 piksel</td></tr>
+        </tbody>
+      </table>
+      <p class="w-note">
+        Akibatnya ada satu jebakan yang menipu selama 18 iterasi dekompilasi:
+        <strong>string sebaris itu terbaca sebagai instruksi</strong>. Deretan
+        <code>adc ax, 0x2020</code> di disassembly-nya sebenarnya spasi di
+        <code>"   G A M E    K E Y S  "</code>, dan lima "penangan aksi berukuran
+        tepat 8 instruksi" di &sect;9.3 ternyata lima panggilan menggambar kotak menu
+        di X = 200, 290, 380, 470, 560 &mdash; bilah menu di dasar layar. Angka
+        cakupan kode 99% ikut terlalu tinggi karena data ini ikut terhitung.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Kapal aslinya — dipanen dari biner, keenam belas sudutnya</p>
+      <p class="w-note">
+        Ini bukan gambar saya. Ini <strong>piksel yang sesungguhnya</strong> dari
+        <code>SPACEWAR.EXE</code> 1985, didekode dengan aturan yang dibaca dari
+        <code>sub_45CA</code>: dua tabel bersebelahan di <code>0x1340</code> dan
+        <code>0x1540</code>, 16 sudut per kapal, 16 &times; 16 piksel.
+      </p>
+      <div class="w-sprite" id="sprite-kiri"></div>
+      <p class="w-note w-sprite__cap">Pemain kiri &mdash; <code>0x1340</code></p>
+      <div class="w-sprite" id="sprite-kanan"></div>
+      <p class="w-note w-sprite__cap">Pemain kanan &mdash; <code>0x1540</code></p>
+      <p class="w-note">
+        Kapal yang <em>dimainkan</em> di layar atas tetap gambar saya, karena
+        diminta begitu &mdash; sprite 16 &times; 16 tidak bisa jadi kapal seukuran
+        layar ini tanpa jadi kotak-kotak. Yang di panel ini <strong>bukti, bukan
+        aset</strong>, persis seperti makro <code>DRAW</code> di halaman Hopper.
+      </p>
+      <p class="w-note">
+        Akibatnya untuk halaman ini: rotasi 16 langkah yang tadinya cuma pilihan
+        rancangan ternyata <strong>memang 16 di aslinya</strong> &mdash;
+        <code>add bl,8 | and bx,0xf0</code> membulatkan sudutnya ke perenambelasan
+        terdekat. Kebetulan yang beruntung, bukan hasil dugaan yang benar.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Yang dijalankan, dan sejauh mana</p>
+      <table class="w-tabel">
+        <tbody>
+          <tr><td>Mode video yang diminta</td><td>6 &mdash; 640&times;200</td></tr>
+          <tr><td>Bita framebuffer terisi</td><td>5.616 / 16.384</td></tr>
+          <tr><td>Piksel menyala sesudah didekode</td><td>17.591 / 128.000</td></tr>
+          <tr><td>Baris teks</td><td>0 &mdash; semuanya grafis</td></tr>
+          <tr><td>Cakupan region kode</td><td>99%</td></tr>
+          <tr><td>Subrutin teridentifikasi</td><td>107</td></tr>
+        </tbody>
+      </table>
+      <p class="w-note">
+        Layar yang tercapai <strong>bukan permainannya</strong> melainkan halaman
+        teks yang dirender di mode grafis. Menyetirnya masuk ke permainan butuh
+        urutan tombol yang belum diketahui, karena pemetaan lima handler aksinya
+        belum ditelusuri satu per satu.
+      </p>
+      <p class="w-note">
+        Piksel mode 6 <strong>tidak persegi</strong>: 640&times;200 di layar 4:3
+        membuat tiap piksel 2,4&times; lebih tinggi daripada lebar. Layar di halaman
+        ini memakai 640&times;480 &mdash; bidang yang sama, dipetakan ke piksel
+        persegi, supaya lingkaran tetap bundar dan sudut tetap sudut.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Perangkat lunak yang dibayar dengan kepercayaan</p>
+      <pre class="w-instruksi" id="shareware">—</pre>
+      <p class="w-note">
+        <code id="versi">—</code> &middot; <span id="cipta">—</span>
+      </p>
+      <p class="w-note">
+        SPACE MINEZ yang disebut di situ tidak ada di koleksi ini, dan tidak ada
+        petunjuk apakah ia pernah selesai.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Tingkat kepastian di halaman ini</p>
+      <table class="w-tabel">
+        <thead><tr><th>Bagian</th><th>Tingkat</th></tr></thead>
+        <tbody>
+          <tr><td>Ongkos, kerusakan, laju isi ulang</td><td>pasti (teks biner)</td></tr>
+          <tr><td>Peta nama tombol kedua pemain</td><td>pasti (teks biner)</td></tr>
+          <tr><td>Benda di tengah menguras shield, faser menembak foton</td><td>pasti (teks biner)</td></tr>
+          <tr><td>Robot kiri bertahan, kanan menyerang</td><td>pasti (teks biner)</td></tr>
+          <tr><td>Mode 6, 5 relokasi, 4 interupsi, port 60h</td><td>pasti (diukur)</td></tr>
+          <tr><td>Sprite kapal 16&times;16, 16 sudut, <code>0x1340</code>/<code>0x1540</code></td><td>pasti (dibaca dari <code>sub_45CA</code>)</td></tr>
+          <tr><td>16 langkah rotasi</td><td>pasti (<code>and bx,0xf0</code>)</td></tr>
+          <tr><td>Tabel <code>0x1840</code>: 32&times;32, isinya lingkaran</td><td>pasti (didekode)</td></tr>
+          <tr><td>Tabel <code>0x1840</code> itu <strong>planetnya</strong></td><td>pasti (digambar di titik tengah, digerbangi saklar <code>PLANET</code>)</td></tr>
+          <tr><td>Arti <code>WEAPON ENERGY</code> / <code>SHIELD ENERGY</code></td><td><strong>simpulan</strong> &mdash; namanya pasti, perilakunya tidak</td></tr>
+          <tr><td>Kapasitas shield, laju kapal, kecepatan torpedo, gravitasi</td><td><strong>rekonstruksi</strong></td></tr>
+          <tr><td>Bentuk kapal, bintang</td><td><strong>digambar sendiri</strong></td></tr>
+          <tr><td>Benda di tengah digambar sebagai lubang hitam</td><td><strong>pilihan, bukan temuan</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/spacewar.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../decompile/SPACEWAR/ARCHITECTURE.md">Analisis dekompilasi</a> &middot;
+      <a href="../../../decompile/SPACEWAR/spacewar.asm">Disassembly (6.081 baris)</a> &middot;
+      <a href="../../../decompile/tools/harvest-spacewar.py">Pemanen string</a> &middot;
+      <a href="../../../run/SPACEWAR.EXE">Berkas EXE aslinya</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="spacewar-data.js"></script>
+<script src="spacewar.js"></script>
+</body>
+</html>

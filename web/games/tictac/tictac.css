@@ -1,0 +1,109 @@
+/* ===========================================================================
+   tictac.css — hanya yang khas permainan ini. Sisanya dari base.css.
+
+   Semua nama kelas diawali `t-` supaya tidak pernah bertabrakan dengan
+   komponen bersama — pelajaran dari bug `.tile` di 15PUZZLE, ketika sebuah
+   kelas bernama umum di base.css diam-diam mengambil alih elemen SVG.
+   =========================================================================== */
+
+.t-layout {
+  display: grid; gap: var(--s5);
+  grid-template-columns: minmax(320px, 1fr) minmax(280px, 420px);
+  align-items: start; padding-block: var(--s6) var(--s8);
+}
+@media (max-width: 940px) { .t-layout { grid-template-columns: 1fr; } }
+
+.t-stage { display: grid; gap: var(--s4); justify-items: center; }
+
+/* --- papan --------------------------------------------------------------- */
+
+.t-board { width: 100%; max-width: 420px; height: auto; }
+
+/* Garis papan. Aslinya digambar dengan karakter blok CHR$(219) setinggi
+   dua kolom; di sini garis sungguhan dengan ujung membulat. */
+.t-grid { stroke: var(--acc-blue); stroke-width: 3; stroke-linecap: round; }
+
+.t-cell {
+  fill: transparent;
+  transition: fill var(--t-fast) var(--ease);
+}
+.t-cell.is-open { cursor: pointer; }
+.t-cell.is-open:hover { fill: color-mix(in srgb, var(--acc-phosphor) 12%, transparent); }
+
+.t-num {
+  font-family: var(--font-mono); font-size: 15px; fill: var(--ink-faint);
+  text-anchor: middle; pointer-events: none; user-select: none;
+  transition: opacity var(--t) var(--ease);
+}
+.t-cell-filled .t-num { opacity: 0; }
+
+/* X manusia — COLOR 12 (merah muda terang) di aslinya.
+   O komputer — COLOR 10 (hijau terang). Warnanya dipertahankan. */
+.t-x { stroke: var(--acc-red); stroke-width: 9; stroke-linecap: round; fill: none; }
+.t-o { stroke: var(--acc-phosphor); stroke-width: 9; fill: none; }
+
+/* Digambar dengan menganimasikan panjang garis putus-putus — sehingga
+   bentuknya seolah dituliskan, bukan muncul begitu saja. */
+.t-ink { stroke-dasharray: var(--len); stroke-dashoffset: var(--len);
+         animation: t-draw var(--t-slow) var(--ease) forwards; }
+@keyframes t-draw { to { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .t-ink { animation: none; stroke-dashoffset: 0; }
+}
+
+/* Garis kemenangan. */
+.t-win { stroke: var(--acc-amber); stroke-width: 7; stroke-linecap: round;
+         opacity: .9; }
+
+.t-say {
+  font-family: var(--font-mono); font-size: var(--fs-md);
+  color: var(--acc-phosphor); min-height: 1.6em; text-align: center;
+}
+.t-say--idle { color: var(--ink-dim); }
+
+/* --- larik berpagar ------------------------------------------------------ */
+
+/* Lima kolom, persis seperti larik aslinya. Sel pagar sengaja dibuat berbeda
+   total supaya "kenapa tidak perlu cek tepi" terlihat, bukan cuma dibaca. */
+.t-pad {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px;
+  margin-top: var(--s3); max-width: 260px;
+}
+.t-pad__c {
+  aspect-ratio: 1; display: grid; place-items: center;
+  border-radius: var(--r-sm); font-family: var(--font-mono);
+  font-size: var(--fs-xs); line-height: 1.15; text-align: center;
+  border: 1px solid transparent;
+}
+.t-pad__c small { display: block; font-size: 9px; color: var(--ink-faint); }
+.t-pad__c--edge { background: var(--panel-2); color: var(--ink-faint); }
+.t-pad__c--free { background: var(--bg-sunken); color: var(--ink-dim);
+                  border-color: var(--edge-soft); }
+.t-pad__c--x { background: var(--acc-red-dim); color: var(--acc-red);
+               border-color: var(--acc-red); }
+.t-pad__c--o { background: var(--acc-phosphor-dim); color: var(--acc-phosphor);
+               border-color: var(--acc-phosphor); }
+.t-pad__c.is-last { outline: 2px solid var(--acc-amber); outline-offset: 1px; }
+
+/* --- daftar aturan ------------------------------------------------------- */
+
+.t-rules { display: grid; gap: 2px; }
+.t-rule {
+  display: grid; grid-template-columns: 1.6rem 1fr; gap: var(--s3);
+  padding: 5px var(--s3); border-radius: var(--r-sm);
+  font-size: var(--fs-sm); color: var(--ink-dim);
+  border: 1px solid transparent;
+  transition: background var(--t-fast) var(--ease),
+              color var(--t-fast) var(--ease),
+              border-color var(--t-fast) var(--ease);
+}
+.t-rule__no { color: var(--ink-faint); font-family: var(--font-mono);
+              text-align: right; }
+.t-rule.is-on {
+  background: var(--acc-phosphor-dim); border-color: var(--acc-phosphor);
+  color: var(--ink);
+}
+.t-rule.is-dead { opacity: .5; }
+
+.t-note { font-size: var(--fs-sm); color: var(--ink-dim); margin-top: var(--s2); }
+.t-proof { border-left: 3px solid var(--acc-phosphor); }

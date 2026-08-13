@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Wizard's Castle — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari WIZARD.BAS (Joseph R. Power, 1980): roguelike 8×8×8 yang hampir tidak pernah bercabang — seluruh programnya menghitung dengan hasil perbandingan alih-alih memakai IF. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="../../_shared/zot.css?v=1">
+<link rel="stylesheet" href="wizard.css?v=4">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap zot-layout">
+
+  <section class="stack">
+    <div class="screen screen--scanlines">
+
+      <div class="zot-atas">
+        <div class="zot-petaLuar">
+          <div class="zot-peta" id="peta"></div>
+          <p class="zot-kecil zot-legenda">
+            Lantai <b id="s-lantai" class="mono">1</b> dari 8 &middot;
+            posisi <b id="s-posisi" class="mono">—</b> &middot;
+            giliran <b id="s-giliran" class="mono">1</b>
+          </p>
+        </div>
+
+        <dl class="zot-status">
+          <div class="zot-pasang"><dt>Ras</dt>
+            <dd id="s-ras" class="zot-nilai mono">—</dd></div>
+          <div class="zot-pasang"><dt>Strength</dt>
+            <dd id="s-st" class="zot-nilai mono">—</dd></div>
+          <div class="zot-pasang"><dt>Intelligence</dt>
+            <dd id="s-iq" class="zot-nilai mono">—</dd></div>
+          <div class="zot-pasang"><dt>Dexterity</dt>
+            <dd id="s-dx" class="zot-nilai mono">—</dd></div>
+          <div class="zot-pasang"><dt>Gold pieces</dt>
+            <dd id="s-gp" class="zot-nilai mono">—</dd></div>
+          <div class="zot-pasang"><dt>Flares</dt>
+            <dd id="s-fl" class="zot-nilai mono">—</dd></div>
+          <div class="zot-pasang"><dt>Treasures</dt>
+            <dd id="s-tc" class="zot-nilai mono">—</dd></div>
+          <div class="zot-pasang"><dt>Weapon</dt>
+            <dd id="s-senjata" class="zot-nilai mono">—</dd></div>
+          <div class="zot-pasang zot-pasang--lebar"><dt>Armor</dt>
+            <dd id="s-zirah" class="zot-nilai mono">—</dd></div>
+          <div class="zot-pasang zot-pasang--lebar" id="s-skor-box" hidden><dt>Score</dt>
+            <dd id="s-skor" class="zot-nilai mono">—</dd></div>
+          <div class="zot-pasang zot-pasang--lebar"><dt>Dibawa</dt>
+            <dd id="s-bawa" class="zot-nilai mono">—</dd></div>
+        </dl>
+      </div>
+
+      <div class="zot-harta" id="harta"></div>
+
+      <div class="zot-log" id="log" role="log" aria-live="polite"
+           aria-label="Catatan petualangan"></div>
+
+      <div class="zot-masuk">
+        <span class="zot-prompt" id="prompt">ENTER YOUR COMMAND</span>
+        <input id="ketik" class="zot-ketik" type="text" autocomplete="off"
+               spellcheck="false" aria-label="Perintah">
+        <button class="btn btn--primary btn--sm" id="kirim" type="button">Kirim</button>
+      </div>
+      <div class="zot-tombolBaris" id="tombol"></div>
+      <div class="zot-alat">
+        <button class="btn btn--ghost btn--sm" id="baru" type="button">Kastel baru</button>
+        <button class="btn btn--ghost btn--sm" id="ulangi" type="button">Ulangi benih…</button>
+        <label class="zot-kecil" title="Baris 4150: ' LET Q=34 TO HIDE ROOMS — matikan untuk melihat perilaku disket 1980">
+          <input type="checkbox" id="kabut" checked> <code>LET Q=34</code>
+          &mdash; kabut menyala <span class="zot-kecil2">(matikan = perilaku 1980)</span></label>
+        <span class="zot-kecil">Benih: <b id="s-benih" class="mono">—</b></span>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">944 baris BASIC</span>
+      <span class="ruleset__k">8 &times; 8 &times; 8 = 512 kamar</span>
+      <span class="ruleset__k ruleset__k--mangsa">hampir tanpa IF</span>
+      <span class="ruleset__k ruleset__k--bahaya">petanya membuka seluruh lantai</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Kamar terisi</span>
+        <span class="stat__value mono">351 / 512</span></div>
+      <div class="stat"><span class="stat__label">Bola kristal jujur</span>
+        <span class="stat__value mono">37,5 %</span></div>
+      <div class="stat"><span class="stat__label">Kemenangan tersimpan</span>
+        <ol class="zot-skor mono" id="skor"></ol></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara memainkannya</summary>
+      <p class="zot-note">
+        Kastel Zot: delapan lantai, masing-masing 8&times;8 kamar. Cari
+        <b>Runestaff</b>, pakai <b>bola kristal</b> untuk mengetahui letak
+        <b>Orb of Zot</b>, lalu <b>teleport tepat ke sana</b> &mdash; itu
+        satu-satunya cara mengambilnya. Setelah itu keluar lewat pintu masuk
+        di lantai 1 dengan menekan <code>N</code>.
+      </p>
+      <ol class="howto__steps">
+        <li><strong>Gerak</strong> <code>N S E W</code>, dan petaknya
+            <b>melingkar</b> &mdash; keluar dari tepi kanan membawa Anda ke
+            tepi kiri. Itu <code>FNB</code> di baris 1150.</li>
+        <li><strong><code>U</code> / <code>D</code></strong> naik-turun tangga.
+            Tangga naik selalu tepat di atas tangga turun.</li>
+        <li><strong><code>DR</code></strong> minum dari kolam,
+            <strong><code>O</code></strong> buka peti atau buku,
+            <strong><code>G</code></strong> pandang bola kristal.</li>
+        <li><strong><code>F</code></strong> suar menyinari 3&times;3,
+            <strong><code>L</code></strong> lampu menyinari satu kamar.
+            Matikan saklar <code>LET Q=34</code> dan keduanya jadi
+            <em>tidak berguna</em> &mdash; itulah yang terjadi di disket
+            aslinya; lihat panel kanan.</li>
+        <li><strong>Bertarung</strong>: <code>A</code>ttack,
+            <code>R</code>etreat, <code>B</code>ribe, <code>C</code>ast
+            (mantra butuh IQ di atas 14).</li>
+        <li><strong>Pedagang</strong> bisa diajak dagang, diabaikan, atau
+            diserang. Menyerangnya membuat <b>semua</b> pedagang bermusuhan
+            sampai Anda menyuap salah satunya.</li>
+      </ol>
+    </details>
+  </section>
+
+  <aside class="stack">
+
+    <section class="panel zot-good">
+      <h2 class="panel__title">Sebuah perbandingan bukan benar/salah &mdash; ia angka</h2>
+      <div class="zot-code">1150 DEF FNB(Q)=Q+8*((Q=9)-(Q=0))
+1160 DEF FNC(Q)=-Q*(Q&lt;19)-18*(Q&gt;18)
+1170 DEF FND(Q)=64*(Q-1)+8*(X-1)+Y
+1180 DEF FNE(Q)=Q+100*(Q&gt;99)</div>
+      <p class="zot-note">
+        Di BASIC, <code>(Q=9)</code> <b>bernilai</b> &minus;1 kalau benar dan
+        0 kalau salah. Power memakai itu di mana-mana, dan hasilnya program
+        944 baris yang hampir tidak pernah bercabang:
+      </p>
+      <table class="zot-tbl">
+        <thead><tr><th>baris</th><th>yang ditulis</th><th>artinya</th></tr></thead>
+        <tbody>
+          <tr><td>1150</td><td><code>Q+8*((Q=9)-(Q=0))</code></td>
+              <td>lingkar 1..8 &mdash; petaknya <b>torus</b></td></tr>
+          <tr><td>1160</td><td><code>-Q*(Q&lt;19)-18*(Q&gt;18)</code></td>
+              <td><code>min(Q,18)</code></td></tr>
+          <tr><td>3900</td><td><code>X=X+(O$="N")-(O$="S")</code></td>
+              <td>gerak, tanpa satu pun <code>IF</code></td></tr>
+          <tr><td>2480</td><td><code>AV=-3*(O$="P")-2*(O$="C")-(O$="L")</code></td>
+              <td>huruf jadi angka 0..3</td></tr>
+          <tr><td>3040</td><td><code>-(C(Q,1)=X)*(C(Q,2)=Y)*(C(Q,3)=Z)</code></td>
+              <td><b>DAN</b> tiga arah = perkalian</td></tr>
+          <tr><td>4860</td><td><code>ON (1-(ST&lt;1)) GOTO 2920,8840</code></td>
+              <td><code>if/else</code> jadi lompatan berindeks</td></tr>
+        </tbody>
+      </table>
+      <p class="zot-note">
+        Port ini <b>mempertahankan idiomnya</b> lewat satu fungsi
+        <code>b(c)</code> yang mengembalikan &minus;1 atau 0. Meratakannya
+        jadi <code>if/else</code> akan menghapus justru hal yang membuat
+        program ini layak dibaca &mdash; dan menyembunyikan satu cacatnya
+        yang lahir dari tanda idiom itu sendiri.
+      </p>
+    </section>
+
+    <section class="panel zot-bad">
+      <h2 class="panel__title">Petanya membuka seluruh lantai, dan komentarnya tahu</h2>
+      <div class="zot-code">1310 L(Q)=101                     ' semua kamar: kode+100 = belum terlihat
+4140 Q=L(FND(Z))
+4150 IF Q &gt; 99 THEN Q=Q-100      ' LET Q=34 TO HIDE ROOMS
+4170 PRINT " ";I$(Q);"   ";
+…
+9550 DATA X,"?",NO WEAPON," SANDWICH"</div>
+      <p class="zot-note">
+        <code>L()</code> menyimpan &ldquo;belum terlihat&rdquo; sebagai
+        <b>kode + 100</b>. Baris 4150 seharusnya menyembunyikan kamar yang
+        belum dikunjungi; yang ditulis justru <b>membukanya</b> &mdash; dan
+        komentar di baris yang sama menyebutkan perbaikannya.
+        <code>DATA</code> 9550 bahkan sudah menyediakan entri ke-34
+        (<code>X</code> / <code>?</code>) khusus untuk itu.
+      </p>
+      <p class="zot-note">
+        Kabutnya <b>dipelihara dengan benar</b> oleh enam baris lain
+        (1180, 3000, 4390, 4690, 5540, 6000) dan tidak pernah dibaca untuk
+        peta. Yang ikut mati karena satu baris ini:
+      </p>
+      <table class="zot-tbl">
+        <thead><tr><th>yang jadi tak berguna</th><th>baris</th></tr></thead>
+        <tbody>
+          <tr><td>suar (<code>FLARE</code>) &mdash; membuka 3&times;3</td><td>4320&ndash;4460</td></tr>
+          <tr><td>lampu (<code>LAMP</code>) &mdash; membuka satu kamar</td><td>4520&ndash;4720</td></tr>
+          <tr><td>kutukan <i>Forgetting</i> &mdash; menyembunyikan ulang</td><td>2970&ndash;3050</td></tr>
+          <tr><td><i>Green Gem</i> &mdash; penangkal kutukan itu</td><td>3780&ndash;3810</td></tr>
+        </tbody>
+      </table>
+      <p class="zot-note">
+        <b>Port ini menyalakan kabutnya sebagai bawaan</b> &mdash;
+        satu-satunya penyimpangan aturan main di sini, dan ia dinyatakan
+        alih-alih disamarkan. Alasannya: dengan kabut mati, keempat mekanik
+        di atas tidak berguna sama sekali, dan permainannya kehilangan hal
+        yang membuatnya permainan.
+      </p>
+      <p class="zot-note">
+        Matikan saklar <b><code>LET Q=34</code></b> di bawah layar lalu tekan
+        <code>M</code>, dan Anda melihat <b>persis apa yang dilakukan disket
+        1980</b>: seluruh lantai terbuka dari giliran pertama, dan suar Anda
+        tiba-tiba tidak ada gunanya.
+      </p>
+    </section>
+
+    <section class="panel zot-bad">
+      <h2 class="panel__title">Empat ras yang jumlah nilainya sama persis</h2>
+      <div class="zot-code">2120 IF LEFT$(R$(Q),1)=O$ THEN RC=Q : ST=ST+2*Q : DX=DX-2*Q
+2150 OT=OT+4*(RC=1)
+9580 DATA HOBBIT,ELF,MAN,DWARF</div>
+      <table class="zot-tbl">
+        <thead><tr><th>ras</th><th>Q</th><th>ST</th><th>DX</th><th>ST+DX</th><th>titik bebas</th></tr></thead>
+        <tbody>
+          <tr><td>HOBBIT</td><td>1</td><td>4</td><td>12</td><td>16</td>
+              <td class="zot-salah"><b>4</b></td></tr>
+          <tr><td>ELF</td><td>2</td><td>6</td><td>10</td><td>16</td><td>8</td></tr>
+          <tr><td>MAN</td><td>3</td><td>8</td><td>8</td><td>16</td><td>8</td></tr>
+          <tr><td>DWARF</td><td>4</td><td>10</td><td>6</td><td>16</td><td>8</td></tr>
+        </tbody>
+      </table>
+      <p class="zot-note">
+        <code>ST+DX</code> selalu <b>16</b>, apa pun rasnya &mdash;
+        <code>2+2Q</code> dan <code>14&minus;2Q</code> saling meniadakan.
+        Jadi satu-satunya yang benar-benar membedakan keempat ras adalah
+        <b>jumlah titik bebas</b>.
+      </p>
+      <p class="zot-note">
+        Dan baris 2150 memberi Hobbit <b>empat titik lebih sedikit</b>,
+        bukan lebih banyak: <code>(RC=1)</code> bernilai &minus;1, jadi
+        <code>OT+4*(RC=1)</code> <b>mengurangi</b>. Untuk menambah, tandanya
+        harus <code>OT-4*(RC=1)</code>.
+      </p>
+      <p class="zot-note">
+        Hasilnya Hobbit <b>didominasi ketat</b>: nilai dasarnya sama dengan
+        yang lain, titik bebasnya separuh, dan tidak ada satu kalimat pun di
+        layar yang menyebutkannya. Idiom yang membuat program ini elegan
+        adalah juga yang membuat cacat ini tak terlihat &mdash; sebuah tanda
+        minus yang hilang tidak menghasilkan galat, cuma ketidakadilan.
+      </p>
+    </section>
+
+    <section class="panel zot-warn">
+      <h2 class="panel__title">Seluruh syarat kemenangan ada di satu baris</h2>
+      <div class="zot-code">1960 Q=109                    ' Orb DISIMPAN sebagai kamar "warp" biasa
+6080 IF Q &gt; 9 GOTO 6110
+6090 IF (O(1)=X) AND (O(2)=Y) AND (O(3)=Z) THEN ON (1-(O$="T")) GOTO 3900,9370
+5650 IF RF &lt;&gt; 0 GOTO 5690   ' teleport butuh Runestaff</div>
+      <p class="zot-note">
+        Orb of Zot disimpan sebagai kamar <b>warp</b> — kode 109, sama
+        persis dengan 24 warp jebakan lainnya. Di peta ketiganya bertanda
+        <code>W</code>, dan layar bantuan aslinya menuliskannya apa adanya:
+        <i>&ldquo;W = WARP/ORB&rdquo;</i>.
+      </p>
+      <p class="zot-note">
+        Baris 6090 memutuskan mana yang terjadi. <code>O$</code> berisi
+        perintah terakhir; kalau ia <code>"T"</code>, perbandingannya
+        &minus;1, <code>1&minus;(&minus;1)=2</code>, dan
+        <code>ON&hellip;GOTO</code> mengambil cabang <b>kedua</b> &mdash;
+        Anda menemukan Orb. Untuk perintah lain nilainya 1, cabang pertama,
+        dan Anda terlempar ke tempat acak.
+      </p>
+      <p class="zot-note">
+        Jadi rantai kemenangan seluruh permainan &mdash; bunuh monster
+        pembawa Runestaff, pandang bola kristal sampai ia menyebut letak
+        Orb, teleport tepat ke sana, lalu keluar lewat pintu masuk &mdash;
+        dinyatakan dalam <b>satu baris</b>, lewat sebuah perbandingan yang
+        dipakai sebagai indeks.
+      </p>
+    </section>
+
+    <section class="panel zot-warn">
+      <h2 class="panel__title">Bola kristalnya berbohong 62,5 % waktu</h2>
+      <div class="zot-code">5590 A=FNA(8) : B=FNA(8) : C=FNA(8)
+5600 IF FNA(8) &lt; 4 THEN A=O(1) : B=O(2) : C=O(3)
+5610 PRINT "***THE ORB OF ZOT*** AT (";A;",";B;") LEVEL";C;"!"</div>
+      <p class="zot-note">
+        Tiga koordinat acak dibuat lebih dulu, lalu <b>3 dari 8</b>
+        kemungkinan menimpanya dengan letak Orb yang sebenarnya. Jadi
+        petunjuknya benar <b>37,5 %</b> waktu &mdash; disimulasikan 200.000
+        kali: 37,63 % (selisihnya tebakan acak yang kebetulan tepat, 1 dari
+        512).
+      </p>
+      <p class="zot-note">
+        Dan tidak ada apa pun di layar yang membedakan petunjuk benar dari
+        petunjuk palsu. Satu-satunya cara memastikannya adalah
+        <b>teleport ke sana dan lihat</b> &mdash; yang butuh Runestaff, dan
+        gagal berarti mendarat di kamar acak.
+      </p>
+    </section>
+
+    <section class="panel zot-warn">
+      <h2 class="panel__title">Satu larik, dua tabel &mdash; dan satu DATA, tiga hal</h2>
+      <div class="zot-code">1340 FOR Q=1 TO 8 : READ W$(Q),E$(Q) : NEXT Q
+9550 DATA X,"?",NO WEAPON," SANDWICH"
+9560 DATA DAGGER," STEW",MACE," SOUP",SWORD," BURGER",NO ARMOR," ROAST"
+9570 DATA LEATHER," FILET",CHAINMAIL," TACO",PLATE," PIE"
+5960 PRINT "WEAPON = ";W$(WV+1);"  ARMOR = ";W$(AV+5)</div>
+      <p class="zot-note">
+        <code>W$</code> berisi <b>empat senjata lalu empat baju zirah</b> di
+        satu larik delapan, dan <code>+5</code> di baris 5960 adalah
+        jahitannya. Sementara <code>E$</code> &mdash; daftar lelucon makanan
+        yang dipakai waktu Anda memakan monster yang baru dibunuh &mdash;
+        ikut terbaca di gelung <code>READ</code> yang sama.
+      </p>
+      <p class="zot-note">
+        Jadi satu blok <code>DATA</code> memuat tiga hal yang sama sekali
+        tidak berhubungan, dan yang memisahkannya cuma <b>urutan</b>.
+        Menyisipkan satu senjata baru akan menggeser nama baju zirah
+        <em>dan</em> menu makanannya sekaligus.
+      </p>
+    </section>
+
+    <section class="panel zot-warn">
+      <h2 class="panel__title">Monster tanpa tabel monster</h2>
+      <div class="zot-code">6180 A=L(FND(Z))-12
+7390 Q1=1+INT(A/2) : Q2=A+2 : Q3=1</div>
+      <p class="zot-note">
+        Serangan dan darah tiap monster diturunkan dari <b>satu angka</b>:
+        urutannya di <code>DATA</code>. Kobold (A=1) menyerang 1 dan
+        berdarah 3; Dragon (A=12) menyerang 7 dan berdarah 14; pedagang yang
+        marah (A=13) menyerang 7 dan berdarah 15 &mdash; lawan terkuat di
+        permainan ini adalah <b>toko</b>.
+      </p>
+      <p class="zot-note">
+        Tidak ada tabel serangan, tidak ada tabel darah, tidak ada satu pun
+        angka keseimbangan yang ditulis tangan. Menyisipkan satu monster di
+        tengah daftar akan menggeser seluruh kurva kesulitan tanpa satu
+        baris pun perlu diubah &mdash; hemat, dan sekaligus membuat
+        penyetelan mustahil.
+      </p>
+    </section>
+
+    <section class="panel zot-bad">
+      <h2 class="panel__title">Tidak ada satu pun RANDOMIZE</h2>
+      <div class="zot-code">1250 Q=RND(1)</div>
+      <p class="zot-note">
+        Di seluruh 944 baris tidak ada <code>RANDOMIZE</code>. Tanpa itu,
+        <code>RND</code> di GW-BASIC selalu mulai dari benih yang sama:
+        <b>kastel pertama tiap kali program dijalankan identik</b>. Bukan 60
+        kemungkinan seperti <a href="../../docs/wildcat.md">WILDCAT</a>,
+        bukan 119 seperti <a href="../../docs/startrek.md">STARTREK</a>,
+        bukan 3.600 seperti <a href="../../docs/droids.md">DROIDS</a> &mdash;
+        <b>satu</b>.
+      </p>
+      <p class="zot-note">
+        Baris 1250 membuang satu bilangan acak, yang tidak mengubah apa pun.
+        Kastel <em>kedua</em> dan seterusnya berbeda, karena baris 9320
+        kembali ke 1240 tanpa memulai ulang deretnya &mdash; jadi permainan
+        kedua di satu sesi terasa acak, dan permainan pertama tidak pernah
+        begitu.
+      </p>
+      <p class="zot-note">
+        Port ini memakai <code>crypto.getRandomValues</code> + mulberry32
+        (<a href="../../docs/_fondasi.md">fondasi &sect;2.6</a>) dan
+        menampilkan nomor benihnya, jadi sebuah kastel bisa diulang
+        <b>dengan sengaja</b>.
+      </p>
+    </section>
+
+    <section class="panel zot-warn">
+      <h2 class="panel__title">Sisa-sisa yang tertinggal di listing</h2>
+      <table class="zot-tbl">
+        <thead><tr><th>baris</th><th>apa</th><th>keadaannya</th></tr></thead>
+        <tbody>
+          <tr><td>4240&ndash;4250</td><td><code>PRINT ") LEVEL";Z</code></td>
+              <td>baris 4230 berakhir <code>GOTO 4470</code> dan tak ada satu
+                  pun lompatan ke 4240 &mdash; <b>tak terjangkau</b></td></tr>
+          <tr><td>9960&ndash;9980</td><td><code>INPUT O$ : Q=INT(VAL(O$))</code></td>
+              <td>subrutin yang <b>tidak pernah dipanggil</b>; kembarannya di
+                  9990 punya pemeriksaan 1..8 dan itulah yang dipakai</td></tr>
+          <tr><td>1010</td><td><code>SAMP$="YES"</code></td>
+              <td><b>bukan</b> mati &mdash; itu <b>titik masuk kedua</b>,
+                  dipakai <code>CHAIN "SAMPLES",1000</code> di baris 10180.
+                  Nomor baris sebagai antarmuka publik, sama seperti
+                  <code>MORTGAGE.BAS</code></td></tr>
+        </tbody>
+      </table>
+      <p class="zot-note">
+        Tapi <code>SAMPLES.BAS</code> <b>tidak ada di koleksi ini</b>. Jadi
+        baris terakhir program ini menunjuk ke berkas yang hilang &mdash;
+        separuh program yang lenyap untuk kesekian kalinya, sesudah
+        <a href="../../docs/check.md">CHECK</a> yang meluncurkan
+        <code>info.sys</code> dan <code>DRAW.EXE</code> yang hilang dari
+        <a href="../../docs/draw.md">DRAW</a>.
+      </p>
+    </section>
+
+    <p class="zot-links">
+      <a href="../../docs/wizard.md">Catatan lengkap port ini</a> &middot;
+      <a href="../../../reviews/WIZARD.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../index.html">Semua program</a>
+    </p>
+  </aside>
+</main>
+
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="../../_shared/zot-kamar.js?v=1"></script>
+<script src="../../_shared/zot.js?v=3"></script>
+<script src="wizard.js?v=3"></script>
+</body>
+</html>

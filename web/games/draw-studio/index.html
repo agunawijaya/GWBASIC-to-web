@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ASCII Studio — Classic DOS BASIC Games</title>
+<meta name="description" content="Turunan modern dari DRAW.BAS: melukis ASCII dengan tetikus — pensil, garis, kotak, elips, isi-ember, teks, pipet, undo — dan sudut garisnya dipilih sendiri oleh program, memakai pasangan glif CP437 yang sama. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="studio.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap p-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="p-stage">
+
+        <div class="p-bar" id="alat">
+          <button class="btn btn--ghost btn--sm" data-a="pensil" type="button">✏ Pensil</button>
+          <button class="btn btn--ghost btn--sm" data-a="garis" type="button">╱ Garis</button>
+          <button class="btn btn--ghost btn--sm" data-a="kotak" type="button">▭ Kotak</button>
+          <button class="btn btn--ghost btn--sm" data-a="kotakIsi" type="button">▬ Kotak isi</button>
+          <button class="btn btn--ghost btn--sm" data-a="elips" type="button">◯ Elips</button>
+          <button class="btn btn--ghost btn--sm" data-a="isi" type="button">🪣 Isi</button>
+          <button class="btn btn--ghost btn--sm" data-a="teks" type="button">T Teks</button>
+          <button class="btn btn--ghost btn--sm" data-a="pipet" type="button">⌖ Pipet</button>
+          <button class="btn btn--ghost btn--sm" data-a="hapus" type="button">⌫ Hapus</button>
+        </div>
+
+        <div class="p-crt">
+          <div class="p-kanvas" id="kanvas" role="img"
+               aria-label="Kanvas 80 kolom kali 25 baris karakter CP437"></div>
+        </div>
+
+        <div class="p-bar" id="gaya">
+          <span class="p-kecil">Gaya garis:</span>
+          <button class="btn btn--ghost btn--sm" data-g="tunggal" type="button">─ tunggal</button>
+          <button class="btn btn--ghost btn--sm" data-g="ganda" type="button">═ ganda</button>
+          <span class="p-kecil" style="margin-left:auto">Ctrl+Z / Ctrl+Y</span>
+          <button class="btn btn--ghost btn--sm" id="undo" type="button">↶ Undo</button>
+          <button class="btn btn--ghost btn--sm" id="redo" type="button">↷ Redo</button>
+          <button class="btn btn--ghost btn--sm" id="bersih" type="button">Bersihkan</button>
+          <button class="btn btn--ghost btn--sm" id="demo" type="button">Demo</button>
+        </div>
+
+        <div class="p-panel">
+          <div id="glif"></div>
+          <div class="p-grup"><span class="p-grupLabel">warna depan</span>
+            <span id="fgbar" style="display:flex;gap:2px;flex-wrap:wrap"></span></div>
+          <div class="p-grup"><span class="p-grupLabel">warna latar</span>
+            <span id="bgbar" style="display:flex;gap:2px;flex-wrap:wrap"></span></div>
+          <div class="p-bar" style="margin-top:.5rem">
+            <button class="btn btn--primary btn--sm" id="simpan" type="button">Simpan</button>
+            <input id="nama" class="p-angka" maxlength="16" value="KARYA1">
+            <button class="btn btn--ghost btn--sm" id="salin" type="button">Salin sebagai teks</button>
+          </div>
+          <p class="p-pesan" id="pesan">Pilih alat, seret di kanvas. Sudut garis dipilih sendiri.</p>
+          <div id="daftar"></div>
+          <textarea class="p-keluaran" id="keluaran" hidden readonly></textarea>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">turunan modern</span>
+      <span class="ruleset__k">kanvas 80 &times; 25</span>
+      <span class="ruleset__k ruleset__k--baik">sudut garis dipilih sendiri</span>
+      <span class="ruleset__k">16 warna CGA</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Alat</span>
+        <span class="stat__value mono" id="s-alat">pensil</span></div>
+      <div class="stat"><span class="stat__label">Glif</span>
+        <span class="stat__value mono" id="s-glif">—</span></div>
+      <div class="stat"><span class="stat__label">Warna</span>
+        <span class="stat__value mono" id="s-warna">15 / 0</span></div>
+      <div class="stat"><span class="stat__label">Kursor</span>
+        <span class="stat__value mono" id="s-pos">—</span></div>
+      <div class="stat"><span class="stat__label">Sel terisi</span>
+        <span class="stat__value mono" id="s-isi">0</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara memakainya</summary>
+      <p class="p-note">
+        Melukis ASCII dengan tetikus. Pilih alat di bilah atas, glif dan warna di
+        panel bawah, lalu <strong>seret di kanvas</strong>.
+      </p>
+      <ol class="howto__steps">
+        <li><strong>Garis, kotak, dan elips memilih sudutnya sendiri.</strong>
+            Gambar dua kotak yang bersinggungan &mdash; sambungannya berubah jadi
+            <span class="p-g">├ ┬ ┼</span> dengan sendirinya. Itu bukan hiasan;
+            lihat panel sebelah untuk asal-usulnya.</li>
+        <li><strong>Pensil</strong> melukis bebas; sapuan cepat tetap tersambung
+            karena jejaknya diisi dengan algoritma garis Bresenham.</li>
+        <li><strong>Isi</strong> menyebar ke semua sel bertetangga yang glif
+            <em>dan</em> warnanya sama. <strong>Pipet</strong> mengambil glif dan
+            warna dari sel mana pun.</li>
+        <li><strong>Teks</strong>: klik sekali untuk menaruh kursor, lalu ketik.
+            Enter pindah baris, Backspace menghapus.</li>
+        <li><strong>Ctrl+Z / Ctrl+Y</strong> untuk undo dan redo (60 langkah).
+            <strong>Salin sebagai teks</strong> mengeluarkan gambarnya sebagai
+            teks biasa yang bisa ditempel ke mana saja.</li>
+      </ol>
+    </details>
+  </section>
+
+  <aside class="stack">
+
+    <section class="panel p-good">
+      <h2 class="panel__title">Dari mana kemampuan menyambung ini datang</h2>
+      <p class="p-note">
+        <a href="../draw/index.html">Port setia DRAW.BAS</a> menemukan bahwa
+        palet 1982-nya bukan lima puluh benda melainkan <b>dua puluh lima
+        pasang</b>: <code>A</code> memberi <span class="p-g">╔</span> dan
+        <code>a</code> memberi <span class="p-g">╚</span>, <code>I</code> memberi
+        <span class="p-g">─</span> dan <code>i</code> memberi
+        <span class="p-g">│</span>.
+      </p>
+      <p class="p-note">
+        Kalau glifnya berpasangan begitu, artinya ia <b>potongan yang saling
+        menyambung</b> &mdash; dan kalau potongannya saling menyambung, komputer
+        bisa memilihkan potongan yang benar sendiri. Untuk tiap sel cukup dilihat
+        tetangga mana yang juga berisi garis, lalu glifnya diambil dari tabel
+        enam belas kemungkinan:
+      </p>
+      <table class="p-tbl">
+        <tr><th>tetangga</th><th>tunggal</th><th>ganda</th></tr>
+        <tr><td>timur + barat</td><td class="p-g">─</td><td class="p-g">═</td></tr>
+        <tr><td>utara + selatan</td><td class="p-g">│</td><td class="p-g">║</td></tr>
+        <tr><td>timur + selatan</td><td class="p-g">┌</td><td class="p-g">╔</td></tr>
+        <tr><td>utara + timur + selatan</td><td class="p-g">├</td><td class="p-g">╠</td></tr>
+        <tr><td>keempatnya</td><td class="p-g">┼</td><td class="p-g">╬</td></tr>
+      </table>
+      <p class="p-note">
+        Program 1982-nya menyuruh Anda memilih tiap sudut sendiri, satu tombol
+        per potongan. Itu bukan kelalaian &mdash; menyapu tetangga tiap sel
+        setiap kali garis digambar terlalu mahal untuk BASIC di 4,77 MHz. Yang
+        berubah sekarang bukan gagasannya, melainkan harga menjalankannya.
+      </p>
+    </section>
+
+    <section class="panel">
+      <h2 class="panel__title">Apa yang tetap, apa yang berubah</h2>
+      <table class="p-tbl">
+        <tr><th></th><th>DRAW.BAS (1982)</th><th>ASCII Studio</th></tr>
+        <tr><td>Kanvas</td><td>80 &times; 19</td><td>80 &times; 25</td></tr>
+        <tr><td>Glif</td><td>50, dari <code>DATA</code></td><td>50 yang sama, dikelompokkan</td></tr>
+        <tr><td>Masukan</td><td>papan ketik saja</td><td>tetikus + papan ketik</td></tr>
+        <tr><td>Bentuk</td><td>digambar sel demi sel</td><td>garis, kotak, elips, isi</td></tr>
+        <tr><td>Sudut</td><td>dipilih pemakai</td><td>dipilih program</td></tr>
+        <tr><td>Warna</td><td>16 depan / 8 latar</td><td>sama</td></tr>
+        <tr><td>Batal</td><td>tidak ada</td><td>60 langkah</td></tr>
+        <tr><td>Keluaran</td><td><code>.pic</code> = salinan RAM layar</td><td>teks biasa + simpanan peramban</td></tr>
+      </table>
+      <p class="p-note">
+        Halaman ini <b>bukan port</b> dan tidak diperlakukan sebagai port: ia
+        tidak masuk hitungan 66 program, dan aturan "tiap penyimpangan wajib
+        dijelaskan" tidak berlaku di sini karena tidak ada yang disimpangi.
+        Port setianya berdiri sendiri, utuh, di
+        <a href="../draw/index.html">games/draw/</a>.
+      </p>
+    </section>
+
+    <p class="p-links">
+      <a href="../../docs/draw-studio.md">Catatan lengkap halaman ini</a> ·
+      <a href="../draw/index.html">Port setia DRAW.BAS</a> ·
+      <a href="../../docs/draw.md">Catatan port itu</a> ·
+      <a href="../../index.html">Semua program</a>
+    </p>
+  </aside>
+</main>
+
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="studio.js?v=4"></script>
+</body>
+</html>

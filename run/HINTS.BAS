@@ -1,0 +1,132 @@
+10 ON ERROR GOTO 1320
+20 ON KEY(10) GOSUB 1220
+30 ON KEY(1) GOSUB 1300
+40 DEFSTR Z:SCREEN 0,0,0:WIDTH 80
+50 XLIN=1:XPOS=1
+60 CLS:GOSUB 1270
+70 LOCATE 1,1:PRINT "É"STRING$(78,"Í")"»"
+80 FOR A=2 TO 22:LOCATE A,1:PRINT "º":LOCATE A,80:PRINT "º";:NEXT
+90 LOCATE 23,1:PRINT "È"STRING$(78,"Í")"¼";
+100 COLOR 15,0:LOCATE 3,31:PRINT "HELPFUL DOS COMMANDS":COLOR 3,0
+110 LOCATE 5,20:PRINT   "Before proceeding  with specific commands,
+120 LOCATE 6,20:PRINT   "it will be  helpful for you to understand
+130 LOCATE 7,20:PRINT  "a few terms and concepts.
+140 LOCATE 9,20:PRINT  "FRAGMENTATION  is a term used to describe
+150 LOCATE 10,20:PRINT "a file that is `broken up' and resides on
+160 LOCATE 11,20:PRINT "different parts of a diskette rather than
+170 LOCATE 12,20:PRINT "intact in one place as it should be.
+180 LOCATE 14,20:PRINT "There are TWO types of commands, INTERNAL
+190 LOCATE 15,20:PRINT "and EXTERNAL. Internal commands are built
+200 LOCATE 16,20:PRINT "into the command processor;  and external
+210 LOCATE 17,20:PRINT "commands reside on the  DOS  diskette.
+220 LOCATE 19,20:PRINT "All of the commands on the next 3 screens
+230 LOCATE 20,20:PRINT "(except `COPY') are external commands, so
+240 LOCATE 21,20:PRINT "THEY ALL REQUIRE USE OF THE DOS DISKETTE!
+250 GOSUB 1190
+260 IF BACKFLAG THEN RUN"intro
+270 CLS:GOSUB 1270
+280 LOCATE 1,1:PRINT "É"STRING$(78,"Í")"»"
+290 FOR A=2 TO 22:LOCATE A,1:PRINT "º":LOCATE A,80:PRINT "º";:NEXT
+300 LOCATE 23,1:PRINT "È"STRING$(78,"Í")"¼";
+310 COLOR 15,0:LOCATE 3,31:PRINT "HELPFUL DOS COMMANDS":COLOR 3,0
+320 LOCATE 5,10:PRINT "FORMAT B:/S
+330 LOCATE 5,24:PRINT "You must put  DOS  onto all new diskettes that
+340 LOCATE 6,24:PRINT "you want to use with your disk driven PC. With
+350 LOCATE 7,24:PRINT "third party software, you must  FORMAT a blank
+360 LOCATE 8,24:PRINT "diskette BEFORE you can copy anything onto it.
+370 LOCATE 10,24:PRINT"To FORMAT a new diskette, first insert the DOS
+380 LOCATE 11,24:PRINT"diskette. Type FORMAT B:/S and press ENTER key.
+390 LOCATE 13,24:PRINT"By using Format B:/S you will FORMAT and trans-
+400 LOCATE 14,24:PRINT"fer the three system files to the new diskette.
+410 LOCATE 16,10:PRINT"CHKDSK B:
+420 LOCATE 16,24:PRINT"This command will tell you:  1) how many total
+430 LOCATE 17,24:PRINT"bytes of storage are on the diskette,   2) how
+440 LOCATE 18,24:PRINT"many  bytes  of  storage that remain available,
+450 LOCATE 19,24:PRINT"3) the number of files,   4) total bytes of PC
+460 LOCATE 20,24:PRINT"memory, and 5) bytes of memory still available.
+470 GOSUB 1190
+480 IF BACKFLAG THEN 60
+490 CLS:GOSUB 1270
+500 LOCATE 1,1:PRINT "É"STRING$(78,"Í")"»"
+510 FOR A=2 TO 22:LOCATE A,1:PRINT "º":LOCATE A,80:PRINT "º";:NEXT
+520 LOCATE 23,1:PRINT "È"STRING$(78,"Í")"¼";
+530 COLOR 15,0:LOCATE 3,31:PRINT "HELPFUL DOS COMMANDS":COLOR 3,0
+540 LOCATE 5,9:PRINT "DISKCOPY A: B:
+550 LOCATE 5,24:PRINT  "This command will produce a `carbon  copy' of the
+560 LOCATE 6,24:PRINT  "diskette in drive  A  to the diskette in drive  B.
+570 LOCATE 8,9:PRINT "DISKCOMP A: B:
+580 LOCATE 8,24:PRINT  "This should be used after a diskcopy command.  It
+590 LOCATE 9,24:PRINT  "will verify that the orginal was copied correctly.
+600 LOCATE 11,9:PRINT "COPY A:*.* B:
+610 LOCATE 11,24:PRINT "This command is slower than the  diskcopy command,
+620 LOCATE 12,9:PRINT " (Internal)    but is useful because it copies all files  sequen-
+630 LOCATE 13,24:PRINT "tually and re-groups any  FRAGMENTED  files. This
+640 LOCATE 14,24:PRINT "command can also be used to copy a single file by
+650 LOCATE 15,24:PRINT "file name.  Please refer to your  DOS  manual.
+660 LOCATE 17,9:PRINT "COMP A:*.* B:
+670 LOCATE 17,24:PRINT "Compares the copied diskette to the original on a
+680 LOCATE 18,24:PRINT "file by file (ie: name by name) basis.
+690 GOSUB 1190
+700 IF BACKFLAG THEN 270
+710 CLS:GOSUB 1270:LOCATE 1,1:PRINT "É"STRING$(78,"Í")"»"
+720 FOR A=2 TO 22:LOCATE A,1:PRINT "º":LOCATE A,80:PRINT "º";:NEXT
+730 LOCATE 23,1:PRINT "È"STRING$(78,"Í")"¼";
+740 COLOR 15,0:LOCATE 3,31:PRINT "HELPFUL DOS COMMANDS":COLOR 3,0
+750 LOCATE 4,10:PRINT "
+760 LOCATE 5,10:PRINT "DATE          This command will set the date for new
+770 LOCATE 6,10:PRINT "              files and will appear in the directory.
+780 LOCATE 7,10:PRINT "
+790 LOCATE 8,10:PRINT "MODE[]:[],[]  This command will set the mode for the
+800 LOCATE 9,10:PRINT "              printer or monitor.
+810 LOCATE 10,10:PRINT"
+820 LOCATE 11,10:PRINT"SYS B:        Transfers the three  DOS  system files.
+830 LOCATE 12,10:PRINT"
+840 LOCATE 13,10:PRINT"TIME          This command will allow you to set the
+850 LOCATE 14,10:PRINT"              Hours and Minutes used as the starting
+860 LOCATE 15,10:PRINT"              point on the internal clock.
+870 LOCATE 16,10:PRINT"
+880 LOCATE 17,10:PRINT"
+890 LOCATE 18,10:PRINT"              The MODE and SYS commands are EXTERNAL.
+900 LOCATE 19,10:PRINT"              They require the use of a DOS diskette.
+910 LOCATE 20,10:PRINT"
+920 GOSUB 1190
+930 IF BACKFLAG THEN 490
+940 CLS:GOSUB 1270
+950 LOCATE 1,1:PRINT "É"STRING$(78,"Í")"»"
+960 FOR A=2 TO 22:LOCATE A,1:PRINT "º":LOCATE A,80:PRINT "º";:NEXT
+970 LOCATE 23,1:PRINT "È"STRING$(78,"Í")"¼";
+980 COLOR 15,0:LOCATE 3,31:PRINT "HELPFUL DOS COMMANDS":COLOR 3,0
+990 LOCATE 4,10:PRINT "
+1000 LOCATE 5,10:PRINT "(batch)       Executes a `batch' of  files or a series of
+1010 LOCATE 6,10:PRINT "              commands  without  re-entering each command.
+1020 LOCATE 7,10:PRINT "              This will be done automatically and sequen-
+1030 LOCATE 8,10:PRINT "              tially for all files with `.BAT' extentions.
+1040 LOCATE 9,10:PRINT "
+1050 LOCATE 10,10:PRINT"DIR           Lists all filenames,  the type of  file and
+1060 LOCATE 11,10:PRINT"              its extention (ie: .com, .bas, .exe, .bat),
+1070 LOCATE 12,10:PRINT"              the size of the file in bytes, and also the
+1080 LOCATE 13,10:PRINT"              date that the file was created.
+1090 LOCATE 14,10:PRINT"
+1100 LOCATE 15,10:PRINT"ERASE         Deletes a file from diskette.  You must use
+1110 LOCATE 16,10:PRINT"              the complete filename and its extention.
+1120 LOCATE 18,10:PRINT"TYPE          Displays file contents.
+1130 LOCATE 20,10:PRINT"              These are  INTERNAL  commands.  They DO NOT
+1140 LOCATE 21,10:PRINT"              require the use of your  DOS  diskette.
+1150 GOSUB 1190
+1160 IF BACKFLAG THEN 710
+1170 CLS:GOSUB 1270
+1180 RUN"intro
+1190 BACKFLAG=0:KEY(1) ON:LOCATE 24,12:COLOR 15,0:PRINT "Strike Any Key To Continue   Strike <F1> For Previous Page";:COLOR 3,0
+1200 DEF SEG:POKE 106,0:IF INKEY$<>"" THEN 1200
+1210 Z=INKEY$:IF Z="" THEN 1210 ELSE RETURN
+1220 KEY(10) OFF:XLIN=CSRLIN:XPOS=POS(0):LOCATE 25,1:PRINT SPC(79);
+1230 LOCATE 25,21:COLOR 15,0:PRINT "Do You Wish To Leave This Program? <Y/N>";:COLOR 3,0
+1240 Z=INKEY$:IF Z="" THEN 1240
+1250 IF Z="y" OR Z="Y" THEN RUN"INTRO
+1260 IF Z<>"n" AND Z<>"N" THEN 1240
+1270 LOCATE 25,1:PRINT SPC(79);:LOCATE 25,23:COLOR 0,7
+1280 PRINT " Strike <F10> To Leave This Program ";:COLOR 3,0:LOCATE XLIN,XPOS,0
+1290 KEY(10) ON:RETURN
+1300 KEY(1) OFF:BACKFLAG=1:RETURN 1310
+1310 RETURN
+1320 RUN "menu

@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hearing And Eye Test — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari HEAREYE.BAS (Friendlyware, 1982): kartu Snellen dari aksara blok CGA dan sapuan nada 100-30.000 Hz yang 92% waktunya dihabiskan di atas 14 kHz. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="../../_shared/reader.css">
+<link rel="stylesheet" href="../history/history.css">
+<link rel="stylesheet" href="heareye.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap h-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="h-stage">
+        <div id="reader"></div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">117 baris</span>
+      <span class="ruleset__k">2 uji</span>
+      <span class="ruleset__k" id="k-nada"></span>
+      <span class="ruleset__k">7 baris Snellen</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Halaman</span>
+        <span class="stat__value mono" id="s-hal">—</span></div>
+      <div class="stat"><span class="stat__label">Baris BASIC</span>
+        <span class="stat__value mono" id="s-baris">—</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara memakai</summary>
+      <p class="h-lead">
+        Dua alat kesehatan rumahan dari 1982: <strong>kartu mata Snellen</strong>
+        yang digambar dari aksara blok CGA, dan <strong>sapuan nada</strong>
+        100&ndash;30.000&nbsp;Hz lewat pengeras suara PC. Keduanya membuka
+        dengan peringatan yang sama: <em>&ldquo;This test is not a replacement
+        for regular visits to your doctor.&rdquo;</em>
+      </p>
+      <ol class="howto__steps">
+        <li><strong>Maju</strong> / <strong>Mundur</strong>, panah
+            <kbd>&larr;</kbd> <kbd>&rarr;</kbd>, atau rel angka.
+            <strong>Aslinya tidak punya tombol mundur sama sekali</strong>
+            &mdash; ini tambahan, dan dinyatakan begitu.</li>
+        <li>Di halaman <strong>kartu mata</strong>, setel dulu ukuran layarnya.
+            Tanpa itu label <code>20/20</code> tidak berarti apa-apa &mdash;
+            dan itu berlaku untuk aslinya juga.</li>
+        <li>Di halaman <strong>uji nada</strong>, tekan Mulai lalu tekan
+            Berhenti begitu nadanya tidak terdengar lagi. Frekuensi saat itu
+            yang dilaporkan, sama seperti baris 1030.</li>
+      </ol>
+      <p>
+        Aslinya kedua uji berdiri sendiri lewat menu, dan sesudah selesai
+        program <em>memulai dirinya kembali dari baris 10</em>. Di sini
+        keduanya jadi satu urutan lima halaman.
+      </p>
+    </details>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel h-warn">
+      <p class="eyebrow">Sembilan jebakan tombol yang tidak melakukan apa-apa</p>
+<pre class="h-code">1080 ON KEY(1) GOSUB 1180
+  …          (sembilan baris)
+1160 ON KEY(9) GOSUB 1180
+1170 FOR A=1 TO 9:KEY(A) ON:NEXT
+1180 RETURN</pre>
+      <p class="h-note">
+        Sembilan tombol fungsi dijebak, dan penanganannya
+        <strong>kosong</strong>. Sekilas terlihat seperti tombol yang sengaja
+        dimatikan &mdash; tapi bukan itu sebabnya.
+      </p>
+      <p class="h-note">
+        Di GW-BASIC, <kbd>F1</kbd>&hellip;<kbd>F9</kbd> punya
+        <strong>makro bawaan</strong>: F1 mengetik <code>LIST</code>, F2
+        <code>RUN</code>, F3 <code>LOAD"</code>. <code>KEY OFF</code> di baris
+        10 cuma menyembunyikan tampilannya di baris 25 &mdash; makronya
+        <em>tetap</em> mengetik. Program ini membaca masukan lewat
+        <code>INKEY$</code>, jadi tanpa jebakan itu menekan F1 akan menumpahkan
+        huruf <code>L-I-S-T</code> ke dalam uji.
+      </p>
+      <p class="h-note">
+        Jadi penangan kosong bukan &ldquo;tidak jadi dibuat&rdquo; &mdash; ia
+        <strong>pekerjaannya memang tidak melakukan apa-apa</strong>.
+        Menjebak adalah cara mematikan makronya.
+      </p>
+      <p class="h-note">
+        Baris 1180 melayani dua peran sekaligus: ia <code>RETURN</code> untuk
+        <code>GOSUB 1080</code> <em>dan</em> badan kesembilan penangan itu.
+        Satu baris, dua tugas, nol komentar.
+      </p>
+    </div>
+
+    <div class="panel h-good">
+      <p class="eyebrow">Sapuan nada yang 92% waktunya di atas 14 kHz</p>
+<pre class="h-code">950 FOR I=100 TO 30000 STEP 100
+960   SOUND I,J
+970   IF I=14000 THEN <b>J=10</b>
+980   B$=INKEY$:IF B$&lt;&gt;"" THEN 1000
+990 NEXT I</pre>
+      <p class="h-note">
+        <code>J</code> adalah <strong>panjang</strong> tiap nada dalam tik
+        pencacah PC (1/18,2 detik). Ia mulai dari 1, dan berubah jadi
+        <strong>10</strong> begitu sapuan mencapai 14.000&nbsp;Hz &mdash;
+        sepuluh kali lebih <em>lambat</em>, bukan lebih cepat.
+      </p>
+      <table class="h-tbl" id="tbl-nada"></table>
+      <p class="h-note">
+        Alasannya ada di layar sebelumnya, baris 810: <em>&ldquo;most people
+        will lose the tone near 15,000 cycles per second&rdquo;</em>. Sapuan
+        itu <strong>melambat tepat sebelum jawabannya</strong>, supaya
+        pendengar punya waktu menyadari nadanya hilang.
+      </p>
+      <p class="h-note">
+        Satu angka, satu baris, dan ia mengubah alat ukur kasar jadi alat ukur
+        yang berguna. Tidak ada komentar yang menyebutnya.
+      </p>
+      <p class="h-note">
+        Kerapuhannya: <code>IF I=14000</code> memakai <strong>sama
+        dengan</strong>, bukan lebih besar. Ia benar hanya karena 14.000 tepat
+        kelipatan langkah 100 dan sapuan mulai dari 100. Ubah
+        <code>STEP</code> jadi 3, dan ambangnya tidak akan pernah kena.
+      </p>
+    </div>
+
+    <div class="panel h-warn">
+      <p class="eyebrow">&ldquo;Stand back 20 feet from the screen&rdquo;</p>
+      <p class="h-note">
+        Baris 300 menyuruh berdiri 20 kaki dari layar, lalu baris 350
+        menjanjikan bahwa mata normal bisa membaca baris <code>20/20</code>.
+      </p>
+      <p class="h-note">
+        Itu <strong>tidak bisa benar</strong>. Ukuran aksara di layar teks
+        tergantung ukuran fisik monitornya: aksara pada monitor 12 inci dan 25
+        inci sama-sama satu sel 80&times;25, tapi tingginya berbeda dua kali
+        lipat. Jarak 20 kaki hanya sah untuk <em>satu</em> ukuran layar, dan
+        program tidak pernah menanyakannya.
+      </p>
+      <p class="h-note">
+        Kartu Snellen cetak tidak punya masalah ini &mdash; ia dicetak pada
+        ukuran tertentu, sekali, selamanya. Memindahkannya ke layar
+        <strong>membuang justru sifat yang membuatnya alat ukur</strong>.
+      </p>
+      <p class="h-note">
+        Port ini tidak berpura-pura bisa memperbaikinya diam-diam. Di halaman
+        kartu ada <strong>penyetel ukuran</strong>: samakan bilahnya dengan
+        kartu ATM (8,56&nbsp;cm), dan jarak baca yang benar dihitung dari
+        situ. Angkanya biasanya <em>jauh</em> dari 20 kaki.
+      </p>
+    </div>
+
+    <div class="panel h-good">
+      <p class="eyebrow">Ketika aksara blok kehabisan resolusi</p>
+      <p class="h-note">
+        Tujuh baris kartu, dan tekniknya <strong>berubah tiga kali</strong>
+        saat hurufnya mengecil:
+      </p>
+      <table class="h-tbl h-tbl--kiri">
+        <thead><tr><th>Baris</th><th>Digambar dari</th></tr></thead>
+        <tbody>
+          <tr><td><code>20/50</code></td><td>blok penuh <code>█</code> + separuh <code>▐ ▌ ▄ ▀</code></td></tr>
+          <tr><td><code>20/40</code> &ndash; <code>20/20</code></td><td>hanya <code>█ ▀ ▄</code>, makin sedikit sel</td></tr>
+          <tr><td><code>20/15</code></td><td>separuh blok dalam <em>satu</em> baris teks</td></tr>
+          <tr><td><code>20/10</code>, <code>20/5</code></td><td><strong>huruf sungguhan</strong>: <code>U</code> <code>∩</code> <code>n</code> <code>u</code></td></tr>
+        </tbody>
+      </table>
+      <p class="h-note">
+        Dua baris terakhir bukan gambar lagi &mdash; mereka
+        <strong>huruf yang diketik</strong>. Di bawah ukuran itu, satu sel
+        aksara tidak bisa lagi dibagi jadi bentuk, jadi penulisnya berhenti
+        menggambar dan mulai mengetik.
+      </p>
+      <p class="h-note">
+        Konsistensinya terjaga karena <code>U</code> dan <code>∩</code>
+        (<code>CHR$(239)</code>) adalah bentuk yang sama diputar
+        180&deg; &mdash; persis peran yang dimainkan huruf <code>E</code>
+        terbalik-balik di kartu Snellen sungguhan.
+      </p>
+      <p class="h-note">
+        <strong>Batas alat memaksa perubahan teknik, dan penulisnya
+        menyerah pada waktu yang tepat.</strong> Memaksakan blok sampai baris
+        terakhir akan menghasilkan bentuk yang tidak terbaca &mdash; dan
+        merusak ujinya, bukan cuma rupanya.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Di atas 20 kHz, port ini berhenti jujur</p>
+      <p class="h-note">
+        Sapuan aslinya sampai 30.000&nbsp;Hz. Web Audio mencuplik pada
+        44.100&nbsp;Hz, jadi nada di atas <strong>22.050&nbsp;Hz</strong>
+        (batas Nyquist) tidak bisa dihasilkan &mdash; yang keluar adalah
+        bayangannya di frekuensi lain, bukan nadanya.
+      </p>
+      <p class="h-note">
+        Jadi bagian sapuan itu ditandai di layar, dan tidak diklaim sebagai
+        pengukuran. Aslinya juga sudah jujur soal ini di baris 830:
+        <em>&ldquo;we had no way to evaluate the capacity of the
+        speaker&rdquo;</em> &mdash; mereka tahu batasnya ada di perangkat
+        keras, dan menuliskannya.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/heareye.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/HEAREYE.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/HEAREYE.BAS">Kode sumber 1982</a> &middot;
+      <a href="../intro/index.html">INTRO &mdash; kerangka yang sama</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="../../_shared/reader.js"></script>
+<script src="screens.js"></script>
+<script src="heareye.js"></script>
+</body>
+</html>

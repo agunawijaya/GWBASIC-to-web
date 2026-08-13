@@ -1,0 +1,72 @@
+/* ===========================================================================
+   droids.css — DROIDS.BAS
+   Warna papan MEMBAWA ARTI (kuning = bijih, biru = droid), jadi latarnya
+   gelap tetap dan tidak ikut tema halaman.
+   =========================================================================== */
+.d-layout { display: grid; gap: var(--s5); align-items: start; }
+@media (min-width: 1000px) {
+  .d-layout { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); }
+}
+@media (min-width: 1400px) { .d-layout { max-width: 1340px; } }
+.d-stage { display: grid; gap: var(--s3); }
+.d-crt { background: #0a0f16; border: 1px solid var(--line); border-radius: 16px;
+         padding: var(--s3); }
+.d-svg { display: block; width: 100%; height: auto; }
+.d-latar { fill: #0a0f16; }
+.d-sel { fill: #111a24; stroke: #16202c; stroke-width: 1; }
+/* --- bijih: bongkahan mineral, bukan kotak ---------------------------------- */
+.d-bayang { fill: rgba(0,0,0,.35); }
+.d-bijih { fill: #e8a92c; stroke: #7a5410; stroke-width: 1; }
+.d-bijihSisi { fill: #ffd166; }
+.d-kilau { fill: #fff2c4; opacity: .9; }
+.d-kosong { fill: none; }
+
+/* --- droid: robot penambang, dibedakan warna DAN bentuk antena -------------- */
+.d-antena { stroke: #9fb3c8; stroke-width: 1.6; }
+.d-visor { fill: #16e0ff; }
+.d-dada { fill: #0d1620; }
+.d-rantai { fill: #2b3644; stroke: #46586c; stroke-width: 1; }
+.d-roda { fill: #7d8fa3; }
+.d-droidTeks { fill: #eaf3ff; font: 700 12px var(--font-mono); text-anchor: middle; }
+.d-ra .d-badan { fill: #3f86d8; }  .d-ra .d-antenaUjung { fill: #7dc4ff; }
+.d-rb .d-badan { fill: #d8813f; }  .d-rb .d-antenaUjung { fill: #ffc48a; }
+.d-rc .d-badan { fill: #46a86a; }  .d-rc .d-antenaUjung { fill: #8ee8ac; }
+.d-rd .d-badan { fill: #a668c8; } .d-rd .d-antenaUjung { fill: #dda6f0; }
+.d-pilih { fill: none; stroke: #7dffb0; stroke-width: 2.5; }
+.d-jalur { fill: none; stroke: #7dffb0; stroke-width: 2; stroke-dasharray: 4 4; }
+.d-kompas { fill: #93a3b5; font: 700 11px var(--font-mono); text-anchor: middle; }
+.d-info { fill: #9ec4a4; font: 700 12px var(--font-mono); letter-spacing: .06em; }
+.d-panel { padding: var(--s3); border: 1px solid var(--line);
+           border-radius: var(--r-sm); background: var(--bg-raised); }
+.d-tanya { margin: 0 0 var(--s3); font-weight: 700; }
+.d-row { display: flex; flex-wrap: wrap; gap: var(--s2); align-items: center; }
+.d-arah { display: grid; grid-template-columns: repeat(3, 3.2rem); gap: var(--s2); }
+.d-arah .btn { min-width: 0; }
+.d-catatan { margin: var(--s3) 0 0; font-size: var(--fs-xs);
+             color: var(--fg-dim); line-height: 1.55; }
+.d-kecil { font-size: var(--fs-xs); color: var(--fg-dim); font-weight: 400; }
+.d-log { height: 130px; overflow-y: auto; padding: var(--s3);
+         background: #0a0f16; border: 1px solid #1d2836; border-radius: var(--r-sm);
+         font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.55; }
+.d-baris { margin: 0 0 2px; color: #93a3b5; }
+.d-log .d-judul { color: #fff; font-weight: 700; margin-top: 6px; }
+.d-log .d-baik { color: #7dffb0; }
+.d-log .d-awas { color: #ffa15c; }
+.d-row--kecil { font-size: var(--fs-sm); color: var(--fg-dim);
+                display: flex; flex-wrap: wrap; gap: var(--s3); align-items: center; }
+.d-row--kecil label { display: flex; align-items: center; gap: var(--s2); }
+.d-angka { font-family: var(--font-mono); padding: 4px 6px; width: 8ch;
+           border: 1px solid var(--line); border-radius: var(--r-sm);
+           background: var(--bg-sunken); color: var(--fg); }
+select.d-angka { width: auto; }
+.d-note { font-size: var(--fs-sm); line-height: 1.6; }
+.d-bad2 { border-left: 3px solid #c0503f; }
+.d-warn { border-left: 3px solid #e0a020; }
+.d-good { border-left: 3px solid #46c17f; }
+.d-code { font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.55;
+          background: var(--bg-sunken); border-radius: var(--r-sm);
+          padding: var(--s3); overflow-x: auto; white-space: pre; }
+.d-tbl { width: 100%; border-collapse: collapse; font-size: var(--fs-xs); margin: var(--s3) 0; }
+.d-tbl td, .d-tbl th { padding: 4px 6px; border-bottom: 1px solid var(--line); text-align: right; }
+.d-tbl td:first-child, .d-tbl th:first-child { text-align: left; }
+.d-links { margin-top: var(--s4); }

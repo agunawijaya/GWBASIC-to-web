@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>X-Wing Fighter — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari XWING.BAS (George Blank, 1978): program tertua di koleksi, dengan sprite yang disimpan sebagai bilangan bulat mentah — dan dibongkar kembali di sini. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="xwing.css?v=11">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap xw-layout">
+
+  <section class="stack">
+    <div class="screen screen--scanlines">
+      <div class="xw-kokpitBungkus">
+        <div class="xw-kokpit" id="kokpit"></div>
+        <div class="xw-pembuka" id="pembuka" hidden>
+          <h3 class="xw-pembukaJudul">Tiga hal sebelum berangkat</h3>
+          <ol class="xw-pembukaDaftar">
+            <li><b>Hanya ada satu cara menang</b>: torpedo ke Bintang Kematian
+                saat jaraknya di bawah 10.000 km <em>dan</em> ia tepat di titik
+                bidik. Kurung bidiknya akan menyala
+                <b class="xw-oranye">TORPEDO LOCK</b>.</li>
+            <li><b>Kedua pesawat musuh tidak bisa dihabisi.</b> Ditembak pun
+                mereka cuma mundur 25.000 km lalu datang lagi. Meriam menunda,
+                tidak menyelesaikan.</li>
+            <li><b>Panah tidak menggerakkan pesawat Anda.</b> Ia memutar
+                arah, dan <em>seluruh medan bergeser berlawanan</em> &mdash;
+                terus-menerus, sampai sasarannya mentok ke tepi. Sekali tekan
+                sudah cukup; tekan <b>0</b> atau <b>C</b> untuk berhenti
+                berputar.</li>
+            <li><b>Kecepatan adalah keputusan terpenting Anda.</b> Lihat
+                <em>jendela tembak</em> di jalur pendekatan: pada Mach 50 ia
+                cuma <b id="p-j5">—</b>, pada Mach 10 jadi <b id="p-j1">—</b>.
+                Terlalu cepat berarti melewati &mdash; lalu menabrak.</li>
+          </ol>
+          <button class="btn btn--primary btn--sm" id="mulai-main" type="button">
+            Mengerti, mulai</button>
+        </div>
+      </div>
+
+      <div class="xw-jalur">
+        <div class="xw-jalurKepala">
+          <span class="xw-jalurJudul">Jalur pendekatan</span>
+          <span class="xw-tiba">Bintang Kematian tiba dalam
+            <b id="s-tiba" class="xw-tibaNilai mono">—</b></span>
+          <span class="xw-kecil">jendela tembak <b id="s-jendela" class="mono">—</b></span>
+        </div>
+        <div id="jalur"></div>
+      </div>
+
+      <dl class="xw-hud">
+        <div class="xw-pasang"><dt>Torpedoes</dt>
+          <dd id="s-torpedo" class="xw-nilai mono">—</dd></div>
+        <div class="xw-pasang"><dt>Hor.</dt>
+          <dd id="s-hor" class="xw-nilai mono">—</dd></div>
+        <div class="xw-pasang"><dt>Vert.</dt>
+          <dd id="s-vert" class="xw-nilai mono">—</dd></div>
+        <div class="xw-pasang"><dt>Speed Mach</dt>
+          <dd id="s-mach" class="xw-nilai mono">—</dd></div>
+        <div class="xw-pasang"><dt>Time remaining</dt>
+          <dd id="s-waktu" class="xw-nilai mono">—</dd></div>
+        <div class="xw-pasang"><dt>Skill</dt>
+          <dd id="s-skill" class="xw-nilai mono">—</dd></div>
+        <div class="xw-pasang xw-pasang--lebar"><dt>KM to Imperial Fighter</dt>
+          <dd id="s-imp" class="xw-nilai mono">—</dd></div>
+        <div class="xw-pasang xw-pasang--lebar"><dt>KM to Darth Vader</dt>
+          <dd id="s-dv" class="xw-nilai mono">—</dd></div>
+        <div class="xw-pasang xw-pasang--lebar"><dt>KM to Death Star</dt>
+          <dd id="s-ds" class="xw-nilai mono">—</dd></div>
+        <div class="xw-pasang xw-pasang--lebar"><dt>Status</dt>
+          <dd id="s-status" class="xw-nilai mono">—</dd></div>
+      </dl>
+
+      <div class="xw-pesan" id="pesan" role="log" aria-live="polite"></div>
+
+      <div class="xw-tombolBaris">
+        <button class="btn btn--ghost btn--sm" data-aksi="naik" type="button">↑ naik</button>
+        <button class="btn btn--ghost btn--sm" data-aksi="turun" type="button">↓ turun</button>
+        <button class="btn btn--ghost btn--sm" data-aksi="kiri" type="button">← kiri</button>
+        <button class="btn btn--ghost btn--sm" data-aksi="kanan" type="button">→ kanan</button>
+        <button class="btn btn--ghost btn--sm" data-aksi="pusat" type="button"
+                title="Nolkan kemudi tegak dan mendatar">0 · pusatkan</button>
+        <button class="btn btn--primary btn--sm" data-aksi="meriam" type="button">Z · meriam</button>
+        <button class="btn btn--primary btn--sm" data-aksi="torpedo" type="button">X · torpedo</button>
+      </div>
+      <p class="xw-kunciTombol">
+        Panah mengemudi (bisa ditahan) &middot; <b>Z</b> meriam &middot;
+        <b>X</b> torpedo &middot; <b>0</b> atau <b>C</b> memusatkan &middot;
+        <b>1</b>&ndash;<b>9</b> kecepatan.
+        <span class="xw-kecil">Alias: Spasi/F1 meriam, Enter/T/F2 torpedo.</span>
+      </p>
+      <div class="xw-alat">
+        <button class="btn btn--ghost btn--sm" id="kurang" type="button">− Mach</button>
+        <button class="btn btn--ghost btn--sm" id="lebih" type="button">+ Mach</button>
+        <label class="xw-kecil">Skill
+          <select id="skill" class="xw-pilih">
+            <option value="0">0 · 5:00 · termudah</option>
+            <option value="1">1 · 3:00</option>
+            <option value="2">2 · 2:45</option>
+            <option value="3">3 · 2:30 · tersulit</option>
+          </select></label>
+        <button class="btn btn--ghost btn--sm" id="baru" type="button">Misi baru</button>
+        <button class="btn btn--ghost btn--sm" id="ulangi" type="button">Ulangi benih…</button>
+        <label class="xw-kecil"><input type="checkbox" id="senyap"> Senyapkan bunyi</label>
+        <span class="xw-kecil">Benih: <b id="s-benih" class="mono">—</b></span>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">732 baris BASIC · 1978</span>
+      <span class="ruleset__k ruleset__k--mangsa">sprite dari makro DRAW</span>
+      <span class="ruleset__k">enam penangan kejadian</span>
+      <span class="ruleset__k ruleset__k--bahaya">tabrakan diuji lewat POINT()</span>
+      <span class="ruleset__k ruleset__k--bahaya">"unless moviemakers object"</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Program tertua di koleksi</span>
+        <span class="stat__value mono">1978</span></div>
+      <div class="stat"><span class="stat__label">Ruang benih</span>
+        <span class="stat__value mono">60</span></div>
+      <div class="stat"><span class="stat__label">Skor tersimpan</span>
+        <ol class="xw-skor mono" id="skor"></ol></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara memainkannya</summary>
+      <p class="xw-note">
+        <a href="#" id="buka-pembuka">Tampilkan lagi tiga hal sebelum
+        berangkat &rarr;</a>
+      </p>
+      <p class="xw-note">
+        Anda di kokpit X-Wing. <b>Hanya ada satu cara menang</b>: torpedo ke
+        Bintang Kematian, dan cuma kalau jaraknya sudah di bawah 10.000 km
+        <em>dan</em> ia benar-benar berada di bawah titik bidik. Pesawat
+        Imperial dan Darth Vader tidak bisa dihabisi &mdash; ditembak pun
+        mereka datang lagi 25.000 km di belakang.
+      </p>
+      <ol class="howto__steps">
+        <li><strong>Panah</strong> bukan menggerakkan pesawat Anda melainkan
+            mengatur <b>kecepatan putar</b>: baris 2550 berbunyi
+            <code>M = M &minus; W</code>, jadi seluruh medan bergeser
+            <em>berlawanan</em> dengan tombol yang ditekan, dan terus bergeser
+            selama <code>W</code> bukan nol. Pada <code>W</code>=1 sasarannya
+            sudah mentok ke tepi dalam <b>1,8 detik</b>; pada
+            <code>W</code>=3, dalam <b>0,6 detik</b>. Karena itu ada
+            <b>0</b>/<b>C</b> untuk memusatkan, dan penanda segitiga di tepi
+            layar saat ada sasaran yang tersangkut di sana.
+            Batasnya <b>tidak simetris</b>: tegak &minus;3..3, mendatar
+            &minus;5..5 (baris 1100&ndash;1170).</li>
+        <li><strong>Z</strong> meriam &mdash; hanya mengenai kedua pesawat,
+            di bawah 26.000 km. <strong>X</strong> torpedo &mdash; tiga
+            butir, dan satu butir <b>tetap habis</b> walau ditembakkan di luar
+            jangkauan (baris 5820 mengurangi sebelum 5830 memeriksa).
+            Aslinya keduanya F1 dan F2 (<code>ON KEY(1)</code>,
+            <code>ON KEY(2)</code>); keduanya masih bekerja, tapi bukan lagi
+            tombol utama &mdash; F1 tombol bantuan peramban.</li>
+        <li><strong>Angka 1&ndash;9</strong> atau <strong>&plusmn; Mach</strong>
+            mengatur kecepatan. Terlalu cepat dan Anda melewati &mdash; lalu
+            <b>menabrak</b> &mdash; Bintang Kematian sebelum sempat membidik.</li>
+        <li><strong>Yang akan Anda lihat.</strong> Meriam menembakkan
+            <b>empat larik merah</b> dari ujung sayap; torpedo satu butir
+            jingga dari bawah kanopi. Kalau <b>kena</b>, pelurunya menuju
+            benda yang meledak; kalau <b>meleset</b>, ia lewat menembus titik
+            bidik dan hilang. Dunianya berhenti selama peluru terbang &mdash;
+            itu bukan penyederhanaan, aslinya juga begitu (5350 dan 5750
+            adalah subrutin, jadi gelung utamanya tertahan).</li>
+        <li><strong>Skill</strong> mengubah empat hal sekaligus: batas waktu,
+            seberapa sering musuh mengelak, peluang selamat saat dilewati, dan
+            peluang torpedonya kena. Di <b>skill 0</b> torpedo yang tepat
+            selalu menang &mdash; baris 5850 memotong sebelum dadunya dilempar.</li>
+      </ol>
+    </details>
+  </section>
+
+  <aside class="stack">
+
+    <section class="panel xw-bad">
+      <h2 class="panel__title">Kalimat paling jujur di seluruh koleksi</h2>
+      <div class="xw-code">1000  REM * STAR PILOT GAME *
+1010  REM * WRITTEN BY GEORGE BLANK, LEECHBURG, PA. *
+1020  REM * FOR  PUBLIC DOMAIN UNLESS MOVIEMAKERS OBJECT *
+1030  REM * VERSION 4.0    SEPTEMBER 25,1978 *
+1040  REM * MODIFIED TO RUN ON THE IBM PC BY ERNEST *
+1050  REM * SMITH AND RAYMOND ROGERS, HOUSTON, TEXAS *
+1060  REM * DECEMBER 82 *</div>
+      <p class="xw-note">
+        Setahun sesudah filmnya keluar, Blank melepas programnya ke domain
+        publik <b>dengan satu syarat yang ia tulis sendiri di dalam
+        kodenya</b>. Bukan lisensi, bukan sangkalan &mdash; sebuah kalimat
+        yang mengakui bahwa ia tahu persis apa yang sedang dipakainya.
+      </p>
+      <p class="xw-note">
+        Tanggalnya juga menerangkan sesuatu: <b>25 September 1978</b> untuk
+        versi 4.0. Berarti ada tiga versi sebelumnya, dan yang pertama
+        hampir pasti ditulis pada 1977&ndash;78 &mdash; <b>program tertua di
+        koleksi ini</b>, empat tahun sebelum port IBM PC-nya.
+      </p>
+    </section>
+
+    <section class="panel xw-good">
+      <h2 class="panel__title">Layar judul yang juga lembar sprite</h2>
+      <div class="xw-code">1330 LOCATE 8,1:PRINT "IMPERIAL FIGHTER:  ":DRAW "C2;BM145,59;
+     M+0,0;BM+10,1;M+0,-2;M+2,2;M+0,-2;BM+10,-1;M+0,4;BM+6,-4;
+     M+0,4;M+0,-2;M-6,0"
+1340 DIM IM(6):DIM IM1(6):DIM IM2(6):DIM IM3(6):
+     GET (145,59)-(145,59),IM  : GET (155,58)-(157,60),IM2 :
+     GET (167,57)-(173,61),IM3</div>
+      <p class="xw-note">
+        Musuh yang Anda lawan saat terbang <b>tidak disimpan sebagai angka
+        sama sekali</b>. Ia disimpan sebagai <b>bahasa</b>: makro
+        <code>DRAW</code> melukis ketiga ukuran berdampingan di layar judul
+        &mdash; gambar kecil di sebelah tulisan
+        <em>"IMPERIAL FIGHTER:"</em> &mdash; lalu <code>GET</code> memotong
+        tiap ukuran dari layar itu. <b>Layar judulnya sekaligus lembar
+        sprite.</b>
+      </p>
+      <p class="xw-note">
+        Dijalankan ulang, kesepuluh gambarnya kembali utuh. Ini yang benar-benar
+        muncul di kokpit &mdash; sebesar-besarnya <b>tujuh kali lima piksel</b>:
+      </p>
+      <div class="xw-tieContoh" id="draw-contoh"></div>
+      <p class="xw-note">
+        <b>DV3 bukan salinan IM3.</b> Keempat sudutnya dipangkas: pesawat
+        Vader memang berbeda bentuk, dan Blank menggambarnya berbeda &mdash;
+        dalam tujuh kali lima piksel. Perhatikan juga <b>IM3</b>: dua bilah
+        tegak, penghubung mendatar. Orientasi yang sama dengan IM4 dan IM5,
+        dan bukti ketiga bahwa yang menyimpang adalah IM7.
+      </p>
+    </section>
+
+    <section class="panel xw-warn">
+      <h2 class="panel__title">Dari tujuh kali lima piksel ke SVG</h2>
+      <div class="xw-armada" id="armada"></div>
+      <p class="xw-note">
+        Peta piksel di panel sebelumnya adalah <b>barang buktinya</b>; yang
+        tergambar di kokpit adalah ketiga kapal di atas. Satu piksel bukan
+        pesawat &mdash; ia titik &mdash; dan menaikkannya sampai selebar layar
+        cuma menghasilkan kotak besar, bukan kapal.
+      </p>
+      <p class="xw-note">
+        Bentuknya tetap terikat pada temuan. TIE Imperial mengikuti
+        <b>IM3</b>: bilah tegak, penghubung mendatar. TIE Advanced mengikuti
+        <b>DV3</b>, yang keempat sudutnya dipangkas &mdash; sayapnya
+        <b>menyempit ke arah lambung</b>, dan itu justru bentuk TIE Advanced
+        yang sebenarnya. Blank menyatakan perbedaan itu di dalam kanvas tujuh
+        kali lima piksel; di sini perbedaan yang sama dinyatakan lebih
+        leluasa.
+      </p>
+      <p class="xw-note">
+        Yang <b>tidak</b> berubah: letak, tahap, dan uji kena. Lebar gambarnya
+        justru diambil dari <b>kotak bidik</b> &mdash; <code>2&times;IMR1</code>
+        petak, kotak yang benar-benar diuji baris 5420 &mdash; sehingga lebar
+        kapal di layar sama persis dengan lebar daerah yang bisa dikenai
+        meriam. Tidak ada pemain yang menembak benda yang tampak berada di
+        dalam kurung lalu diberitahu bahwa ia meleset.
+      </p>
+      <p class="xw-note">
+        Cawan superlaser Bintang Kematian sengaja <b>tidak di tengah</b>. Bola
+        yang simetris sempurna terbaca sebagai lingkaran, bukan sebagai bola
+        &mdash; pelajaran yang sama dengan starbase
+        <a href="../../docs/startrek.md">STARTREK</a>, tempat dua percobaan
+        gagal karena simetrinya, bukan karena kurang detail.
+      </p>
+    </section>
+
+    <section class="panel xw-bad">
+      <h2 class="panel__title">Layar ini bukan jendela &mdash; programnya
+        menyebutnya radar</h2>
+      <div class="xw-code">2230  LOCATE 17,1:PRINT "RADAR TARGETS"
+7490  PRINT"ON THE RADAR SCREEN."
+7570  PRINT"HAIRS ON YOUR RADAR SCREEN. THEN YOU MAY";
+7660  PRINT"THE  CROSS HAIRS  ON YOUR  RADAR SCREEN.";</div>
+      <p class="xw-note">
+        Kotak grafiknya (<code>2160 LINE (1,1)-(76,42),3,B</code>) saya
+        perlakukan sebagai <b>jendela kokpit</b> &mdash; rangka kanopi, kaca,
+        dan kaca yang pecah saat menabrak. Programnya menyebut benda itu
+        <b>empat kali</b>, dan tidak sekali pun menyebutnya jendela.
+      </p>
+      <p class="xw-note">
+        Itu <b>layar radar</b>. Titik 1&times;1 sampai 7&times;5 piksel itu
+        <b>kontak radar</b>, bukan pesawat yang terlihat mata. Dan itu
+        menerangkan banyak hal yang tadinya tampak seperti kekurangan: kenapa
+        musuhnya sekecil itu, kenapa bidikannya digambar sebagai garis
+        putus-putus menyilang layar (2170&ndash;2180), dan kenapa menabrak
+        Bintang Kematian tidak memerlukan gambar apa pun &mdash; di radar,
+        tabrakan adalah sebuah angka yang mencapai nol.
+      </p>
+      <p class="xw-note">
+        Kokpitnya tetap dipertahankan, dan itu <b>keputusan sadar</b>:
+        halaman ini memilih permainan yang enak dimainkan lebih dulu. Yang
+        tidak boleh terjadi adalah penyimpangan itu lewat tanpa disebut,
+        karena ia menyatakan sesuatu yang <b>dibantah sumbernya sendiri</b>:
+        bahwa Anda sedang melihat ke luar, padahal Anda sedang melihat ke
+        sebuah alat. Sebagian utangnya dibayar <b>jalur pendekatan</b> di
+        bawah layar &mdash; itu instrumen, dan itu memang radar.
+      </p>
+    </section>
+
+    <section class="panel xw-good">
+      <h2 class="panel__title">Sprite yang disimpan sebagai bilangan bulat</h2>
+      <div class="xw-code">1350 DIM IM4(13):IM4(0)=22:IM4(1)=7:IM4(2)=128:IM4(3)=-32760:
+     IM4(4)=2048:IM4(5)=128:IM4(6)=-22008:IM4(7)=-22358: …</div>
+      <p class="xw-note">
+        Itu bukan angka ajaib &mdash; itu <b>gambar</b>. Larik
+        <code>GET</code>/<code>PUT</code> di GW-BASIC menyimpan dua kata
+        kepala (lebar dalam <b>bit</b>, tinggi dalam baris) lalu data piksel
+        dua bit per piksel, karena <code>SCREEN 1</code> adalah CGA
+        320&times;200 empat warna.
+      </p>
+      <p class="xw-note">
+        Larik IM4&ndash;IM8 dipakai <b>hanya di satu tempat</b>: baris
+        3320&ndash;3470, animasi lima bingkai saat musuhnya <b>melintas</b>.
+        Itulah kenapa ukurannya melompat dari 7&times;5 langsung ke
+        25&times;29 &mdash; bukan pembesaran bertahap, melainkan adegan
+        terpisah.
+      </p>
+      <p class="xw-note">
+        Dibongkar, IM4 dan IM5 keluar sebagai <b>TIE fighter dari depan</b>:
+        dua bilah sayap tegak, penghubung mendatar &mdash; sama seperti IM3
+        di panel sebelumnya. Itu <b>piksel 1978 itu sendiri</b>.
+      </p>
+      <p class="xw-note">
+        Lalu IM7 memberi bentuk yang <b>diputar 90&deg;</b>:
+      </p>
+      <div class="xw-tieContoh" id="tie-contoh"></div>
+      <p class="xw-note">
+        IM4 dan IM5 sepakat satu sama lain. IM7 adalah <b>transpose</b>-nya,
+        bukan pembesarannya &mdash; padahal baris 3320&ndash;3470 memakai
+        kelimanya sebagai satu urutan zoom pesawat yang sama.
+      </p>
+    </section>
+
+    <section class="panel xw-bad">
+      <h2 class="panel__title">Kenapa bacaannya tidak bisa dipercaya begitu saja</h2>
+      <p class="xw-note">
+        Langkah barisnya bukan soal selera: <code>DIM</code>-nya sendiri yang
+        menentukan. Kebutuhan sebuah larik GET adalah
+        <code>4 + ceil(lebar_bit/8) &times; tinggi</code> bita, dan
+        <code>DIM IMn(k)</code> menyediakan <code>(k+1)&times;2</code>.
+      </p>
+      <table class="xw-tbl">
+        <thead><tr><th>larik</th><th>piksel</th><th>butuh</th><th>DIM beri</th>
+          <th>sisa</th><th>terisi</th></tr></thead>
+        <tbody>
+          <tr><td>IM4</td><td>11 &times; 7</td><td>25</td><td>28</td>
+              <td class="xw-menang">+3</td><td>13/14</td></tr>
+          <tr><td>IM5</td><td>13 &times; 9</td><td>40</td><td>42</td>
+              <td class="xw-menang">+2</td><td>20/21</td></tr>
+          <tr><td>IM6</td><td>17 &times; 17</td><td>89</td><td>90</td>
+              <td class="xw-menang">+1</td><td class="xw-bahaya">22/45</td></tr>
+          <tr><td>IM7</td><td>15 &times; 21</td><td>88</td><td>90</td>
+              <td class="xw-menang">+2</td><td>44/45</td></tr>
+          <tr><td>IM8</td><td>25 &times; 29</td><td>207</td><td>206</td>
+              <td class="xw-bahaya">&minus;1</td><td class="xw-bahaya">54/103</td></tr>
+        </tbody>
+      </table>
+      <p class="xw-note">
+        Sisa 0&ndash;2 bita wajar &mdash; <code>DIM</code> dibulatkan ke kata.
+        Sisa <b>&minus;1</b> tidak: untuk IM8, ketiga angka itu (lebar 50,
+        tinggi 29, <code>DIM 102</code>) <b>tidak konsisten satu sama
+        lain</b>. Salah satunya salah, dan tidak ada cara memutuskan yang
+        mana. IM6 pun cuma terisi 22 dari 45 dan hasilnya tidak berbentuk
+        apa-apa.
+      </p>
+      <p class="xw-note">
+        Jadi tiga dari lima sprite <b>tidak dipakai</b> di permainan ini.
+        Yang tergambar saat sasaran sudah dekat digambar tangan &mdash;
+        orientasinya mengikuti IM4/IM5, dua bacaan yang cocok satu sama lain:
+      </p>
+      <div class="xw-tieTangan" id="tie-tangan"></div>
+      <p class="xw-note">
+        Membesarkan IM7 sampai hampir sepertiga lebar layar akan membuat
+        sebuah bacaan yang meragukan tampak seperti barang temuan &mdash;
+        justru saat ia paling terlihat. Itu penyimpangan yang
+        lebih besar daripada menggambar sendiri dan mengatakannya.
+      </p>
+    </section>
+
+    <section class="panel xw-warn">
+      <h2 class="panel__title">Zoom lima bingkai, dan jeda musik sebagai jamnya</h2>
+      <div class="xw-code">3320 PUT (EP-4,FP-1),IM4
+3330 PUT (EP,FP),IM
+3340 PLAY "P4"
+3350 PUT (EP-9,FP-2),IM5
+3360 PUT (EP-4,FP-1),IM4
+3370 PLAY "P4"
+3380 PUT (EP-12,FP-6),IM6
+3390 PUT (EP-9,FP-2),IM5
+3400 PLAY "P4"
+3410 PUT (EP-9,FP-7),IM7
+…</div>
+      <p class="xw-note">
+        Tiap pasang baris menggambar bingkai baru lalu <b>menghapus yang
+        sebelumnya</b> &mdash; <code>PUT</code> bawaannya XOR, jadi
+        menggambar benda yang sama dua kali menghapusnya. Itu animasi
+        pendekatan: IM4 &rarr; IM5 &rarr; IM6 &rarr; IM7 &rarr; IM8.
+      </p>
+      <p class="xw-note">
+        Dan yang mengatur kecepatannya <code>PLAY "P4"</code> &mdash;
+        <b>tanda istirahat musik</b>. Bukan gelung penghitung, bukan jam:
+        sebuah jeda not seperempat. Temuan yang sama persis dengan
+        <a href="../../docs/lander.md">LANDER</a> dan
+        <a href="../../docs/startrek.md">STARTREK</a>, di program yang
+        ditulis <b>tiga tahun lebih dulu</b> daripada keduanya.
+      </p>
+    </section>
+
+    <section class="panel xw-warn">
+      <h2 class="panel__title">Enam penangan kejadian</h2>
+      <div class="xw-code">1320 ON KEY(1) GOSUB 5350:ON KEY(2) GOSUB 5750:ON KEY(11) GOSUB 1100:
+     ON KEY(12) GOSUB 1120:ON KEY(13) GOSUB 1140:ON KEY(14) GOSUB 1160
+1100 V=V-1:IF V&lt;-3 THEN V=-3
+1120 W=W-1:IF W&lt;-5 THEN W=-5
+1180 KEY(1) ON:KEY(2) ON:KEY(11) ON: …
+1190 KEY(1) STOP:KEY(2) STOP:KEY(11) STOP: …</div>
+      <p class="xw-note">
+        F1 dan F2 untuk senjata, KEY 11&ndash;14 untuk keempat panah.
+        Satu-satunya program di koleksi yang memakai <b>interupsi tombol</b>
+        untuk kemudi <em>sekaligus</em> senjata &mdash; dan yang menyalakan
+        serta mematikannya di sekitar bagian yang tidak boleh diganggu
+        (1180/1190).
+      </p>
+      <p class="xw-note">
+        Perhatikan batasnya: tegak dijepit &minus;3..3, mendatar
+        &minus;5..5. <b>Tidak simetris</b>, dan tidak ada satu pun kalimat
+        di layar yang menyebutkannya. Pesawatnya memang lebih lincah ke
+        samping daripada ke atas-bawah.
+      </p>
+    </section>
+
+    <section class="panel xw-bad">
+      <h2 class="panel__title">Uji tabrakan dengan membaca warna layar</h2>
+      <div class="xw-code">5820  Z=Z-1
+5830  IF O-S&gt;10000  THEN 5990        ' OUT OF RANGE
+5840  IF POINT(38,21)&lt;&gt;3 THEN 5880   ' TORPEDO MISSED
+5850  IF SKILL=0 GOTO 6100            ' GAME WON
+5860  K=INT(RND*10)
+5870  IF K&gt;SKILL+1  THEN 6100</div>
+      <p class="xw-note">
+        Baris 5840 tidak membandingkan koordinat apa pun. Ia memanggil
+        <code>POINT(38,21)</code> &mdash; <b>membaca warna piksel di titik
+        bidik</b> &mdash; dan menganggap kena kalau warnanya 3, warna Bintang
+        Kematian. Uji tabrakan yang dijawab oleh <em>layar</em>, bukan oleh
+        model dunia. Port ini menyatakannya ulang persis: apakah petak (38,21)
+        memang bagian dari gambar Bintang Kematian.
+      </p>
+      <p class="xw-note">
+        Perhatikan juga urutan 5820 lalu 5830: torpedonya <b>sudah dikurangi
+        sebelum jaraknya diperiksa</b>. Menembak dari luar jangkauan tetap
+        menghabiskan satu dari tiga butir yang Anda punya.
+      </p>
+      <p class="xw-note">
+        Dan 5850: di <b>skill 0</b>, torpedo yang tepat sasaran menang tanpa
+        lemparan dadu. Di skill 1&ndash;3, <code>K&gt;SKILL+1</code> memberi
+        peluang 70%, 60%, 50%. Manualnya benar saat menulis <i>"skill level 0
+        provides the best chance of hitting the Death Star"</i> &mdash; tapi
+        tidak menyebut bahwa peluangnya <b>100%</b>.
+      </p>
+    </section>
+
+    <section class="panel xw-warn">
+      <h2 class="panel__title">Satu pencacah, dua gerbang</h2>
+      <div class="xw-code">2880  IF FLAG2&lt;&gt;BYPASS THEN FLAG2=FLAG2+1:GOTO 2910   ' pesawat Imperial
+2890  FLAG2=0
+2900  E=E+INT(RND*5)-2:F=F+INT(RND*5)-2
+…
+3950  IF FLAG2&lt;&gt;BYPASS THEN FLAG2=FLAG2+1:GOTO 3980   ' Darth Vader
+3960  FLAG2=0
+3970  H=H+INT(RND*5)-2:I=I+INT(RND*5)-2</div>
+      <p class="xw-note">
+        <code>FLAG2</code> yang sama dipakai dua kali dalam satu putaran
+        gelung: sekali untuk mengatur seberapa sering pesawat Imperial
+        mengelak, sekali lagi untuk Vader. Yang di depan sudah mengubah
+        pencacahnya sebelum yang di belakang membacanya, jadi gerak mengelak
+        keduanya saling mengunci &mdash; tidak pernah bebas satu sama lain.
+        Bintang Kematian punya pencacah sendiri (<code>FLAG1</code>).
+        <b>Dipertahankan apa adanya</b>, tidak diperbaiki.
+      </p>
+      <p class="xw-note">
+        Perhatikan juga penjepit tepinya: Bintang Kematian dibatasi
+        <code>N&gt;35</code> (baris 2590), kedua pesawat dibatasi
+        <code>F&gt;37</code> (2950) dan <code>I&gt;37</code> (4020).
+        Dua batas bawah yang berbeda, di layar yang sama.
+      </p>
+    </section>
+
+    <section class="panel xw-warn">
+      <h2 class="panel__title">Jam dinding, bukan hitungan putaran</h2>
+      <div class="xw-code">2290  SEC1=VAL(RIGHT$(TIME$,2))
+…
+5200  SEC2=VAL(RIGHT$(TIME$,2))
+5250  A2NEW=A2-(SEC2+(60*N8)-SEC1)
+5260  IF A2NEW&lt;0 THEN A2NEW=A2NEW+60:A1=A1-1:A2=A2+60
+5270  IF A1&lt;0 GOTO 6760</div>
+      <p class="xw-note">
+        Batas waktunya <b>detik sungguhan</b>, dibaca dari
+        <code>TIME$</code>. Hampir semua program lain di koleksi ini mengukur
+        waktu dengan menghitung putaran gelung &mdash; dan itulah sebabnya
+        mereka rusak begitu prosesornya makin cepat. Program <b>tertua</b> di
+        koleksi justru yang tidak melakukannya.
+      </p>
+      <p class="xw-note">
+        Sementara itu jaraknya tetap dihitung per putaran:
+        <code>S=S+Q*100</code> di baris 5170. Jadi dua satuan berjalan
+        berdampingan &mdash; kilometer per putaran, detik per detik &mdash;
+        dan yang menyatukan keduanya cuma <code>SOUND 37*Q,1</code> di baris
+        2440: deru mesin sepanjang satu centang, 1/18,2 detik, yang nadanya
+        kebetulan juga <b>kecepatan Anda sendiri</b>.
+      </p>
+    </section>
+
+    <section class="panel xw-warn">
+      <h2 class="panel__title">Yang tidak bisa dibongkar: pesawat pemainnya</h2>
+      <div id="kapal"></div>
+      <p class="xw-note">
+        Di seluruh 732 baris <b>tidak ada satu pun sprite X-Wing</b>.
+        Layarnya pandangan dari kokpit; yang tergambar cuma HUD dan tiga
+        sasaran yang membesar. Jadi tidak ada piksel yang bisa dipulihkan
+        &mdash; dan gambar di atas <b>digambar tangan</b>, satu-satunya di
+        halaman ini yang bukan turunan dari kodenya.
+      </p>
+      <p class="xw-note">
+        Ia memenuhi janji yang ditulis di
+        <a href="../../svg-demo.html">svg-demo.html</a> sejak fondasi
+        dibangun, tiga puluh satu sesi lalu: <i>"X-Wing (untuk
+        XWING.BAS)"</i> &mdash; s-foil terbuka, engsel sayap, cincin intake,
+        soket droid astromekanik, dan meriam berlaras banyak, semuanya
+        <code>&lt;path&gt;</code> yang ditulis tangan.
+      </p>
+    </section>
+
+    <section class="panel xw-bad">
+      <h2 class="panel__title">Yang sudah kita kenali</h2>
+      <table class="xw-tbl">
+        <thead><tr><th>di XWING</th><th>pertama kali muncul di</th></tr></thead>
+        <tbody>
+          <tr><td><code>POKE &amp;H410</code> memaksa mode video (1070)</td>
+              <td><a href="../../docs/draw.md">DRAW</a>, sesi 26</td></tr>
+          <tr><td><code>RANDOMIZE(VAL(RIGHT$(TIME$,2)))</code> — 60 benih</td>
+              <td><a href="../../docs/wildcat.md">WILDCAT</a> dan 27 lainnya</td></tr>
+          <tr><td>bunyi sebagai pengatur waktu</td>
+              <td><a href="../../docs/lander.md">LANDER</a>, sesi 20</td></tr>
+          <tr><td>sprite sebagai data mentah</td>
+              <td><a href="../../docs/lander.md">LANDER.BIN</a>, sesi 20</td></tr>
+          <tr><td>sapuan frekuensi untuk senjata</td>
+              <td><a href="../../docs/startrek.md">STARTREK</a>, sesi 28</td></tr>
+        </tbody>
+      </table>
+      <p class="xw-note">
+        Semuanya sudah ada di sini, di program <b>tertua</b> di koleksi.
+        Yang kita sebut "temuan" selama tiga puluh sesi sebenarnya
+        kebiasaan yang sudah terbentuk sebelum IBM PC ada &mdash; dan
+        berpindah ke sana bersama orang-orang yang mem-port-nya.
+      </p>
+    </section>
+
+    <p class="xw-links">
+      <a href="../../docs/xwing.md">Catatan lengkap port ini</a> &middot;
+      <a href="../../../reviews/XWING.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../svg-demo.html">Demo SVG fondasi</a> &middot;
+      <a href="../../index.html">Semua program</a>
+    </p>
+  </aside>
+</main>
+
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="pesawat.js?v=11"></script>
+<script src="xwing.js?v=11"></script>
+</body>
+</html>

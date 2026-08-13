@@ -1,0 +1,35 @@
+/* ===========================================================================
+   intro.css — tambahan lokal INTRO. Layar 80x25 dan panelnya memakai
+   history.css, karena keduanya program Friendlyware dengan bentuk layar yang
+   sama persis. Berkas ini cuma menambahkan kartu pilihannya.
+
+   Kenapa menumpang, bukan menyalin: dua halaman yang menampilkan layar CGA
+   yang sama harus berubah bersama-sama kalau paletnya diperbaiki. Menyalin
+   membuat keduanya bebas menyimpang — dan §"Kerangka yang dipakai bersama"
+   di halaman ini justru tentang apa yang terjadi kalau itu dibiarkan.
+   =========================================================================== */
+
+.i-pilih { display: grid; gap: var(--s3); }
+@media (min-width: 560px) { .i-pilih { grid-template-columns: repeat(3, 1fr); } }
+
+.i-kartu {
+  display: grid; gap: var(--s1); padding: var(--s3);
+  text-align: left; text-decoration: none;
+  background: var(--panel-2); border: 1px solid var(--line);
+  border-radius: var(--r-sm); color: var(--ink-dim); font: inherit;
+  transition: color var(--t-fast) var(--ease),
+              border-color var(--t-fast) var(--ease);
+}
+.i-kartu:hover { color: var(--ink); border-color: var(--acc-phosphor); }
+.i-kartu:focus-visible { outline: none; box-shadow: var(--glow); }
+
+.i-kartu__k { font-family: var(--font-mono); font-size: 10px;
+              letter-spacing: .12em; color: var(--acc-phosphor); }
+.i-kartu__n { font-size: var(--fs-sm); font-weight: 620; color: var(--ink); }
+.i-kartu__s { font-size: var(--fs-xs); color: var(--ink-faint); }
+
+/* Tujuan yang tidak diport berdiri sendiri sebagai <div>, bukan <a>. Bedanya
+   harus terlihat SEBELUM diklik, bukan sesudahnya. */
+.i-kartu--tanpa { opacity: .6; cursor: default; }
+.i-kartu--tanpa:hover { color: var(--ink-dim); border-color: var(--line); }
+.i-kartu--tanpa .i-kartu__k { color: var(--ink-faint); }

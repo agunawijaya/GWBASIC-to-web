@@ -1,0 +1,70 @@
+/* ===========================================================================
+   integrat.css — khusus Integral by Simpson's Rule. Awalan `i-`.
+   =========================================================================== */
+
+.i-layout {
+  display: grid; gap: var(--s5);
+  grid-template-columns: minmax(340px, 1fr) minmax(300px, 420px);
+  align-items: start; padding-block: var(--s6) var(--s8);
+}
+@media (max-width: 1040px) { .i-layout { grid-template-columns: 1fr; } }
+
+.i-stage { display: grid; gap: var(--s4); }
+.i-judul { font-family: var(--font-mono); color: var(--acc-phosphor); }
+
+/* Kotak peringatan berbingkai, padanan baris 180-250 yang menggambarnya
+   dengan CHR$(201), CHR$(205), CHR$(187) — sudut dan garis CP437. Bentuknya
+   dipertahankan karena ia satu-satunya hiasan di seluruh program, dan ia ada
+   untuk alasan yang serius. */
+.i-warnbox {
+  border: 2px solid var(--acc-amber); border-radius: var(--r);
+  padding: var(--s3) var(--s4); background: var(--acc-amber-dim);
+  font-family: var(--font-mono); font-size: var(--fs-xs);
+  color: var(--ink); text-align: center; line-height: 1.7;
+}
+.i-warnbox b { display: block; letter-spacing: .12em; color: var(--acc-amber);
+               margin-bottom: var(--s2); }
+
+.i-row { display: flex; gap: var(--s3); align-items: center; flex-wrap: wrap;
+         font-size: var(--fs-xs); color: var(--ink-dim); }
+.i-row input[type="text"] { flex: 1; min-width: 180px;
+                            font-family: var(--font-mono); padding: 5px var(--s2); }
+.i-row input[type="number"] { width: 110px; font-family: var(--font-mono); }
+.i-err { color: var(--acc-red); font-weight: 700; }
+.i-note { font-size: var(--fs-sm); color: var(--ink-dim); }
+
+.i-tbl { width: 100%; border-collapse: collapse; margin-top: var(--s3);
+         font-size: var(--fs-sm); font-family: var(--font-mono); }
+.i-tbl th, .i-tbl td { padding: 3px var(--s3) 3px 0; text-align: left;
+                       border-bottom: 1px solid var(--line-soft); }
+.i-tbl th { color: var(--ink-dim); font-weight: 600; font-size: var(--fs-xs);
+            letter-spacing: .06em; }
+.i-tbl td:nth-child(2) { color: var(--acc-amber); }
+/* Baris tempat angkanya berhenti berubah — di situlah pemakai 1982 berhenti
+   menatap layar dan menekan Ctrl-Break. */
+.i-diam td { color: var(--acc-phosphor) !important; }
+.i-diam td:first-child::after { content: ' \2713'; }
+
+.i-contoh { font-size: var(--fs-xs); }
+
+.i-code {
+  margin-top: var(--s3); padding: var(--s3);
+  border: var(--border); border-radius: var(--r);
+  background: var(--bg-sunken); color: var(--acc-amber);
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.7;
+  overflow-x: auto;
+}
+.i-code em { color: var(--ink-faint); font-style: normal; }
+.i-warn { border-left: 3px solid var(--acc-amber); }
+.i-good { border-left: 3px solid var(--acc-phosphor); }
+
+.i-tbl2 { width: 100%; border-collapse: collapse; margin-top: var(--s3);
+          font-size: var(--fs-xs); }
+.i-tbl2 th, .i-tbl2 td { padding: 4px var(--s2); text-align: left;
+                         border-bottom: 1px solid var(--line-soft);
+                         vertical-align: top; }
+.i-tbl2 th { color: var(--ink-dim); font-weight: 600; }
+
+.howto > .i-lead {
+  border-top: none; padding-top: 0; margin-top: var(--s3); color: var(--ink);
+}

@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Blackjack (21) — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari 21.BAS (1982): blackjack satu dek dengan split dan double down. Blackjack dibayar dua kali lipat. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="../../_shared/cards.css">
+<link rel="stylesheet" href="../../_shared/blackjack.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap bj-layout">
+
+  <section class="stack">
+
+    <div class="screen">
+      <div class="bj-meja">
+
+        <div class="bj-sisi">
+          <div class="bj-sisi__label">Dealer</div>
+          <div id="bjBandar"></div>
+          <div class="bj-sisi__nilai" id="bjBandarNilai">&mdash;</div>
+        </div>
+
+        <p class="bj-pesan" id="bjPesan"></p>
+
+        <div class="bj-sisi">
+          <div id="bjPemain"></div>
+          <div class="bj-sisi__label">Anda</div>
+        </div>
+
+        <div class="bj-taruh">
+          <button class="btn btn--ghost btn--sm" id="bjTaruhTurun" type="button">&minus;</button>
+          <span class="bj-taruh__n" id="bjTaruh">$0</span>
+          <button class="btn btn--ghost btn--sm" id="bjTaruhNaik" type="button">+</button>
+        </div>
+
+        <div class="bj-aksi">
+          <button class="btn" id="bjBagi" type="button">Deal</button>
+          <button class="btn" id="bjHit" type="button">Hit</button>
+          <button class="btn" id="bjStand" type="button">Stand</button>
+          <button class="btn btn--ghost" id="bjGanda" type="button">Double Down</button>
+          <button class="btn btn--ghost" id="bjSplit" type="button">Split</button>
+          <button class="btn" id="bjLagi" type="button">Deal again</button>
+          <span id="bjAsuransi">
+            <button class="btn" id="bjAsuransiYa" type="button">Insurance: Yes</button>
+            <button class="btn btn--ghost" id="bjAsuransiTidak" type="button">No</button>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">1 dek</span>
+      <span class="ruleset__k">blackjack dibayar 2:1</span>
+      <span class="ruleset__k">bandar berhenti di 17</span>
+      <span class="ruleset__k">tanpa asuransi</span>
+      <span class="ruleset__k">split & double</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat stat--good"><span class="stat__label">Uang</span>
+        <span class="stat__value" id="bjKas">$0</span></div>
+      <div class="stat"><span class="stat__label">Menang</span>
+        <span class="stat__value" id="bjMenang">0</span></div>
+      <div class="stat"><span class="stat__label">Kalah</span>
+        <span class="stat__value" id="bjKalah">0</span></div>
+      <div class="stat"><span class="stat__label">Seri</span>
+        <span class="stat__value" id="bjSeri">0</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <ol class="howto__steps">
+        <li>Atur taruhan dengan <strong>&minus;</strong> dan <strong>+</strong> (satu keping $100), lalu <strong>Deal</strong>.</li>
+        <li><strong>Hit</strong> ambil kartu, <strong>Stand</strong> berhenti, <strong>Double Down</strong> menggandakan taruhan untuk satu kartu terakhir. Pasangan boleh di-<strong>Split</strong>.</li>
+        <li>Sedekat mungkin ke 21 tanpa melewatinya. As bernilai 1 atau 11.</li>
+      </ol>
+      <p>Program ini membayar blackjack <strong>dua kali lipat</strong>, bukan 1,5 kali seperti kasino. Panel di bawah mengukur akibatnya &mdash; dan kenapa layar &ldquo;You Broke The Bank&rdquo; itu ada.</p>
+    </details>
+
+    <div class="row">
+      <button class="btn btn--ghost btn--sm" id="bjUlang" type="button">Mulai dari awal</button>
+      <span class="faint">Bandingkan: <a href="../bj/index.html">BJ</a> &middot; <a href="../black/index.html">BLACK</a> &middot; <a href="../blackjck/index.html">BLACKJCK</a></span>
+    </div>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel bj-warn">
+      <p class="eyebrow">Blackjack dibayar dua kali lipat</p>
+<pre class="bj-code">920  CSH = CSH + BT*200     ' menang biasa: taruhan kembali + 1x
+1770 CSH = CSH + BT*300     ' blackjack:    taruhan kembali + 2x</pre>
+      <p class="bj-note">
+        Kasino sungguhan membayar blackjack <strong>1,5 : 1</strong>. Program
+        ini membayar <strong>2 : 1</strong>.
+      </p>
+      <p class="bj-note">
+        Blackjack muncul pada <strong>4,66%</strong> tangan (di luar seri).
+        Tambahan bayaran 0,5&times; peluang itu memindahkan
+        <strong>+2,33 poin persen</strong> ke pihak pemain. Diukur atas
+        400.000 tangan: selisihnya <strong>+2,32</strong> &mdash; cocok
+        sampai 0,01 poin.
+      </p>
+      <table class="bj-table">
+        <tbody>
+          <tr><td>1,5 : 1</td><td>hasil per taruhan &minus;2,18%</td></tr>
+          <tr><td class="is-aneh">2 : 1</td><td class="is-aneh">hasil per taruhan +0,14% &mdash; pemain unggul</td></tr>
+        </tbody>
+      </table>
+      <p class="bj-note">
+        Angka mutlaknya bergantung strategi (simulasinya memakai strategi
+        sederhana tanpa split dan double, jadi keduanya terlalu pesimis
+        sekitar 1,7 poin). Yang <strong>tidak</strong> bergantung strategi
+        adalah selisih 2,33 poin itu &mdash; ia lahir langsung dari peluang
+        blackjack.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Layar yang membuktikan aturannya sendiri</p>
+<pre class="bj-code">90   IF CSH&gt;10000 THEN 3340
+3350 PRINT"You Broke The Bank !!!"</pre>
+      <p class="bj-note">
+        Program ini punya layar kemenangan untuk <em>membangkrutkan
+        bandar</em>. Simulasi bertaruh $100 per tangan, mulai dari $2.000,
+        sampai $10.000 atau habis:
+      </p>
+      <table class="bj-table">
+        <tbody>
+          <tr><td>1,5 : 1</td><td>bangkrutkan bandar <strong>2%</strong> dari 400 percobaan</td></tr>
+          <tr><td class="is-aneh">2 : 1</td><td class="is-aneh">bangkrutkan bandar <strong>20%</strong>, median 2.466 tangan</td></tr>
+        </tbody>
+      </table>
+      <p class="bj-note">
+        Sepuluh kali lipat. Layar itu bukan hiasan &mdash; dengan aturan
+        program ini sendiri, ia memang bisa dicapai.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/blackjack.md">Dokumen arsitektur (keempatnya)</a> &middot;
+      <a href="../../../reviews/21.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/21.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/cards.js"></script>
+<script src="../../_shared/blackjack.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="21.js"></script>
+</body>
+</html>

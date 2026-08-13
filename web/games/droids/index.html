@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Droids — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari DROIDS.BAS (IPCO disk 2043-A, 1980-an): permainan yang tidak punya larik papan sama sekali — satu-satunya penyimpan bijih adalah buffer video, dan program membacanya kembali dengan SCREEN(y,x). Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="droids.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap d-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="d-stage">
+        <div class="d-crt">
+          <svg id="svg" class="d-svg" viewBox="0 0 820 580"
+               role="img" aria-label="Papan 15 kali 10 berisi bijih dan empat droid"></svg>
+        </div>
+
+        <div class="d-panel" id="panel"></div>
+        <div class="d-log" id="log" aria-live="polite"></div>
+
+        <div class="d-row--kecil">
+          <label>Pemain
+            <select id="pemain" class="d-angka">
+              <option value="1">1</option>
+              <option value="2" selected>2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select></label>
+          <label>Benih
+            <input type="number" id="benih" min="0" max="999999" step="1" value="1982"
+                   class="d-angka"></label>
+          <label><input type="checkbox" id="bunyi" checked> Bunyi</label>
+          <button class="btn btn--ghost btn--sm" id="mulai" type="button">Papan baru</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">183 baris BASIC</span>
+      <span class="ruleset__k">papan 15 &times; 10</span>
+      <span class="ruleset__k ruleset__k--mangsa">tanpa larik papan sama sekali</span>
+      <span class="ruleset__k">4 bijih hilang tanpa dihitung</span>
+      <span class="ruleset__k ruleset__k--baik">benih 3.600, bukan 60</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Giliran</span>
+        <span class="stat__value mono" id="s-giliran">—</span></div>
+      <div class="stat"><span class="stat__label">Bijih tersisa</span>
+        <span class="stat__value mono" id="s-sisa">—</span></div>
+      <div class="stat"><span class="stat__label">Skor</span>
+        <span class="stat__value mono" id="s-skor">—</span></div>
+      <div class="stat"><span class="stat__label">Benih</span>
+        <span class="stat__value mono" id="s-benih">1982</span></div>
+      <div class="stat"><span class="stat__label">Rekor Anda</span>
+        <span class="stat__value mono" id="s-rekor">—</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <p class="d-note">
+        Empat droid bernama <b>A</b>, <b>B</b>, <b>C</b>, <b>D</b> berdiri di
+        atas ladang bijih. Pilih sebuah droid, lalu sebuah arah; ia
+        <strong>meluncur lurus sampai bijihnya habis</strong>, dan tiap bijih
+        yang dilewatinya jadi satu angka bagi pemain yang sedang giliran.
+      </p>
+      <ol class="howto__steps">
+        <li><strong>Siapa pun boleh menggerakkan droid mana pun</strong>
+            (baris 1580). Tidak ada droid milik siapa-siapa; angkanya masuk ke
+            pemain yang sedang giliran.</li>
+        <li><strong>Delapan arah</strong>: N, NE, E, SE, S, SW, W, NW. Selalu
+            garis lurus.</li>
+        <li><strong>Langkah pertama harus mendarat di bijih.</strong> Kalau
+            tidak, itu <code>ILLEGAL MOVE</code> dan giliran <b>tidak</b>
+            berpindah. Arah yang sah disorot di sini; aslinya tidak.</li>
+        <li><strong>Permainan berhenti ketika tak satu pun droid punya bijih di
+            delapan sel tetangganya</strong> &mdash; berapa pun bijih yang
+            masih tergeletak di kejauhan.</li>
+      </ol>
+    </details>
+  </section>
+
+  <aside class="stack">
+
+    <section class="panel d-bad2">
+      <h2 class="panel__title">Layarnya adalah papannya — secara harfiah</h2>
+      <div class="d-code">2210 Z=Z+1:CT=SCREEN (IY(DN)+DY,IX(DN)+DX)
+2220 IF CT=ORE THEN 2230
+2230 LOCATE IY(DN),IX(DN):PRINT CHR$(0)
+2340 CT=SCREEN (IY(J)+JY,IX(J)+JX)</div>
+      <p class="d-note">
+        Cari larik yang menyimpan medannya. Tidak ada. <code>DIM</code> di
+        seluruh berkas hanya menyebut <code>PL$(4)</code> dan <code>CH(4)</code>
+        &mdash; nama pemain dan kode huruf droid. <b>Satu-satunya tempat bijih
+        disimpan adalah buffer video</b>, dan permainan membacanya kembali
+        dengan <code>SCREEN(y,x)</code>, fungsi yang mengembalikan kode
+        karakter di sebuah sel layar.
+      </p>
+      <p class="d-note">
+        Ini contoh paling murni dari pola yang berulang di seluruh koleksi ini
+        &mdash; SPACE, METEOR, SERPENT, ATTACK, PAC-GAL, SUB semuanya memakai
+        layar sebagai keadaan &mdash; tapi hanya di sini programnya benar-benar
+        <em>membaca layarnya sendiri</em> untuk mengetahui isi dunianya.
+        Menghapus satu karakter dengan spasi berarti menghapus sepotong bijih;
+        menggulir layar berarti mengacak seluruh papan.
+      </p>
+      <p class="d-note">
+        Akibat langsungnya ada di baris 2230: sel yang sudah dimakan ditulisi
+        <code>CHR$(0)</code>, <b>bukan spasi</b>. Karena itu baris 2229 harus
+        memeriksa <code>CT=0 OR CT=32</code> &mdash; dua cara berbeda untuk
+        "kosong", yang keduanya harus ditangani karena layar bisa berisi
+        keduanya.
+      </p>
+    </section>
+
+    <section class="panel d-warn">
+      <h2 class="panel__title">Empat bijih hilang tanpa pernah dihitung</h2>
+      <div class="d-code">1910 IX(J)=INT(15*RND)+5
+1920 IY(J)=INT(10*RND)+3
+1930 CHT=SCREEN(IY(J),IX(J)):IF CHT&lt;&gt;ORE THEN 1910
+1940 LOCATE IY(J),IX(J):PRINT CHR$(CH(J))</div>
+      <p class="d-note">
+        Papannya <b id="b-sel">—</b> sel, semuanya berisi bijih. Tiap droid
+        <em>harus</em> mendarat di sel berbijih (baris 1930 mengulang undian
+        sampai dapat), lalu menimpanya dengan hurufnya. Waktu droid itu pindah,
+        baris 2230 mengosongkan sel asalnya &mdash; tanpa menambah angka.
+      </p>
+      <p class="d-note">
+        Jadi angka maksimum yang bisa dikumpulkan seluruh pemain adalah
+        <b id="b-skor">—</b>, bukan 150. Papan ini menampilkan sisanya terhadap
+        angka itu, bukan terhadap 150.
+      </p>
+    </section>
+
+    <section class="panel d-warn">
+      <h2 class="panel__title">Berhenti dengan bijih yang masih tergeletak</h2>
+      <div class="d-code">2310 FOR J=1 TO 4
+2320  FOR JX=-1 TO 1
+2330   FOR JY=-1 TO 1
+2340    CT=SCREEN (IY(J)+JY,IX(J)+JX)
+2350    IF CT=ORE THEN STP$="NO"</div>
+      <p class="d-note">
+        Syarat berhentinya bukan "bijih habis" melainkan "tidak ada droid yang
+        <em>bersebelahan</em> dengan bijih". Keempat droid bisa terkurung di
+        petak kosong yang mereka buat sendiri sementara bijih masih menumpuk di
+        sudut yang jauh.
+      </p>
+      <p class="d-note">
+        Disimulasikan 200 papan dengan langkah acak sampai buntu:
+      </p>
+      <table class="d-tbl">
+        <tr><th>berhenti dengan bijih tersisa</th><td id="b-macet">—</td></tr>
+        <tr><th>rata-rata yang tertinggal</th><td id="b-rata">—</td></tr>
+      </table>
+      <p class="d-note">
+        Bukan cacat &mdash; itu justru yang membuat permainannya punya taktik:
+        menggiring droid ke tepi lebih awal berarti mengunci ladangnya sendiri.
+        Tapi aslinya tidak pernah menyebutnya.
+      </p>
+    </section>
+
+    <section class="panel d-good">
+      <h2 class="panel__title">Satu-satunya benih yang benar-benar lebar</h2>
+      <div class="d-code">1890 RANDOMIZE VAL(MID$(TIME$,7,2)+MID$(TIME$,4,2))</div>
+      <p class="d-note">
+        Perhatikan: <code>MID$</code>-nya menyambung <b>detik</b> dengan
+        <b>menit</b> sebagai <em>teks</em>, baru hasilnya di-<code>VAL</code>.
+        Jadi "35" dan "12" menjadi "3512" &mdash; <b id="b-benih">—</b> benih
+        yang mungkin, bukan 60.
+      </p>
+      <p class="d-note">
+        Bandingkan dengan tiga saudaranya: <a href="../wildcat/index.html">WILDCAT</a>
+        memakai <code>RANDOMIZE(RND*30000)</code> yang tidak menambah satu bit
+        pun; <a href="../golf/index.html">GOLF</a> menyemai ulang selagi
+        menunggu tombol; <a href="../football/index.html">FOOTBALL</a> menyemai
+        ulang dari detik sebelum <em>setiap</em> permainan. Yang benar-benar
+        melebarkan ruang benihnya justru berkas paling sederhana di antara
+        semuanya, dan caranya hanya menyambung dua potongan <code>TIME$</code>.
+      </p>
+      <p class="d-note">
+        Sepuluh baris pertama berkas ini bukan kode melainkan <b>logo kelompok
+        pengguna</b>: <i>International PC Owners</i>, P.O. Box 10426,
+        Pittsburgh PA 15234, disk 2043-A &mdash; ditambah baris
+        <i>"Error correction by JOHN BECK, Melbourne PC-Group"</i>. Berkas ini
+        pergi dari Pittsburgh ke Melbourne, diperbaiki di sana, lalu beredar
+        lagi. Itu <em>fork</em> dan <em>patch</em>, dikirim lewat pos. Alamat
+        kotak posnya alamat organisasi, bukan rumah pribadi, jadi ia dikutip
+        di sini.
+      </p>
+    </section>
+
+    <p class="d-links">
+      <a href="../../docs/droids.md">Catatan lengkap port ini</a> ·
+      <a href="../../../reviews/DROIDS.md">Analisis BASIC aslinya</a> ·
+      <a href="../../index.html">Semua program</a>
+    </p>
+  </aside>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="droids.js"></script>
+</body>
+</html>

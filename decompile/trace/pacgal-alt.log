@@ -1,0 +1,6 @@
+format    : MZ, 5632-byte header, 1361 relocations applied; entry CS:IP 0000:001A -> image offset 0x1A
+start-up: 87,093 instructions, stopped: int 0x20
+  interrupts requested: 03h, 10h, 16h, 20h
+  ports written: 0x21, 0x40, 0x42, 0x43, 0x61
+  keyboard: 1 reads, 1001 of 1002 keys unused
+executed 1,844 distinct addresses -> C:/Users/aguna/Downloads/Personal/Games/old_games/decompile/trace/pacgal-alt.map

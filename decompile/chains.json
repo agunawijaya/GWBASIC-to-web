@@ -1,0 +1,33 @@
+{
+ "3DTTT.EXE": [],
+ "PAC-GAL.EXE": [
+  {
+   "routine": 21341,
+   "nvars": 3,
+   "kind": "PLAY",
+   "examples": [
+    "mbt190o2l8bbbl16cecl8bbp8bbbl16cl8edcc",
+    "mbl64abceabceebceabceagaa"
+   ]
+  }
+ ],
+ "HOPPER.EXE": [
+  {
+   "routine": 22506,
+   "nvars": 4,
+   "kind": "DRAW",
+   "examples": [
+    "C1RFL3BL3L0BL2R0BR11R0BR2DL2BL2L5BL2L2",
+    "C2L45G2DGD2FDF2R46E2UEU2HUH2G2DGD2FDF2"
+   ]
+  },
+  {
+   "routine": 18724,
+   "nvars": 1,
+   "kind": "?",
+   "examples": [
+    "HMPKD"
+   ]
+  }
+ ]
+}

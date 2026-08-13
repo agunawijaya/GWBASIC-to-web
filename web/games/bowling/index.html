@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bowling Champ — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari BOWLING.BAS (1986): boling sepuluh frame dengan bidikan berayun. Termasuk tiga pola khas BASIC yang dipakai sekaligus. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="bowling.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap b-layout">
+
+  <section class="stack">
+    <div class="screen screen--scanlines">
+      <div class="b-stage">
+        <div id="lane"></div>
+        <p class="b-say" id="say">Tekan Lempar saat pelempar sejajar dengan sasaran.</p>
+        <div class="m-transport">
+          <button class="btn btn--primary" id="throw" type="button">Lempar</button>
+          <button class="btn btn--ghost" id="restart" type="button">Mulai ulang</button>
+          <label class="b-opt">Kesulitan
+            <input type="range" id="diff" min="1" max="10" value="5">
+            <span id="diffN">5</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div id="card"></div>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Frame</span>
+        <span class="stat__value" id="sFrame">1</span></div>
+      <div class="stat stat--good"><span class="stat__label">Total</span>
+        <span class="stat__value" id="sTotal">0</span></div>
+      <div class="stat"><span class="stat__label">Rekor</span>
+        <span class="stat__value" id="sBest">—</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <ol class="howto__steps">
+        <li>Pelempar di ujung kiri <strong>berjalan naik-turun</strong> mencari
+            jalur. Tekan <strong>Lempar</strong> tepat saat ia sejajar dengan
+            pin yang Anda incar &mdash; itu satu-satunya kendali yang Anda
+            punya, dan seluruh keterampilan permainan ini ada di situ.</li>
+        <li>Bolanya lalu berjalan <strong>lurus</strong> di jalur itu. Pin yang
+            tertabrak roboh, lalu <strong>menyebar menyerong ke
+            depan</strong> &mdash; ke atas dan ke bawah sekaligus &mdash;
+            merobohkan pin lain yang kena. Jadi membidik pin depan tidak sama
+            dengan membidik pin belakang.</li>
+        <li>Penggeser <strong>Kesulitan</strong> mengatur seberapa cepat ia
+            berjalan. Makin cepat, makin sempit celah waktunya.</li>
+        <li>Sepuluh <em>frame</em>, dua lemparan tiap frame. Kalau lemparan
+            pertama merobohkan kesepuluh pin (<strong>strike</strong>, ditandai
+            <code>X</code>), frame itu selesai saat itu juga.</li>
+        <li><strong>Strike</strong> bernilai 10 <em>ditambah dua lemparan
+            berikutnya</em>. <strong>Spare</strong> (<code>/</code>, sepuluh
+            pin habis dalam dua lemparan) bernilai 10 <em>ditambah satu
+            lemparan berikutnya</em>. Itu sebabnya angka di kartu skor baru
+            muncul setelah Anda melempar lagi.</li>
+      </ol>
+      <p>
+        Di frame kesepuluh Anda dapat lemparan tambahan kalau menutupnya dengan
+        strike atau spare &mdash; supaya bonusnya punya sesuatu untuk dihitung.
+        Nilai sempurna 300 berarti dua belas strike berturut-turut.
+      </p>
+    </details>
+    <div class="row">
+      <button class="btn btn--ghost btn--sm" id="resetBest" type="button">Reset rekor</button>
+    </div>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel b-warn">
+      <p class="eyebrow">Layar sebagai struktur data</p>
+<pre class="b-code">570 IF SCREEN(V,H)=234 THEN J=J+1 ELSE 610
+590 X1=X1+D:X2=X2+1:IF SCREEN(X1,X2)=234 THEN
+    LOCATE X1,X2:PRINT " ";:J=J+1: … GOTO 590</pre>
+      <p class="b-note">
+        Program ini <strong>tidak menyimpan di mana pinnya berada</strong>.
+        Untuk mengetahui apakah bola mengenai pin, ia <strong>membaca kembali
+        layar</strong>: <code>SCREEN(V,H)</code> mengembalikan kode karakter
+        pada baris V kolom H, dan 234 adalah karakter pin.
+      </p>
+      <p class="b-note">
+        Menjatuhkan pin berarti <code>PRINT " "</code> di posisi itu. Tampilan
+        <strong>adalah</strong> keadaan permainannya.
+      </p>
+      <p class="b-note">
+        Kenapa orang menulis begini? Karena layar sudah ada, sudah dua dimensi,
+        bisa dibaca maupun ditulis, dan <strong>tidak memakan memori
+        tambahan</strong>. Di mesin 64 KB, <code>DIM</code> sebuah larik pin
+        terasa boros.
+      </p>
+      <p class="b-note">
+        Harganya: ganti warna, geser tata letak, atau pakai kartu grafis lain —
+        dan aturan permainannya ikut rusak. Port ini menyimpan pin sebagai data
+        dan menggambar layar darinya. Anda bisa melihat keduanya:
+      </p>
+      <div class="row">
+        <button class="btn btn--ghost btn--sm" id="showPins" type="button" aria-pressed="false">Tampilkan data pin</button>
+      </div>
+      <div id="pinData" class="hidden"></div>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Satu <code>PRINT</code> menggambar sepuluh pin</p>
+<pre class="b-code">1001 DATA 234,31,29,29,234,31,29,29,234,28
+1002 DATA 234,31,29,29,29,29,234,28,234,31
+1003 DATA 29,29,234,28,234,31,29,29,234,31,234
+
+400 FOR I=1 TO 31:READ PC:PRINT CHR$(PC);:NEXT</pre>
+      <p class="b-note">
+        Tiga puluh satu angka, satu perulangan. Tapi hanya sepuluh di antaranya
+        yang berupa pin (<strong>234</strong>) &mdash; sisanya
+        <strong>perintah gerak kursor</strong>:
+      </p>
+      <table class="b-table">
+        <tbody>
+          <tr><td><code>234</code></td><td>&Omega;</td><td>gambar satu pin</td></tr>
+          <tr><td><code>31</code></td><td>&darr;</td><td>kursor turun</td></tr>
+          <tr><td><code>29</code></td><td>&larr;</td><td>kursor kiri</td></tr>
+          <tr><td><code>28</code></td><td>&rarr;</td><td>kursor kanan</td></tr>
+        </tbody>
+      </table>
+      <p class="b-note">
+        Itu <em>escape sequence</em> &mdash; prinsip yang sama dengan
+        <code>\\033[2J</code> di terminal Unix sampai hari ini, dan dengan
+        gambar dadu di <code>CRAPS.BAS</code>. Bentuk dua dimensi disimpan
+        sebagai deret satu dimensi berisi "gambar" dan "pindah".
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Skor boling sebagai mesin keadaan lima langkah</p>
+<pre class="b-code">450 ON S(Z9) GOSUB 680,700,720,740,760
+
+680 IF J1=10 THEN IF PS THEN S=2 ELSE S=5
+700 T=T+J:IF J=10 THEN S=3 ELSE S=4
+720 T=T+J*2:IF J&lt;&gt;10 THEN S=4
+740 T=T+J:IF J1=10 THEN S=5 ELSE S=1
+760 T=T+J:IF J=10 THEN S=2 ELSE S=1</pre>
+      <p class="b-note">
+        Menghitung skor boling biasanya digambarkan sebagai
+        <em>melihat ke depan</em>: nilai sebuah strike baru diketahui setelah
+        dua lemparan berikutnya. Program ini tidak pernah melihat ke depan.
+      </p>
+      <p class="b-note">
+        Ia menyimpan <strong>satu angka keadaan</strong> per pemain, dan tiap
+        lemparan memutakhirkannya. Bonus dibayar saat lemparannya terjadi,
+        bukan dihitung mundur belakangan.
+      </p>
+      <div class="b-states" id="states"></div>
+      <p class="b-note">
+        Keadaan yang sedang berlaku disorot &mdash; ia berubah tiap lemparan.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/bowling.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/BOWLING.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/BOWLING.BAS">Kode sumber 1986</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="bowling.js"></script>
+</body>
+</html>

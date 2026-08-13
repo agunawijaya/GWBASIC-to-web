@@ -1,0 +1,107 @@
+/* ===========================================================================
+   yahtzee.css — khusus Yatzee. Awalan `y-`.
+   Dadunya sendiri datang dari _shared/dice.css.
+   =========================================================================== */
+
+.y-layout {
+  display: grid; gap: var(--s5);
+  grid-template-columns: minmax(340px, 1fr) minmax(300px, 430px);
+  align-items: start; padding-block: var(--s6) var(--s8);
+}
+@media (max-width: 1040px) { .y-layout { grid-template-columns: 1fr; } }
+
+.y-stage { display: grid; gap: var(--s4); justify-items: center; }
+
+.y-say {
+  font-family: var(--font-mono); font-size: var(--fs-sm);
+  color: var(--acc-phosphor); min-height: 1.6em; text-align: center;
+}
+.y-say--bad { color: var(--acc-red); }
+
+/* --- kartu skor ----------------------------------------------------------
+   Aslinya digambar dengan karakter kotak CP437 dan enam kolom tetap, satu
+   untuk tiap pemain (baris 6840-7010). Di sini kolomnya sebanyak pemain yang
+   benar-benar bermain — kolom kosong di papan 1980 ada karena `PRINT` tidak
+   bisa tahu berapa pemainnya sebelum digambar, bukan karena diinginkan. */
+
+.y-card { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
+.y-card th, .y-card td {
+  border: 1px solid var(--line-soft); padding: 0;
+}
+.y-card thead th {
+  padding: 6px var(--s2); font-size: var(--fs-xs); color: var(--ink-dim);
+  text-transform: uppercase; letter-spacing: .06em; font-weight: 600;
+}
+.y-card tbody th {
+  padding: 4px var(--s2); text-align: left; font-weight: 500;
+  color: var(--ink-dim); font-size: var(--fs-xs);
+  display: flex; align-items: center; gap: var(--s2);
+}
+
+/* Huruf/angka tombol aslinya. Ia bukan hiasan: kolom inilah yang diketik
+   pemain 1980, dan menyimpannya membuat kode sumber bisa dibaca berdampingan
+   dengan layarnya. */
+.y-key {
+  flex: none; width: 17px; height: 17px; border-radius: 3px;
+  display: grid; place-items: center;
+  background: var(--bg-sunken); border: 1px solid var(--edge-soft);
+  font-family: var(--font-mono); font-size: 10px; color: var(--acc-amber);
+}
+
+.y-pick {
+  width: 100%; min-height: 26px; padding: 2px 6px;
+  border: none; background: none; color: var(--ink);
+  font-family: var(--font-mono); font-size: var(--fs-sm); text-align: right;
+  cursor: default;
+}
+.y-pick--isi    { color: var(--ink); }
+.y-pick--hangus { color: var(--ink-faint); }
+
+/* Sel yang bisa dipilih giliran ini. Nilai yang akan didapat ditampilkan
+   sebagai pratinjau — lihat catatan di yahtzee.js dan dokumen §4. */
+.y-pick--bisa {
+  cursor: pointer;
+  background: color-mix(in srgb, var(--acc-phosphor) 10%, transparent);
+}
+.y-pick--bisa:hover { background: var(--acc-phosphor-dim); }
+.y-pick--nilai { color: var(--acc-phosphor); font-weight: 700; }
+/* Nol yang bisa dipilih tetap ditampilkan, tidak disembunyikan: mengorbankan
+   sebuah kotak adalah langkah sah di Yahtzee, dan kadang satu-satunya. */
+.y-pick--nol   { color: var(--acc-red); }
+.y-pick:focus-visible { outline: none; box-shadow: var(--glow); }
+
+.y-sum th { color: var(--ink); font-weight: 600; }
+.y-sum td { padding: 3px 6px; text-align: right;
+            font-family: var(--font-mono); color: var(--ink-dim); }
+.y-sum--rule th, .y-sum--rule td { border-top: 2px solid var(--edge-strong); }
+.y-sum--grand th, .y-sum--grand td {
+  border-top: 2px solid var(--acc-phosphor);
+  color: var(--acc-phosphor); font-weight: 700; font-size: var(--fs-md);
+}
+
+/* --- panel kanan --------------------------------------------------------- */
+
+.y-code {
+  margin-top: var(--s3); padding: var(--s3);
+  border: var(--border); border-radius: var(--r);
+  background: var(--bg-sunken); color: var(--acc-amber);
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.7;
+  overflow-x: auto;
+}
+.y-code em { color: var(--ink-faint); font-style: normal; }
+
+.y-note { font-size: var(--fs-sm); color: var(--ink-dim); margin-top: var(--s2); }
+.y-warn { border-left: 3px solid var(--acc-amber); }
+.y-good { border-left: 3px solid var(--acc-phosphor); }
+
+.y-tbl { width: 100%; border-collapse: collapse; margin-top: var(--s3);
+         font-size: var(--fs-xs); }
+.y-tbl th, .y-tbl td { padding: 5px var(--s2); text-align: left;
+                       border-bottom: 1px solid var(--line-soft);
+                       vertical-align: top; }
+.y-tbl th { color: var(--ink-dim); font-weight: 600; }
+.y-tbl td:last-child, .y-tbl th:last-child {
+  text-align: right; font-family: var(--font-mono); }
+
+.y-setup { display: grid; gap: var(--s4); justify-items: center;
+           padding-block: var(--s6); }

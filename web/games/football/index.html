@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Head Coach — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari FOOTBALL.BAS (Friendlyware, 29 Juli 1982): satu tabel hasil dipakai dua arah sehingga formasi bertahan Anda ikut memilih hasil serangan komputer, indeks yang meleset di kedua ujung, seluruh baris DATA kedua yang tidak pernah dibaca, dan hasil tiap permainan yang ditentukan detik jam. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="football.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap f-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="f-stage">
+        <div class="f-crt f-crt--samping">
+          <svg id="svg2" class="e-svg" viewBox="0 0 820 232"
+               role="img" aria-label="Tampilan dari pinggir lapangan: dua regu"></svg>
+        </div>
+
+        <div class="f-crt">
+          <svg id="svg" class="f-svg" viewBox="0 0 820 250"
+               role="img" aria-label="Lapangan football dari atas"></svg>
+        </div>
+
+        <div class="f-panel" id="panel"></div>
+        <div class="f-log" id="log" aria-live="polite"></div>
+
+        <div class="f-row--kecil">
+          <label>Benih
+            <input type="number" id="benih" min="0" max="999999" step="1" value="1982"
+                   class="f-angka2"></label>
+          <label><input type="checkbox" id="bunyi" checked> Bunyi</label>
+          <label><input type="checkbox" id="animasi" checked> Animasi
+            <span class="f-kecil">(klik gambar untuk melompati)</span></label>
+          <button class="btn btn--ghost btn--sm" id="mulai" type="button">Pertandingan baru</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">345 baris BASIC</span>
+      <span class="ruleset__k">4 quarter &times; 30 permainan</span>
+      <span class="ruleset__k ruleset__k--mangsa">satu tabel, dua arah</span>
+      <span class="ruleset__k ruleset__k--bahaya">DATA kedua tak pernah dibaca</span>
+      <span class="ruleset__k ruleset__k--bahaya">hasil ditentukan detik jam</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Quarter</span>
+        <span class="stat__value mono" id="s-qtr">1</span></div>
+      <div class="stat"><span class="stat__label">Anda (visitors)</span>
+        <span class="stat__value mono" id="s-anda">0</span></div>
+      <div class="stat"><span class="stat__label">Saya (home)</span>
+        <span class="stat__value mono" id="s-saya">0</span></div>
+      <div class="stat"><span class="stat__label">Down &amp; to go</span>
+        <span class="stat__value mono" id="s-down">1 &amp; 10</span></div>
+      <div class="stat"><span class="stat__label">Yard line</span>
+        <span class="stat__value mono" id="s-yln">—</span></div>
+      <div class="stat"><span class="stat__label">Permainan</span>
+        <span class="stat__value mono" id="s-play">0 / 30</span></div>
+      <div class="stat"><span class="stat__label">Benih</span>
+        <span class="stat__value mono" id="s-benih">1982</span></div>
+      <div class="stat"><span class="stat__label">Skor terbaik Anda</span>
+        <span class="stat__value mono" id="s-rekor">—</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <p class="f-lead">
+        Empat quarter, masing-masing <strong>30 permainan</strong>. Waktu Anda
+        memegang bola, pilih satu dari <strong>tujuh</strong> permainan
+        menyerang; waktu komputer memegang bola, pilih satu dari
+        <strong>lima</strong> formasi bertahan. Menang kalau skor Anda
+        (<em>visitors</em>) lebih besar dari skor komputer (<em>home</em>).
+      </p>
+      <ol class="howto__steps">
+        <li><strong>Nomor yang Anda tekan adalah kolom tabel</strong>, dan
+            tabelnya sama untuk menyerang maupun bertahan. Jadi memilih formasi
+            "Long Pass" berarti memberi komputer kolom 5 &mdash; kolom yang
+            berisi 40, 50, dan tiga angka 99. Tabelnya terbuka di panel sebelah;
+            aslinya tidak pernah memperlihatkannya.</li>
+        <li><strong>Kode 99 berarti intersep, 98 berarti fumble</strong> &mdash;
+            dan artinya <em>bertukar</em> menurut siapa yang memegang bola.
+            Angka yang sama membuat Anda kehilangan bola atau merebutnya.</li>
+        <li><strong>Baris tabel dipilih oleh satu angka 0&ndash;9</strong> yang
+            di aslinya diambil dari detik jam dinding, disemai ulang sebelum
+            <em>setiap</em> permainan. Di sini "detik" itu diundi dari benih yang
+            bisa Anda tulis, jadi pertandingan bisa diulang persis.</li>
+        <li><strong>Anda dapat empat down; komputer menendang di down keempat</strong>
+            (baris 970&ndash;990 melawan 1580&ndash;1590). Anda boleh memilih
+            <em>punt</em> atau <em>field goal</em> kapan saja.</li>
+        <li><strong>Tombol 0 diterima.</strong> Baris 850 dan 1320 hanya menolak
+            di luar rentang 0&ndash;5 dan 0&ndash;7, jadi "0" adalah permainan
+            yang sah &mdash; dan selalu memberi nol yard, karena kolom 0 tabelnya
+            tidak pernah diisi.</li>
+      </ol>
+    </details>
+  </section>
+
+  <aside class="stack">
+
+    <section class="panel f-bad2">
+      <h2 class="panel__title">Formasi bertahan Anda memilih hasil serangan saya</h2>
+      <div class="f-code">590 FOR I=1 TO 10:FOR J=1 TO 5:READ YRD(I,J):NEXT J,I
+870 POSI=VAL(P$)        ' bertahan: 1..5
+1340 POSI=VAL(P$)       ' menyerang: 1..7
+1050 YDS=YDS-YRD(RW,POSI)   ' dipakai KEDUA arah</div>
+      <p class="f-note">
+        Tidak ada tabel kedua untuk pertahanan. Nomor formasi yang Anda tekan
+        masuk ke <code>POSI</code>, dan <code>POSI</code> adalah kolom yang sama
+        yang dibaca ketika Anda menyerang. Ini tabel hasilnya, apa adanya:
+      </p>
+      <table class="f-tbl"><tbody id="b-tabel"></tbody></table>
+      <p class="f-note">
+        Dan inilah artinya bagi Anda &mdash; rata-rata dan risiko tiap kolom,
+        dihitung dari sepuluh baris yang benar-benar dipakai:
+      </p>
+      <table class="f-tbl">
+        <thead><tr><th>kolom</th><th>rata²</th><th>maks</th><th>intersep</th><th>fumble</th></tr></thead>
+        <tbody id="b-peluang"></tbody>
+      </table>
+    </section>
+
+    <section class="panel f-warn">
+      <h2 class="panel__title">Indeksnya meleset di kedua ujung</h2>
+      <div class="f-code">1780 R=RND*10
+1790 RW=FIX(R)          ' 0..9
+590  FOR I=1 TO 10 ...  ' mengisi 1..10</div>
+      <p class="f-note">
+        <code>RW</code> bernilai <b>0 sampai 9</b>, tapi tabelnya diisi pada
+        <b>1 sampai 10</b>. Jadi baris <b>0</b> tidak pernah diisi &mdash; di
+        GW-BASIC ia berisi nol semua, dan itu berarti <b>satu dari sepuluh
+        permainan selalu gagal total</b> apa pun yang Anda pilih. Sementara
+        baris <b>10</b>, yang datanya ada dan sudah dibaca, tidak pernah
+        terpakai sama sekali.
+      </p>
+      <p class="f-note">
+        Kode <code>100</code> (touchdown langsung dari tabel) diperiksa di baris
+        1040 dan 1500. Di dalam kedua baris <code>DATA</code>:
+        <b id="b-seratus">—</b>. Touchdown hanya bisa terjadi dengan melewati
+        garis gol.
+      </p>
+      <p class="f-note">
+        Dari 60 detik yang mungkin: <b id="b-detik">—</b>.
+      </p>
+    </section>
+
+    <section class="panel f-bad2">
+      <h2 class="panel__title">Seluruh baris DATA kedua tidak pernah dibaca</h2>
+      <p class="f-note">
+        Baris 590 membaca tepat 50 angka. Baris <code>3020</code> berisi 50
+        angka. Baris <code>3030</code> tidak pernah tersentuh &mdash; dan
+        bedanya dengan 3020 cuma ini:
+      </p>
+      <ul class="f-note" id="b-beda"></ul>
+      <p class="f-note">
+        Lima puluh angka disalin untuk mengubah satu. Kemungkinan besar ini
+        tabel varian yang sedang dicoba penulisnya lalu tidak pernah
+        disambungkan &mdash; <code>RESTORE</code> di baris 2990 mengembalikan
+        pembacaan ke awal, jadi ia tetap tidak terpakai pada pertandingan kedua.
+      </p>
+    </section>
+
+    <section class="panel f-warn">
+      <h2 class="panel__title">Duplikasi yang melahirkan bug, persis seperti diramalkan</h2>
+      <p class="f-note">
+        Empat blok kejadian ditulis dua kali &mdash; satu untuk Anda, satu untuk
+        komputer &mdash; karena tidak ada parameter "siapa yang mencetak angka".
+        Konsekuensinya muncul di dua tempat, dan keduanya tanda perbandingan
+        yang lupa dibalik saat menyalin:
+      </p>
+      <div class="f-code">2520 IF NPS&lt;25 AND RW&lt;9 THEN ... Good
+2530 IF NPS&lt;30 AND RW&lt;7 THEN ... Good
+2540 IF NPS&gt;35 AND RW&lt;5 THEN ... Good   &lt;-- seharusnya &lt;
+2550 IF NPS&lt;38 AND RW&lt;4 THEN ... Good
+
+2690 IF NPS&gt;55 AND RW&lt;9 THEN ... Good
+2700 IF NPS&gt;50 AND RW&lt;7 THEN ... Good
+2710 IF NPS&lt;45 AND RW&lt;5 THEN ... Good   &lt;-- seharusnya &gt;</div>
+      <p class="f-note">
+        Keduanya <strong>dipertahankan</strong>. Kalau sebuah field goal lolos
+        justru lewat baris yang tandanya terbalik, catatan pertandingan
+        menyebutnya. Perhatikan juga jumlah tingkatnya: field goal
+        <b>Anda</b> punya empat tingkat (25/30/35/38), field goal
+        <b>komputer</b> hanya tiga (25/30/35). Bukan penyeimbangan &mdash;
+        satu blok memang lebih pendek dari yang lain.
+      </p>
+    </section>
+
+    <section class="panel f-good">
+      <h2 class="panel__title">Yang dipertahankan, yang diubah</h2>
+      <p class="f-note">
+        <b>Dipertahankan:</b> seluruh isi tabel, arah maju yang berganti tiap
+        quarter (baris 2900 menukar sisi dengan <code>NPS=80-OPS</code>), punt
+        20 kolom, intersep 5 kolom, batas 16 dan 64 sebagai garis gol, empat
+        down untuk Anda dan tendangan otomatis untuk komputer, dua bug tanda di
+        atas, dan bahkan tombol <b>0</b> yang sah.
+      </p>
+      <p class="f-note">
+        <b>Diubah:</b> penyemaian. Aslinya <code>RANDOMIZE VAL(RIGHT$(TIME$,2))</code>
+        dijalankan sebelum setiap permainan, jadi hasilnya ditentukan detik jam
+        dinding &mdash; dua permainan dalam detik yang sama memberi hasil yang
+        sama persis. Di sini "detik" itu diundi dari benih yang bisa Anda tulis:
+        sifatnya dipertahankan (satu angka 0&ndash;59 memilih seluruh hasil, dan
+        angka itu dicetak di catatan tiap permainan), tapi pertandingannya jadi
+        bisa diulang.
+      </p>
+      <p class="f-note">
+        <b>Ditambahkan:</b> tabel hasilnya diperlihatkan. Aslinya ia rahasia,
+        dan tanpa melihatnya tidak ada cara memahami kenapa memilih formasi
+        nomor 5 begitu berbahaya.
+      </p>
+    </section>
+
+    <p class="f-links">
+      <a href="../../docs/football.md">Catatan lengkap port ini</a> ·
+      <a href="../../../reviews/FOOTBALL.md">Analisis BASIC aslinya</a> ·
+      <a href="../../index.html">Semua program</a>
+    </p>
+  </aside>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="football-data.js"></script>
+<script src="football-scene.js"></script>
+<script src="football.js"></script>
+</body>
+</html>

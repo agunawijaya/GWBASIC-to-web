@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Spinout — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari BREAKOUT.BAS (K.R. Sloan Jr., 1 Januari 1982): bukan Breakout biasa — bolanya punya SPIN yang membelokkan lintasannya, dan bata yang sudah pecah bisa kembali. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="breakout.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap k-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="k-stage">
+        <div class="k-crt">
+          <svg id="layar" class="k-svg" viewBox="0 0 320 200"
+               role="img" aria-label="Papan permainan Spinout"></svg>
+          <p class="k-pesan" id="pesan"></p>
+        </div>
+
+        <div class="k-row">
+          <button class="btn btn--primary" id="mulai" type="button">Mulai</button>
+          <button class="btn btn--ghost" id="jeda" type="button" disabled>Jeda</button>
+          <button class="btn btn--ghost btn--sm" id="mode" type="button"
+                  aria-pressed="false">Mode 1982</button>
+          <label>Kemampuan
+            <select id="skill">
+              <option>1</option><option>2</option><option>3</option><option>4</option>
+              <option selected>5</option><option>6</option><option>7</option>
+              <option>8</option><option>9</option><option>10</option>
+            </select></label>
+          <label class="k-cek"><input type="checkbox" id="bunyi" checked> Bunyi</label>
+        </div>
+
+        <div class="k-row k-row--kecil">
+          <label>Langkah per detik
+            <input type="range" id="hz" min="12" max="60" step="1" value="32">
+            <span class="mono" id="hzv"></span></label>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">80 bata &middot; 6800 poin</span>
+      <span class="ruleset__k">4 bola</span>
+      <span class="ruleset__k">spin membelokkan bola</span>
+      <span class="ruleset__k" id="k-balik"></span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Skor</span>
+        <span class="stat__value mono" id="s-skor">0</span></div>
+      <div class="stat"><span class="stat__label">Bola</span>
+        <span class="stat__value mono" id="s-bola">—</span></div>
+      <div class="stat"><span class="stat__label">Bata tersisa</span>
+        <span class="stat__value mono" id="s-bata">80</span></div>
+      <div class="stat stat--warn"><span class="stat__label">Spin</span>
+        <span class="stat__value mono" id="s-spin">0,00</span></div>
+      <div class="stat"><span class="stat__label">Laju</span>
+        <span class="stat__value mono" id="s-laju">0,00</span></div>
+      <div class="stat stat--bad"><span class="stat__label">Bata dikembalikan</span>
+        <span class="stat__value mono" id="s-balik">0</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <p class="k-lead">
+        Namanya di berkas <code>BREAKOUT.BAS</code>, tapi di layarnya sendiri
+        ia menyebut diri <strong>Spinout</strong> &mdash; dan itu tepat.
+        Bedanya dengan Breakout biasa: <strong>bolanya punya
+        spin</strong>, dan spin itu <em>membelokkan lintasannya</em> terus
+        selama terbang.
+      </p>
+      <ol class="howto__steps">
+        <li><kbd>&larr;</kbd> <kbd>&rarr;</kbd> menggerakkan papan,
+            <kbd>Spasi</kbd> menyajikan bola. Aslinya ketiga tombol ini
+            <strong>dipilih pemain</strong> di layar pembuka &mdash; lihat
+            panel di sebelah.</li>
+        <li>Memukul bola <strong>di luar titik tengah papan</strong> memberinya
+            spin. Makin jauh dari tengah, makin besar spinnya, dan makin
+            melengkung lintasannya.</li>
+        <li><strong>Kemampuan 1&ndash;10 bukan sekadar kecepatan.</strong> Satu
+            angka itu mengendalikan enam hal sekaligus &mdash; termasuk seberapa
+            sering bata yang sudah Anda pecahkan <em>dipasang kembali</em>.</li>
+        <li><strong>Perhatikan jejak bolanya.</strong> Ia melengkung, dan
+            lengkungan itu bukan hiasan &mdash; itu spin yang sedang bekerja.
+            Cincin kuning di sekeliling bola menunjukkan arah dan besarnya.
+            Tombol <strong>Mode 1982</strong> menukar seluruh rupa ke palet
+            CGA aslinya; simulasinya tetap sama persis.</li>
+      </ol>
+      <p>
+        Aslinya tidak punya pewaktu sama sekali: satu langkah simulasi = satu
+        putaran perulangan penafsir BASIC, jadi kecepatannya bergantung
+        kecepatan mesin. Penggeser <em>langkah per detik</em> di atas adalah
+        pengganti yang jujur untuk angka yang tidak pernah tertulis.
+      </p>
+    </details>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel k-good">
+      <p class="eyebrow">Spin: sebuah matriks rotasi yang menyamar</p>
+<pre class="k-code">760 VX=OVX-(SPIN*OVY*<b>.05</b>):VY=OVY+(SPIN*OVX*<b>.05</b>)+G
+761 SPIN=SPIN*.9999</pre>
+      <p class="k-note">
+        Baca ulang sebagai matriks. Dengan <em>t</em> = <code>SPIN×0,05</code>:
+      </p>
+<pre class="k-code">⎡vx'⎤   ⎡ 1  -t ⎤ ⎡vx⎤
+⎣vy'⎦ = ⎣ t   1 ⎦ ⎣vy⎦</pre>
+      <p class="k-note">
+        Itu <strong>rotasi sudut kecil</strong>, diterapkan tiap langkah. Bola
+        yang berspin tidak dibelokkan sekali lalu lurus &mdash; ia
+        <strong>terus berbelok</strong> selama masih berspin. Efek Magnus,
+        dalam satu baris BASIC.
+      </p>
+      <table class="k-tbl" id="tbl-spin"></table>
+      <p class="k-note">
+        Tapi matriksnya <strong>tidak menjaga laju</strong>: determinannya
+        1+<em>t</em>², bukan 1. Jadi bola berspin ikut <strong>makin
+        cepat</strong> &mdash; pada spin 1, sekitar 13% tiap seratus langkah.
+      </p>
+      <p class="k-note">
+        Rotasi yang benar butuh <code>cos</code> dan <code>sin</code>. Yang
+        dipakai di sini adalah hampirannya untuk sudut kecil, dan
+        percepatannya adalah <strong>galat hampiran itu</strong> &mdash;
+        bukan fitur yang dirancang. Yang menahannya cuma batas
+        <code>MAXVX/MAXVY</code> di baris 770&ndash;781.
+      </p>
+      <p class="k-note">
+        Dan batasnya sendiri longgar: <code>MAXVX</code>/<code>MAXVY</code>
+        membatasi <strong>tiap komponen</strong>, bukan besaran vektornya.
+        Pada kemampuan 10 batasnya 10 per sumbu, jadi laju sesungguhnya boleh
+        mencapai <code>√(10²+10²) = 14,1</code>.
+      </p>
+      <p class="k-note">
+        Lebih dari itu pun bisa muncul sesaat: <em>english</em> papan di baris
+        1250 diterapkan <strong>sesudah</strong> penjepitan, dan baru dijepit
+        di langkah berikutnya. Papan angka menampilkan nilai apa adanya, jadi
+        angka di atas 14 yang berkelebat sesudah pukulan keras memang benar
+        &mdash; dan memang ada di aslinya.
+      </p>
+    </div>
+
+    <div class="panel k-warn">
+      <p class="eyebrow">Satu angka yang mengendalikan enam hal</p>
+      <p class="k-note">
+        Baris 270 cuma menanyakan satu hal: <em>&ldquo;How good are you at
+        this game (1-10)?&rdquo;</em>. Jawabannya dibagi sepuluh, lalu dipakai
+        di enam tempat yang tidak berhubungan:
+      </p>
+      <table class="k-tbl k-tbl--kiri">
+        <thead><tr><th>Baris</th><th>Yang dikendalikan</th></tr></thead>
+        <tbody>
+          <tr><td><code>290</code></td><td>laju maksimum bola (<code>6+4×SKILL</code>)</td></tr>
+          <tr><td><code>295</code></td><td><strong>gravitasi</strong> (<code>SKILL/5</code>) &mdash; bola ditarik ke bawah</td></tr>
+          <tr><td><code>710</code></td><td>pengali laju saat mengenai dua baris atas</td></tr>
+          <tr><td><code>1150</code></td><td><strong>peluang bata dikembalikan</strong></td></tr>
+          <tr><td><code>1250</code></td><td>kekuatan <em>english</em> dari titik pukul papan</td></tr>
+          <tr><td><code>1260</code></td><td>berapa banyak spin yang ditambahkan</td></tr>
+        </tbody>
+      </table>
+      <p class="k-note">
+        Enam akibat dari satu masukan, tanpa satu komentar pun yang
+        menyatakannya. Menaikkan kemampuan dari 5 ke 10 bukan
+        &ldquo;lebih cepat&rdquo; &mdash; ia mengubah <em>fisikanya</em>.
+      </p>
+    </div>
+
+    <div class="panel k-bad">
+      <p class="eyebrow">Bata yang sudah pecah bisa kembali</p>
+<pre class="k-code">1150 IF (RND(1)*2)&gt;SKILL GOTO 1210     ' lewati kalau tidak beruntung
+1160 BX=INT(RND(1)*19.99):BY=INT(RND(1)*3.99)
+1170 IF BRICK[1+BX,1+BY]&gt;0 GOTO 1210   ' masih utuh? tidak jadi
+1180 BRICK[1+BX,1+BY]=-BRICK[1+BX,1+BY]
+1190 LINE …                            ' <b>digambar kembali</b>
+1200 SCORE=SCORE-BRICK[1+BX,1+BY]      ' <b>skor dikurangi</b></pre>
+      <p class="k-note">
+        Setiap kali bola mengenai papan Anda, ada peluang sebuah bata yang
+        sudah pecah <strong>dipasang kembali</strong> dan skornya
+        <strong>ditarik kembali</strong>.
+      </p>
+      <table class="k-tbl" id="tbl-balik"></table>
+      <p class="k-note">
+        Peluangnya <code>SKILL/2</code>. Pada kemampuan 10 itu
+        <strong>satu dari dua</strong> pukulan papan.
+      </p>
+      <p class="k-note">
+        <strong>Makin tinggi Anda menilai diri sendiri, makin sering permainan
+        membatalkan pekerjaan Anda.</strong> Bukan bolanya yang dipercepat
+        &mdash; papannya yang dipasang ulang. Itu tuas kesulitan yang tidak
+        pernah saya lihat di mana pun lagi.
+      </p>
+      <p class="k-note">
+        Baris 1170 menambahkan sesuatu yang jauh lebih halus: bata yang
+        diundi <strong>harus sudah pecah</strong>, kalau tidak percobaannya
+        batal. Jadi peluang <em>sesungguhnya</em> adalah
+        <code>SKILL/2 × (bagian bata yang sudah pecah)</code>.
+      </p>
+      <p class="k-note">
+        Artinya di awal permainan hampir tidak pernah terjadi &mdash; dan
+        <strong>makin dekat Anda ke kemenangan, makin sering ia
+        menyerang</strong>. Sebuah kurva kesulitan yang lahir dari satu baris
+        <code>IF</code>, dan hampir pasti bukan disengaja.
+      </p>
+    </div>
+
+    <div class="panel k-good">
+      <p class="eyebrow">6800 bukan angka ajaib</p>
+<pre class="k-code">330 BRICK[1+BX,1+BY]=10+50*BY
+970 IF SCORE&lt;6800 GOTO 1050</pre>
+      <table class="k-tbl" id="tbl-nilai"></table>
+      <p class="k-note">
+        Enam ribu delapan ratus adalah <strong>persis</strong> jumlah seluruh
+        bata. Jadi syarat menang di baris 970 sebenarnya berbunyi
+        &ldquo;semua bata pecah&rdquo; &mdash; hanya saja dinyatakan sebagai
+        skor, bukan sebagai hitungan.
+      </p>
+      <p class="k-note">
+        Itu <strong>bisa</strong> begitu justru karena baris 1200 mengurangi
+        skor persis sebesar nilai bata yang dikembalikan. Dua baris yang
+        berjauhan menjaga satu persamaan tetap benar, dan tidak ada satu pun
+        yang menyebut yang lain.
+      </p>
+      <p class="k-note">
+        Perhatikan juga arah nilainya: baris <strong>paling atas</strong>
+        &mdash; yang paling jauh dan paling sulit &mdash; bernilai
+        <strong>10</strong>, sedangkan baris terbawah bernilai
+        <strong>160</strong>. Kebalikan dari Breakout baku. Dan baris 870&ndash;880
+        membuat bola <em>makin cepat</em> justru saat mengenai dua baris teratas
+        yang murah itu.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Program tanpa pewaktu</p>
+      <p class="k-note">
+        Cari <code>SLEEP</code>, <code>TIMER</code>, atau perulangan penunda di
+        164 baris ini &mdash; tidak ada. Satu langkah simulasi adalah satu
+        putaran perulangan 740&rarr;1300, dan kecepatannya adalah
+        <strong>kecepatan penafsir BASIC di mesin itu</strong>.
+      </p>
+      <p class="k-note">
+        Akibatnya sama dengan <a href="../reading/index.html">READING</a>:
+        program yang sama terasa berbeda di mesin yang berbeda, dan tidak ada
+        angka yang bisa disalin. Karena itu port ini
+        <strong>menanyakannya</strong> lewat penggeser, dengan bawaan 32
+        langkah/detik &mdash; taksiran untuk PC 4,77&nbsp;MHz yang menggambar
+        bola lewat <code>PUT…XOR</code> tiap putaran.
+      </p>
+      <p class="k-note">
+        Bola dihapus dengan <code>PUT…XOR</code> dua kali (baris 1270&ndash;1280),
+        teknik yang sama dengan <a href="../space/index.html">SPACE</a> &mdash;
+        kemunculan ketiga di koleksi ini.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Pilot arkade: keputusan yang diwarisi sesi 18&ndash;25</p>
+      <table class="k-tbl k-tbl--kiri">
+        <tbody>
+          <tr><td>Gelung permainan</td><td><code>_shared/loop.js</code> — langkah tetap, batas kejar 5</td></tr>
+          <tr><td>Masukan</td><td><code>_shared/input.js</code> — <code>isDown()</code> untuk gerak kontinu</td></tr>
+          <tr><td>Gambar</td><td><strong>SVG</strong>, bukan canvas</td></tr>
+          <tr><td>Kecepatan</td><td>langkah/detik dinyatakan, tidak ditebak diam-diam</td></tr>
+        </tbody>
+      </table>
+      <p class="k-note">
+        SVG dipilih karena yang bergerak cuma <strong>dua</strong> elemen
+        &mdash; bola dan papan &mdash; sementara 80 bata diam sampai pecah.
+        Delapan puluh dua elemen dengan dua yang berubah per bingkai jauh di
+        bawah batas SVG, dan ia memberi penskalaan tajam serta bisa dibaca
+        pembaca layar.
+      </p>
+      <p class="k-note">
+        <strong>Kapan itu berhenti benar:</strong> begitu sebuah program punya
+        ratusan benda yang bergerak bersamaan, atau efek per-piksel. Program
+        arkade berikutnya harus memeriksa syarat itu, bukan menyalin
+        keputusan ini.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/breakout.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/BREAKOUT.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/BREAKOUT.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/input.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="breakout.js"></script>
+</body>
+</html>

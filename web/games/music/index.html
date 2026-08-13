@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IBM Music — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari MUSIC.BAS (IBM, 1981-82): sebelas lagu, dan seluruh tangga nada sama rata dalam satu baris BASIC. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="../../_shared/music.css">
+<link rel="stylesheet" href="music_local.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap u-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="u-stage">
+        <p class="u-judul">IBM MUSIC &mdash; Version 1.10</p>
+
+        <!-- Pemilih lagu bergaya jukebox: satu kartu di tengah adalah pilihan
+             yang berlaku, tetangganya mengintip di kiri-kanan. -->
+        <div class="u-juke" role="group" aria-label="Pilih lagu">
+          <button class="u-arm" id="kiri" type="button" aria-label="Lagu sebelumnya">&lsaquo;</button>
+          <div class="u-vitrin">
+            <div class="u-rol" id="rol"></div>
+          </div>
+          <button class="u-arm" id="kanan" type="button" aria-label="Lagu berikutnya">&rsaquo;</button>
+        </div>
+        <p class="u-note" id="count"></p>
+
+        <div id="staff"></div>
+
+        <div id="piano"></div>
+        <p class="u-note" id="range"></p>
+
+        <div class="m-transport">
+          <button class="btn btn--primary" id="play" type="button">Play</button>
+          <button class="btn btn--ghost" id="reset" type="button">Reset</button>
+          <span class="m-now m-now--idle" id="now">&mdash;</span>
+          <span class="mono u-clock" id="clock">0:00 / 0:00</span>
+        </div>
+
+        <div class="picker" id="instruments"></div>
+
+        <div class="u-row">
+          <label>Tempo <input type="range" id="tempo" min="40" max="200" value="100">
+            <span id="tempov">100%</span></label>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">88 tuts</span>
+      <span class="ruleset__k">tangga nada sama rata</span>
+      <span class="ruleset__k">11 lagu bawaan</span>
+    </p>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara memakai</summary>
+      <p class="u-lead">
+        Ini <strong>bukan permainan</strong>. Aslinya sebuah alat untuk
+        <strong>menyusun</strong> lagu tuts demi tuts, lengkap dengan
+        <strong>sebelas lagu contoh</strong> tersimpan di dalam
+        <code>DATA</code>-nya.
+      </p>
+      <ol class="howto__steps">
+        <li>Putar <strong>rol lagu</strong> dengan tombol
+            <kbd>&lsaquo;</kbd> <kbd>&rsaquo;</kbd> atau panah
+            <kbd>&larr;</kbd> <kbd>&rarr;</kbd>; kartu yang di tengah adalah
+            pilihan yang berlaku. Klik kartu mana pun untuk langsung ke sana.
+            Kesebelas judulnya diekstrak <strong>apa adanya</strong> dari
+            <code>DATA</code> program 1982 &mdash; termasuk salah ketiknya.</li>
+        <li>Tekan <strong>Play</strong>. <strong>Not baloknya bergulir</strong>
+            dari kanan ke kiri; not yang menyentuh garis penanda itulah yang
+            sedang berbunyi, dan papan tuts menyala mengikutinya.</li>
+        <li><strong>Tempo</strong> mengubah kecepatannya. Aslinya tidak punya
+            ini &mdash; durasi tiap nada tertulis tetap di
+            <code>DATA</code>.</li>
+        <li><strong>Instrumen</strong> juga tambahan, dan berlaku
+            <strong>seketika</strong> termasuk di tengah lagu. PC 1982 punya
+            satu pengeras suara dan satu bentuk gelombang; pilihan ini datang
+            dari <code>_shared/audio.js</code>, fondasi yang dibangun sesi 4.</li>
+      </ol>
+      <p>
+        Rentang papan tutsnya bukan tebakan: ia dihitung dari
+        <strong>tuts terendah dan tertinggi yang benar-benar dipakai</strong>
+        kesebelas lagu.
+      </p>
+    </details>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel u-good">
+      <p class="eyebrow">Tangga nada sama rata, dalam satu baris</p>
+<pre class="u-code">1370 FOR I=7 TO 88:M(I) = 36.8*(2^(1/12))^(I-6):NEXT</pre>
+      <p class="u-note">
+        Baris itu adalah seluruh sistem penalaan Barat sejak abad ke-18.
+        <strong>Akar kedua belas dari dua</strong> &mdash; satu semiton &mdash;
+        dipangkatkan sebanyak jarak tuts dari acuan.
+      </p>
+      <p class="u-note">
+        Tidak ada tabel frekuensi, tidak ada <code>DATA</code> berisi 88 angka:
+        satu rumus, dan seluruh piano lahir darinya.
+      </p>
+      <table class="u-tbl">
+        <thead><tr><th>Tuts</th><th>Frekuensi</th><th>Nada</th></tr></thead>
+        <tbody id="freqBody"></tbody>
+      </table>
+      <p class="u-note" id="oktaf"></p>
+      <p class="u-note">
+        Itu bukan kebetulan &mdash; itu definisinya: naik dua belas tuts berarti
+        mengalikan dengan (2<sup>1/12</sup>)<sup>12</sup> = <strong>2</strong>.
+        Satu oktaf adalah penggandaan frekuensi, dan tangga nada sama rata
+        membagi penggandaan itu jadi dua belas langkah yang sama besar.
+      </p>
+    </div>
+
+    <div class="panel u-warn">
+      <p class="eyebrow">Acuannya bukan A440</p>
+      <p class="u-note" id="a440"></p>
+      <p class="u-note">
+        Rumusnya <strong>benar</strong> &mdash; jarak antarnadanya tepat, dan
+        oktafnya tepat menggandakan. Yang meleset cuma <strong>titik
+        acuannya</strong>: seluruh piano digeser naik sedikit dari tala standar
+        dunia.
+      </p>
+      <p class="u-note">
+        Empat sen tidak terdengar sendirian, dan program ini tidak pernah
+        dimainkan bersama alat musik lain &mdash; jadi tidak ada yang pernah
+        mengeluh, dan tidak ada yang pernah tahu.
+      </p>
+      <p class="u-note">
+        Dipertahankan apa adanya. Menalanya ke 440 akan membuat lagunya terdengar
+        "benar" dan datanya jadi <strong>bukan data 1982 lagi</strong>. Yang
+        ditambahkan cuma angkanya, supaya bisa diperiksa.
+      </p>
+    </div>
+
+    <div class="panel u-good">
+      <p class="eyebrow">Delapan puluh delapan</p>
+<pre class="u-code">1360 DIM M(88),O(70)</pre>
+      <p class="u-note">
+        <code>88</code> bukan angka bulat sembarangan: itu <strong>jumlah tuts
+        piano</strong>. Ukuran larik yang mencerminkan domainnya adalah bentuk
+        <strong>dokumentasi</strong> &mdash; siapa pun yang melihat 88 di
+        program musik langsung tahu apa yang dimodelkan, tanpa satu komentar
+        pun.
+      </p>
+      <table class="u-tbl">
+        <thead><tr><th>Program</th><th>Larik</th><th>Kenapa angka itu</th></tr></thead>
+        <tbody>
+          <tr><td><strong>MUSIC</strong></td><td><code>M(88)</code></td><td>tuts piano</td></tr>
+          <tr><td><a href="../dominoes/index.html">DOMINOES</a></td><td><code>PLD$(28)</code></td><td>batu ganda-enam</td></tr>
+          <tr><td><a href="../yahtzee/index.html">YAHTZEE</a></td><td><code>M(13)</code></td><td>kotak kartu skor</td></tr>
+          <tr><td><a href="../backgam/index.html">BACKGAM</a></td><td><code>A(25)</code></td><td>24 titik + 2 bar</td></tr>
+        </tbody>
+      </table>
+      <p class="u-note">
+        Lawannya: larik yang dibulatkan ke angka bundar. <code>DIM X(100)</code>
+        tidak memberi tahu apa pun selain "cukup besar, mudah-mudahan".
+      </p>
+    </div>
+
+    <div class="panel u-warn">
+      <p class="eyebrow">Tuts 0 sampai 6 adalah diam</p>
+<pre class="u-code">1380 FOR I=0 TO 6:M(I) = 32767:NEXT
+1590 SOUND M(J),K</pre>
+      <p class="u-note">
+        Di GW-BASIC, <code>SOUND 32767, durasi</code> adalah cara
+        <strong>resmi</strong> menghasilkan diam &mdash; bukan bunyi yang
+        terlalu tinggi untuk didengar, melainkan istirahat yang
+        didokumentasikan.
+      </p>
+      <p class="u-note">
+        Jadi tujuh tuts terbawah dipakai ulang sebagai istirahat, dan lagunya
+        menuliskan istirahat sebagai <strong>tuts 0</strong>. Perhatikan data
+        <em>La Cucaracha</em>: <code>42,1,0,1,42,1,0,1</code> &mdash; nada,
+        diam, nada, diam.
+      </p>
+      <p class="u-note">
+        Penghematan yang rapi: <strong>tidak butuh penanda khusus</strong> di
+        data lagu, tidak butuh cabang di perulangan pemutar. Sebuah istirahat
+        adalah nada, hanya saja nada yang tidak terdengar.
+      </p>
+      <p class="u-note">
+        Di sini tuts 0&ndash;6 jadi jeda sungguhan, karena Web Audio tidak punya
+        frekuensi yang kebetulan berarti diam. Yang hilang: kebetulan
+        indahnya. Yang didapat: seorang pembaca tidak perlu tahu bahwa 32767
+        istimewa.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow"><code>ON ERROR</code> untuk makro yang diketik pemakai</p>
+<pre class="u-code">1141 ON ERROR GOTO 1148
+1142 PLAY "mf"
+1149 ON ERROR GOTO 0</pre>
+      <p class="u-note">
+        <code>PLAY</code> melempar galat kalau diberi makro yang tidak sah
+        &mdash; dan makro itu <strong>diketik pemakai</strong>. Menangkapnya
+        dan meminta mengetik ulang jauh lebih baik daripada membiarkan program
+        mati di tengah lagu.
+      </p>
+      <p class="u-note">
+        Keputusan yang sama dengan <a href="../piechart/index.html">PIECHART</a>
+        baris 1292, di program yang sama-sama IBM. Menangani galat yang
+        <em>bisa diperkirakan</em> adalah kebiasaan rumah, bukan kebetulan satu
+        penulis.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/music.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/MUSIC.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/MUSIC.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/piano.js"></script>
+<script src="../../_shared/staff.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="songs.js"></script>
+<script src="music.js"></script>
+</body>
+</html>

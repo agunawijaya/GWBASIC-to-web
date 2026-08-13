@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Anatomy of a Program — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari ANATOMY.BAS (Friendlyware, 1982): sebuah program yang isinya listing program lain, sembilan halaman, dan manual cetak yang mendokumentasikan versi yang sudah tidak ada. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="../../_shared/reader.css">
+<link rel="stylesheet" href="anatomy.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap a-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="a-stage">
+        <div id="reader"></div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">9 halaman</span>
+      <span class="ruleset__k">F1 mundur</span>
+      <span class="ruleset__k">115 baris tercetak</span>
+      <span class="ruleset__k" id="k-chr"></span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Baris tercetak</span>
+        <span class="stat__value mono" id="s-cetak">—</span></div>
+      <div class="stat stat--good"><span class="stat__label">Masih sama</span>
+        <span class="stat__value mono" id="s-sama">—</span></div>
+      <div class="stat stat--warn"><span class="stat__label">Nomor berubah</span>
+        <span class="stat__value mono" id="s-nomor">—</span></div>
+      <div class="stat stat--bad"><span class="stat__label">Ditulis ulang</span>
+        <span class="stat__value mono" id="s-tulis">—</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara memakai</summary>
+      <p class="a-lead">
+        Ini <strong>bukan permainan</strong> dan bukan pelajaran anatomi tubuh
+        &mdash; namanya <em>Anatomy of a&nbsp;Program</em>. Ia sebuah
+        <strong>program yang isinya program lain</strong>: sembilan layar yang
+        menampilkan listing
+        <a href="../master/index.html">MASTER&nbsp;MIND</a> potong demi potong,
+        supaya pembaca bisa menelusurinya sambil memegang manual cetak.
+      </p>
+      <ol class="howto__steps">
+        <li><strong>Maju</strong> dan <strong>Mundur</strong>, atau panah
+            <kbd>&larr;</kbd> <kbd>&rarr;</kbd>. <kbd>F1</kbd> mundur satu
+            halaman &mdash; tombol yang sama dengan aslinya (baris 1570).</li>
+        <li>Deretan angka di atas layar melompat langsung ke halaman mana pun.
+            <strong>Aslinya tidak bisa</strong>: sembilan halamannya ditulis
+            sebagai sembilan baris kode, bukan sebagai daftar.</li>
+        <li>Nyalakan <strong>Banding</strong> untuk mewarnai tiap baris menurut
+            nasibnya di <code>MASTER.BAS</code> yang benar-benar dikirim:
+            <span class="a-key a-key--sama">sama</span>,
+            <span class="a-key a-key--nomor">nomor lompatan berubah</span>,
+            <span class="a-key a-key--tulis">ditulis ulang</span>.</li>
+      </ol>
+      <p>
+        Setengah dari program ini <strong>hilang</strong>. Baris bawah layarnya
+        berbunyi <em>"Screen corresponds to page&nbsp;… in your manual"</em>,
+        dan manual cetak itu tidak ada dalam koleksi. Panel
+        <strong>Catatan halaman</strong> di bawah layar adalah usaha mengisi
+        bagian yang hilang itu &mdash; ditulis sekarang, bukan tahun 1982, dan
+        ditandai begitu.
+      </p>
+    </details>
+
+    <div class="panel a-catatan">
+      <p class="eyebrow">Catatan halaman <span class="a-tag">ditulis 2026, bukan 1982</span></p>
+      <div id="catatan"></div>
+    </div>  </section>
+
+  <section class="stack">
+
+    <div class="panel a-warn">
+      <p class="eyebrow">Manual ini mendokumentasikan versi yang sudah tidak ada</p>
+      <p class="a-note">
+        Koleksi ini memuat <strong>keduanya</strong>: tutorialnya, dan
+        <code>MASTER.BAS</code> yang dikirim bersamanya. Jadi keduanya bisa
+        dibandingkan baris demi baris &mdash; dan hasilnya:
+      </p>
+      <table class="a-tbl" id="tbl-drift"></table>
+      <p class="a-note">
+        Sebelas dari dua puluh dua penulisan ulang ada di
+        <strong>halaman&nbsp;1</strong> saja &mdash; seluruh layar petunjuknya
+        disusun ulang, dipindah tiga baris ke bawah, dan ditambahi contoh
+        (<code>`3 3 9'</code>) yang tidak ada di manual.
+      </p>
+      <p class="a-note">
+        Yang paling telak ada di halaman&nbsp;9. Manual mencetak
+        <code class="a-bad">C O N G R A G U L A T I O N S</code>;
+        program yang dikirim menulis
+        <code class="a-good">C O N G R A T U L A T I O N S</code>.
+        Salah ketiknya <strong>sudah diperbaiki di programnya</strong> dan
+        <strong>dibekukan selamanya di dokumentasinya</strong>.
+      </p>
+      <p class="a-note">
+        Bukan kelalaian satu orang: dokumentasi dan kode disimpan di dua tempat
+        berbeda, dikerjakan pada waktu berbeda, dan tidak ada apa pun yang
+        memaksa keduanya tetap sejalan. Empat puluh tahun kemudian
+        satu-satunya cara mengetahuinya adalah <em>menjalankan
+        perbandingannya</em>.
+      </p>
+    </div>
+
+    <div class="panel a-good">
+      <p class="eyebrow">132 tanda kutip di 159 baris</p>
+<pre class="a-code">180 PRINT"170 LOCATE 5,20,0:PRINT"CHR$(34)"Welcome to Master Mind…"CHR$(34)"</pre>
+      <p class="a-note">
+        Untuk mencetak <strong>satu tanda kutip</strong>, string harus ditutup,
+        <code>CHR$(34)</code> disambung, lalu string dibuka lagi. BASIC tidak
+        punya karakter pelarian &mdash; tidak ada <code>\"</code>, tidak ada
+        kutip ganda-ganda.
+      </p>
+      <p class="a-note">
+        Akibatnya bisa dihitung: <strong id="n-chr">…</strong> kemunculan
+        <code>CHR$(34)</code> dalam 159 baris. Hampir satu per baris, semuanya
+        hanya untuk satu karakter.
+      </p>
+      <p class="a-note">
+        Dan itulah alasan program ini <em>sulit sekali dibaca</em> di
+        sumbernya, padahal yang dicetaknya rapi. Baris 1120 panjangnya
+        <strong>250 kolom</strong> untuk mencetak satu baris BASIC sepanjang
+        185 kolom &mdash; selisihnya seluruhnya ongkos pelarian.
+      </p>
+    </div>
+
+    <div class="panel a-good">
+      <p class="eyebrow">Tabel halaman yang digulung jadi sembilan baris</p>
+<pre class="a-code">50 CLS:GOSUB 1540:GOSUB  180:GOSUB 150:IF BACKFLAG THEN  40
+60 CLS:GOSUB 1540:GOSUB  340:GOSUB 150:IF BACKFLAG THEN  50
+70 CLS:GOSUB 1540:GOSUB  430:GOSUB 150:IF BACKFLAG THEN  60
+                     ↑                              ↑
+                 isi halaman                  halaman sebelumnya</pre>
+      <p class="a-note">
+        Sembilan baris yang hampir identik. Itu <strong>sebuah tabel</strong>
+        &mdash; <code>[180, 340, 430, …]</code> &mdash; yang tidak bisa ditulis
+        sebagai tabel, karena <code>GOSUB</code> tidak menerima nomor baris dari
+        variabel. Tidak ada <code>GOSUB halaman(i)</code> di BASIC.
+      </p>
+      <p class="a-note">
+        Begitu tabelnya jadi data di port ini, tiga hal langsung mungkin yang
+        aslinya <strong>mustahil</strong>, bukan sekadar tidak dibuat:
+      </p>
+      <ul class="a-poin">
+        <li>lompat ke halaman mana pun (rel angka di atas layar)</li>
+        <li>tahu ada berapa halaman seluruhnya (&ldquo;3 / 9&rdquo;)</li>
+        <li>mengingat halaman terakhir yang dibaca</li>
+      </ul>
+      <p class="a-note">
+        Ketiganya bukan selera. Ketiganya adalah <strong>akibat langsung</strong>
+        dari mengubah kode jadi data &mdash; dan itulah yang membuat modul
+        <code>_shared/reader.js</code> lahir di halaman ini untuk tujuh program
+        edukasi berikutnya.
+      </p>
+    </div>
+
+    <div class="panel a-warn">
+      <p class="eyebrow"><code>PAGE</code>, bukan <code>PAGE$</code></p>
+<pre class="a-code">1150 <b>PAGE=15</b>:GOSUB 1510      ← halaman 7
+1260 <b>PAGE=15</b>:GOSUB 1510      ← halaman 8
+1490 <b>PAGE$=" 15 "</b>:GOSUB 1510  ← halaman 9, benar</pre>
+      <p class="a-note">
+        Dua kali huruf <code>$</code> tertinggal. Baris 1510 mencetak
+        <code>PAGE$</code>, jadi di halaman 7 dan 8 yang tampil adalah
+        <strong>nilai halaman sebelumnya</strong> &mdash; <code>PAGE</code> yang
+        angka itu diisi, lalu tidak pernah dibaca siapa pun.
+      </p>
+      <table class="a-tbl" id="tbl-page"></table>
+      <p class="a-note">
+        Dan salah ketiknya <strong>tidak pernah terlihat</strong>: halaman 6
+        sudah menyetel <code>PAGE$=" 15 "</code>, dan halaman 7 dan 8 memang
+        seharusnya menampilkan 15. Nilai yang basi kebetulan sama dengan nilai
+        yang benar.
+      </p>
+      <p class="a-note">
+        Ia juga tidak bisa terlihat lewat jalan lain: alurnya lurus 50&rarr;130,
+        jadi halaman 6 <em>selalu</em> berjalan tepat sebelum halaman 7. Tidak
+        ada urutan penelusuran yang membongkarnya.
+      </p>
+      <p class="a-note">
+        Di port ini nomor halamannya tetap dihitung seperti aslinya &mdash;
+        termasuk cara nilainya bertahan. Yang ditambahkan cuma tabel di atas,
+        supaya bedanya kelihatan.
+      </p>
+    </div>
+
+    <div class="panel a-warn">
+      <p class="eyebrow">Penganalisis yang tertipu oleh datanya sendiri</p>
+      <p class="a-note">
+        Analisis otomatis di <a href="../../../reviews/ANATOMY.md">reviews/ANATOMY.md</a>
+        menyebut program ini memakai <code>PLAY</code>, <code>RANDOMIZE</code>,
+        <code>DIM</code>, dan <code>ON&nbsp;x&nbsp;GOSUB</code>. Tidak satu pun
+        benar.
+      </p>
+      <table class="a-tbl">
+        <thead><tr><th>Katanya dipakai</th><th>Kenyataannya</th></tr></thead>
+        <tbody>
+          <tr><td><code>PLAY</code></td>
+              <td>kata Inggris dalam kalimat <em>"DO YOU WISH TO PLAY AGAIN?"</em></td></tr>
+          <tr><td><code>RANDOMIZE</code></td>
+              <td>baris 670 &mdash; di dalam string, milik MASTER MIND</td></tr>
+          <tr><td><code>DIM GUESS(6)</code></td>
+              <td>di dalam string; ANATOMY tidak punya satu larik pun</td></tr>
+          <tr><td><code>ON x GOSUB</code></td>
+              <td>tidak ada; yang ada cuma <code>ON KEY</code> dan <code>ON ERROR</code></td></tr>
+          <tr><td>memuat program <code>CHR$(34)</code></td>
+              <td>dari <code>RUN"CHR$(34)"MENU</code> &mdash; nama program hantu</td></tr>
+        </tbody>
+      </table>
+      <p class="a-note">
+        Penyebabnya satu: <strong>program ini datanya adalah kode</strong>.
+        Penganalisis yang mencari kata kunci tidak bisa membedakan
+        <code>RANDOMIZE</code> yang dijalankan dari <code>RANDOMIZE</code> yang
+        dicetak &mdash; dan tidak ada program di koleksi ini yang menyerangnya
+        setelak ini.
+      </p>
+      <p class="a-note">
+        Judulnya pun ikut salah: katalog menyebutnya
+        <em>&ldquo;Tutorial anatomi tubuh&rdquo;</em> selama tiga belas sesi,
+        ditebak dari namanya saja. Sudah diperbaiki di
+        <code>catalog.js</code>, dan koreksinya dicatat di berkas tinjauannya.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Dua sisipan yang tertinggal jejaknya</p>
+<pre class="a-code">379 LOCATE  6,17:PRINT CHR$(201)   ┌ pojok kiri-atas
+431 LOCATE 16,67:PRINT CHR$(188)   ┘ pojok kanan-bawah
+461 LOCATE 16,17:PRINT CHR$(200)   └ pojok kiri-bawah</pre>
+      <p class="a-note">
+        Nomor baris BASIC dinaikkan sepuluh-sepuluh justru supaya ada ruang
+        menyisipkan. Tiga nomor <strong>ganjil</strong> di tengah kelipatan
+        sepuluh berarti: ada yang menggambar kotaknya, lupa pojoknya, lalu
+        menambalnya belakangan.
+      </p>
+      <p class="a-note">
+        Jejak suntingan yang bertahan selama empat puluh tahun karena nomor
+        baris tidak pernah dirapikan &mdash; jenis riwayat yang di berkas
+        modern hanya ada di dalam git.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow"><code>RETURN 1580</code> &mdash; kembali ke tempat lain</p>
+<pre class="a-code">1570 KEY(1) OFF:BACKFLAG=1:<b>RETURN 1580</b></pre>
+      <p class="a-note">
+        <code>RETURN</code> biasa kembali ke pemanggil. <code>RETURN&nbsp;&lt;nomor&gt;</code>
+        membuang alamat kembalinya dan melompat ke baris yang disebut.
+      </p>
+      <p class="a-note">
+        Itu satu-satunya cara keluar dari sini: F1 menyela di tengah
+        <em>perulangan tunggu tombol</em> baris 170. <code>RETURN</code> biasa
+        akan kembali ke perulangan itu dan menunggu lagi &mdash; padahal
+        pemakainya sudah menyatakan ingin mundur.
+      </p>
+      <p class="a-note">
+        Berpasangan dengan <code>BACKFLAG</code>, satu-satunya kanal dari
+        penjebak tombol ke alur utama, karena penjebak tidak bisa
+        mengembalikan nilai. Di port ini keduanya lenyap: sebuah penangan
+        <code>keydown</code> memanggil fungsi secara langsung.
+      </p>
+    </div>
+
+    <div class="panel a-warn">
+      <p class="eyebrow">Halaman 9 muat tanpa sisa satu baris pun</p>
+      <table class="a-tbl" id="tbl-muat"></table>
+      <p class="a-note">
+        Baris 23 layar adalah tempat pesan
+        <em>"Screen corresponds to page…"</em> ditulis (<code>LOCATE 23,17</code>).
+        Di halaman 9, baris terakhir listingnya <strong>juga</strong> mendarat
+        di baris 23 &mdash; dan tidak bertabrakan hanya karena baris itu
+        kebetulan berbunyi <code>1260 END</code>, delapan kolom, berhenti jauh
+        sebelum kolom 17.
+      </p>
+      <p class="a-note">
+        Satu baris listing lagi, dan seluruh layar tergulir &mdash; membawa
+        bilah judulnya ikut hilang. Nol baris sisa, sembilan kolom sisa, dan
+        tidak ada satu pun komentar yang menyebutnya.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/anatomy.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/ANATOMY.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/ANATOMY.BAS">Kode sumber 1982</a> &middot;
+      <a href="../master/index.html">MASTER MIND, program yang dibedah</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="../../_shared/reader.js"></script>
+<script src="listing.js"></script>
+<script src="anatomy.js"></script>
+</body>
+</html>

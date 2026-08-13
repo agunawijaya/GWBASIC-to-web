@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Simultaneous Equations — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari SIMEQN.BAS (Feldman &amp; Rugg, 1982): eliminasi Gauss dengan pivot parsial dalam 50 baris, ditulis agar jalan di BASIC mana pun. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="simeqn.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap q-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="q-stage">
+        <p class="q-judul">A SIMULTANEOUS LINEAR EQUATION SOLVER</p>
+
+        <label class="q-opt">Number of equations
+          <input type="range" id="n" min="1" max="8" value="3">
+          <span id="nv">3</span></label>
+
+        <div class="q-grid" id="grid"></div>
+
+        <div class="m-transport">
+          <button class="btn btn--primary" id="go" type="button">Solve</button>
+          <button class="btn btn--ghost" id="nol" type="button">Clear</button>
+          <button class="btn btn--ghost" id="sing" type="button">Contoh singular</button>
+        </div>
+
+        <div id="out"></div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">eliminasi Gauss</span>
+      <span class="ruleset__k">pivot parsial</span>
+      <span class="ruleset__k">50 baris, 50 kolom</span>
+    </p>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara memakai</summary>
+      <p class="q-lead">
+        Ini <strong>bukan permainan</strong> &mdash; ia alat. Masukkan sistem
+        persamaan linear, dan program menyelesaikannya dengan
+        <strong>eliminasi Gauss</strong>, metode yang sama yang Anda pelajari
+        di sekolah, hanya dikerjakan mesin.
+      </p>
+      <ol class="howto__steps">
+        <li>Atur <strong>jumlah persamaan</strong> dengan penggeser. Jumlah
+            yang tidak diketahui selalu sama dengan jumlah persamaan.</li>
+        <li>Isi <strong>koefisien</strong> tiap suku di kisi, dan
+            <strong>ruas kanan</strong> di kotak beraksen kuning.</li>
+        <li>Tekan <strong>Solve</strong>. Jawabannya muncul sebagai
+            <code>X1</code> sampai <code>Xn</code> &mdash; penamaan aslinya,
+            yang mulai dari satu.</li>
+        <li>Di bawahnya ada <strong>sisa terbesar</strong>: jawabannya
+            dimasukkan kembali ke persamaan asalnya untuk diperiksa. Aslinya
+            tidak melakukan ini.</li>
+        <li><strong>Contoh singular</strong> memuat sistem yang persamaan
+            keduanya kelipatan persis persamaan pertama &mdash; tidak punya
+            jawaban tunggal. Lihat apa yang terjadi, dan panel di samping
+            menjelaskan kenapa aslinya akan meledak di situ.</li>
+      </ol>
+      <p>
+        Contoh bawaannya sengaja berjawaban bulat (<code>2, 3, &minus;1</code>),
+        supaya kebenarannya bisa diperiksa mata tanpa kalkulator.
+      </p>
+    </details>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel q-good">
+      <p class="eyebrow">&ldquo;Any BASIC, any CRT.&rdquo;</p>
+<pre class="q-code">130 REM: Any BASIC, any CRT.</pre>
+      <p class="q-note">
+        Satu kalimat, dan ia menjelaskan seluruh bentuk program ini. Perkakas
+        bahasa yang dipakainya: <code>BEEP</code>, <code>SWAP</code>,
+        <code>DEFINT</code>, <code>STRING$</code>, <code>COLOR</code>. Itu
+        saja.
+      </p>
+      <p class="q-note">
+        Tidak ada <code>LOCATE</code>, tidak ada <code>SCREEN 1</code>, tidak
+        ada <code>PEEK</code>/<code>POKE</code>, tidak ada <code>ON KEY</code>
+        &mdash; bandingkan dengan program Friendlyware mana pun di koleksi ini,
+        yang penuh <code>LOCATE</code> dan <code>POKE 106,0</code>.
+      </p>
+      <p class="q-note">
+        Feldman &amp; Rugg membatasi diri pada <strong>irisan bahasa yang ada
+        di semua mesin</strong>, supaya programnya bisa diketik ulang dari
+        majalah di Apple II, TRS-80, atau IBM PC tanpa satu pun perubahan.
+      </p>
+      <p class="q-note">
+        Harganya: tampilannya polos, dan tata letaknya seluruhnya lewat
+        <code>PRINT</code> dan <code>TAB</code>. Imbalannya: <strong>ini
+        satu-satunya kelompok program di koleksi yang secara teori masih jalan
+        di mana pun.</strong>
+      </p>
+      <p class="q-note">
+        Bukti disiplin itu ada di angkanya: <strong>baris terpanjangnya 50
+        kolom</strong> &mdash; terpendek di seluruh koleksi. Lebar layar
+        terkecil yang mungkin ditemuinya adalah 40 kolom, dan ia tidak pernah
+        jauh melewatinya.
+      </p>
+    </div>
+
+    <div class="panel q-bad-panel">
+      <p class="eyebrow">Pembagian dengan nol yang tidak pernah diperiksa</p>
+<pre class="q-code">500 Q=A(M,K)/A(K,K)</pre>
+      <p class="q-note">
+        Tidak ada satu pun baris di seluruh program yang memeriksa apakah
+        <code>A(K,K)</code> bernilai nol.
+      </p>
+      <p class="q-note">
+        Pivot parsial (baris 410&ndash;480) memilih baris dengan nilai mutlak
+        <strong>terbesar</strong>, dan itu menyelamatkan hampir semua kasus.
+        Tapi kalau seluruh kolomnya nol &mdash; sistem yang
+        <strong>singular</strong>, misalnya dua persamaan yang sebenarnya sama
+        &mdash; maka yang terbesar pun nol.
+      </p>
+      <table class="q-tbl">
+        <thead><tr><th>Di mana</th><th>Apa yang terjadi</th></tr></thead>
+        <tbody>
+          <tr><td>GW-BASIC 1982</td><td><code>Division by zero</code>, program berhenti</td></tr>
+          <tr><td>JavaScript</td><td><code>Infinity</code> lalu <code>NaN</code> &mdash; <strong>tampak seperti jawaban</strong></td></tr>
+        </tbody>
+      </table>
+      <p class="q-note">
+        Karena itu pemeriksaannya <strong>ditambahkan</strong> di port ini, dan
+        ditandai jelas sebagai tambahan di <code>_shared/gauss.js</code>. Tekan
+        <strong>Contoh singular</strong> untuk melihatnya bekerja.
+      </p>
+      <p class="q-note">
+        Pelajarannya bukan "aslinya ceroboh". Di BASIC, pembagian dengan nol
+        <em>berhenti</em>, dan berhenti adalah perilaku yang jujur. Yang
+        berubah bukan kodenya melainkan <strong>bahasanya</strong>: JavaScript
+        memilih melanjutkan dengan <code>NaN</code>, dan diam itulah yang
+        berbahaya.
+      </p>
+    </div>
+
+    <div class="panel q-warn">
+      <p class="eyebrow">Dua puluh satu baris yang sama, di dua program</p>
+      <p class="q-note">
+        Bandingkan sendiri:
+      </p>
+      <table class="q-tbl">
+        <tbody>
+          <tr><td><code>SIMEQN.BAS</code> baris 390&ndash;590</td></tr>
+          <tr><td><code>CURVE.BAS</code> baris 780&ndash;980</td></tr>
+        </tbody>
+      </table>
+      <p class="q-note">
+        <strong>Sama persis, kata demi kata</strong>, hanya berbeda nomor
+        barisnya. Feldman &amp; Rugg menulis satu penyelesai persamaan linear,
+        lalu menyalinnya ke program kedua.
+      </p>
+      <p class="q-note">
+        Bukan karena malas &mdash; karena <strong>tidak ada cara lain</strong>.
+        BASIC 1982 tidak punya <code>INCLUDE</code>, tidak punya pustaka, tidak
+        punya modul. Yang ada cuma <code>CHAIN</code>, dan itu
+        <em>mengganti</em> seluruh program, bukan menambahkan bagian.
+      </p>
+      <p class="q-note">
+        Di port ini keduanya memanggil <code>_shared/gauss.js</code>. Itu
+        satu-satunya perbedaan struktural yang berarti antara versi 1982 dan
+        versi ini &mdash; dan ia bukan perbaikan atas penulisnya, melainkan
+        atas bahasanya.
+      </p>
+      <p class="q-note">
+        <a href="../curve/index.html">CURVE</a> memakai penyelesai yang sama
+        untuk mencocokkan kurva kuadrat terkecil. Buka keduanya berdampingan.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow"><code>DEFINT</code> sebagai konvensi matematika</p>
+<pre class="q-code">150 CLEAR:CLS:DEFINT J,K,L,M,N
+    DIM A(N,N),R(N),V(N)</pre>
+      <p class="q-note">
+        Lima huruf dijadikan bilangan bulat; <code>A</code>, <code>R</code>,
+        <code>V</code> dibiarkan pecahan karena berisi koefisien.
+      </p>
+      <p class="q-note">
+        Itu bukan penghematan memori &mdash; itu <strong>konvensi
+        matematika</strong> (i, j, k untuk indeks) yang dipetakan ke sistem
+        tipe BASIC. Pembaca yang melihat <code>J</code> langsung tahu ia
+        indeks, bukan koefisien, tanpa perlu melacak dari mana asalnya.
+      </p>
+      <p class="q-note">
+        <code>SWAP</code> di baris 470&ndash;480 juga bukan hiasan: pivot
+        parsial <em>adalah</em> pertukaran baris, dan BASIC kebetulan punya
+        satu kata untuk itu.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/simeqn.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/SIMEQN.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/SIMEQN.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/gauss.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="simeqn.js"></script>
+</body>
+</html>

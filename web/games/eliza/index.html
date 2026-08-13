@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Eliza — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari ELIZA.BAS v3.0 (Steve Grumette, 1981): mesin aturan 514 baris yang seluruh kepribadiannya dibaca dari STRINGS.FIL, dengan jendela ke dalam pipa penyulihannya. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="eliza.css?v=1">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap e-layout">
+
+  <section class="stack">
+    <div class="screen screen--scanlines">
+      <div class="e-crt">
+        <div class="e-layar" id="layar" role="log" aria-live="polite"
+             aria-label="Percakapan dengan Eliza"></div>
+      </div>
+      <div class="e-masuk">
+        <span class="e-prompt" aria-hidden="true">&gt;</span>
+        <input id="ketik" class="e-ketik" type="text" autocomplete="off"
+               spellcheck="false" maxlength="240"
+               aria-label="Ketik kalimat Anda" placeholder="TELL ME YOUR PROBLEM">
+        <button class="btn btn--primary btn--sm" id="kirim" type="button">Kirim</button>
+      </div>
+      <div class="e-alat">
+        <button class="btn btn--ghost btn--sm" id="contoh" type="button">Contoh percakapan</button>
+        <label class="e-kecil">Lebar layar (PEEK&nbsp;&amp;H4A)
+          <select id="lebar" class="e-angka">
+            <option value="80" selected>80 kolom</option>
+            <option value="40">40 kolom</option>
+          </select></label>
+        <span class="e-kecil">Perintah: <code>DISPLAY</code> <code>CLEAR</code>
+          <code>SAVE</code> <code>RESTART</code></span>
+      </div>
+      <div class="e-simpanan"><span class="e-kecil">Tersimpan:</span>
+        <div id="simpanan"></div></div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">514 baris BASIC</span>
+      <span class="ruleset__k">44 kata kunci &rarr; 29 penangan</span>
+      <span class="ruleset__k ruleset__k--mangsa">aturannya di berkas, bukan di kode</span>
+      <span class="ruleset__k ruleset__k--bahaya">ingatan jebol di &ldquo;MY&rdquo; ke-21</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Kata kunci menang</span>
+        <span class="stat__value mono" id="s-kunci">&mdash;</span></div>
+      <div class="stat"><span class="stat__label">Penangan (baris)</span>
+        <span class="stat__value mono" id="s-penangan">&mdash;</span></div>
+      <div class="stat" id="s-ingatan-box"><span class="stat__label">Ingatan M$</span>
+        <span class="stat__value mono" id="s-ingatan">0 / 20</span></div>
+      <div class="stat"><span class="stat__label">Penyangga S$</span>
+        <span class="stat__value mono" id="s-penyangga">0 / 100</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara memakainya</summary>
+      <p class="e-note">
+        Ketik apa saja dalam bahasa Inggris dan tekan Enter. Eliza bukan
+        pengarang kalimat &mdash; ia <strong>menyulih kata ganti lalu memilih
+        satu jawaban jadi</strong>, dan panel di sebelah kanan memperlihatkan
+        tiap langkahnya untuk kalimat yang baru saja Anda ketik.
+      </p>
+      <ol class="howto__steps">
+        <li><strong>Mulailah dengan keluhan.</strong> <code>I AM UNHAPPY</code>,
+            <code>MY MOTHER NEVER LISTENS</code>, <code>I CAN'T SLEEP</code>.
+            Teks antarmukanya sengaja tetap Inggris seperti aslinya.</li>
+        <li><strong>Perhatikan penanda <span class="e-nul">␀</span></strong> di
+            panel &ldquo;Di balik layar&rdquo;. Itu <code>CHR$(0)</code> yang
+            disuntikkan baris 180 &mdash; tanda bahwa kata itu <em>lahir dari
+            kata Anda</em>, bukan Anda ketik sendiri.</li>
+        <li><strong>Ketik ulang kalimat yang sama beberapa kali.</strong>
+            Jawabannya berputar, dan tiap beberapa putaran ia <em>ganti
+            topik</em> &mdash; itu slot kosong di keluarga jawabannya.</li>
+        <li><strong>Katakan <code>MY …</code> beberapa kali, lalu ketik omong
+            kosong.</strong> Sesudah lebih dari lima giliran, Eliza akan
+            memanggil kembali yang <em>paling lama</em> Anda sebutkan.</li>
+        <li><strong>Perintahnya huruf-sensitif</strong>, persis seperti baris
+            290&ndash;350: <code>DISPLAY</code> atau <code>display</code>,
+            tapi bukan <code>Display</code>.</li>
+      </ol>
+    </details>
+  </section>
+
+  <aside class="stack">
+
+    <section class="panel e-live">
+      <h2 class="panel__title">Di balik layar &mdash; giliran terakhir</h2>
+      <dl class="e-pipa">
+        <dt>1 &middot; yang Anda ketik <span class="e-brs">370</span></dt>
+        <dd id="p-mentah" class="e-mono">&mdash;</dd>
+        <dt>2 &middot; sesudah 22 kaidah sulih <span class="e-brs">420&ndash;450</span></dt>
+        <dd id="p-sulih" class="e-mono">&mdash;</dd>
+        <dt>3 &middot; dipotong jadi kalimat <span class="e-brs">490&ndash;530</span></dt>
+        <dd id="p-kalimat" class="e-mono e-pre">&mdash;</dd>
+        <dt>4 &middot; penyapuan 44 kata kunci <span class="e-brs">570&ndash;600</span></dt>
+        <dd id="p-sapu">&mdash;</dd>
+        <dt>5 &middot; pengiriman &amp; pemilihan <span class="e-brs">620 &rarr; 4600</span></dt>
+        <dd id="p-hasil">&mdash;</dd>
+      </dl>
+    </section>
+
+    <section class="panel e-bad">
+      <h2 class="panel__title">Dua penjaga untuk satu masalah &mdash; dan umurnya berbeda</h2>
+      <div class="e-code">DATA … I,YOU,YOU,I,ME,YOU,MY,*OUR,YOUR,MY,…   ' WRTSTR baris 30
+ 180 RW$(12)=" YO"+CHR$(0)+"U ":RW$(21)=" AR"+CHR$(0)+"E "
+ 230 K$(22)=" AR"+CHR$(0)+"E ":K$(43)=" YO"+CHR$(0)+"U "
+ 470 B=1
+ 480 A=INSTR(B,A$,"*"):IF A&lt;&gt;0 THEN MID$(A$,A)="Y":B=A+1:GOTO 480
+4600 ZZ=INSTR(B$,CHR$(0))
+4605 IF ZZ THEN B$=LEFT$(B$,ZZ-1)+MID$(B$,ZZ+1):GOTO 4600</div>
+      <p class="e-note">
+        Kaidah 12 mengubah <code>I</code> jadi <code>YOU</code>; kaidah 13
+        mengubah <code>YOU</code> jadi <code>I</code>. Keduanya dijalankan
+        berurutan atas kalimat yang sama, jadi tanpa penjaga kaidah kedua
+        <b>membatalkan</b> yang pertama: <i>I HATE YOU</i> akan jadi
+        <i>I HATE I</i>.
+      </p>
+      <p class="e-note">
+        Ada dua penjaga di program ini, dan bedanya bukan gaya melainkan
+        <b>umur</b>:
+      </p>
+      <table class="e-tbl">
+        <thead><tr><th>penjaga</th><th>dipasang</th><th>dibuang</th><th>bertahan sampai</th></tr></thead>
+        <tbody>
+          <tr><td class="e-bintang">*</td><td>DATA WRTSTR</td><td>baris 470&ndash;480</td>
+              <td>sebelum penyapuan</td></tr>
+          <tr><td class="e-nul">␀</td><td>baris 180 / 200 / 230</td><td>baris 4600&ndash;4605</td>
+              <td><b>sesudah</b> penyapuan</td></tr>
+        </tbody>
+      </table>
+      <p class="e-note">
+        Akibatnya <span class="e-nul">␀</span> bukan sekadar penjaga. Ia
+        <b>satu bit informasi tambahan</b> yang ikut disapu. Dua kata kunci
+        <b>membawa</b> penandanya &mdash; nomor <b id="b-bertanda">&mdash;</b>
+        &mdash; dan dua lagi bekerja justru karena <b>tidak</b> membawanya.
+        Empat kata kunci, dua pasang, dan yang dibedakan bukan kata melainkan
+        <b>siapa yang mengatakannya</b>:
+      </p>
+      <table class="e-tbl">
+        <thead><tr><th>kaidah sulih</th><th>kata kunci</th><th>penangan</th><th>artinya</th></tr></thead>
+        <tbody id="b-ganti"></tbody>
+      </table>
+      <p class="e-note">
+        Pasangan <code>MY</code>/<code>YOUR</code> tidak dapat perlakuan itu,
+        karena <code>*</code> sudah hilang sebelum penyapuan. Ketik
+        <i>MY DOG AND YOUR CAT</i> dan lihat panel di atas: keduanya berakhir
+        sebagai kata biasa, dan tak ada lagi yang tahu mana yang mana.
+      </p>
+    </section>
+
+    <section class="panel e-warn">
+      <h2 class="panel__title">Satu gelung, dua aturan prioritas</h2>
+      <div class="e-code"> 570 A0=50:FOR Z=1 TO 44:A=INSTR(A$,K$(Z)):IF A=0 THEN 590
+                                        ELSE IF Z&lt;21 THEN 620
+ 580 IF A&lt;A0 THEN A0=A:Z0=Z
+ 590 NEXT Z
+ 600 IF A0&lt;&gt;50 THEN Z=Z0:A=A0:GOTO 620</div>
+      <p class="e-note">
+        Baca baris 570 pelan-pelan. Untuk <code>Z&lt;21</code> ia
+        <b>langsung berangkat</b> ke tabel pengiriman: dua puluh kata kunci
+        pertama menang menurut <b>urutan daftar</b>, dan yang paling awal di
+        daftar selalu mengalahkan yang belakangan. Untuk
+        <code>Z&gt;=21</code> ia justru mencatat dan meneruskan: dua puluh
+        empat sisanya bersaing menurut <b>posisi terkecil di dalam kalimat</b>.
+      </p>
+      <p class="e-note">
+        Jadi <i>I ALWAYS DREAM ABOUT COMPUTERS</i> dijawab soal komputer
+        (K$&nbsp;1, paling depan di daftar) walaupun <code>ALWAYS</code>
+        dan <code>DREAM</code> muncul lebih dulu di kalimatnya &mdash;
+        sementara <i>WHY DO YOU THINK SO</i> dijawab soal
+        <code>WHY</code> semata-mata karena kata itu berdiri paling kiri.
+      </p>
+      <p class="e-note">
+        Dua aturan berbeda dalam satu gelung <code>FOR</code>, tanpa satu pun
+        komentar. Dan angka 21 &mdash; batas antara keduanya &mdash; hanya ada
+        di baris 570; <code>STRINGS.FIL</code> tidak menyimpannya, jadi
+        menyusun ulang daftar kata kunci di WRTSTR akan diam-diam mengubah
+        arti pembatas itu.
+      </p>
+    </section>
+
+    <section class="panel e-good">
+      <h2 class="panel__title">Slot kosong sebagai jalur ganti topik</h2>
+      <div class="e-code">2680 XF=XF+1:IF XF=6 THEN XF=1
+2690 ON XF GOTO 2700,2710,2720,2730,2740
+2740 RETURN                       ' &lt;- tidak menetapkan B$ sama sekali
+ 970 GOSUB 1580:GOSUB 2680:IF XF=5 THEN 1100 ELSE GOTO 4600</div>
+      <p class="e-note">
+        <b id="b-jumkosong">&mdash;</b> dari 46 keluarga jawaban menyisakan satu
+        slot yang <b>tidak menetapkan apa-apa</b>. Pemanggilnya menguji nomor
+        slot itu dan melempar giliran tersebut ke penjawab pertanyaan di baris
+        1100. Pencacah putarannya sekaligus <b>mesin keadaan</b>: tiap
+        <i>n</i> giliran, Eliza mengganti topik &mdash; dengan disengaja.
+      </p>
+      <table class="e-tbl">
+        <thead><tr><th>cacah</th><th>slot</th><th>baris kosong</th><th>diuji di</th><th>ke</th></tr></thead>
+        <tbody id="b-kosong"></tbody>
+      </table>
+      <p class="e-note">
+        Dua slot lain melangkah lebih jauh. Baris 2050 dan 2120 menyetel
+        <code>A=0</code>, dan baris 630 membaca itu sebagai
+        <i>&ldquo;anggap kata kunci ini tidak cocok&rdquo;</i> &mdash; jadi
+        penyapuan <b>diteruskan</b> dan kata kunci lain di kalimat yang sama
+        dapat giliran. Sebuah kata kunci yang bisa <b>menyerahkan</b> haknya.
+      </p>
+    </section>
+
+    <section class="panel e-bad">
+      <h2 class="panel__title">Ingatan lintas giliran &mdash; dan tempatnya cuma dua puluh</h2>
+      <div class="e-code"> 890 GOSUB 1520:GOSUB 1580:IF A=0 THEN RETURN ELSE IF S=0 THEN NE=0
+ 900 S=S+1:M$(S)=D$: …
+1500 IF NE&gt;5 AND S&lt;&gt;0 THEN NE=0:GOTO 4460 ELSE …
+4460 D$=M$(1):FOR I=1 TO S-1:M$(I)=M$(I+1):NEXT:S=S-1: …
+ 150 DIM …,M$(20)</div>
+      <p class="e-note">
+        Tiap kali Anda bilang <i>MY&nbsp;…</i>, potongannya disimpan. Kalau
+        lebih dari lima giliran berlalu <b>dan</b> sebuah giliran tidak
+        mencocokkan satu pun kata kunci, baris 4460 mengambil yang
+        <b>paling lama</b> disimpan dan berkata
+        <i>&ldquo;EARLIER YOU SAID YOUR …&rdquo;</i>.
+      </p>
+      <p class="e-note">
+        Perhatikan <code>M$(1)</code> dan geseran di baris 4460: ini
+        <b>antrean</b>, bukan tumpukan. Eliza aslinya Weizenbaum memakai
+        tumpukan &mdash; yang paling baru lebih dulu. Grumette membalikkannya,
+        dan hasilnya berbeda sifat: yang dipanggil kembali adalah keluhan
+        <b>pertama</b> Anda, bukan yang terakhir.
+      </p>
+      <p class="e-note">
+        Tapi baris 900 menambah <code>S</code> tanpa pernah memeriksanya
+        terhadap <code>DIM M$(20)</code>. Dua puluh satu kalimat
+        <i>MY&nbsp;…</i> tanpa diselingi giliran yang gagal mencocokkan, dan
+        GW-BASIC berhenti dengan <i>Subscript out of range in 900</i>. Papan
+        angka <b>Ingatan M$</b> di kiri memberi tahu Anda seberapa dekat.
+        Diperiksa: berturut-turut jebol di masukan ke-<b>21</b>; diselingi
+        giliran kosong, di <i>MY</i> ke-<b>26</b>.
+      </p>
+      <p class="e-note">
+        Saudaranya ada di baris 510: <code>DIM A$(20)</code> membatasi
+        <b>jumlah kalimat dalam satu masukan</b>, dan dua puluh satu titik
+        memberi <i>Subscript out of range in 510</i>. Port ini tidak berhenti
+        &mdash; ia menahan diri di batasnya dan <b>mengatakan</b> di panel
+        bahwa aslinya akan mati di sini.
+      </p>
+    </section>
+
+    <section class="panel e-good">
+      <h2 class="panel__title">Pembangkit dan hasilnya sama-sama selamat</h2>
+      <div class="e-code"> 10 OPEN"O",1,"STRINGS.FIL"          ' WRTSTR.BAS
+ 40 FOR I=1 TO 22:READ OW$(I),RW$(I):LO(I)=LEN(OW$(I)):…
+130 FOR I=1 TO 22:WRITE#1,OW$(I),RW$(I),LO(I),LR(I):NEXT
+
+160 OPEN"I",1,"STRINGS.FIL"          ' ELIZA.BAS
+170 FOR I=1 TO 22:INPUT#1,OW$(I),RW$(I),LO(I),LR(I):NEXT</div>
+      <p class="e-note">
+        <code>WRTSTR.BAS</code> tujuh belas baris, dan satu-satunya tugasnya
+        membuat berkas untuk program lain. Halaman ini <b>menjalankan
+        programnya</b>, bukan menyalin hasilnya &mdash; lihat
+        <code>strings.js</code>. Berkas yang dihasilkan:
+        <b id="b-bita">&mdash;</b> bita, <span id="b-cocok">&mdash;</span>.
+      </p>
+      <p class="e-note">
+        Yang paling berarti secara arsitektur: <code>LO</code> dan
+        <code>LR</code> &mdash; panjang tiap kata &mdash; <b>dihitung di
+        WRTSTR lalu ikut ditulis ke berkas</b>, bukan dihitung ulang tiap kali
+        Eliza jalan. Itu praberhitungan yang dipindahkan ke waktu pembuatan:
+        sebuah <i>build step</i>, tahun 1982.
+      </p>
+      <p class="e-note">
+        Dan membungkus tiap kata dengan spasi (<code>" I "</code>, bukan
+        <code>"I"</code>) adalah <b>pencocokan batas kata</b> sebelum ada
+        regex. Tanpa itu, <code>I</code> akan cocok dengan
+        <i>SIT</i> dan <i>TIME</i>.
+      </p>
+      <p class="e-note">
+        Tabel pengiriman di baris 620 punya <b id="b-cabang">&mdash;</b>
+        cabang menuju <b id="b-tujuan">&mdash;</b> tujuan berbeda; yang paling
+        sering dipakai bersama adalah baris <b id="b-terbanyak">&mdash;</b>.
+        Semua angka itu dihitung dari tabelnya sendiri saat halaman dimuat.
+      </p>
+    </section>
+
+    <section class="panel e-warn">
+      <h2 class="panel__title">Dua kata yang tidak pernah muncul di listingnya</h2>
+      <div class="e-code"> 250 FOR I=1 TO 4:READ ZZ:FZ$=FZ$+CHR$(ZZ):NEXT
+ 260 FOR I=1 TO 4:READ ZZ:SZ$=SZ$+CHR$(ZZ):NEXT
+1510 DATA 83,72,73,84,70,85,67,75
+ 460 IF INSTR(A$,FZ$) OR INSTR(A$,SZ$) THEN GOSUB 4410:GOSUB 4600:GOTO 640</div>
+      <p class="e-note">
+        Dua kata umpatan yang diawasi Eliza disimpan sebagai <b>kode
+        aksara</b>, bukan sebagai teks. Akibatnya me-<code>LIST</code> program
+        ini &mdash; atau membacanya dengan mata di layar 1981 &mdash; tidak
+        pernah memperlihatkan kata-katanya. Itu penyuntingan sopan yang
+        dikerjakan dengan aritmetika.
+      </p>
+      <p class="e-note">
+        Baris 460 juga satu-satunya jalan yang <b>memotong sebelum kalimat
+        dipotong</b>: umpatan dijawab sebelum penyulihan sempat berarti apa
+        pun. Ia mendahului seluruh mesin aturannya.
+      </p>
+    </section>
+
+    <section class="panel e-warn">
+      <h2 class="panel__title">Fosil di ujung berkasnya</h2>
+      <div class="e-code">misc\ELIZA.SRC  24.320 bita  = 190 × 128
+                Ctrl-Z (EOF) di bita 24.255
+   bita 0…24.254  identik dengan run\ELIZA.BAS
+   bita 24.256…24.319  = 64 bita "OTO 290 / 5080 GOTO 5050 / 5090 I=0 / …"
+                         yang di berkas hidup ada 128 bita lebih awal</div>
+      <p class="e-note">
+        Koleksi ini memuat dua salinan Eliza. Yang di <code>misc\</code>
+        panjangnya <b>persis kelipatan 128</b> &mdash; ukuran rekaman yang
+        diwarisi MS-DOS dari CP/M &mdash; dan isinya berhenti di penanda EOF
+        <code>Ctrl-Z</code> jauh sebelum ujungnya.
+      </p>
+      <p class="e-note">
+        Enam puluh empat bita sesudah penanda itu bukan sampah acak: itu
+        potongan <b>program yang sama</b>, dari posisi yang tepat
+        <b>128 bita</b> lebih awal. Rekaman terakhir tidak ditimpa penuh,
+        jadi yang tersisa di sana adalah ekor <b>simpanan sebelumnya</b> dari
+        berkas yang saat itu 128 bita lebih panjang.
+      </p>
+      <p class="e-note">
+        Artinya kita memegang jejak satu penyuntingan yang tidak
+        terdokumentasi di mana pun: antara dua kali simpan, 128 bita dibuang
+        dari bagian awal program. Isinya tidak bisa dipulihkan &mdash; tapi
+        <em>ukurannya</em> bisa dibaca dari sisa yang tertinggal.
+      </p>
+    </section>
+
+    <section class="panel e-bad">
+      <h2 class="panel__title">Tiga hal yang ditulis lalu tidak pernah dipakai</h2>
+      <table class="e-tbl">
+        <thead><tr><th>baris</th><th>apa</th><th>kenapa mati</th></tr></thead>
+        <tbody>
+          <tr><td>830</td><td><code>PRINT B$:RETURN</code></td>
+              <td>baris 820 di atasnya berakhir <code>GOTO 4600</code>, jadi
+                  830 tidak pernah tercapai &mdash; fosil dari sebelum 4600 ada</td></tr>
+          <tr><td>140 / 380</td><td><code>T=1</code> … <code>IF T=0</code></td>
+              <td>saklar untuk mempertahankan huruf kecil; disetel sekali,
+                  diuji sekali, tidak pernah diubah lagi</td></tr>
+          <tr><td>4650&ndash;4680</td><td>bungkus baris ke berkas</td>
+              <td>salinan kata demi kata dari 4610&ndash;4640; bedanya cuma
+                  <code>PRINT</code> lawan <code>PRINT#1</code></td></tr>
+        </tbody>
+      </table>
+      <p class="e-note">
+        Dan <b>dua</b> yang bukan mati melainkan <b>salah baca</b>, keduanya di
+        <code>reviews/ELIZA.md</code> sendiri:
+      </p>
+      <p class="e-note">
+        <b>Satu.</b> Ia mencantumkan <code>WHILE</code>/<code>WEND</code> di
+        daftar perkakas bahasa yang dipakai. Program ini punya <b>nol</b>.
+        Satu-satunya kemunculan &ldquo;WHILE&rdquo; ada di dalam sebuah
+        <b>kalimat Inggris</b>, baris 2020: <i>&ldquo;HAVE YOU EVER FANTASIED
+        … WHILE YOU WERE AWAKE?&rdquo;</i>
+      </p>
+      <p class="e-note">
+        <b>Dua.</b> Ia menyebut 121 <code>GOTO</code>-nya
+        <i>&ldquo;tertinggi di koleksi&rdquo;</i>. Bukan &mdash;
+        <code>TEMPLE</code> punya 255 dan <code>WIZARD</code> 224; ELIZA
+        ketiga. Yang benar-benar tertinggi adalah <b>47 tabel
+        <code>ON…</code></b>, lebih dari dua kali lipat program mana pun.
+        Kesimpulannya jadi terbalik: percabangannya <b>terstruktur</b>, bukan
+        kusut.
+      </p>
+      <p class="e-note">
+        Keduanya sesebab: <b>menghitung tanpa melihat</b>. Dan ini kebalikan
+        persis dari <a href="../../docs/anatomy.md">ANATOMY</a>, tempat kode
+        terbaca sebagai data dan menipu alat yang sama di enam tempat.
+      </p>
+    </section>
+
+    <p class="e-links">
+      <a href="../../docs/eliza.md">Catatan lengkap port ini</a> &middot;
+      <a href="../../../reviews/ELIZA.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../reviews/WRTSTR.md">Analisis WRTSTR.BAS</a> &middot;
+      <a href="../../index.html">Semua program</a>
+    </p>
+  </aside>
+</main>
+
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="strings.js?v=1"></script>
+<script src="eliza.js?v=1"></script>
+</body>
+</html>

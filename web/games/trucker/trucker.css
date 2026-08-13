@@ -1,0 +1,465 @@
+/* ===========================================================================
+   trucker.css — TRUCKER.BAS
+
+   Satu satuan-x di dalam SVG = satu mil di pita perjalanan, dan garis marka
+   jalannya digeser oleh ODOMETER, bukan oleh jam. Jadi kalau truknya kelihatan
+   cepat, ia memang sedang cepat.
+   =========================================================================== */
+
+.t-layout { display: grid; gap: var(--s5); align-items: start; }
+@media (min-width: 1000px) {
+  .t-layout { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+}
+@media (min-width: 1400px) { .t-layout { max-width: 1360px; } }
+
+.t-stage { display: grid; gap: var(--s3); }
+
+.t-crt {
+  position: relative; background: #06080e;
+  border: 1px solid var(--line); border-radius: 16px;
+  padding: var(--s3); overflow: hidden;
+  box-shadow: inset 0 0 70px rgba(0,0,0,.7);
+}
+@keyframes t-celaka {
+  0%,100% { transform: translate(0,0); filter: none; }
+  15% { transform: translate(-8px,4px); filter: brightness(2.4) saturate(0); }
+  35% { transform: translate(8px,-5px); filter: brightness(.4); }
+  60% { transform: translate(-5px,-3px); filter: brightness(1.8) saturate(0); }
+}
+.t-crt--celaka { animation: t-celaka .3s ease-in-out 3; }
+.t-svg { display: block; width: 100%; height: auto; }
+
+/* --- pemandangan ----------------------------------------------------------- */
+.t-bintang { fill: #eaf1ff; opacity: .85; }
+.t-bukit { fill: #1a2230; opacity: .9; }
+.t-aspal { fill: url(#t-aspal); }
+.t-bahu { fill: #55555f; }
+.t-tepi { fill: #6b6b76; }
+.t-marka { fill: #e8d98a; }
+
+/* --- truk ------------------------------------------------------------------ */
+.t-trailer { fill: #d8dde5; stroke: #8d949f; stroke-width: 1.4; }
+.t-trailerGaris { fill: #aeb6c1; }
+.t-reefer { fill: #b9c0ca; stroke: #7d848f; stroke-width: 1.2; }
+.t-reeferKipas { fill: none; stroke: #5f666f; stroke-width: 2; }
+.t-kabin { fill: #b8342b; stroke: #6f1d17; stroke-width: 1.4; }
+.t-kaca { fill: #22394d; stroke: #8fc4e6; stroke-width: 1; }
+.t-bemper { fill: #cfd5dd; }
+.t-knalpot { fill: #9aa1ab; }
+.t-bandan { fill: #14161b; stroke: #33373f; stroke-width: 2; }
+.t-velg { fill: #8a9099; }
+.t-lampu { fill: #fff3c4; }
+.t-sorot { fill: #fff3c4; opacity: .12; }
+
+/* --- cuaca ----------------------------------------------------------------- */
+.t-kabut { fill: #c9d4de; opacity: .38; }
+.t-salju { fill: #ffffff; opacity: .9; }
+.t-hujan { stroke: #9fc4e6; stroke-width: 1.1; opacity: .55; }
+.t-badai { fill: #dfe8f2; opacity: .22; }
+.t-basah { fill: #7fb4ff; opacity: .10; }
+
+/* --- pita mil -------------------------------------------------------------- */
+.t-pitaLatar { fill: #1a2030; stroke: #38445c; stroke-width: 1; }
+.t-pitaIsi { fill: #46c17f; opacity: .55; }
+.t-pinTitik { fill: #7c8aa3; stroke: #0d121c; stroke-width: 1; cursor: help; }
+.t-pinTitik--1 { fill: #9b8cff; }   /* zona waktu */
+.t-pinTitik--2 { fill: #ffd166; }   /* tol */
+.t-pinTitik--3 { fill: #ff9a3c; }   /* perbaikan jalan */
+.t-pinTitik--4 { fill: #ff5a4e; }   /* radar */
+.t-pinTitik--5 { fill: #4fa3ff; }   /* jembatan timbang */
+.t-pinTitik--6 { fill: #b8352a; }   /* longsor */
+.t-pinTitik--7 { fill: #46c17f; }   /* unit pendingin */
+.t-pin--lewat .t-pinTitik { opacity: .45; }
+.t-pitaTruk { fill: #ffffff; }
+.t-pitaTrukJarum { fill: #ffd166; }
+.t-pitaNama { fill: #93a6bd; font: 700 11px var(--font-mono); letter-spacing: .08em; }
+
+/* --- catatan perjalanan ----------------------------------------------------
+   Ini keluaran teks program aslinya, jadi ia diberi LATAR GELAP TETAP, tidak
+   mengikuti tema halaman. Alasannya bukan gaya melainkan keterbacaan: warna
+   di sini menandakan jenis kejadian (kuning = kejadian, merah = bahaya, hijau
+   = kabar baik), dan warna-warna itu dipilih untuk latar gelap. Sewaktu
+   latarnya ikut tema terang, "You are at the Los Angeles trucking terminal."
+   yang berwarna putih menjadi putih-di-atas-putih dan hilang sama sekali.
+
+   Aturannya: kalau warna dipakai untuk MENYAMPAIKAN sesuatu, latarnya tidak
+   boleh berubah di bawahnya. */
+.t-log {
+  height: 190px; overflow-y: auto; padding: var(--s3);
+  background: #0a0f16; border: 1px solid #1d2836;
+  border-radius: var(--r-sm);
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.55;
+  box-shadow: inset 0 0 30px rgba(0,0,0,.55);
+}
+.t-baris { margin: 0 0 2px; color: #93a3b5; }
+.t-judul { color: #ffffff; font-weight: 700; letter-spacing: .06em; margin-top: 6px; }
+.t-pilih { color: #7fd4ff; }
+.t-titik { color: #dce9f4; font-weight: 700; }
+.t-kejadian { color: #ffd166; }
+.t-awas { color: #ffa15c; }
+.t-bahaya { color: #ff6b5d; font-weight: 700; }
+.t-baik { color: #7dffb0; }
+.t-catatan { color: #98a2b3; font-style: italic; }
+
+/* --- panel keputusan -------------------------------------------------------- */
+.t-panel {
+  padding: var(--s3); border: 1px solid var(--line); border-radius: var(--r-sm);
+  background: var(--bg-raised);
+}
+.t-tanya { margin: 0 0 var(--s3); font-weight: 700; }
+.t-row { display: flex; flex-wrap: wrap; gap: var(--s2); align-items: center; }
+.t-angka {
+  font-family: var(--font-mono); padding: 5px 7px; width: 9ch;
+  border: 1px solid var(--line); border-radius: var(--r-sm);
+  background: var(--bg-sunken); color: var(--fg);
+}
+.t-slider { flex: 1 1 220px; min-width: 180px; }
+.t-spOut { font-family: var(--font-mono); font-size: var(--fs-sm); }
+.t-label { font-size: var(--fs-sm); color: var(--fg-dim); }
+.t-daftar { margin: var(--s3) 0 0; padding-left: 1.2em;
+            font-size: var(--fs-sm); color: var(--fg-dim); line-height: 1.6; }
+.t-panel .t-catatan { margin: var(--s3) 0 0; font-size: var(--fs-xs);
+                      font-style: normal; color: var(--fg-dim); }
+.t-panel .t-bahaya { color: #c0503f; }
+.t-cd.t-bahaya, .t-cd.t-awas { font-weight: 700; }
+
+/* --- kendali --------------------------------------------------------------- */
+.t-row--kecil { font-size: var(--fs-sm); color: var(--fg-dim); }
+.t-row--kecil label { display: flex; align-items: center; gap: var(--s2); }
+/* --- bilah solar -----------------------------------------------------------
+   Bilah ini menunjukkan ISI TANGKI SEBENARNYA, bukan angka "Approximate fuel"
+   di papan yang sengaja meleset. Supaya ia bisa dibaca sebagai ukuran dan
+   bukan sebagai lampu yang berkedip, ia diberi tiga hal yang tadinya tidak
+   ada: garis skala di 50/100/150 galon, zona berwarna yang tercetak di
+   jalurnya (bukan cuma pada isian), dan angka di sebelahnya.
+
+   Kenapa warnanya sempat terasa acak: satu-satunya ambang (20 galon) tidak
+   tergambar di mana pun, dan baris 2550 aslinya MENGISI ULANG tangki jadi 55
+   galon begitu Anda kehabisan -- jadi merah bisa berubah hijau tanpa pemain
+   mengisi apa pun. Sekarang lompatan itu terlihat sebagai melintasi zona. */
+.t-bar { display: grid; grid-template-columns: max-content 1fr max-content;
+         gap: var(--s3); align-items: center;
+         font-size: var(--fs-xs); color: var(--fg-dim); }
+.t-jalur { position: relative; height: 10px; border-radius: 99px;
+           background: var(--bg-sunken); border: 1px solid var(--line);
+           overflow: hidden; }
+.t-zona { position: absolute; top: 0; bottom: 0; left: 0; }
+.t-zona--cadangan { width: 10%; background: rgba(192,57,43,.34); }   /* 0-20 gal  */
+.t-zona--waspada  { width: 25%; background: rgba(224,160,32,.20); }  /* 0-50 gal  */
+.t-tik { position: absolute; top: 0; bottom: 0; width: 1px;
+         background: rgba(255,255,255,.28); }
+.t-isi { position: absolute; left: 0; top: 0; bottom: 0; width: 0;
+         background: linear-gradient(90deg,#2f7a52,#46c17f);
+         transition: width .2s linear; }
+.t-isi--waspada  { background: linear-gradient(90deg,#a06a1a,#e0a020); }
+.t-isi--cadangan { background: #c0392b; }
+.t-bbmTeks { color: var(--fg); font-size: var(--fs-xs); }
+.t-bbmKunci { margin: 4px 0 0; line-height: 1.5; }
+.t-kunciWaspada { color: #b07d10; }
+.t-kunciCadangan { color: #c0392b; }
+
+/* --- panel kanan ----------------------------------------------------------- */
+.t-lead { margin-top: 0; }
+.t-note { font-size: var(--fs-sm); line-height: 1.6; }
+.t-kecil { font-size: var(--fs-xs); color: var(--fg-dim); }
+.t-good { border-left: 3px solid #46c17f; }
+.t-warn { border-left: 3px solid #e0a020; }
+.t-bad  { border-left: 3px solid #c0503f; }
+.t-code {
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.55;
+  background: var(--bg-sunken); border-radius: var(--r-sm);
+  padding: var(--s3); overflow-x: auto; white-space: pre;
+}
+.t-tbl { width: 100%; border-collapse: collapse; font-size: var(--fs-xs);
+         margin: var(--s3) 0 0; }
+.t-tbl td, .t-tbl th { padding: 4px 6px; border-bottom: 1px solid var(--line);
+                       text-align: right; }
+.t-tbl td:first-child, .t-tbl th:first-child { text-align: left; }
+.t-links { margin-top: var(--s4); }
+.t-seni {
+  font-family: var(--font-mono); font-size: 9px; line-height: 1.05;
+  white-space: pre; color: #ffd166; background: var(--bg-sunken);
+  border-radius: var(--r-sm); padding: var(--s3); overflow-x: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-crt--celaka { animation: none; }
+  .t-isi { transition: none; }
+}
+
+/* ===========================================================================
+   Adegan bergerak (trucker-scene.js)
+
+   Aturan yang tidak boleh dilanggar berkas ini: warna boleh apa saja, tapi
+   TIDAK ADA satu pun kelas di sini yang mengubah geometri kendaraan. Bentuk
+   truk ditentukan oleh path di trucker-scene.js, supaya kalau seseorang
+   mematikan CSS ia masih melihat truk, bukan tumpukan kotak.
+   =========================================================================== */
+
+/* --- langit & tanah -------------------------------------------------------- */
+.sc-langit { fill: url(#sc-langit); }
+.sc-tanahJauh { fill: #3f4436; }
+.sc-aspalJauh { fill: #40424a; }
+.sc-bahuJauh { fill: #6d6d78; }
+.sc-aspal { fill: url(#sc-aspal); }
+.sc-bahuAtas { fill: #6d6d78; }
+.sc-bahuBawah { fill: #5c5c66; }
+.sc-marka { fill: #e8d98a; }
+.sc-markaJauh { fill: #cbbe78; opacity: .8; }
+.sc-gunung { fill: #2b3446; }
+.sc-bukit { fill: #39445a; }
+.sc-pagarBesi { fill: #7b818c; }
+.sc-pagarBesiPita { fill: #9aa1ac; }
+
+.sc-matahari circle { fill: #ffe9a8; filter: drop-shadow(0 0 14px rgba(255,220,120,.75)); }
+.sc-bulan circle { fill: #e8eef8; }
+.sc-bulanKawah { fill: #c3ccdb; }
+.sc-bintang { fill: #eaf1ff; opacity: .9; }
+
+/* --- traktor pemain -------------------------------------------------------- */
+.sc-sasis { fill: #2c2f36; }
+.sc-kabin { fill: #b8342b; stroke: #6e1d17; stroke-width: 1.6; }
+.sc-moncong { fill: #a92e26; stroke: #6e1d17; stroke-width: 1.6; }
+.sc-garisKabin { fill: #f0c04a; }
+.sc-kaca { fill: #26445c; stroke: #9fd0ee; stroke-width: 1.2; }
+.sc-visor { fill: #7d1f19; }
+.sc-grill { fill: #cfd6de; stroke: #8f97a1; stroke-width: 1; }
+.sc-grillGaris { stroke: #8f97a1; stroke-width: 1.1; }
+.sc-spakbor { fill: #8f231d; }
+.sc-cerobong { fill: #b9c0ca; stroke: #7d848f; stroke-width: 1; }
+.sc-krom { fill: #d7dde5; }
+.sc-spion { stroke: #b9c0ca; stroke-width: 2; }
+.sc-bemper { fill: #d7dde5; }
+.sc-tangki { fill: #cfd6de; stroke: #949ba5; stroke-width: 1; }
+.sc-kotak { fill: #4a4e57; }
+.sc-lampuDepan { fill: #fff3c4; }
+.sc-lumpur { fill: #23262c; }
+
+/* --- trailer: jeruk (berpendingin) ----------------------------------------- */
+.sc-badanDingin { fill: #eef1f5; stroke: #9aa2ad; stroke-width: 1.6; }
+.sc-rusuk { stroke: #cdd4dc; stroke-width: 1.4; }
+.sc-pitaDingin { fill: #e8892a; opacity: .92; }
+.sc-reefer { fill: #c6cdd6; stroke: #7d848f; stroke-width: 1.4; }
+.sc-reeferKipas { fill: #3a3f47; stroke: #8d949e; stroke-width: 2; }
+.sc-reeferPusat { fill: #b9c0ca; }
+.sc-reeferSirip { stroke: #98a0ab; stroke-width: 1.4; }
+.sc-jerukBuah { fill: #f5951f; stroke: #b3620a; stroke-width: 1.4; }
+.sc-jerukDaun { fill: #3f8f4a; }
+.sc-tulisTrailer { fill: #24303d; font: 700 15px var(--font-mono); letter-spacing: .06em; }
+.sc-tulisKecil { fill: #5d6975; font: 700 9px var(--font-mono); letter-spacing: .1em; }
+
+/* --- trailer: freight ------------------------------------------------------ */
+.sc-badanVan { fill: #c9ced6; stroke: #868d98; stroke-width: 1.6; }
+.sc-gelombang { stroke: #aab1bb; stroke-width: 1.6; }
+.sc-vanAtas, .sc-vanBawah { fill: #98a0ab; }
+.sc-pintu { fill: #b3bac3; stroke: #7d848f; stroke-width: 1.2; }
+.sc-engsel { fill: #6f767f; }
+.sc-plakat { fill: #1f4d84; stroke: #12335a; stroke-width: 1.4; }
+.sc-tulisPlakat { fill: #ffffff; font: 800 19px var(--font-mono); text-anchor: middle; letter-spacing: .1em; }
+.sc-tulisPlakatKecil { fill: #a9c8ea; font: 700 10px var(--font-mono); text-anchor: middle; letter-spacing: .14em; }
+
+/* --- trailer: surat -------------------------------------------------------- */
+.sc-badanPos { fill: #f3f5f8; stroke: #99a1ac; stroke-width: 1.6; }
+.sc-pitaBiru { fill: #1c3f80; }
+.sc-pitaMerah { fill: #c0392b; }
+.sc-tulisPos { fill: #1c3f80; font: 800 21px var(--font-mono); text-anchor: middle; letter-spacing: .14em; }
+.sc-trailer--surat .sc-tulisKecil { text-anchor: middle; }
+
+/* --- roda ------------------------------------------------------------------ */
+.sc-ban { fill: #16181d; stroke: #34383f; stroke-width: 2.2; }
+.sc-velg { fill: #9aa1ab; }
+.sc-noktah { fill: #ffffff; }
+.sc-jari { stroke: #6c737c; stroke-width: 1.6; }
+
+/* --- kendaraan lain (semuanya cab-over) ------------------------------------ */
+.sc-lainTrailer { fill: #b6bcc5; stroke: #838a95; stroke-width: 1.4; }
+.sc-lainKabin { fill: #3f6f4f; stroke: #26452f; stroke-width: 1.4; }
+.sc-lain--biru .sc-lainKabin { fill: #2f5c8a; stroke: #1b3856; }
+.sc-lain--kuning .sc-lainKabin { fill: #c79a1e; stroke: #7f6210; }
+.sc-lain--merah .sc-lainKabin { fill: #a83a30; stroke: #6b221b; }
+.sc-lain--coklat .sc-lainKabin { fill: #6d5240; stroke: #43301f; }
+.sc-lain--putih .sc-lainKabin { fill: #d3d8df; stroke: #8f96a0; }
+
+.sc-mobilBadan { fill: #4a6f96; stroke: #2b4460; stroke-width: 1.4; }
+.sc-mobil--kuning .sc-mobilBadan { fill: #cba52c; stroke: #7f6512; }
+.sc-mobil--hijau .sc-mobilBadan { fill: #4a7f57; stroke: #2b4e33; }
+.sc-mobil--coklat .sc-mobilBadan { fill: #7a5c44; stroke: #4a3728; }
+.sc-mobil--putih .sc-mobilBadan { fill: #d9dee5; stroke: #8f96a0; }
+.sc-mobil--merah .sc-mobilBadan { fill: #a8443a; stroke: #6b2620; }
+.sc-mobilLampu { fill: #fff3c4; }
+.sc-mobilLampuBelakang { fill: #ff6b5a; }
+.sc-bakPikap { fill: #2f353d; }
+
+.sc-polisiBadan { fill: #e9edf2; stroke: #8b929c; stroke-width: 1.4; }
+.sc-polisiPintu { fill: #1d3f74; }
+.sc-tulisPolisi { fill: #ffffff; font: 700 9px var(--font-mono); text-anchor: middle; }
+.sc-sireneMerah { fill: #7d2a24; }
+.sc-sireneBiru { fill: #22406e; }
+.sc-sirene--nyala .sc-sireneMerah { fill: #ff4438; animation: sc-kedip .32s steps(1) infinite; }
+.sc-sirene--nyala .sc-sireneBiru { fill: #4aa6ff; animation: sc-kedip .32s steps(1) .16s infinite; }
+@keyframes sc-kedip { 0%,50% { opacity: 1; } 51%,100% { opacity: .22; } }
+
+/* --- truk parkir (tampak belakang) ----------------------------------------- */
+.sc-parkirBadan { fill: #b9bfc8; stroke: #7c838d; stroke-width: 1.8; }
+.sc-parkirBelah { stroke: #6f767f; stroke-width: 2; }
+.sc-palang { fill: #8f96a0; }
+.sc-parkirBemper { fill: #4a4e57; }
+.sc-lampuBelakang { fill: #ff5a4e; }
+.sc-tulisParkir { fill: #46536a; font: 800 13px var(--font-mono); text-anchor: middle; letter-spacing: .18em; }
+
+/* --- properti pinggir jalan ------------------------------------------------ */
+.sc-kaktus { fill: none; stroke: #4d7d4a; stroke-width: 9; stroke-linecap: round; }
+.sc-tanah { fill: #6b6247; opacity: .55; }
+.sc-batang { fill: #5a4432; }
+.sc-daun { fill: #3f7a45; }
+.sc-daunGelap { fill: #2f5f3c; }
+.sc-semak { fill: #55704a; }
+.sc-tiang, .sc-pagarTiang { fill: #6b5a45; }
+.sc-pagarPapan { fill: #7d6a52; }
+.sc-silo { fill: #c9c3b4; stroke: #938d7e; stroke-width: 1.4; }
+.sc-siloAtap { fill: #8d9199; }
+.sc-siloPita { fill: #a49d8d; }
+.sc-menaraKincir { fill: none; stroke: #7d8590; stroke-width: 3; }
+.sc-kincirBilah { fill: #cdd4dc; }
+.sc-kincirKipas { animation: sc-putarKincir 4s linear infinite; }
+@keyframes sc-putarKincir { to { transform: translate(0px, -78px) rotate(360deg); } }
+.sc-gudang { fill: #8e3b2e; stroke: #5c241b; stroke-width: 1.4; }
+.sc-gudangPintu { fill: #3d2117; }
+.sc-gudangGaris { stroke: #d8cdbd; stroke-width: 2; fill: none; }
+.sc-mesa { fill: #7a5c44; }
+.sc-mesaPita { fill: #8e6c4e; }
+.sc-rumput { stroke: #5d7a4a; stroke-width: 2.4; fill: none; stroke-linecap: round; }
+.sc-reklame { fill: #e9e2cf; stroke: #8d856d; stroke-width: 2; }
+.sc-tulisReklame { fill: #7a3226; font: 800 15px var(--font-mono); text-anchor: middle; }
+.sc-kuda { fill: #6b4a30; }
+.sc-kudaSurai { fill: #432c1a; }
+
+/* --- rambu (isinya dari DATA) ---------------------------------------------- */
+.sc-rambuHijau { fill: #1f5c3a; stroke: #0f3421; stroke-width: 1.6; }
+.sc-rambuTepi { fill: none; stroke: #eaf3ec; stroke-width: 1.6; }
+.sc-tulisRambu { fill: #ffffff; font: 700 17px var(--font-mono); text-anchor: middle; letter-spacing: .08em; }
+.sc-tulisRambuKecil { fill: #cfe6d8; font: 700 10px var(--font-mono); text-anchor: middle; letter-spacing: .08em; }
+.sc-rambuPutih { fill: #f4f6f8; stroke: #2b2f36; stroke-width: 2.4; }
+.sc-tulisBatas { fill: #14171c; font: 800 34px var(--font-mono); text-anchor: middle; }
+.sc-tulisBatasKecil { fill: #14171c; font: 700 11px var(--font-mono); text-anchor: middle; letter-spacing: .1em; }
+.sc-perisaiMerah { fill: #b3232b; }
+.sc-perisaiBiru { fill: #17356e; }
+.sc-perisaiKata { fill: #ffffff; font: 700 6.5px var(--font-mono); text-anchor: middle; letter-spacing: .06em; }
+.sc-perisaiNomor { fill: #ffffff; font: 800 22px var(--font-mono); text-anchor: middle; }
+.sc-rambuOranye { fill: #e8791f; stroke: #14171c; stroke-width: 2.4; }
+.sc-tulisKonstruksi { fill: #14171c; font: 800 13px var(--font-mono); text-anchor: middle; }
+.sc-drum { fill: #e8791f; }
+.sc-drumPita { fill: #f4f6f8; }
+
+/* --- gerbang tol, timbangan, terowongan ------------------------------------ */
+.sc-tolTiang, .sc-kanopiTiang { fill: #8d949e; }
+.sc-tolAtap, .sc-kanopi { fill: #c6ccd4; stroke: #8d949e; stroke-width: 1.4; }
+.sc-tolGardu { fill: #d8dee5; stroke: #8d949e; stroke-width: 1.4; }
+.sc-tolKaca { fill: #2b4a63; }
+.sc-tulisTol { fill: #14171c; font: 800 17px var(--font-mono); text-anchor: middle; letter-spacing: .1em; }
+.sc-palangTol { fill: #f4f6f8; stroke: #14171c; stroke-width: 1.2; }
+.sc-palangGaris { fill: #c0392b; }
+.sc-bangunan { fill: #cfc9b8; stroke: #8f8a7b; stroke-width: 1.4; }
+.sc-atapDatar { fill: #8d949e; }
+.sc-jendelaGedung { fill: #3a5670; }
+.sc-timbangan { fill: #7f858f; stroke: #4a4e57; stroke-width: 1.4; }
+.sc-tulisTimbang { fill: #14171c; font: 800 15px var(--font-mono); text-anchor: middle; }
+.sc-bukitTerowongan { fill: #4a4436; }
+.sc-mulutTerowongan { fill: #0d0f13; }
+.sc-lengkungTerowongan { stroke: #9aa1ab; stroke-width: 5; }
+.sc-batu { fill: #7d766a; stroke: #4f4a41; stroke-width: 1.6; }
+
+/* --- truck stop ------------------------------------------------------------ */
+.sc-papanStop { fill: #14306b; stroke: #f0c04a; stroke-width: 3; }
+.sc-tulisStopBesar { fill: #ffd166; font: 800 24px var(--font-mono); text-anchor: middle; letter-spacing: .1em; }
+.sc-tulisStopKecil { fill: #cfe0f5; font: 700 11px var(--font-mono); text-anchor: middle; letter-spacing: .1em; }
+.sc-pompa { fill: #c0392b; stroke: #7a231a; stroke-width: 1.2; }
+.sc-pompaKaca { fill: #f4f6f8; }
+
+/* --- langit: pesawat, burung, kereta --------------------------------------- */
+.sc-pesawatBadan { fill: #e9edf2; stroke: #98a0ab; stroke-width: 1; }
+.sc-pesawatSayap, .sc-pesawatEkor { fill: #c6ccd4; }
+.sc-jejakUap { fill: #ffffff; opacity: .35; }
+.sc-burungSayap { fill: none; stroke: #2c3340; stroke-width: 2; stroke-linecap: round; }
+.sc-rel { fill: #5b5348; }
+.sc-lokomotif { fill: #b8402f; stroke: #6f2119; stroke-width: 1.4; }
+.sc-gerbong { fill: #6d5a48; stroke: #3f342a; stroke-width: 1.2; }
+.sc-gerbongPita { fill: #8a7460; }
+.sc-gerbongRoda { fill: #23262c; }
+.sc-tumbleweedBola { fill: none; stroke: #9a8a5c; stroke-width: 2; }
+.sc-tumbleweedGaris { stroke: #9a8a5c; stroke-width: 1.4; }
+
+/* --- cuaca ----------------------------------------------------------------- */
+.sc-kabut { fill: #c9d4de; opacity: .4; }
+.sc-basah { fill: #7fb4ff; opacity: .1; }
+.sc-salju { fill: #ffffff; opacity: .92; animation: sc-turun 1.1s linear infinite var(--d,0s); }
+.sc-hujan { stroke: #9fc4e6; stroke-width: 1.2; opacity: .6; animation: sc-turun .45s linear infinite var(--d,0s); }
+.sc-badai { fill: #dfe8f2; opacity: .2; }
+@keyframes sc-turun { to { transform: translate(-26px, 60px); } }
+
+.sc-sorot { fill: #fff3c4; opacity: .1; }
+.sc-truk--parkir .sc-sorot { display: none; }
+
+/* --- bilah saat animasi berjalan ------------------------------------------- */
+.t-jalanBar { display: flex; gap: var(--s2); align-items: baseline; flex-wrap: wrap;
+              font-size: var(--fs-sm); letter-spacing: .06em; }
+.t-jalanJalur { margin-top: var(--s2); height: 6px; border-radius: 99px;
+                background: var(--bg-sunken); border: 1px solid var(--line); overflow: hidden; }
+.t-jalanIsi { display: block; height: 100%; width: 0;
+              background: linear-gradient(90deg,#a06a1a,#ffd166);
+              animation: t-isiJalan linear forwards; }
+@keyframes t-isiJalan { from { width: 0; } to { width: 100%; } }
+.t-pilihLaju { font-family: var(--font-mono); padding: 4px 6px;
+               border: 1px solid var(--line); border-radius: var(--r-sm);
+               background: var(--bg-sunken); color: var(--fg); }
+
+@media (prefers-reduced-motion: reduce) {
+  .sc-salju, .sc-hujan, .sc-kincirKipas, .sc-sirene--nyala .sc-sireneMerah,
+  .sc-sirene--nyala .sc-sireneBiru, .t-jalanIsi { animation: none; }
+}
+
+/* --- pohon yang ditabrak, dan bangkainya ----------------------------------- */
+.sc-batangTebal { fill: #5a4432; }
+.sc-akar { fill: #4a382a; }
+.sc-daunTabrak { fill: #35703f; }
+/* Tidak ada aturan `transform` untuk pohon di sini dengan sengaja: <g>
+   luarnya memakai atribut transform, dan properti CSS akan menimpanya.
+   Miringnya digerakkan trucker-scene.js pada <g> dalam. */
+
+.sc-truk--rusak .sc-kaca { fill: #16283a; }
+.sc-truk--rusak .sc-grill { fill: #8b9099; }
+.sc-retak { stroke: #eaf3ff; stroke-width: 1.6; fill: none; opacity: .95; }
+
+@keyframes sc-asapNaik {
+  from { transform: translate(0,0) scale(.35); opacity: .85; }
+  to   { transform: translate(-38px,-96px) scale(2.1); opacity: 0; }
+}
+.sc-asap {
+  fill: #7d8590; transform-box: fill-box; transform-origin: 50% 50%;
+  animation: sc-asapNaik 1.9s ease-out infinite var(--d, 0s);
+}
+@keyframes sc-serpihTerbang {
+  from { transform: translate(0,0) rotate(0deg); opacity: 1; }
+  to   { transform: translate(var(--dx,40px), var(--dy,-40px)) rotate(420deg); opacity: 0; }
+}
+.sc-serpih {
+  fill: #d7dde5; transform-box: fill-box; transform-origin: 50% 50%;
+  animation: sc-serpihTerbang .9s ease-out forwards var(--d, 0s);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sc-asap, .sc-serpih { animation: none; }
+}
+
+/* --- truk tangki pengantar solar ------------------------------------------- */
+.sc-tangkiBadan { fill: #cfd6de; stroke: #8b929c; stroke-width: 1.5; }
+.sc-tangkiTutup { fill: #b7bec7; stroke: #8b929c; stroke-width: 1.2; }
+.sc-tangkiPita { fill: #9aa1ab; }
+.sc-tangkiLubang { fill: #7d848f; }
+.sc-tangkiKabin { fill: #1f6f4f; stroke: #124430; stroke-width: 1.5; }
+.sc-tulisTangki { fill: #1f4d84; font: 800 15px var(--font-mono);
+                  text-anchor: middle; letter-spacing: .1em; }
+.sc-suar { fill: #ffb300; animation: sc-suarKedip .5s steps(1) infinite; }
+@keyframes sc-suarKedip { 0%,55% { opacity: 1; } 56%,100% { opacity: .25; } }
+
+@media (prefers-reduced-motion: reduce) { .sc-suar { animation: none; } }

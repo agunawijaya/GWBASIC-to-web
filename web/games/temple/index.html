@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Temple of Loth — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari TEMPLE.BAS v4.2 (John Belew, 1984): WIZARD.BAS yang disalin lalu diubah — 706 pernyataannya identik kata demi kata, dan satu komentar berubah jadi kode. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="../../_shared/zot.css?v=1">
+<link rel="stylesheet" href="temple.css?v=2">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap zot-layout">
+
+  <section class="stack">
+    <div class="screen screen--scanlines">
+
+      <div class="zot-atas">
+        <div class="zot-petaLuar">
+          <div class="zot-peta" id="peta"></div>
+          <p class="zot-kecil zot-legenda">
+            Lantai <b id="s-lantai" class="mono">1</b> dari 8 &middot;
+            posisi <b id="s-posisi" class="mono">—</b> &middot;
+            giliran <b id="s-giliran" class="mono">1</b>
+          </p>
+        </div>
+
+        <dl class="zot-status">
+          <div class="zot-pasang"><dt>Ras</dt>
+            <dd id="s-ras" class="zot-nilai mono">—</dd></div>
+          <div class="zot-pasang"><dt>Strength</dt>
+            <dd id="s-st" class="zot-nilai mono">—</dd></div>
+          <div class="zot-pasang"><dt>Intelligence</dt>
+            <dd id="s-iq" class="zot-nilai mono">—</dd></div>
+          <div class="zot-pasang"><dt>Dexterity</dt>
+            <dd id="s-dx" class="zot-nilai mono">—</dd></div>
+          <div class="zot-pasang"><dt>Gold pieces</dt>
+            <dd id="s-gp" class="zot-nilai mono">—</dd></div>
+          <div class="zot-pasang"><dt>Flares</dt>
+            <dd id="s-fl" class="zot-nilai mono">—</dd></div>
+          <div class="zot-pasang"><dt>Treasures</dt>
+            <dd id="s-tc" class="zot-nilai mono">—</dd></div>
+          <div class="zot-pasang"><dt>Weapon</dt>
+            <dd id="s-senjata" class="zot-nilai mono">—</dd></div>
+          <div class="zot-pasang zot-pasang--lebar"><dt>Armor</dt>
+            <dd id="s-zirah" class="zot-nilai mono">—</dd></div>
+          <div class="zot-pasang zot-pasang--lebar" id="s-skor-box"><dt>Score
+            <span class="zot-kecil2">(baris 6450)</span></dt>
+            <dd id="s-skor" class="zot-nilai mono zot-skorNilai">—</dd></div>
+          <div class="zot-pasang zot-pasang--lebar"><dt>Dibawa</dt>
+            <dd id="s-bawa" class="zot-nilai mono">—</dd></div>
+        </dl>
+      </div>
+
+      <div class="zot-harta" id="harta"></div>
+
+      <div class="zot-log" id="log" role="log" aria-live="polite"
+           aria-label="Catatan petualangan"></div>
+
+      <div class="zot-masuk">
+        <span class="zot-prompt" id="prompt">ENTER YOUR COMMAND</span>
+        <input id="ketik" class="zot-ketik" type="text" autocomplete="off"
+               spellcheck="false" aria-label="Perintah">
+        <button class="btn btn--primary btn--sm" id="kirim" type="button">Kirim</button>
+      </div>
+      <div class="zot-tombolBaris" id="tombol"></div>
+      <div class="zot-alat">
+        <button class="btn btn--ghost btn--sm" id="baru" type="button">Kuil baru</button>
+        <button class="btn btn--ghost btn--sm" id="ulangi" type="button">Ulangi benih…</button>
+        <label class="zot-kecil" title="Baris 4570: IF Q > 99 THEN Q=Q-100:LET Q=34:REM TO HIDE ROOMS — mematikannya memperlihatkan baris WIZARD yang belum diperbaiki, bukan versi TEMPLE mana pun">
+          <input type="checkbox" id="kabut" checked> <code>:LET Q=34:</code>
+          &mdash; perbaikan Belew <span class="zot-kecil2">(matikan = baris WIZARD
+          yang belum diperbaiki)</span></label>
+        <span class="zot-kecil">Benih: <b id="s-benih" class="mono">—</b></span>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">1.187 baris BASIC</span>
+      <span class="ruleset__k ruleset__k--mangsa">706 identik dengan WIZARD</span>
+      <span class="ruleset__k">monster dari TSR</span>
+      <span class="ruleset__k ruleset__k--bahaya">rekor tersimpan di manualnya</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Sama dengan WIZARD</span>
+        <span class="stat__value mono">61 %</span></div>
+      <div class="stat"><span class="stat__label">Rekor Lord Nurᵣcc</span>
+        <span class="stat__value mono">142.498</span></div>
+      <div class="stat"><span class="stat__label">Kemenangan tersimpan</span>
+        <ol class="zot-skor mono" id="skor"></ol></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara memainkannya</summary>
+      <p class="zot-note">
+        Kuil Loth: delapan lantai, masing-masing 8&times;8 kamar. Cari
+        <b>Runestaff</b>, pakai <b>bola kristal</b> untuk mengetahui letak
+        <b>Amulet of Chaos</b>, lalu <b>teleport tepat ke sana</b>. Setelah
+        itu keluar lewat pintu masuk di lantai 1 dengan menekan <code>N</code>.
+      </p>
+      <p class="zot-note">
+        Perintahnya sama persis dengan
+        <a href="../wizard/index.html">The Wizard's Castle</a> &mdash; karena
+        memang program yang sama. Yang ditambahkan Belew: perintah
+        <code>#</code> untuk melihat skor, dan tangga peringkat di akhir
+        permainan.
+      </p>
+      <ol class="howto__steps">
+        <li><strong>Gerak</strong> <code>N S E W</code>, dan petaknya
+            <b>melingkar</b>. <code>U</code>/<code>D</code> naik-turun tangga.</li>
+        <li><strong><code>DR</code></strong> minum kolam,
+            <strong><code>O</code></strong> buka peti atau buku,
+            <strong><code>G</code></strong> pandang bola kristal,
+            <strong><code>F</code></strong> suar, <strong><code>L</code></strong> lampu.</li>
+        <li><strong><code>#</code></strong> menampilkan skor &mdash; dengan
+            rumus yang <em>berbeda</em> dari yang sudah tertulis di papan
+            status. Bandingkan keduanya; lihat panel kanan.</li>
+        <li><strong>Bertarung</strong>: <code>A</code>ttack,
+            <code>R</code>etreat, <code>B</code>ribe, <code>C</code>ast.
+            Musuhnya dari <i>Monster Manual</i>: Mind Flayer, Drider,
+            Balor Demon.</li>
+      </ol>
+    </details>
+  </section>
+
+  <aside class="stack">
+
+    <section class="panel zot-good">
+      <h2 class="panel__title">Program ini mengaku, di baris 750</h2>
+      <div class="zot-code">700 REM
+710 REM    ****************************************************
+720 REM    *  WRITTEN BY JOHN BELEW FOR USE WITH THE I.B.M.   *
+730 REM    *            AND OTHER COMPATIBLE                  *
+740 REM    *        THANKS TO TSR FOR THE MONSTERS            *
+750 REM    * THANKS TO RECREATIONAL COMPUTING FOR THE ORIGINAL*
+760 REM    * PROGRAM          JUNE 29, 1984                   *
+770 REM    ****************************************************</div>
+      <p class="zot-note">
+        <i>Recreational Computing</i> Juli/Agustus 1980 adalah tempat
+        <b>The Wizard's Castle</b> karya Joseph R. Power terbit. Belew
+        menyebutkan sumbernya di dalam kodenya sendiri, empat tahun
+        kemudian &mdash; dan TSR, penerbit <i>Dungeons &amp; Dragons</i>,
+        untuk monsternya.
+      </p>
+      <p class="zot-note">Diukur, bukan ditaksir:</p>
+      <table class="zot-tbl">
+        <tbody>
+          <tr><td>pernyataan identik kata demi kata</td><td><b>706</b></td></tr>
+          <tr><td>&hellip; sebagai bagian TEMPLE</td><td><b>61,0 %</b></td></tr>
+          <tr><td>&hellip; sebagai bagian WIZARD</td><td><b>77,2 %</b></td></tr>
+          <tr><td>kedua <code>DIM</code></td><td>identik <b>aksara demi aksara</b></td></tr>
+          <tr><td>kelima <code>DEF FN</code></td><td>identik <b>aksara demi aksara</b></td></tr>
+          <tr><td>blok <code>DATA</code></td><td>12 lawan 12, <b>88 item lawan 88</b></td></tr>
+        </tbody>
+      </table>
+      <p class="zot-note">
+        Karena itu port ini <b>tidak menyalin mesinnya</b>. Kedua halaman
+        memanggil <code>_shared/zot.js</code> yang sama, dan yang ada di
+        <code>temple.js</code> cuma objek aturan &mdash; pola yang sama
+        dengan <code>_shared/blackjack.js</code> yang melayani empat program
+        blackjack. Menyalinnya dua kali akan mengulang persis kesalahan yang
+        jadi temuan utama halaman ini.
+      </p>
+    </section>
+
+    <section class="panel zot-good">
+      <h2 class="panel__title">Sebuah komentar yang berubah jadi kode</h2>
+      <div class="zot-code">WIZARD 4150  IF Q &gt; 99 THEN Q=Q-100 <b>' LET Q=34 TO HIDE ROOMS</b>
+TEMPLE 4570  IF Q &gt; 99 THEN Q=Q-100<b>:LET Q=34:</b>REM TO HIDE ROOMS</div>
+      <p class="zot-note">
+        Power meninggalkan catatan untuk dirinya sendiri: <i>kalau mau
+        menyembunyikan kamar, setel Q ke 34.</i> Empat tahun kemudian Belew
+        <b>membacanya dan melakukannya</b> &mdash; instruksinya dipindahkan
+        dari balik tanda kutip ke dalam alur program, dan sisa kalimatnya
+        jadi <code>REM</code>.
+      </p>
+      <p class="zot-note">
+        Perhatikan <code>Q=Q-100</code> yang dibiarkan di depannya:
+        penetapan kedua menimpa yang pertama, jadi pengurangan itu sekarang
+        <b>tidak berguna</b>. Ia fosil dari perbaikannya sendiri &mdash;
+        Belew <b>menambahkan</b>, bukan mengganti.
+      </p>
+      <p class="zot-note">
+        Akibatnya besar: di WIZARD, kabut yang mati membuat suar, lampu,
+        kutukan <i>Forgetting</i>, dan <i>Green Gem</i> sama-sama tidak
+        berguna. Di TEMPLE keempatnya hidup. <b>Satu pernyataan
+        mengembalikan empat mekanik.</b>
+      </p>
+      <p class="zot-note">
+        <b>Tidak ada satu pun dari kedua program yang bisa memilih.</b>
+        <code>Q=34</code> muncul tepat sekali di masing-masing berkas, dipaku
+        di dalam rutin petanya; tidak ada <code>INPUT</code>, bendera, atau
+        pilihan menu yang menyentuhnya. Pemain 1980 mendapat peta terbuka,
+        pemain 1984 mendapat kabut, dan tidak seorang pun bisa menukarnya.
+      </p>
+      <p class="zot-note">
+        Kotak centang di bawah layar karena itu <b>tambahan port ini</b>, dan
+        artinya berbeda di kedua halaman. Di
+        <a href="../wizard/index.html">WIZARD</a>, mematikannya memperlihatkan
+        <b>disket 1980 yang sebenarnya</b>. Di sini, mematikannya
+        memperlihatkan <b>baris WIZARD yang belum diperbaiki</b> &mdash;
+        keadaan yang tidak pernah dikirim ke siapa pun, tapi justru itulah
+        perbandingan yang jadi inti halaman ini.
+      </p>
+    </section>
+
+    <section class="panel zot-bad">
+      <h2 class="panel__title">Tiga cacat, tiga nasib</h2>
+      <table class="zot-tbl">
+        <thead><tr><th>cacat WIZARD</th><th>di TEMPLE</th><th>kenapa</th></tr></thead>
+        <tbody>
+          <tr><td>peta membuka seluruh lantai</td>
+              <td class="zot-baik">diperbaiki</td>
+              <td>terlihat saat bermain, <b>dan</b> penulis lama meninggalkan catatannya</td></tr>
+          <tr><td>tidak ada <code>RANDOMIZE</code></td>
+              <td class="zot-baik">diperbaiki</td>
+              <td>terlihat: kastel yang sama tiap kali dijalankan</td></tr>
+          <tr><td><code>OT=OT+4*(RC=1)</code> menghukum Hobbit</td>
+              <td class="zot-salah">diwarisi utuh</td>
+              <td>tidak terlihat: tersembunyi di dalam <b>tanda</b> sebuah idiom</td></tr>
+        </tbody>
+      </table>
+      <div class="zot-code">WIZARD 2150  OT=OT+4*(RC=1)
+TEMPLE 2150  OT=OT+4*(RC=1)</div>
+      <p class="zot-note">
+        Baris itu bernomor <b>sama persis</b> di kedua program &mdash; blok
+        pembuatan tokohnya disalin lengkap dengan penomorannya. Hobbit tetap
+        mendapat empat titik lebih sedikit, dan tetap tidak ada yang
+        menyebutkannya.
+      </p>
+      <p class="zot-note">
+        Itulah pelajaran halaman ini. Kode yang diwarisi membawa cacatnya,
+        dan yang <b>diperbaiki</b> adalah yang terlihat saat dimainkan atau
+        yang sudah dicatat penulis sebelumnya. Cacat yang hidup di dalam
+        sebuah tanda minus tidak terlihat oleh keduanya.
+      </p>
+    </section>
+
+    <section class="panel zot-warn">
+      <h2 class="panel__title">Benih: dari 1 jadi 60</h2>
+      <div class="zot-code">15 N=VAL (MID$(TIME$,7,2))
+20 RANDOMIZE N</div>
+      <p class="zot-note">
+        WIZARD tidak punya satu pun <code>RANDOMIZE</code>, jadi kastel
+        pertamanya identik tiap kali program dijalankan &mdash; ruang benih
+        <b>1</b>. Belew melihatnya dan menambahkan dua baris.
+      </p>
+      <p class="zot-note">
+        <code>MID$(TIME$,7,2)</code> mengambil aksara ke-7 dan ke-8 dari
+        <code>HH:MM:SS</code>: <b>detik</b>. Jadi <b>60</b> benih &mdash;
+        tetap yang paling lemah di koleksi ini, sama dengan 27 program lain,
+        tapi enam puluh kali lebih baik daripada satu.
+      </p>
+    </section>
+
+    <section class="panel zot-bad">
+      <h2 class="panel__title">Dua rumus skor di satu program</h2>
+      <div class="zot-code"> 6450 JOHN!=IQ*100+ST*100+DX*100+KM!+FTRS+REQ+GP!-T*5   ' papan status
+11050 LET JOHN!=ST+IQ+DX+GP!-T                          ' perintah '#'</div>
+      <p class="zot-note">
+        Baris 6450 ada <b>di dalam rutin papan status</b>, jadi skor
+        sebenarnya sudah tercetak tiap giliran &mdash; Anda bisa melihatnya
+        di kotak <b>Score</b> di kiri. Lalu perintah <code>#</code>
+        menghitung ulang dengan rumus yang <b>sama sekali berbeda</b>, dan
+        nilainya ratusan kali lebih kecil.
+      </p>
+      <p class="zot-note">
+        Cobalah: tekan <code>#</code> dan bandingkan dengan angka yang sudah
+        ada di papan status. Tidak ada apa pun di layar yang menjelaskan
+        kenapa keduanya berbeda.
+      </p>
+      <p class="zot-note">
+        Peubah skornya bernama <code>JOHN!</code> &mdash; nama depan
+        penulisnya, dengan akhiran <code>!</code> yang di BASIC berarti
+        presisi tunggal. Ia dipakai di enam belas baris.
+      </p>
+    </section>
+
+    <section class="panel zot-bad">
+      <h2 class="panel__title">Tangga peringkat yang tidak cocok dengan manualnya</h2>
+      <table class="zot-tbl">
+        <thead><tr><th>skor</th><th>kode (10020&ndash;27)</th><th>manual (2760&ndash;90)</th></tr></thead>
+        <tbody>
+          <tr><td>0&ndash;20.000</td><td>a Wimp</td><td>Whimp</td></tr>
+          <tr class="zot-sorot"><td>20.000&ndash;35.000</td>
+              <td class="zot-salah"><b>tidak ada</b></td><td>Peasent</td></tr>
+          <tr><td>35.000&ndash;50.000</td><td>a Peasant</td><td>Ameteur</td></tr>
+          <tr><td>50.000&ndash;75.000</td><td>an Amateur</td><td>Scout</td></tr>
+          <tr><td>75.000&ndash;90.000</td><td>a Scout</td>
+              <td class="zot-salah">tidak disebut</td></tr>
+          <tr><td>90.000&ndash;110.000</td><td>an Adventurer</td><td>Adventurer</td></tr>
+          <tr><td>110.000&ndash;125.000</td><td>a Hero</td><td>Hero</td></tr>
+          <tr><td>125.000&ndash;140.000</td><td>a Wizard</td><td>Wizard</td></tr>
+          <tr><td>140.000+</td><td>a Lord</td><td>Lord</td></tr>
+        </tbody>
+      </table>
+      <p class="zot-note">
+        Tujuh <code>IF</code> menyetel <code>RANK$</code>, dan
+        <b>tidak satu pun menyentuh 20.000&ndash;35.000</b>. Di BASIC itu
+        berarti <code>RANK$</code> menyimpan nilai <b>permainan
+        sebelumnya</b> &mdash; atau string kosong pada permainan pertama,
+        sehingga layarnya berbunyi <i>&ldquo;You are ranked as&rdquo;</i>
+        lalu tidak ada apa-apa. Ditiru persis di sini.
+      </p>
+      <p class="zot-note">
+        Dan seluruh tangganya <b>bergeser satu anak</b> terhadap manualnya:
+        rentang yang disebut manual <i>Ameteur</i> dinamai kode
+        <i>Peasant</i>. Empat peringkat teratas cocok; lima yang bawah
+        tidak.
+      </p>
+    </section>
+
+    <section class="panel zot-warn">
+      <h2 class="panel__title">Papan skornya adalah sebuah <code>PRINT</code> di berkas lain</h2>
+      <div class="zot-code">TEM-INS 2810  PRINT "  The highest score to date is that of Lord Nur£cc: 142,498"
+TEMPLE 12100  IF JOHN! &gt; 142498 THEN PRINT " Don't forget to replace my
+              score on Tem-Ins.Bas</div>
+      <p class="zot-note">
+        Rekor tertinggi tidak disimpan di berkas data, tidak di
+        <code>localStorage</code>, tidak di mana pun yang bisa ditulis
+        program. Ia sebuah <b>pernyataan <code>PRINT</code> di dalam kode
+        sumber manualnya</b> &mdash; dan cara memperbaruinya adalah
+        <b>menyunting sumber itu</b>.
+      </p>
+      <p class="zot-note">
+        Angka yang sama juga tertulis keras di dalam permainannya, di baris
+        12100. Jadi mengalahkan rekor itu menuntut Anda menyunting
+        <b>dua berkas</b> yang harus tetap sinkron, dan tidak ada apa pun
+        yang menjaganya.
+      </p>
+    </section>
+
+    <section class="panel zot-warn">
+      <h2 class="panel__title">Satu pintu, dua kunci</h2>
+      <div class="zot-code">TEMPLE   55  IF ANS$="ARIOCH" GOTO 700
+TEM-INS 3010  CHAIN "Temple",700</div>
+      <p class="zot-note">
+        Baris 700 adalah tempat permainannya benar-benar mulai, sesudah
+        layar judul dan musiknya. Ada dua cara ke sana. Manualnya
+        memakainya lewat <code>CHAIN</code> &mdash; itulah cara pemain
+        kembali ke permainan dari petunjuk. Dan pemain bisa memakainya
+        sendiri dengan mengetik <b><code>ARIOCH</code></b> di prompt
+        <i>&ldquo;Do you want graphics (Y/N)&rdquo;</i>, yang melompati
+        seluruh pembukaan.
+      </p>
+      <p class="zot-note">
+        Nomor baris sebagai antarmuka publik &mdash; pola
+        <code>MORTGAGE.BAS</code> (<a href="../../docs/_fondasi.md">fondasi
+        &sect;2.7</a>), di sini dipakai oleh dua program yang saling
+        memanggil. Dan kata sandinya <b>Arioch</b>, pangeran iblis dari
+        Michael Moorcock, yang tidak pernah disebut di petunjuk mana pun.
+      </p>
+    </section>
+
+    <section class="panel zot-warn">
+      <h2 class="panel__title">Yang diganti, dan yang tidak</h2>
+      <p class="zot-note">
+        Ke-34 nama kamar diubah &mdash; tapi tiga puluh di antaranya cuma
+        berubah huruf besar-kecilnya. Yang benar-benar diganti isinya cuma
+        <b>dua belas monster dan pedagangnya</b>:
+      </p>
+      <table class="zot-tbl">
+        <thead><tr><th>WIZARD (1980)</th><th>TEMPLE (1984)</th></tr></thead>
+        <tbody>
+          <tr><td>A KOBOLD</td><td>a Green Slime</td></tr>
+          <tr><td>A WOLF</td><td>an Evil Dwarf</td></tr>
+          <tr><td>AN OGRE</td><td>a Mind Flayer</td></tr>
+          <tr><td>A BEAR</td><td>a Giant spider</td></tr>
+          <tr><td>A GARGOYLE</td><td>a Drow</td></tr>
+          <tr><td>A CHIMERA</td><td>a Drider</td></tr>
+          <tr><td>A BALROG</td><td>a Balor Demon</td></tr>
+          <tr><td>A DRAGON</td><td>a Red Dragon</td></tr>
+          <tr><td>A VENDOR</td><td>a Drow Merchant</td></tr>
+        </tbody>
+      </table>
+      <p class="zot-note">
+        Mind Flayer, Drow, Drider, Balor &mdash; semuanya
+        <i>Monster Manual</i>. Balrog jadi Balor: nama Tolkien diganti nama
+        TSR untuk makhluk yang sama, yang memang begitulah TSR
+        melakukannya sesudah masalah hak cipta 1977.
+      </p>
+      <p class="zot-note">
+        Tapi kedelapan <b>harta</b> dibiarkan persis seperti Power
+        menulisnya &mdash; <i>Palantir</i> dan <i>Silmaril</i> tetap
+        Tolkien. Belew mengganti musuhnya dan membiarkan hadiahnya.
+      </p>
+    </section>
+
+    <p class="zot-links">
+      <a href="../../docs/temple.md">Catatan lengkap port ini</a> &middot;
+      <a href="../wizard/index.html">The Wizard's Castle (1980)</a> &middot;
+      <a href="../../../reviews/TEMPLE.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../index.html">Semua program</a>
+    </p>
+  </aside>
+</main>
+
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="../../_shared/zot-kamar.js?v=1"></script>
+<script src="../../_shared/zot.js?v=2"></script>
+<script src="temple.js?v=1"></script>
+</body>
+</html>

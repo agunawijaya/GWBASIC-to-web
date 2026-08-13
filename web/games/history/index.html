@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Information: pelajaran komputer — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari HISTORY.BAS (Friendlyware, 1982): enam belas layar pelajaran komputer, tiga di antaranya menimpa layar sebelumnya tanpa membersihkannya. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="../../_shared/reader.css">
+<link rel="stylesheet" href="history.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap h-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="h-stage">
+        <div id="reader"></div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">16 halaman</span>
+      <span class="ruleset__k">F1 mundur</span>
+      <span class="ruleset__k" id="k-topik"></span>
+      <span class="ruleset__k" id="k-timpa"></span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Halaman</span>
+        <span class="stat__value mono" id="s-hal">—</span></div>
+      <div class="stat"><span class="stat__label">Bab</span>
+        <span class="stat__value" id="s-bab">—</span></div>
+      <div class="stat"><span class="stat__label">Baris BASIC</span>
+        <span class="stat__value mono" id="s-baris">—</span></div>
+      <div class="stat" id="stat-cls"><span class="stat__label">Bersihkan layar</span>
+        <span class="stat__value" id="s-cls">—</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara memakai</summary>
+      <p class="h-lead">
+        Ini <strong>bukan permainan</strong> &mdash; ia enam belas layar
+        pelajaran komputer dari 1982, isi menu <em>&ldquo;1&nbsp;Information&rdquo;</em>
+        di <a href="../intro/index.html">Introduction To Computers</a>.
+        Berkasnya bernama <code>HISTORY.BAS</code>, dan itulah yang membuat
+        katalog kita salah selama empat belas sesi: <strong>sejarah cuma tiga
+        halaman pertamanya</strong>.
+      </p>
+      <ol class="howto__steps">
+        <li><strong>Maju</strong> dan <strong>Mundur</strong>, atau panah
+            <kbd>&larr;</kbd> <kbd>&rarr;</kbd>. <kbd>F1</kbd> mundur satu
+            halaman &mdash; tombol yang sama dengan aslinya (baris 3490).</li>
+        <li>Deretan angka melompat ke halaman mana pun; babnya ditandai
+            warna. Aslinya tidak bisa melompat.</li>
+        <li>Layarnya <strong>tepat 80&times;25 aksara</strong>, warna per sel,
+            sama seperti yang keluar di monitor CGA 1982 &mdash; termasuk
+            baris 24 dan 25 yang selalu jadi baris bantuan.</li>
+      </ol>
+      <p>
+        Layar-layar ini tidak disalin dengan tangan. Programnya
+        <strong>dijalankan</strong>: sebuah penafsir kecil untuk
+        <code>CLS</code>/<code>COLOR</code>/<code>LOCATE</code>/<code>PRINT</code>/<code>FOR</code>
+        menyusun bufer 80&times;25, dan tiap halaman dipotret tepat saat
+        program berhenti menunggu tombol. Alasannya ada di panel
+        <em>&ldquo;Tiga halaman yang menimpa&rdquo;</em>.
+      </p>
+    </details>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel h-warn">
+      <p class="eyebrow">Judul katalognya hanya benar untuk tiga dari enam belas halaman</p>
+      <p class="h-note">
+        Katalog kita menyebut program ini <em>&ldquo;Evolusi Ukuran
+        Komputer&rdquo;</em>, diambil dari baris 80 yang memang mencetak
+        <code>THE EVOLUTION OF COMPUTER SIZE</code>. Itu judul
+        <strong>halaman pertama</strong>, bukan judul programnya.
+      </p>
+      <table class="h-tbl h-tbl--kiri" id="tbl-bab"></table>
+      <p class="h-note">
+        Yang sebenarnya: ini isi lengkap menu <em>&ldquo;1
+        Information&rdquo;</em> dari <code>INTRO.BAS</code> baris 170. Sudah
+        diperbaiki di <code>catalog.js</code>.
+      </p>
+      <p class="h-note">
+        Ini kali <strong>kedua berturut-turut</strong> judul katalog ternyata
+        tebakan dari nama berkas &mdash; sesudah
+        <a href="../anatomy/index.html">ANATOMY</a> yang dikira pelajaran
+        anatomi tubuh. Keduanya ketahuan dengan cara yang sama: membuka
+        programnya.
+      </p>
+    </div>
+
+    <div class="panel h-good">
+      <p class="eyebrow">Tiga halaman yang menimpa halaman sebelumnya</p>
+      <p class="h-note">
+        Halaman <strong>2, 3, dan 10</strong> tidak memanggil <code>CLS</code>.
+        Mereka menulis <em>di atas</em> layar halaman sebelumnya, dan hanya
+        benar kalau sisa halaman itu masih ada di sana.
+      </p>
+      <p class="h-note">
+        Bukti paling rapinya ada di halaman 10. Perhatikan bantalan spasi di
+        judulnya:
+      </p>
+<pre class="h-code">1850 …PRINT "THERE ARE THREE TYPES OF COMPUTER MEMORY"   <b>40 aksara</b>
+2050 …PRINT "      FILES, RECORDS, AND FIELDS        "   <b>40 aksara</b></pre>
+      <p class="h-note">
+        Dihitung <strong>persis</strong> supaya judul baru menutupi judul lama
+        sampai aksara terakhir. Bukan kebetulan &mdash; seseorang
+        menghitungnya, lalu tidak menuliskan alasannya di mana pun.
+      </p>
+      <p class="h-note">
+        Untung besarnya: bingkai kotak 80&times;20 yang digambar halaman 9
+        <strong>tidak perlu digambar ulang</strong>. Pada 4,77&nbsp;MHz,
+        menggambar bingkai itu terlihat &mdash; ia menyapu dari atas ke bawah.
+      </p>
+      <p class="h-note">
+        Dan inilah alasan port ini <strong>menjalankan</strong> programnya
+        alih-alih menyalin layarnya: sebuah halaman yang isinya cuma selisih
+        terhadap halaman sebelumnya tidak bisa disalin sendirian.
+      </p>
+    </div>
+
+    <div class="panel h-warn">
+      <p class="eyebrow">Mundur bukan selalu satu halaman</p>
+      <p class="h-note">
+        Enam belas <code>IF BACKFLAG THEN &lt;baris&gt;</code>, dan targetnya
+        tidak seragam:
+      </p>
+      <table class="h-tbl" id="tbl-back"></table>
+      <p class="h-note">
+        Dua yang <strong>terpaksa</strong> bukan pilihan: halaman yang
+        dilewatinya adalah halaman-timpa yang tidak bisa digambar sendirian.
+        Mundur ke sana akan menghasilkan layar rusak, jadi satu-satunya target
+        yang sah adalah halaman utuh terakhir.
+      </p>
+      <p class="h-note">
+        Dua yang <strong>ke awal bab</strong> punya pola: halaman 6 dan 7
+        adalah subtopik CPU, dan mundur mengembalikan pembaca ke pembuka
+        babnya. Itu keputusan desain, bukan kelalaian.
+      </p>
+      <p class="h-note">
+        Yang <strong>satu</strong> tidak punya penjelasan:
+      </p>
+<pre class="h-code">1810 IF BACKFLAG THEN <b>840</b>    ← halaman 8 mundur ke halaman 5</pre>
+      <p class="h-note">
+        Halaman 8 membuka bab <em>memory</em>. Halaman 5 ada di bab
+        <em>CPU</em>, dan bukan pembuka bab itu (yang di baris 580). Bukan
+        halaman sebelumnya, bukan awal bab mana pun. <strong>Satu-satunya
+        target yang tidak cocok pola apa pun di seluruh program.</strong>
+      </p>
+      <p class="h-note">
+        Di port ini mundur selalu <strong>satu halaman</strong>. Perilaku
+        aslinya tidak ditiru &mdash; ia ditampilkan di tabel atas, karena
+        seluruh nilainya ada pada bisa dibandingkan, bukan pada dialami.
+      </p>
+    </div>
+
+    <div class="panel h-good">
+      <p class="eyebrow">Bingkainya <em>adalah</em> ENIAC</p>
+      <p class="h-note">
+        Halaman 1 menulis: <em>&ldquo;The border that surrounds this text
+        represents ENIAC&rdquo;</em>. Kotak tebal <code>CHR$(219)</code> yang
+        mengelilingi layar bukan hiasan &mdash; ia <strong>gambar</strong>,
+        dan seluruh isi halamannya berdiri di dalamnya sebagai perbandingan
+        ukuran.
+      </p>
+      <p class="h-note">
+        Di dalamnya, huruf <code>E N I A C</code> dieja menurun di kolom 6
+        (baris 290&ndash;330), dengan panah <code>&lt;---</code> di atas dan di
+        bawahnya sebagai tanda ukur. IBM 360 dan IBM PC digambar sebagai dua
+        kotak kecil di dalam kotak besar yang sama.
+      </p>
+      <p class="h-note">
+        Tiga skala pada satu layar teks 80&times;25, tanpa satu perintah grafis
+        pun. Seluruh program ini <code>SCREEN 0</code>: <strong>nol</strong>
+        <code>LINE</code>, <code>CIRCLE</code>, <code>DRAW</code>, atau
+        <code>PSET</code>.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Dijalankan, bukan disalin</p>
+      <p class="h-note">
+        Layar-layar di sebelah kiri dihasilkan oleh penafsir kecil yang
+        mengenal lima perintah saja: <code>CLS</code>, <code>COLOR</code>,
+        <code>LOCATE</code>, <code>PRINT</code>, dan <code>FOR…NEXT</code>
+        satu baris. Itu <strong>seluruh</strong> perbendaharaan yang dipakai
+        program ini untuk menggambar.
+      </p>
+      <p class="h-note">
+        Hasilnya bufer 25&times;80 berisi aksara <em>dan</em> warna per sel,
+        dipotret tiap kali program berhenti di <code>GOSUB 3380</code>.
+      </p>
+      <table class="h-tbl">
+        <tbody>
+          <tr><td>Baris BASIC</td><td id="m-baris">—</td></tr>
+          <tr><td>Halaman terpotret</td><td id="m-hal">—</td></tr>
+          <tr><td>Halaman tanpa <code>CLS</code></td><td id="m-timpa">—</td></tr>
+        </tbody>
+      </table>
+      <p class="h-note">
+        Menyalin dengan tangan akan lebih cepat dan akan
+        <strong>salah</strong>: tiga halaman timpa itu hanya benar sebagai
+        selisih, dan tidak ada cara membaca selisih tanpa menjalankan yang
+        sebelumnya.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/history.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/HISTORY.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/HISTORY.BAS">Kode sumber 1982</a> &middot;
+      <a href="../anatomy/index.html">ANATOMY &mdash; program tetangganya</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="../../_shared/reader.js"></script>
+<script src="pages.js"></script>
+<script src="history.js"></script>
+</body>
+</html>

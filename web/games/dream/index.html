@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dream — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari DREAM.BAS (1984): lagu panjang yang disusun dari lima belas frasa.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="../../_shared/music.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap m-layout">
+
+  <section class="stack">
+    <div class="screen screen--scanlines" id="stage">
+      <div class="m-stage">
+        <div id="staff"></div>
+        <div id="piano"></div>
+        <div class="m-transport">
+          <button class="btn btn--primary" id="play" type="button">Mainkan</button>
+          <button class="btn btn--ghost" id="reset" type="button" disabled>Ulang</button>
+          <span class="m-now m-now--idle" id="now">—</span>
+          <span class="faint mono" id="clock">0:00 / 0:00</span>
+        </div>
+        <div class="picker" id="instruments"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Susunan lagu — 18 bagian dari 15 frasa</p>
+      <p class="m-note">
+        Baris 160–180 menyusun lagunya. Perhatikan <strong>A B C</strong> muncul
+        dua kali: itu bait yang diulang. Lima belas frasa disimpan sekali,
+        dipakai delapan belas kali.
+      </p>
+      <div class="m-phrases" id="timeline"></div>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Tiga baris penyusun</p>
+      <div class="m-score" id="score"></div>
+    </div>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel">
+      <p class="eyebrow">Perintah <code>X</code></p>
+      <p class="m-note">
+        <code>XA$;</code> berarti <em>"jalankan isi variabel A$"</em>. Ini
+        <strong>pemanggilan subrutin di dalam bahasa makro</strong> — bahasa
+        mini untuk not ternyata punya pemakaian ulang.
+      </p>
+      <p class="m-note">
+        Tanpa itu, lagu ini harus ditulis sebagai satu string raksasa dengan
+        bait yang disalin dua kali. Prinsipnya sama dengan komponen di
+        antarmuka sekarang: <strong>definisikan sekali, rujuk berkali-kali.</strong>
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Lima belas frasa</p>
+      <div class="m-score" id="phrases"></div>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/dream.md">Dokumen arsitektur</a> ·
+      <a href="../../../reviews/DREAM.md">Analisis BASIC aslinya</a> ·
+      <a href="../../../run/DREAM.BAS">Kode sumber 1984</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/piano.js"></script>
+<script src="../../_shared/staff.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="dream.js"></script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+/* ===========================================================================
+   sub.css — SUB.BAS
+
+   Petaknya digambar miring: tiap baris digeser ke kiri. Itu bukan selera —
+   baris 640-660 memakai `POKE A+156`, yang menambah 160 (satu baris layar)
+   lalu MENGURANGI 4 (dua kolom). Jadi kisinya memang condong di aslinya.
+   =========================================================================== */
+
+.s-layout { display: grid; gap: var(--s5); align-items: start; }
+@media (min-width: 1000px) {
+  .s-layout { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+}
+@media (min-width: 1400px) { .s-layout { max-width: 1320px; } }
+
+.s-stage { display: grid; gap: var(--s3); }
+
+.s-crt {
+  position: relative; background: #030a12;
+  border: 1px solid var(--line); border-radius: 16px;
+  padding: var(--s3); overflow: hidden;
+  box-shadow: inset 0 0 60px rgba(0,0,0,.8);
+}
+.s-crt::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(115% 95% at 50% 40%, transparent 55%, rgba(0,0,0,.55) 100%),
+    repeating-linear-gradient(to bottom, rgba(120,220,255,.05) 0 1px, transparent 1px 3px);
+}
+@keyframes s-guncang {
+  0%,100% { transform: translate(0,0); }
+  25% { transform: translate(-4px, 2px); }
+  50% { transform: translate(4px, -2px); }
+  75% { transform: translate(-2px, -2px); }
+}
+.s-crt--guncang { animation: s-guncang .24s ease-in-out 2; }
+
+.s-svg { display: block; width: 100%; height: auto; }
+
+/* --- laut & kisi ---------------------------------------------------------- */
+.s-laut { fill: url(#glaut); }
+.s-garisTingkat { stroke: #2a5f86; stroke-width: 1; opacity: .5; stroke-dasharray: 6 5; }
+.s-tingkat { fill: #7fd4ff; font: 700 11px var(--font-mono); letter-spacing: .06em; }
+
+.s-sel { cursor: pointer; }
+.s-sel:focus { outline: none; }
+.s-petak {
+  fill: rgba(80,190,255,.05);
+  stroke: #2f6d96; stroke-width: 1;
+  transition: fill .12s ease-out, stroke .12s ease-out;
+}
+.s-sel:hover .s-petak,
+.s-sel:focus-visible .s-petak { fill: rgba(120,220,255,.2); stroke: #9fe6ff; }
+.s-huruf {
+  fill: #6fa6c8; font: 700 10px var(--font-mono);
+  pointer-events: none; transition: fill .12s ease-out;
+}
+.s-sel:hover .s-huruf, .s-sel:focus-visible .s-huruf { fill: #eaf8ff; }
+
+/* --- tanda kena / luput --------------------------------------------------- */
+.ss { pointer-events: none; }
+.s-luput { fill: none; stroke: #4e7f9e; stroke-width: 1.6; }
+.s-kena  { fill: #ff5a4e; filter: url(#sglow); }
+
+/* --- bom ------------------------------------------------------------------ */
+.s-bom   { fill: #ffd166; filter: url(#sglow); }
+.s-jejak { stroke: #ffb347; stroke-width: 1.4; opacity: .55; }
+
+@keyframes s-letus-mekar {
+  from { r: 6; opacity: .95; stroke-width: 4; }
+  to   { r: 40; opacity: 0; stroke-width: .5; }
+}
+.s-letus { fill: none; stroke: #7fd4ff; animation: s-letus-mekar .6s ease-out forwards; }
+.s-letus--kena { stroke: #ff5a4e; }
+
+/* --- teks di dalam layar -------------------------------------------------- */
+.s-status {
+  fill: #cfe4f2; font: 700 13px var(--font-mono);
+  paint-order: stroke; stroke: #030a12; stroke-width: 3;
+}
+.s-besar {
+  fill: #ffffff; font: 700 30px var(--font-mono); letter-spacing: .08em;
+  paint-order: stroke; stroke: #000; stroke-width: 6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .s-crt--guncang { animation: none; }
+  .s-letus { animation-duration: .01s; }
+  .s-petak, .s-huruf { transition: none; }
+}
+
+/* --- kendali -------------------------------------------------------------- */
+.s-row { display: flex; flex-wrap: wrap; gap: var(--s3); align-items: center; }
+.s-row label { display: flex; align-items: center; gap: var(--s2);
+               font-size: var(--fs-sm); color: var(--fg-dim); }
+.s-row input[type="text"] {
+  font-family: var(--font-mono); padding: 4px 6px; width: 10ch;
+  border: 1px solid var(--line); border-radius: var(--r-sm);
+  background: var(--bg-sunken); color: var(--fg);
+}
+.s-cek { cursor: pointer; }
+
+.s-pesan {
+  position: absolute; left: var(--s3); bottom: var(--s3);
+  margin: 0; font-size: var(--fs-xs); color: #ffd166;
+  background: rgba(0,0,0,.6); padding: 2px 8px; border-radius: var(--r-sm);
+}
+.s-pesan:empty { display: none; }
+
+/* --- panel ---------------------------------------------------------------- */
+.s-lead { margin-top: 0; }
+.s-note { font-size: var(--fs-sm); line-height: 1.6; }
+.s-kecil { font-size: var(--fs-xs); color: var(--fg-dim); }
+.s-good { border-left: 3px solid #46c17f; }
+.s-warn { border-left: 3px solid #e0a020; }
+
+.s-code {
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.55;
+  background: var(--bg-sunken); border-radius: var(--r-sm);
+  padding: var(--s3); overflow-x: auto; white-space: pre;
+}
+.s-tbl { width: 100%; border-collapse: collapse; font-size: var(--fs-sm);
+         margin: var(--s3) 0; }
+.s-tbl td, .s-tbl th { padding: 5px 8px; border-bottom: 1px solid var(--line);
+                       text-align: right; }
+.s-tbl--kiri td:first-child { text-align: left; }
+.s-tbl--kiri td:last-child { text-align: left; }
+.s-balistik td { text-align: right; font-size: var(--fs-xs); padding: 4px 6px; }
+.s-kiri  { color: #7fb4ff; }
+.s-kanan { color: #ffb347; }
+.s-links { margin-top: var(--s4); }
+
+/* --- pengungkap kapal selam, hanya sesudah kalah -------------------------
+   Digambar dari salinan posisi ASLI, bukan dari `kapal` yang isinya sudah
+   ditimpa 99 saat kena. Gunanya bukti: pemain bisa memeriksa sendiri bahwa
+   ketiga selnya memang bersambungan dan sejajar, dan bahwa bom yang meleset
+   memang meleset. */
+.s-ungkap { opacity: 0; animation: s-ungkap-muncul .8s ease-out .25s forwards; }
+@keyframes s-ungkap-muncul { to { opacity: 1; } }
+.s-badan    { fill: #2d4d33; stroke: #7dffb0; stroke-width: 1.4; }
+.s-menara   { fill: #2d4d33; stroke: #7dffb0; stroke-width: 1.4; }
+.s-periskop { stroke: #7dffb0; stroke-width: 1.4; stroke-linecap: round; }
+.s-mata     { fill: #7dffb0; }
+
+.s-selUngkap {
+  fill: none; stroke: #7dffb0; stroke-width: 1.6;
+  stroke-dasharray: 5 4; opacity: .85;
+}
+@media (prefers-reduced-motion: reduce) {
+  .s-ungkap { opacity: 1; animation: none; }
+}

@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dominoes (All Fives) — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari DOMINOES.BAS (Friendlyware, 1982): All Fives dengan meja yang hanya menyimpan lima domino, dan pengocokan keempat di koleksi ini — yang pertama yang benar-benar berat sebelah. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="dominoes.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap d-layout">
+
+  <section class="stack">
+    <div class="screen screen--scanlines">
+
+      <div class="d-setup" id="setup">
+        <p class="d-say">HOW LONG A GAME?</p>
+        <div class="row" id="targets"></div>
+        <p class="faint">Tiga pilihan aslinya, baris 3490&ndash;3510.</p>
+      </div>
+
+      <div class="d-stage hidden" id="play">
+        <div class="d-side">
+          <span>Computer</span><b id="cpuN">7</b>
+          <div class="d-cpu" id="cpu"></div>
+        </div>
+
+        <div class="d-table">
+          <div class="d-arm d-arm--0" id="l0"></div>
+          <div class="d-arm d-arm--3" id="l3"></div>
+          <div class="d-pusat" id="pusat"></div>
+          <div class="d-arm d-arm--1" id="l1"></div>
+          <div class="d-arm d-arm--2" id="l2"></div>
+        </div>
+
+        <p class="d-ends" id="ends"></p>
+        <p class="d-say" id="say"></p>
+        <div class="d-hand" id="hand"></div>
+
+        <div class="m-transport">
+          <button class="btn btn--ghost" id="draw" type="button">Draw from boneyard</button>
+          <button class="btn hidden" id="next" type="button">Next hand</button>
+          <button class="btn hidden" id="again" type="button">New game</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">ujung terbuka habis dibagi 5 &rarr; skor</span>
+      <span class="ruleset__k">dobel dihitung dua sisi</span>
+      <span class="ruleset__k">lengan samping perlu pusat dobel</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat stat--good"><span class="stat__label">Anda</span>
+        <span class="stat__value" id="sYou">0</span></div>
+      <div class="stat"><span class="stat__label">Komputer</span>
+        <span class="stat__value" id="sCpu">0</span></div>
+      <div class="stat"><span class="stat__label">Target</span>
+        <span class="stat__value" id="sTarget">&mdash;</span></div>
+      <div class="stat"><span class="stat__label">Kandang</span>
+        <span class="stat__value" id="sYard">14</span></div>
+      <div class="stat"><span class="stat__label">Rekor</span>
+        <span class="stat__value" id="sBest">0</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <p class="d-lead">
+        Ini <strong>All Fives</strong> (Muggins), bukan domino biasa. Anda
+        tidak menang dengan menghabiskan batu &mdash; Anda menang dengan
+        <strong>mencetak angka</strong>, dan menghabiskan batu hanya salah satu
+        caranya.
+      </p>
+      <ol class="howto__steps">
+        <li>Klik sebuah batu di tangan Anda, lalu klik tempat di meja yang
+            menyala hijau. Batu pertama yang dimainkan jadi
+            <strong>pusat</strong>.</li>
+        <li>Sebuah batu boleh dipasang kalau salah satu matanya
+            <strong>sama dengan ujung terbuka</strong> di tempat itu.</li>
+        <li><strong>Skor didapat setiap kali jumlah seluruh ujung terbuka
+            habis dibagi lima.</strong> Jumlah itulah nilainya &mdash; ujung
+            15 memberi 15 poin, ujung 20 memberi 20.</li>
+        <li>Batu <strong>dobel dipasang melintang</strong>, jadi
+            <strong>kedua sisinya</strong> ikut dihitung sebagai ujung
+            terbuka. Dobel enam di ujung menyumbang 12, bukan 6.</li>
+        <li>Dua lengan samping <strong>hanya terbuka kalau pusatnya
+            dobel</strong>. Kalau batu pembuka bukan dobel, permainannya jadi
+            garis berujung dua.</li>
+        <li>Tidak bisa jalan? <strong>Draw from boneyard</strong>. Kalau
+            kandang habis, giliran Anda terlewat. Yang lebih dulu menghabiskan
+            batu mendapat <strong>sisa batu lawan</strong>, dibulatkan ke
+            kelipatan lima terdekat.</li>
+      </ol>
+      <p>
+        Permainan berlanjut babak demi babak sampai ada yang mencapai target
+        yang Anda pilih di awal.
+      </p>
+    </details>
+    <div class="row">
+      <button class="btn btn--ghost btn--sm" id="resetBest" type="button">Reset rekor</button>
+    </div>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel d-bad">
+      <p class="eyebrow">387 baris, nol komentar</p>
+<pre class="d-code">50 PL1=1:GOSUB 2680:GOSUB 570:GOSUB 140:GOSUB 260
+60 IF INVD THEN GOSUB 2050:GOTO 50 ELSE NOPLAY=0
+70 GOSUB 1240:GOSUB 1550:YSCR=YSCR+HOLDY:PL1=0:IF PLNO=0 THEN 3590</pre>
+      <p class="d-note">
+        Itu <strong>seluruh giliran permainan</strong> &mdash; dan tak satu
+        pun dari sebelas nomor di situ memberi tahu apa yang dikerjakan.
+      </p>
+      <p class="d-note">
+        Yang menarik: <strong>strukturnya benar.</strong> Alur utamanya pendek
+        dan mendelegasikan ke subrutin, persis yang diajarkan. Yang hilang cuma
+        <strong>namanya</strong>. Untuk memahami satu baris itu, pembaca harus
+        melompat ke lima tempat dan membaca semuanya.
+      </p>
+      <p class="d-note">
+        Bandingkan <a href="../life2/index.html">LIFE2</a>, yang menulis
+        <code>GOSUB 500 'Get new pattern from player</code>. Biayanya satu
+        komentar; hasilnya alur utama bisa dibaca tanpa melompat sama sekali.
+      </p>
+      <p class="d-note">
+        Program ini <strong>0% komentar</strong>. Program dengan rasio
+        tertinggi di koleksi, <a href="../yahtzee/index.html">YAHTZEE</a>,
+        punya 27% &mdash; dan keduanya sama-sama bisa dijalankan. Bedanya
+        hanya terasa pada orang berikutnya.
+      </p>
+    </div>
+
+    <div class="panel d-good">
+      <p class="eyebrow">Mejanya hanya lima domino</p>
+<pre class="d-code">340 IF OS THEN TBL$(DD)=ZLP+ZRP   <em>' isi lengan DIGANTI</em></pre>
+      <p class="d-note">
+        <code>TBL$(0..3)</code> adalah keempat lengan, <code>TBL$(4)</code>
+        pusatnya. <strong>Satu domino per lengan</strong>, dan tiap kali ada
+        yang dimainkan di sebuah lengan, isinya diganti.
+      </p>
+      <p class="d-note">
+        Jadi program ini <strong>tidak pernah menyimpan rangkaian
+        dominonya</strong>. Ia hanya perlu ujung yang terbuka &mdash; untuk
+        memeriksa aturan dan menghitung skor &mdash; dan sisanya dibiarkan
+        tinggal di layar, lalu dilupakan.
+      </p>
+      <p class="d-note">
+        Rangkaian panjang yang Anda bayangkan saat bermain domino itu ada di
+        <strong>kepala pemain</strong>, bukan di memori. Dan untuk aturan All
+        Fives, itu memang cukup: tidak ada satu aturan pun yang menanyakan
+        apa yang ada di tengah rangkaian.
+      </p>
+      <p class="d-note">
+        Sepupunya <a href="../bowling/index.html">BOWLING</a>, yang membaca
+        kembali layar untuk tahu di mana pinnya. Bedanya: BOWLING memakai layar
+        <em>sebagai</em> penyimpan dan bisa rusak kalau tata letaknya digeser;
+        DOMINOES cuma membuang apa yang tidak dibutuhkannya.
+      </p>
+      <p class="d-note">
+        <strong>Papan di halaman ini tetap menggambar rantainya.</strong> Itu
+        penyimpangan, dan alasannya: model lima-domino benar untuk
+        <em>aturannya</em>, tapi tidak cukup untuk <em>pemainnya</em>. Port
+        pertama menggambar persis lima batu terpisah &mdash; setia, dan tidak
+        terbaca sebagai permainan domino sama sekali. Aturannya tetap membaca
+        ujung terbuka saja; rantainya disimpan hanya untuk digambar.
+      </p>
+    </div>
+
+    <div class="panel d-warn">
+      <p class="eyebrow">Cara keempat mengocok &mdash; dan yang pertama yang berat sebelah</p>
+<pre class="d-code">2210 FOR A=1 TO 28
+2220   B=FIX(RND*28)+1:C=FIX(RND*28)+1:IF B=C THEN 2220
+2230   SWAP BONE$(B),BONE$(C)
+2240 NEXT</pre>
+      <p class="d-note">
+        Dua puluh delapan <strong>penukaran acak</strong>. Terlihat wajar, dan
+        untuk sebagian besar orang terasa cukup acak.
+      </p>
+      <p class="d-note">
+        Tapi penukaran acak berulang hanya mendekati sebaran seragam kalau
+        jumlahnya <strong>jauh lebih besar</strong> daripada
+        n&nbsp;log&nbsp;n. Dua puluh delapan penukaran untuk dua puluh delapan
+        batu tidak cukup: peluang sebuah batu tidak pernah tersentuh sama
+        sekali adalah (26/28)<sup>28</sup> &asymp; <strong>12%</strong>.
+      </p>
+      <div class="row">
+        <button class="btn btn--ghost btn--sm" id="shufRun" type="button">Ukur 20.000 pengocokan</button>
+      </div>
+      <p class="d-note" id="shufOut">Ukur, jangan ditebak.</p>
+      <p class="d-note">
+        Ini <strong>cara keempat</strong> mengocok di koleksi ini, dan yang
+        pertama yang hasilnya <strong>benar-benar tidak seragam</strong>:
+      </p>
+      <table class="d-tbl">
+        <thead><tr><th>Program</th><th>Cara</th><th>Seragam?</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../solitair/index.html">SOLITAIR</a></td>
+              <td>Fisher&ndash;Yates</td><td>ya</td></tr>
+          <tr><td><a href="../maxit1/index.html">MAXIT1</a></td>
+              <td>larik menyusut</td><td>ya</td></tr>
+          <tr><td><a href="../crazy8/index.html">CRAZY8</a></td>
+              <td>tolak dan ulang</td><td>ya</td></tr>
+          <tr><td><strong>DOMINOES</strong></td>
+              <td>penukaran acak</td><td class="g-bad">tidak</td></tr>
+        </tbody>
+      </table>
+      <p class="d-note">
+        Tiga yang pertama mahal tapi benar. Yang keempat <strong>murah dan
+        salah</strong> &mdash; dan satu-satunya yang tidak akan pernah
+        ketahuan dari main sekali dua kali. Port ini memakai
+        Fisher&ndash;Yates; cara aslinya bisa diukur lewat tombol di atas.
+      </p>
+    </div>
+
+    <div class="panel d-good">
+      <p class="eyebrow">Lengan samping menunggu sebuah dobel</p>
+<pre class="d-code">380 IF ZL=ZR THEN 440    <em>' pusat dobel -> keempat lengan boleh</em>
+390 IF DD=0 THEN IF ZL=ZLP THEN <em>...</em>
+410 IF DD=2 THEN IF ZR=ZLP THEN <em>...</em>
+430 GOTO 320             <em>' selain itu: tidak sah</em></pre>
+      <p class="d-note">
+        Kalau domino pembuka <strong>bukan dobel</strong>, lengan 1 dan 3
+        tidak akan pernah bisa dipakai, dan permainannya jadi garis lurus
+        berujung dua. Kalau pembukanya <strong>dobel</strong>, keempat lengan
+        terbuka dan mejanya jadi salib.
+      </p>
+      <p class="d-note">
+        Itu aturan <em>spinner</em> domino sungguhan, disandikan dalam empat
+        baris tanpa satu kata pun yang menyebut namanya.
+      </p>
+    </div>
+
+    <div class="panel d-warn">
+      <p class="eyebrow">Pembulatan ke lima, tanpa fungsi pembulatan</p>
+<pre class="d-code">3620 REMA=TOT MOD 5:TOT=TOT\5:TOT=TOT*5:IF REMA>2 THEN TOT=TOT+5</pre>
+      <p class="d-note">
+        Saat seseorang menghabiskan batunya, sisa batu lawan dijumlahkan lalu
+        dibulatkan ke kelipatan lima terdekat. Sisa 3 atau 4 ke atas, sisa
+        0&ndash;2 ke bawah.
+      </p>
+      <p class="d-note">
+        Itu <strong>pembulatan setengah-ke-atas yang benar</strong>, ditulis
+        dalam satu baris dengan pembagian bulat dan sisa &mdash; tanpa satu
+        pun fungsi pembulatan, karena BASIC tidak punya yang membulatkan ke
+        kelipatan sembarang.
+      </p>
+      <p class="d-note">
+        Layak dicatat justru karena ia <strong>benar</strong>. Baris sepadat
+        ini biasanya tempat bug bersembunyi; yang ini tidak.
+      </p>
+    </div>
+
+    <div class="panel d-bad">
+      <p class="eyebrow">Penjaga yang membaca variabel yang tidak disetel</p>
+<pre class="d-code">490 IF LEFT$(TBL$(4),1)&lt;&gt;RIGHT$(TBL$(<b>A</b>),1) THEN 540
+500 IF TBL$(1)="  " AND TBL$(2)="  " AND DD=1 THEN DD=2:GOTO 540</pre>
+      <p class="d-note">
+        Baris 500&ndash;530 mengalihkan permainan dari lengan samping ke lengan
+        utama kalau yang utama masih kosong &mdash; maksudnya jelas dan benar:
+        <em>isi kedua ujung dulu, baru sampingnya</em>.
+      </p>
+      <p class="d-note">
+        Tapi penjaganya di baris 490 membaca <code>TBL$(A)</code>, dan
+        <code>A</code> <strong>tidak disetel di jalur ini</strong>. Nilainya
+        adalah sisa pencacah <code>FOR</code> dari tempat lain. Jadi apakah
+        pengalihan itu terjadi bergantung pada angka yang kebetulan tertinggal.
+      </p>
+      <p class="d-note">
+        Port ini <strong>tidak meniru ketergantungan itu</strong>. Yang dicapai
+        baris 500&ndash;530 dicapai di sini dengan menutup lengan samping
+        selama lengan utamanya kosong &mdash; hasil akhirnya sama, tanpa
+        bergantung pada variabel yang tak tentu. Penyimpangan ini dicatat di
+        <a href="../../docs/dominoes.md">dokumennya</a>.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/dominoes.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/DOMINOES.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/DOMINOES.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="dominoes.js"></script>
+</body>
+</html>

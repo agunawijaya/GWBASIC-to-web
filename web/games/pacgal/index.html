@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pac-Gal — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari PAC-GAL.EXE (Al J. Jiménez, Mei 1982) — dibongkar balik dari berkas .EXE, bukan dari kode BASIC. Labirinnya tidak disimpan di mana pun: program membangunnya saat startup, lalu membaca layar untuk mendeteksi tabrakan. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="pacgal.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap p-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div id="layar"></div>
+    </div>
+
+    <div class="row">
+      <button class="btn" id="go">Mulai</button>
+    </div>
+
+    <div class="row p-saklar">
+      <label class="p-tog"><input type="checkbox" id="t-asli">
+        <span>Hantu asli PAC-GAL 1986</span></label>
+      <span class="p-tog__ket" id="ket-asli">mati = watak Pac-Man 1980</span>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">468 pelet</span>
+      <span class="ruleset__k">3 nyawa</span>
+      <span class="ruleset__k">panah / WASD</span>
+      <span class="ruleset__k">4 energizer sudut</span>
+      <span class="ruleset__k">terowongan baris 12</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Pelet tersisa</span>
+        <span class="stat__value mono" id="s-pelet">—</span></div>
+      <div class="stat"><span class="stat__label">Nyawa</span>
+        <span class="stat__value" id="s-nyawa">—</span></div>
+      <div class="stat"><span class="stat__label">Hantu rentan</span>
+        <span class="stat__value mono" id="s-takut">—</span></div>
+      <div class="stat"><span class="stat__label">Mode hantu</span>
+        <span class="stat__value" id="s-mode">—</span></div>
+      <div class="stat"><span class="stat__label">Giliran</span>
+        <span class="stat__value mono" id="s-tik">0</span></div>
+      <div class="stat"><span class="stat__label">Peluang kejar <code>I12%</code></span>
+        <span class="stat__value mono" id="s-i12">—</span></div>
+      <div class="stat"><span class="stat__label">Bonus hantu</span>
+        <span class="stat__value mono" id="s-bonus">0</span></div>
+      <div class="stat"><span class="stat__label">Rekor pelet</span>
+        <span class="stat__value mono" id="s-rekor">0</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <p class="p-lead">
+        Makan keempat ratus enam puluh delapan pelet tanpa tertangkap empat
+        hantu. Ini <strong>port pertama di koleksi ini yang berangkat dari
+        sebuah <code>.EXE</code></strong>, bukan dari kode BASIC — tidak ada
+        sumber aslinya, jadi setiap aturan di bawah dibaca dari mesinnya.
+      </p>
+      <ol class="howto__steps">
+        <li><strong>Mulai</strong>, lalu setir dengan
+            <kbd>&larr;</kbd> <kbd>&uarr;</kbd> <kbd>&darr;</kbd> <kbd>&rarr;</kbd>
+            atau <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>. Belokan boleh
+            ditekan <em>sebelum</em> tikungannya sampai.</li>
+        <li>Baris ke-12 tembus di kedua ujungnya. Aslinya mengerjakan itu
+            dengan satu ubin <code>&#9472;</code> dan satu baris aritmetika:
+            <code>kolom = 39 &minus; kolom</code>.</li>
+        <li>Empat <strong>energizer</strong> berdenyut di sudut-sudut labirin
+            membalik keadaan: hantu berubah biru, melambat jadi
+            <strong>sepertiga</strong> laju, lalu bergerak <strong>acak</strong>
+            &mdash; bukan kabur, jadi jangan menganggap sudut sebagai tempat
+            aman &mdash; dan bisa <em>Anda</em> kejar. Lamanya dihitung
+            <code>(pelet/5 + 20) &divide; nyawa&sup2;</code> — jadi makin
+            sedikit nyawa Anda, makin lama mereka takut.</li>
+        <li>Hantu yang Anda makan bernilai <strong>200, lalu 400, 800, 1600</strong>
+            kalau berturut-turut dalam <em>satu</em> energizer; permainan membeku
+            sesaat menampilkan angkanya. Matanya pulang ke kandang lalu langsung
+            bermain lagi &mdash; itu memang aturan aslinya. Di PAC-GAL 1982
+            malah lebih keras: hantunya <em>langsung</em> muncul kembali di
+            kandang dalam wujud normal, tanpa fase mata. Skor dan jedanya sendiri
+            <strong>tambahan</strong> dari Pac-Man arcade &mdash; PAC-GAL tidak
+            punya skor apa pun, hanya pencacah <code>dots</code>.</li>
+        <li>Keempat hantu punya <strong>watak berbeda</strong>:
+            <span style="color:#ff5b5b">Pengejar</span> membidik Anda langsung,
+            <span style="color:#ff9ed8">Pembayang</span> membidik <strong>dua</strong>
+            sel di <em>depan</em> Anda, <span style="color:#6fe3ff">Penjepit</span>
+            membidik cerminan si Pengejar, dan
+            <span style="color:#ffb454">Pemalu</span> mundur pulang begitu Anda
+            terlalu dekat. Mereka juga bergantian <em>menyebar</em> dan
+            <em>mengejar</em>.</li>
+        <li><strong>Hadapkan wajah Anda ke atas</strong> untuk mengelabui si
+            Pembayang. Bidikannya jadi meleset dua sel ke kiri &mdash; itu
+            <em>bug</em> asli Pac-Man 1980, dan sengaja ditiru. Si Penjepit ikut
+            terkelabui karena memakai titik bidik yang sama.</li>
+        <li>Begitu pelet tinggal <strong>20</strong>, si Pengejar
+            <strong>marah</strong>: ia mempercepat dan berhenti ikut menyebar.
+            Pada sisa 10 ia lebih cepat lagi. Pelet terakhir bukan lagi
+            formalitas.</li>
+      </ol>
+      <p>
+        Labirinnya <strong>tidak disalin dengan tangan</strong>. Ia tidak ada
+        sebagai data di mana pun — programnya membangunnya saat startup dari
+        <code>CHR$</code>. Jadi <code>PAC-GAL.EXE</code> dijalankan di
+        emulator dan layarnya dipanen, lalu dicocokkan sel demi sel dengan
+        rekonstruksi <code>.bas</code>-nya: 24 dari 24 baris.
+      </p>
+    </details>
+
+  </section>
+
+  <section class="stack">
+
+    <div class="panel">
+      <p class="eyebrow">Labirinnya tidak ada di dalam berkasnya</p>
+      <p class="p-note">
+        Mencari potongan labirin di segmen data <code>PAC-GAL.EXE</code> tidak
+        menemukan apa pun, dan itu bukan karena pencariannya kurang teliti.
+        Labirin itu memang tidak disimpan — ia <strong>dibangun</strong> sekali
+        saat startup, dari delapan variabel string:
+      </p>
+      <table class="p-tabel">
+        <thead><tr><th>Dibangun dari</th><th>Ubin</th></tr></thead>
+        <tbody>
+          <tr><td><code>CHR$(219)</code></td><td class="p-ubin">&#9608;</td></tr>
+          <tr><td><code>CHR$(186) + " "</code></td><td class="p-ubin">&#9553;</td></tr>
+          <tr><td><code>STRING$(2, 205)</code></td><td class="p-ubin">&#9552;&#9552;</td></tr>
+          <tr><td><code>CHR$(249) + " "</code></td><td class="p-ubin">&#8729;</td></tr>
+          <tr><td><code>STRING$(79, 220)</code></td><td class="p-ubin">&#9604;</td></tr>
+        </tbody>
+      </table>
+      <p class="p-note">
+        Menyimpan labirin sebagai teks berarti menulis dua puluh empat baris
+        penuh di dalam sumbernya. Membangunnya dari <code>CHR$</code> jauh lebih
+        ringkas — dan di mesin dengan ruang kerja 64 KB, itu selisih yang nyata.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Layarnya bukan keluaran — ia struktur datanya</p>
+      <p class="p-note">
+        Tidak ada peta tabrakan di memori. Program menanyakan langsung ke layar
+        apa yang ada di depan pemain:
+      </p>
+      <p class="p-note"><code>I3% = SCREEN(I4%, I5%+I5%+1)</code></p>
+      <p class="p-note">
+        Kalau jawabannya 32 (spasi) atau 249 (pelet), jalan terbuka. Karena itu
+        labirin <strong>harus tergambar</strong> sebelum permainan bisa jalan
+        sama sekali — menggambar dan menyimpan adalah satu tindakan yang sama.
+      </p>
+      <p class="p-note">
+        <code>I5%+I5%+1</code> menjelaskan bentuknya: kolom logis dikalikan dua,
+        jadi satu sel permainan selebar dua kolom layar. Petak 40 kolom digambar
+        di layar 80 kolom.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Angka yang memeriksa dirinya sendiri</p>
+      <table class="p-tabel">
+        <tbody>
+          <tr><td>Ubin pelet di data hasil panen</td><td>468</td></tr>
+          <tr><td>Yang ditulis program di baris statusnya</td><td>dots 468</td></tr>
+          <tr><td>Baris labirin cocok dengan rekonstruksi</td><td>24 / 24</td></tr>
+          <tr><td>Lebar tiap baris labirin</td><td>79 kolom</td></tr>
+          <tr><td>Panggilan runtime tak tertangani</td><td>0</td></tr>
+        </tbody>
+      </table>
+      <p class="p-note">
+        Dua angka pertama datang dari dua tempat yang berbeda — satu dihitung
+        dari petak hasil panen, satu dicetak program 1982 itu sendiri — dan
+        keduanya sama. Itu yang membedakan hasil ukur dari hasil taksir.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Saklar &quot;hantu asli PAC-GAL&quot; &mdash; dan apa yang ia perlihatkan</p>
+      <p class="p-note">
+        Watak hantu di halaman ini bawaannya mengikuti <strong>Pac-Man 1980</strong>.
+        Itu <em>bukan</em> perilaku PAC-GAL. Saklar di bawah tombol Mulai
+        menggantinya dengan yang sesungguhnya ada di binernya, dan bedanya besar.
+      </p>
+      <table class="p-tabel p-tabel--banding">
+        <thead><tr><th>&nbsp;</th><th>Pac-Man 1980</th><th>PAC-GAL 1986</th></tr></thead>
+        <tbody>
+          <tr><td>Sasaran</td><td>empat, berbeda per hantu</td><td><strong>satu</strong>, pemain, untuk keempatnya</td></tr>
+          <tr><td>Cara bergerak</td><td>selalu membidik sasaran</td><td><strong>jalan lurus</strong>, sesekali disela undian mengejar</td></tr>
+          <tr><td>Saat mengejar</td><td>kedua sumbu</td><td>hanya sumbu yang <strong>tidak</strong> sedang ditempuh</td></tr>
+          <tr><td>Menjelang menang</td><td>Blinky makin ganas</td><td>hantu makin <strong>jinak</strong></td></tr>
+        </tbody>
+      </table>
+      <p class="p-note">
+        Baris terakhir itu bukan salah ketik. Peluang mengejar
+        (<code>I12%</code> di barisnya) <strong>dibagi dua</strong> saat pelet
+        tersisa kurang dari 50, dan <strong>dikali dua</strong> kalau pemain mati
+        di awal. Kebalikan telak dari <em>Cruise Elroy</em>. Ia instans kedua dari
+        watak yang sama dengan rumus hantu-rentan yang membagi dengan
+        <code>nyawa&sup2;</code>: PAC-GAL berulang kali memihak pemain yang sedang
+        kalah.
+      </p>
+      <p class="p-note">
+        Nyalakan saklarnya dan lihat angka <code>I12%</code> di panel:
+        <strong>0,000</strong>. Nilai awalnya nol, dan kedua aturan pengubahnya
+        cuma membagi dua dan mengalikan dua &mdash; nol tetap nol. Jadi di
+        pernyataan yang berhasil dipulihkan, <strong>hantunya tidak pernah
+        mengejar sama sekali</strong>: mereka berjalan lurus dan memantul.
+      </p>
+      <p class="p-note">
+        Apakah itu juga berlaku di biner aslinya <strong>belum bisa
+        dipastikan</strong> &mdash; pernyataan yang mengisinya mungkin termasuk
+        yang tak terpulihkan. Tapi ada pendukung dari jalur yang sepenuhnya
+        terpisah: analisis residu menemukan blok 85 bita berisi <strong>AI
+        kejar</strong> yang <strong>tak terjangkau</strong>. Kode kejar yang mati,
+        dan saklar kejar yang tak pernah menyala.
+      </p>
+
+      <p class="eyebrow">Kandang hantunya punya gerbang &mdash; dan itu bukan hiasan</p>
+      <p class="p-note">
+        Petak hasil panen memperlihatkan dinding atas kandang sebagai
+        <code>&#9556;&#9552;&#9552;&nbsp;&nbsp;&#9552;&#9552;&#9559;</code> &mdash;
+        dua sel <strong>spasi</strong> di tengahnya, di baris 11 kolom 19 dan 20.
+        Itu satu-satunya jalan keluar, dan di atasnya sebuah pelet.
+      </p>
+      <p class="p-note">
+        Versi pertama port ini <strong>tidak bisa mengeluarkan hantunya sama
+        sekali</strong>. Sebabnya rapi: pengejarnya selalu memilih arah menuju
+        pemain, dan pemain mulai di <em>bawah</em> kandang &mdash; jadi arah
+        &ldquo;atas&rdquo; selalu jadi pilihan terakhir dan gerbangnya tidak
+        pernah dicoba. Keempatnya memantul di lantai kandang selamanya.
+      </p>
+      <p class="p-note">
+        Perbaikannya bukan menambah aturan gerak, melainkan menambah
+        <strong>keadaan</strong>: seekor hantu keluar dulu (sasarannya gerbang),
+        baru mengejar. Itu juga yang dilakukan Pac-Man 1980, dan alasannya sama.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Tingkat kepastian di halaman ini</p>
+      <table class="p-tabel">
+        <thead><tr><th>Bagian</th><th>Tingkat</th></tr></thead>
+        <tbody>
+          <tr><td>Susunan labirin, jumlah pelet, posisi awal</td><td>pasti</td></tr>
+          <tr><td>Terowongan, rumus hantu rentan, 2 kolom per sel</td><td>pasti</td></tr>
+          <tr><td>Gerbang kandang di baris 11 kolom 19&ndash;20</td><td>pasti (terbaca dari petak)</td></tr>
+          <tr><td>Bahwa hantu memakai pengejar berbasis selisih</td><td>turunan</td></tr>
+          <tr><td>Empat watak berbeda, sebar/kejar, energizer sudut</td><td><strong>rekonstruksi</strong></td></tr>
+          <tr><td>Watak, bug arah-atas, mode marah &mdash; mengikuti Pac-Man 1980</td><td><strong>pilihan</strong> &mdash; menjauh dari PAC-GAL</td></tr>
+          <tr><td>Bentuk gambar, warna, laju langkah</td><td>rekonstruksi</td></tr>
+        </tbody>
+      </table>
+      <p class="p-note">
+        <strong>Rekonstruksi</strong> berarti <em>saya</em> yang mengisinya, dan
+        bukan sesuatu yang terbaca dari berkasnya. Nama variabel, nomor baris,
+        dan seluruh komentar aslinya hilang permanen — memang tidak pernah ada
+        di dalam <code>.EXE</code>.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/pacgal.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../decompile/PAC-GAL/ARCHITECTURE.md">Analisis dekompilasi</a> &middot;
+      <a href="../../../decompile/PAC-GAL/pac-gal-run.bas">Basis port (295 baris)</a> &middot;
+      <a href="../../../run/PAC-GAL.EXE">Berkas EXE aslinya</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="maze.js"></script>
+<script src="pacgal.js"></script>
+</body>
+</html>

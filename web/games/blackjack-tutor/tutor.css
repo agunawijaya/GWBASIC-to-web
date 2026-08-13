@@ -1,0 +1,40 @@
+/* tutor.css — rupa lokal Blackjack Tutor. Awalan `bt-`.
+   Mejanya memakai blackjack.css yang sudah ada; yang di sini hanya panel
+   penasihat, penilaian, dan papan angkanya. */
+
+.bt-layout { display: grid; gap: var(--s5); align-items: start; }
+@media (min-width: 1040px) {
+  .bt-layout { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
+}
+
+.bt-nasihat { border-left: 3px solid var(--acc-phosphor); }
+.bt-nilai   { border-left: 3px solid #e0a020; }
+.bt-nasihat[hidden], .bt-nilai[hidden] { display: none; }
+
+.bt-kepala { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s3);
+             align-items: baseline; }
+.bt-cap { font-size: var(--fs-xs); letter-spacing: .12em;
+          color: var(--ink-dim); text-transform: uppercase; }
+.bt-aksi { font-family: var(--font-mono); font-size: var(--fs-lg);
+           font-weight: 700; letter-spacing: .04em; color: var(--acc-phosphor); }
+.bt-tepi { font-family: var(--font-mono); font-size: var(--fs-xs); }
+.bt-plus  { color: var(--acc-phosphor); }
+.bt-minus { color: var(--acc-red); }
+
+.bt-alasan { margin: var(--s2) 0 0; font-size: var(--fs-sm); line-height: 1.65; }
+
+.bt-ev { width: 100%; border-collapse: collapse; margin-top: var(--s3);
+         font-size: var(--fs-xs); }
+.bt-ev th, .bt-ev td { padding: 3px 6px; border-bottom: 1px solid var(--line);
+                       text-align: left; }
+.bt-ev th { color: var(--ink-dim); font-weight: 600; }
+.bt-ev td:last-child, .bt-ev th:last-child { text-align: right; }
+.bt-ev .bt-baik td { color: var(--acc-phosphor); font-weight: 700; }
+
+.bt-catatanKecil { margin: var(--s2) 0 0; font-size: var(--fs-xs);
+                   color: var(--ink-dim); line-height: 1.5; }
+.bt-catatan { font-size: var(--fs-sm); line-height: 1.65; }
+
+.bt-alat { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s4);
+           align-items: center; margin-top: var(--s3); }
+.bt-kecil { font-size: var(--fs-xs); color: var(--ink-dim); }

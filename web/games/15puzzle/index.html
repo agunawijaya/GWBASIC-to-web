@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The 15 Puzzle — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari 15PUZZLE.BAS (Dale Dewey, 1982). Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="15puzzle.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap game">
+
+  <!-- ================= KIRI: papan ================= -->
+  <section class="screen screen--scanlines" id="stage">
+
+    <!-- Motif elips sekonsentris, dari baris 760–780 kode asli:
+             FOR I=0 TO 55 STEP 5: CIRCLE (25,103),I,1,,,2.5: NEXT
+         Aspek 2.5 membuatnya lonjong tinggi. Di aslinya ini hiasan di sisi
+         kiri layar; di sini dipakai sebagai latar samar. -->
+    <svg class="motif" viewBox="0 0 60 210" aria-hidden="true">
+      <g fill="none" stroke="currentColor" stroke-width="1.1">
+        <ellipse cx="30" cy="105" rx="5"  ry="12.5"/>
+        <ellipse cx="30" cy="105" rx="10" ry="25"/>
+        <ellipse cx="30" cy="105" rx="15" ry="37.5"/>
+        <ellipse cx="30" cy="105" rx="20" ry="50"/>
+        <ellipse cx="30" cy="105" rx="25" ry="62.5"/>
+        <ellipse cx="30" cy="105" rx="30" ry="75"/>
+        <ellipse cx="30" cy="105" rx="35" ry="87.5"/>
+        <ellipse cx="30" cy="105" rx="40" ry="100"/>
+      </g>
+    </svg>
+
+    <svg id="board" viewBox="0 0 402 402" role="application"
+         aria-label="Papan 15-puzzle. Gunakan tombol panah atau klik ubin.">
+      <defs>
+        <linearGradient id="tileFace" x1="0" y1="0" x2=".4" y2="1">
+          <stop offset="0"  stop-color="var(--tile-hi)"/>
+          <stop offset="1"  stop-color="var(--tile-lo)"/>
+        </linearGradient>
+        <!-- Warna ubin yang sudah berada di tempatnya. Lihat catatan di
+             15puzzle.css: palet CGA aslinya hanya empat warna dan tidak punya
+             hijau, jadi petunjuk ini memang tidak mungkin dibuat pada 1982
+             dengan warna yang sama. -->
+        <linearGradient id="tileHome" x1="0" y1="0" x2=".4" y2="1">
+          <stop offset="0" stop-color="var(--tile-home-hi)"/>
+          <stop offset="1" stop-color="var(--tile-home-lo)"/>
+        </linearGradient>
+        <linearGradient id="frameG" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="var(--frame-hi)"/>
+          <stop offset="1" stop-color="var(--frame-lo)"/>
+        </linearGradient>
+        <!-- Bayangan dipasang SEKALI di sumur papan, bukan di tiap ubin.
+             Lima belas filter yang berjalan bersamaan mahal, dan wilayahnya
+             dihitung ulang tiap kali ada yang berubah — itu sumber getaran
+             saat hover di versi pertama. -->
+        <filter id="wellShadow" x="-10%" y="-10%" width="120%" height="120%">
+          <feDropShadow dx="0" dy="3" stdDeviation="4" flood-opacity=".5"/>
+        </filter>
+
+        <!-- Bidang potong satu ubin, dalam koordinat lokal ubin. Dipakai
+             bersama oleh kelima belas ubin — inilah gunanya userSpaceOnUse. -->
+        <clipPath id="tileClip">
+          <rect width="90" height="90" rx="8"/>
+        </clipPath>
+      </defs>
+
+      <rect x="1" y="1" width="400" height="400" rx="14"
+            fill="url(#frameG)" stroke="var(--frame-edge)" stroke-width="2"/>
+      <rect class="well" x="10" y="10" width="382" height="382" rx="8"
+            fill="var(--well)" stroke="var(--frame-edge)" stroke-width="1.5"
+            filter="url(#wellShadow)"/>
+
+      <!-- Gambar aktif disuntikkan JS ke sini, lalu dipotong per ubin.
+           Satu definisi dipakai 15 kali — persis semangat <use>. -->
+      <defs id="picture-def"></defs>
+
+      <!-- Ubin dibangkitkan JS supaya posisinya bisa dianimasikan lewat
+           satu atribut transform. -->
+      <g id="tiles"></g>
+    </svg>
+
+    <p class="hint mono" id="hint">Move &rarr;&nbsp;&larr;&nbsp;&uarr;&nbsp;&darr;</p>
+  </section>
+
+  <!-- ================= KANAN: panel ================= -->
+  <section class="stack">
+
+    <div class="panel">
+      <div class="hud">
+        <div class="stat">
+          <span class="stat__label">Waktu</span>
+          <span class="stat__value" id="clock">0:00</span>
+        </div>
+        <div class="stat">
+          <span class="stat__label">Move</span>
+          <span class="stat__value" id="moves">0</span>
+        </div>
+        <div class="stat stat--good">
+          <span class="stat__label">Di tempat</span>
+          <span class="stat__value" id="home">0<span class="faint">/15</span></span>
+        </div>
+      </div>
+      <p class="dim status" id="status" aria-live="polite"></p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Rekor</p>
+      <!-- Dua rekor yang berdiri sendiri. Tercepat dan tersedikit-langkah
+           jarang dicapai di permainan yang sama: mengejar waktu berarti
+           bergerak cepat tanpa banyak berpikir, mengejar langkah berarti
+           sebaliknya. -->
+      <div class="hud records">
+        <div class="stat stat--good">
+          <span class="stat__label">Tercepat</span>
+          <span class="stat__value" id="bestTime">—</span>
+          <span class="rec-sub faint" id="bestTimeSub"></span>
+        </div>
+        <div class="stat stat--good">
+          <span class="stat__label">Paling sedikit langkah</span>
+          <span class="stat__value" id="bestMoves">—</span>
+          <span class="rec-sub faint" id="bestMovesSub"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="row">
+        <button class="btn btn--primary" id="shuffle" type="button">Acak lagi</button>
+        <button class="btn btn--ghost" id="solve" type="button">Susun rapi</button>
+        <button class="btn btn--ghost btn--sm" id="resetBest" type="button"
+                style="margin-left:auto">Reset rekor</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Tampilan ubin</p>
+      <div class="row modes" id="modes" role="group" aria-label="Pilih tampilan ubin"></div>
+      <label class="row upload">
+        <input type="file" id="ownPic" accept="image/*" hidden>
+        <button class="btn btn--sm" type="button" id="ownPicBtn">Gambar sendiri…</button>
+        <span class="faint" id="ownPicName">JPG/PNG dari komputer Anda</span>
+      </label>
+      <label class="row shownum">
+        <input type="checkbox" id="showNum" checked>
+        <span>Tampilkan nomor kecil di ubin</span>
+      </label>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Cara main</p>
+      <!-- Teks aslinya, baris 800–950, disalin apa adanya. -->
+      <p class="blurb mono">This is a computer version of the 15-PUZZLE.<br>
+        The object is to move the blocks to form a pattern of
+        1-4, 5-8, 9-12, and 13-15 with one empty space!!</p>
+      <p class="dim note">
+        Tombol panah menggerakkan <strong>kotak kosong</strong> ke arah itu —
+        persis seperti aslinya. Bisa juga langsung mengklik ubin yang
+        bersebelahan dengan kotak kosong.
+      </p>
+    </div>
+
+    <div class="panel panel--note">
+      <p class="eyebrow">Satu perbedaan penting</p>
+      <p class="dim note">
+        Pengocokan di kode 1982 tidak memeriksa paritas, sehingga
+        <strong>separuh papan yang dihasilkannya mustahil diselesaikan</strong> —
+        dan pemain tidak diberi tahu. Di sini setiap papan dijamin bisa
+        diselesaikan. Alasannya dijelaskan di dokumen.
+      </p>
+    </div>
+
+    <p class="faint links">
+      <a href="../../docs/15puzzle.md">Dokumen arsitektur &amp; code review</a> ·
+      <a href="../../../reviews/15PUZZLE.md">Analisis BASIC aslinya</a> ·
+      <a href="../../../run/15PUZZLE.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/input.js"></script>
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="pictures.js"></script>
+<script src="15puzzle.js"></script>
+</body>
+</html>

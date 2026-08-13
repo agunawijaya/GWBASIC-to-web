@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Maze — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari MAZE.BAS (1982): labirin orang-pertama dengan pandangan lorong berperspektif, digambar dari peta bitmask 8×8. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="maze.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap z-layout">
+
+  <section class="stack">
+    <div class="screen screen--scanlines">
+      <div class="z-stage">
+        <div id="view"></div>
+        <p class="z-say" id="say">Anda menghadap utara.</p>
+        <div class="m-transport">
+          <button class="btn btn--ghost" id="left" type="button">&larr; Belok kiri</button>
+          <button class="btn btn--primary" id="fwd" type="button">&uarr; Maju</button>
+          <button class="btn btn--ghost" id="right" type="button">Belok kanan &rarr;</button>
+          <button class="btn btn--ghost" id="back" type="button">&darr; Balik badan</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Labirin</span>
+        <span class="stat__value" id="sNo">1</span></div>
+      <div class="stat"><span class="stat__label">Langkah</span>
+        <span class="stat__value" id="sStep">0</span></div>
+      <div class="stat"><span class="stat__label">Terpendek</span>
+        <span class="stat__value" id="sBestPath">—</span></div>
+      <div class="stat stat--good"><span class="stat__label">Rekor</span>
+        <span class="stat__value" id="sBest">—</span></div>
+    </div>
+
+    <div class="row">
+      <button class="btn btn--ghost btn--sm" id="again" type="button">Labirin lain</button>
+      <button class="btn btn--ghost btn--sm" id="map" type="button" aria-pressed="false">Tampilkan peta (M)</button>
+      <button class="btn btn--ghost btn--sm" id="resetBest" type="button">Reset rekor</button>
+    </div>
+    <p class="z-note">
+      <kbd>&uarr;</kbd> maju, <kbd>&larr;</kbd> <kbd>&rarr;</kbd> berbelok,
+      <kbd>&darr;</kbd> balik badan &mdash; sama seperti aslinya
+      (baris 260&ndash;290, yang juga menerima <kbd>8</kbd> <kbd>4</kbd>
+      <kbd>6</kbd> <kbd>2</kbd>). <kbd>M</kbd> membuka dan menutup peta.
+    </p>
+    <div id="plan" class="hidden"></div>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel">
+      <p class="eyebrow">Tiga dimensi dari empat bit per sel</p>
+      <p class="z-note">
+        Seluruh labirin adalah <code>A(7,7)</code> &mdash; 64 sel, masing-masing
+        satu angka. Empat bitnya adalah empat dindingnya:
+      </p>
+<pre class="z-code">400 L(1)=D AND 8 : L(2)=D AND 4
+    L(3)=D AND 2 : L(4)=D AND 1
+        8 = utara   4 = timur
+        2 = selatan 1 = barat</pre>
+      <p class="z-note">
+        Pandangan lorongnya dibangun dengan <strong>berjalan maju di dalam
+        peta</strong> sampai empat sel, menggambar satu bingkai tiap
+        kedalaman, dan berhenti begitu ada dinding:
+      </p>
+<pre class="z-code">480 ON L+1 GOSUB 940,960,1020,1060,1100
+500 IF L(DIR) THEN RETURN
+510 L=L+1:IF L&gt;4 THEN RETURN</pre>
+      <p class="z-note">
+        Lima subrutin, satu per kedalaman. Tidak ada perkalian matriks, tidak
+        ada proyeksi &mdash; hanya lima gambar yang sudah disiapkan, dipilih
+        oleh sebuah <code>ON…GOSUB</code>.
+      </p>
+      <div class="z-bits" id="bits"></div>
+      <p class="z-note">Sel yang sedang Anda tempati, bit per bit.</p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Pintu keluarnya di luar peta</p>
+      <p class="z-note">
+        Tiap labirin punya <strong>tepat satu lubang</strong> di dinding
+        luarnya, dan koordinat pintu keluarnya berada di <strong>luar</strong>
+        kisi 8&times;8 &mdash; misalnya baris 8, atau kolom &minus;1.
+      </p>
+<pre class="z-code">380 IF X=B(2) AND Y=B(3) THEN 580
+390 D=A(S,T)</pre>
+      <p class="z-note">
+        Perhatikan urutannya. Pemeriksaan pintu keluar terjadi
+        <strong>sebelum</strong> larik disentuh, dan baris 390 memakai
+        <code>S,T</code> &mdash; posisi <em>lama</em>, yang selalu di dalam
+        kisi. Jadi koordinat di luar batas itu tidak pernah dipakai sebagai
+        indeks.
+      </p>
+      <p class="z-note">
+        Aman &mdash; tapi aman karena <strong>urutan dua baris</strong>. Tukar
+        keduanya dan program membaca di luar larik.
+      </p>
+    </div>
+
+    <div class="panel z-warn">
+      <p class="eyebrow">Lima labirin tetap, dan pengacak yang tidak mengacak</p>
+<pre class="z-code">2330 RANDOMIZE(VAL(RIGHT$(TIME$,2))*100)
+2350 RANDOMIZE(RND*500)
+2360 RANDOMIZE(RND*500)
+2370 FOR C=1 TO FIX(RND*5)+1
+2380   FOR A=0 TO 7:READ B(A):NEXT
+2390   FOR A=0 TO 7:FOR B=0 TO 7:READ A(A,B):NEXT B,A
+2400 NEXT C</pre>
+      <p class="z-note">
+        Program ini <strong>tidak membangkitkan labirin</strong>. Ada lima
+        labirin tetap di dalam <code>DATA</code>, dan salah satunya dipilih
+        dengan <strong>membaca maju</strong> lalu membuang yang terlewati
+        &mdash; karena penunjuk <code>READ</code> di BASIC hanya bisa maju.
+      </p>
+      <p class="z-note">
+        Baris 2350 dan 2360 menyemai ulang pengacak
+        <strong>dari keluarannya sendiri</strong>. Itu menambah
+        <strong>nol</strong> entropi &mdash; pola yang sudah tercatat sebagai
+        kesalahan <code>WILDCAT.BAS</code> di
+        <a href="../../docs/_fondasi.md">fondasi §2.6</a>, tapi di sini
+        dilakukan dua kali.
+      </p>
+      <p class="z-note">
+        Benihnya tetap detik pada jam: <strong>60 kemungkinan</strong>, untuk
+        lima labirin. Dua orang yang menekan mulai pada detik yang sama
+        mendapat labirin yang sama.
+      </p>
+    </div>
+
+    <div class="panel z-lesson">
+      <p class="eyebrow">Pelajaran: bagaimana menjamin labirin pasti bisa diselesaikan</p>
+      <p class="z-note">
+        MAZE.BAS <strong>tidak pernah mengajukan pertanyaan ini</strong>. Ia
+        tidak membangkitkan labirin sama sekali &mdash; ia menyimpan lima yang
+        digambar tangan di dalam <code>DATA</code>. Jaminannya datang dari
+        seorang manusia yang memeriksanya sendiri.
+      </p>
+      <p class="z-note">
+        Itu jawaban yang sah, dan <strong>tidak bisa diskalakan ke labirin
+        keenam</strong>. Jadi: kalau labirinnya dibangkitkan, bagaimana kita
+        tahu ada jalan dari titik mulai ke pintu keluar?
+      </p>
+
+      <p class="z-sub">Jawaban yang salah: acak lalu periksa</p>
+      <p class="z-note">
+        Robohkan dinding secara acak, lalu telusuri; kalau tidak nyambung,
+        ulangi. Hasilnya benar, tapi ongkosnya <strong>tidak terbatas</strong>
+        &mdash; dan seberapa sering ia gagal sangat bergantung pada berapa
+        banyak dinding yang dirobohkan. Ukur sendiri:
+      </p>
+      <div class="row">
+        <button class="btn btn--ghost btn--sm" id="genAcak" type="button">Ukur 2.000 labirin acak</button>
+      </div>
+      <table class="z-tbl hidden" id="tabelAcak">
+        <thead><tr><th>Peluang dinding dibuka</th><th>Semua sel tercapai</th></tr></thead>
+        <tbody id="tubuhAcak"></tbody>
+      </table>
+
+      <p class="z-sub">Jawaban yang benar: bangun sebagai pohon rentang</p>
+      <p class="z-note">
+        Gali dengan penelusuran mendalam acak, dan patuhi <strong>satu
+        aturan</strong>: setiap kali menggali, gali hanya ke sel yang
+        <strong>belum pernah dikunjungi</strong>.
+      </p>
+<pre class="z-code">if (sudah[nr][nc]) continue;   <em>// seluruh jaminannya ada di baris ini</em></pre>
+      <p class="z-note">
+        Akibatnya berantai, dan tiap langkahnya bisa diperiksa:
+      </p>
+      <table class="z-tbl z-tbl--rantai">
+        <tbody>
+          <tr><td>tiap sel baru masuk lewat <strong>tepat satu</strong> dinding yang dibuka</td></tr>
+          <tr><td>jadi jumlah dinding dibuka = <strong>jumlah sel &minus; 1</strong></td></tr>
+          <tr><td>graf terhubung dengan n simpul dan n&minus;1 sisi adalah <strong>pohon</strong></td></tr>
+          <tr><td>di pohon, <strong>setiap</strong> pasang sel punya jalan</td></tr>
+        </tbody>
+      </table>
+      <p class="z-note">
+        Termasuk pasangan mulai/keluar, <strong>apa pun keduanya</strong>. Tidak
+        ada yang perlu diperiksa sesudahnya: labirin yang tidak bisa
+        diselesaikan bukan sekadar tidak muncul &mdash; ia
+        <strong>mustahil dibangun</strong>.
+      </p>
+      <div class="row">
+        <button class="btn btn--ghost btn--sm" id="genPohon" type="button">Bangkitkan &amp; buktikan</button>
+        <label class="z-opt">Ukuran
+          <input type="range" id="genN" min="4" max="12" value="8">
+          <span id="genNv">8</span></label>
+      </div>
+      <div id="genPapan"></div>
+      <p class="z-note" id="genOut">Warna menunjukkan jarak dari titik mulai.</p>
+
+      <p class="z-sub">Dan pemeriksanya tetap ditulis</p>
+      <p class="z-note">
+        Bukan untuk menjaga pembangkitnya &mdash; melainkan untuk menjaga
+        <strong>penyuntingnya</strong>. Seluruh invariannya hidup di satu baris
+        <code>continue</code>, dan baris seperti itu adalah yang paling mudah
+        dihapus orang berikutnya yang merasa labirinnya
+        &ldquo;terlalu sedikit cabangnya&rdquo;.
+      </p>
+      <p class="z-note">
+        Ini <strong>kebalikan langsung</strong> dari pola yang berulang di
+        koleksi ini: pagar tak sengaja di
+        <a href="../pegleap/index.html">PEGLEAP</a>, angka 600 di
+        <a href="../maxit1/index.html">MAXIT1</a>, straight besar di
+        <a href="../yahtzee/index.html">YAHTZEE</a>. Ketiganya
+        <em>benar karena kebetulan</em>. Yang ini benar karena
+        <strong>dijaga, dua kali</strong> &mdash; sekali oleh konstruksinya,
+        sekali oleh pemeriksanya.
+      </p>
+      <div class="row">
+        <button class="btn btn--ghost btn--sm" id="genLima" type="button">Periksa kelima labirin aslinya</button>
+      </div>
+      <p class="z-note" id="limaOut">
+        Klaim di komentar <code>maze.js</code> &mdash; kelimanya bisa
+        diselesaikan &mdash; diperiksa di sini, bukan cuma ditulis.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/maze.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/MAZE.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/MAZE.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="mazes.js"></script>
+<script src="generator.js"></script>
+<script src="maze.js"></script>
+<script src="lesson.js"></script>
+</body>
+</html>

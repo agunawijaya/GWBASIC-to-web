@@ -1,0 +1,166 @@
+/* ===========================================================================
+   zapem.css — ZAP'EM.BAS (3 Februari 1982, MAV-5-5-K)
+
+   Papan angka digambar DI DALAM layar sejak versi pertama, di baris 2, sesuai
+   baris 690/870/930 aslinya. Itu pelajaran ATTACK §6c yang dipakai lebih dulu
+   kali ini, bukan sesudah dilaporkan.
+   =========================================================================== */
+
+.z-layout { display: grid; gap: var(--s5); align-items: start; }
+@media (min-width: 1000px) {
+  .z-layout { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+}
+@media (min-width: 1400px) { .z-layout { max-width: 1320px; } }
+
+.z-stage { display: grid; gap: var(--s3); }
+
+.z-crt {
+  position: relative; container-type: inline-size;
+  background: #03050d;
+  border: 1px solid var(--line); border-radius: 16px;
+  padding: var(--s3); overflow: hidden;
+  box-shadow: inset 0 0 60px rgba(0,0,0,.8);
+}
+.z-crt::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(104deg, rgba(255,255,255,.045) 0 26%, transparent 44%),
+    radial-gradient(115% 95% at 50% 45%, transparent 58%, rgba(0,0,0,.55) 100%),
+    repeating-linear-gradient(to bottom, rgba(255,255,255,.04) 0 1px, transparent 1px 3px);
+}
+
+.z-svg { display: block; width: 100%; height: auto; }
+.z-svg[hidden], .z-glif[hidden] { display: none; }
+.z-glif {
+  font-family: var(--font-mono); font-size: clamp(8px, 2.35cqi, 18px);
+  line-height: 1.1; white-space: pre; margin: 0; color: #7fd4ff;
+}
+
+/* --- ruang & bingkai ----------------------------------------------------- */
+.z-ruang { fill: url(#gruang); }
+.z-bintang { fill: #ffffff; }
+/* Baris 580-610 menggambar kotak GANDA (CHR$ 186/205/201/…), jadi bingkainya
+   memang bagian dari layar permainan, bukan hiasan CSS. */
+.z-bingkai { fill: none; stroke: #3b6ea5; stroke-width: 2; }
+.z-pemisah { stroke: #3b6ea5; stroke-width: 2; opacity: .8; }
+
+/* --- pesawat & Horde ------------------------------------------------------ */
+.z-badan  { fill: url(#gpesawat); stroke: #16283a; stroke-width: .9; }
+.z-sayap  { fill: #7fb4d8; stroke: #16283a; stroke-width: .8; }
+.z-kokpit { fill: #ffd166; }
+.z-api    { fill: #7fd4ff; filter: url(#zglow); }
+@keyframes z-api-kedip { 0%,100% { opacity: .95; } 50% { opacity: .4; } }
+.z-api { animation: z-api-kedip .2s steps(2) infinite; }
+
+/* Baris 860: FUEL<50 menyetel V=31 — warna BERKEDIP di teks CGA. Jadi kedipan
+   ini bukan tambahan; ia satu-satunya peringatan bahan bakar yang punya
+   aslinya. */
+@keyframes z-kedip { 0%,49% { opacity: 1; } 50%,100% { opacity: .25; } }
+.z-pesawat--kedip { animation: z-kedip .5s steps(1) infinite; }
+
+.z-hbadan { fill: url(#ghorde); stroke: #3d2404; stroke-width: .9; }
+.z-hmata  { fill: #2a1a04; }
+
+/* --- sinar: KEJADIAN, bukan keadaan (pelajaran ATTACK §6b) ---------------- */
+@keyframes z-sinar-pudar { 0%,55% { opacity: 1; } 100% { opacity: 0; } }
+.z-sinar { animation: z-sinar-pudar .26s ease-out forwards; }
+.z-sinar__pijar { fill: #ff4d4d; opacity: .5; filter: url(#zglow); }
+.z-sinar__inti  { fill: #ffd9d9; }
+.z-sinar--kena .z-sinar__pijar { fill: #fff2a8; opacity: .95; }
+.z-sinar--kena .z-sinar__inti  { fill: #ffffff; }
+.z-sinar--kena { animation-duration: .4s; }
+
+@keyframes z-letus-mekar {
+  from { r: 5; opacity: .95; stroke-width: 4; }
+  to   { r: 34; opacity: 0; stroke-width: .5; }
+}
+.z-letus { fill: none; animation: z-letus-mekar .5s ease-out forwards; }
+.z-letus--kena  { stroke: #ffd166; }
+.z-letus--lolos { stroke: #ff6b6b; }
+.z-letus--ouch  { stroke: #ff4d4d; }
+.z-letus--hantu { stroke: #b98cff; }
+
+@keyframes z-angka-naik {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-26px); }
+}
+.z-angka { font: 700 17px var(--font-mono);
+           animation: z-angka-naik .9s ease-out forwards;
+           paint-order: stroke; stroke: #05070f; stroke-width: 4; }
+.z-angka--kena  { fill: #7dffb0; }
+.z-angka--lolos { fill: #ff6b6b; }
+.z-angka--ouch  { fill: #ff4d4d; }
+.z-angka--hantu { fill: #cbb0ff; }
+
+/* --- papan angka di dalam layar, baris 2 --------------------------------- */
+.z-status {
+  fill: #d6dde8; font: 700 25px var(--font-mono);
+  paint-order: stroke; stroke: #03050d; stroke-width: 4;
+}
+.z-besar {
+  fill: #ffffff; font: 700 30px var(--font-mono); letter-spacing: .08em;
+  paint-order: stroke; stroke: #000; stroke-width: 6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .z-api, .z-pesawat--kedip { animation: none; }
+  .z-sinar, .z-letus, .z-angka { animation-duration: .01s; }
+}
+
+/* --- kendali ------------------------------------------------------------- */
+.z-row { display: flex; flex-wrap: wrap; gap: var(--s2); align-items: center; }
+.z-row--kecil { font-size: var(--fs-sm); color: var(--fg-dim); gap: var(--s3); }
+.z-row--kecil label { display: flex; align-items: center; gap: var(--s2); }
+.z-cek { cursor: pointer; }
+.z-pad kbd { margin-right: 4px; }
+.z-ttembak { border-color: #ff4d4d; }
+.z-row input[type="text"], .z-row input[type="number"] {
+  font-family: var(--font-mono); padding: 4px 6px;
+  border: 1px solid var(--line); border-radius: var(--r-sm);
+  background: var(--bg-sunken); color: var(--fg); width: 8ch;
+}
+
+.z-amunisi { display: grid; grid-template-columns: auto 1fr; gap: var(--s3);
+             align-items: center; font-size: var(--fs-xs); color: var(--fg-dim); }
+.z-amunisi__jalur { height: 6px; border-radius: 999px; background: var(--bg-sunken);
+                    border: 1px solid var(--line); overflow: hidden; }
+.z-amunisi__isi { display: block; height: 100%; width: 100%; border-radius: 999px;
+                  background: linear-gradient(90deg, #1d5a90, #7fd4ff);
+                  transition: width .2s ease-out; }
+.z-amunisi__isi.z-kritis { background: linear-gradient(90deg, #7c1a10, #ff6b6b); }
+
+.z-pesan {
+  position: absolute; left: var(--s3); bottom: var(--s3);
+  margin: 0; font-size: var(--fs-xs); color: #ffd166;
+  background: rgba(0,0,0,.6); padding: 2px 8px; border-radius: var(--r-sm);
+}
+.z-pesan:empty { display: none; }
+
+/* --- panel ---------------------------------------------------------------- */
+.z-lead { margin-top: 0; }
+.z-note { font-size: var(--fs-sm); line-height: 1.6; }
+.z-good { border-left: 3px solid #46c17f; }
+.z-warn { border-left: 3px solid #e0a020; }
+.z-papan { border-left: 3px solid #7fd4ff; }
+
+.z-code {
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.55;
+  background: var(--bg-sunken); border-radius: var(--r-sm);
+  padding: var(--s3); overflow-x: auto; white-space: pre;
+}
+
+.z-tbl { width: 100%; border-collapse: collapse; font-size: var(--fs-sm);
+         margin: var(--s3) 0; }
+.z-tbl th, .z-tbl td { padding: 5px 8px; border-bottom: 1px solid var(--line);
+                       text-align: right; }
+.z-tbl th:first-child, .z-tbl td:first-child { text-align: left; }
+.z-tbl--kiri th, .z-tbl--kiri td { text-align: left; }
+.z-tbl--kiri td:last-child { text-align: right; }
+.z-tbl th { color: var(--fg-dim); font-weight: 600; text-transform: uppercase;
+            font-size: var(--fs-xs); letter-spacing: .04em; }
+.z-baru td { color: #7dffb0; font-weight: 700; }
+.z-links { margin-top: var(--s4); }
+
+.z-sub { font-weight: 700; color: var(--fg); margin-top: var(--s4); }
+.z-c { color: var(--fg-dim); }
+.z-kecil { font-size: var(--fs-xs); color: var(--fg-dim); }

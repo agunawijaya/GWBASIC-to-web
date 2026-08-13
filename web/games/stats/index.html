@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sports Menu — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari STATS.BAS (Friendlyware, 1982): penilai regu football berbasis biorhythm yang memberi regu pertama sepuluh angka cuma-cuma, membaca 84 angka tabel kurva yang tidak pernah dipakai, dan membuat hari kritis tidak terasa sama sekali. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="stats.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap s-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="s-stage">
+        <div class="s-crt">
+          <svg id="svg" class="s-svg" viewBox="0 0 820 260"
+               role="img" aria-label="Tiga kurva biorhythm dari DATA 3010-3040"></svg>
+        </div>
+
+        <div class="s-panel">
+          <p style="margin:0 0 .5rem"><b id="t-judul">—</b>
+            <span class="s-kecil">· titik pada kurva di atas menandai
+            <b id="s-sorot">—</b></span></p>
+          <div class="s-wrap">
+            <table class="s-tbl2">
+              <thead><tr><th>posisi</th><th>lahir</th><th>bobot</th>
+                <th>fisik /23</th><th>emosi /28</th><th>nalar /33</th>
+                <th>DD</th><th>jumlah</th><th>×bobot</th></tr></thead>
+              <tbody id="t-tabel"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="s-row--kecil">
+          <label>Lihat regu
+            <select id="lihat" class="s-angka">
+              <option value="0" selected>0 — HOME</option>
+              <option value="1">1 — VISITORS</option>
+            </select></label>
+          <label>Nama 0 <input id="nama0" class="s-angka" value="HOME"></label>
+          <label>Nama 1 <input id="nama1" class="s-angka" value="VISITORS"></label>
+          <label>Tanggal main
+            <input type="date" id="tglmain" class="s-angka" value="1982-10-17"></label>
+          <label>Benih
+            <input type="number" id="benih" min="0" max="999999" step="1" value="1982"
+                   class="s-angka"></label>
+          <button class="btn btn--ghost btn--sm" id="mulai" type="button">Undi ulang</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">449 baris BASIC</span>
+      <span class="ruleset__k">22 posisi &times; 2 regu</span>
+      <span class="ruleset__k">daur 23 / 28 / 33</span>
+      <span class="ruleset__k ruleset__k--bahaya">regu 0 dapat +10 cuma-cuma</span>
+      <span class="ruleset__k ruleset__k--bahaya">84 angka tabel tak terpakai</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Evaluasi regu 0</span>
+        <span class="stat__value mono" id="s-eval0">—</span></div>
+      <div class="stat"><span class="stat__label">Evaluasi regu 1</span>
+        <span class="stat__value mono" id="s-eval1">—</span></div>
+      <div class="stat"><span class="stat__label">Unggul</span>
+        <span class="stat__value mono" id="s-menang">—</span></div>
+      <div class="stat"><span class="stat__label">Offensive avg</span>
+        <span class="stat__value mono" id="s-of">—</span></div>
+      <div class="stat"><span class="stat__label">Defensive avg</span>
+        <span class="stat__value mono" id="s-df">—</span></div>
+      <div class="stat"><span class="stat__label">Benih</span>
+        <span class="stat__value mono" id="s-benih">1982</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara memakainya</summary>
+      <p class="s-note">
+        Ini bukan permainan. STATS.BAS adalah <strong>penilai regu football
+        berbasis biorhythm</strong>: masukkan tanggal lahir 22 pemain untuk dua
+        regu dan tanggal pertandingan, dan ia mencetak satu angka
+        <em>Team Evaluation</em> untuk masing-masing.
+      </p>
+      <ol class="howto__steps">
+        <li><strong>Tiga daur, panjangnya 23, 28, dan 33 hari.</strong> Selisih
+            hari antara lahir dan pertandingan dibagi tiap panjang daur; sisanya
+            menunjuk satu hari di dalam daur, dan hari itu punya nilai di tabel
+            <code>DATA</code>. Kurva ketiganya digambar di atas &mdash; aslinya
+            tidak pernah memperlihatkannya.</li>
+        <li><strong>Nilai dikalikan bobot posisi</strong> (<code>DATA 3080</code>):
+            quarterback 5, middle linebacker 4, free safety 3, halfback 3,
+            selebihnya 2 atau 1.</li>
+        <li><strong>Ubah tanggal lahir siapa pun</strong> langsung di tabel dan
+            angkanya dihitung ulang seketika. Tombol <b>Undi ulang</b> membuat
+            44 tanggal baru dari benih yang Anda tulis.</li>
+        <li><strong>Kolom DD adalah pembagi.</strong> Kalau sebuah daur bernilai
+            nol &mdash; hari kritis &mdash; angkanya tidak dijumlahkan
+            <em>dan</em> pembaginya ikut turun. Lihat panel sebelah untuk apa
+            artinya.</li>
+      </ol>
+    </details>
+  </section>
+
+  <aside class="stack">
+
+    <section class="panel s-bad2">
+      <h2 class="panel__title">Regu 0 diberi sepuluh angka cuma-cuma</h2>
+      <div class="s-code">2820  NEXT B
+2830  IF A=0 THEN AVG!(A)=AVG!(A)+10
+2840  TEAMAVG(A)=AVG!(A)/22 : ...
+2330  PRINT USING " ####.##"; TEAMAVG(0)*100</div>
+      <p class="s-note">
+        Tidak ada syarat, tidak ada komentar, tidak ada penjelasan: regu
+        <b>0</b> &mdash; regu pertama yang Anda buat &mdash; mendapat tambahan
+        10 pada jumlah bobotnya sebelum dibagi 22 dan dikalikan 100 di layar.
+        Nilainya tetap: <b id="b-selisih">—</b> angka, setiap kali, apa pun
+        tanggal lahirnya.
+      </p>
+      <table class="s-tbl">
+        <tr><th>dengan baris 2830</th><td id="b-dengan">—</td></tr>
+        <tr><th>tanpa baris 2830</th><td id="b-tanpa">—</td></tr>
+      </table>
+      <p class="s-note">
+        Apakah bonus itu sendiri yang menentukan pemenang pada benih ini?
+        <b id="b-balik">—</b>
+      </p>
+      <p class="s-note">
+        Mungkin ini dimaksudkan sebagai <em>home field advantage</em>. Tapi
+        tidak ada satu pun kata di seluruh 449 baris yang menyebutnya, layar
+        tidak pernah menandainya, dan pemakai yang membandingkan dua regu
+        tidak punya cara mengetahuinya.
+      </p>
+    </section>
+
+    <section class="panel s-bad2">
+      <h2 class="panel__title">Setengah tabel kurvanya tidak pernah dipakai</h2>
+      <div class="s-code">2870 FOR B=0 TO 1
+2880  FOR A=1 TO 23:READ D(0,A,B):NEXT
+2890  FOR A=1 TO 28:READ D(1,A,B):NEXT
+2900  FOR A=1 TO 33:READ D(2,A,B):NEXT
+2910 NEXT
+
+1630 Z(B,3,T)=STR$(D(0,W,0))
+1650 Z(B,5,T)=STR$(D(1,W,0))
+1670 Z(B,7,T)=STR$(D(2,W,0))   ' selalu 0</div>
+      <p class="s-note">
+        Dua lapis tabel dibaca, 84 angka masing-masing. Ketiga tempat yang
+        memakainya menulis <code>, 0)</code> secara harfiah. Lapis kedua &mdash;
+        <b id="b-jumlahMati">—</b> angka dari <code>DATA 3050</code> sampai
+        <code>3070</code> &mdash; masuk ke memori lalu tidak pernah disebut lagi.
+      </p>
+      <table class="s-tbl">
+        <thead><tr><th>daur</th><th>lapis 0</th><th>lapis 1</th><th>isi</th></tr></thead>
+        <tbody id="b-lapis"></tbody>
+      </table>
+      <p class="s-note">
+        Kurvanya benar-benar berbeda: lapis 1 puncaknya hanya 3, lapis 0
+        sampai 7,5. Ia tampak seperti skala kedua yang lebih tumpul &mdash;
+        mungkin untuk olahraga lain, mungkin untuk tingkat kesulitan. Ini
+        pengulangan persis dari <code>DATA 3030</code> di
+        <a href="../football/index.html">FOOTBALL.BAS</a>, dua program
+        Friendlyware dengan satu kebiasaan yang sama: tabel varian ditulis
+        lengkap, dibaca, lalu dilupakan.
+      </p>
+    </section>
+
+    <section class="panel s-warn">
+      <h2 class="panel__title">Hari kritis tidak terasa sama sekali</h2>
+      <div class="s-code">2710 DD=3
+2720 TOT1=VAL(Z(B,3,A)):IF TOT1=0 THEN DD=DD-1
+2730 TOT2=VAL(Z(B,5,A)):IF TOT2=0 THEN DD=DD-1
+2740 TOT3=VAL(Z(B,7,A)):IF TOT3=0 THEN DD=DD-1
+2760 AVG!=(TOT1+TOT2+TOT3)/DD</div>
+      <p class="s-note">
+        Nilai nol adalah <em>hari kritis</em> &mdash; titik ketika daur
+        menyeberangi garis tengah, dan justru hari yang seharusnya paling
+        berbahaya. Tapi baris 2720&ndash;2740 tidak menjumlahkan nolnya; ia
+        <b>mengecilkan pembaginya</b>. Pemain dengan dua hari kritis dan satu
+        daur di puncak 7,5 mendapat rata-rata <b>7,5</b> &mdash; sama persis
+        dengan pemain yang ketiga daurnya di puncak.
+      </p>
+      <p class="s-note">
+        Hari kritis dalam satu daur penuh, dihitung dari tabelnya:
+      </p>
+      <table class="s-tbl">
+        <thead><tr><th>daur</th><th>hari kritis</th><th>bagian</th></tr></thead>
+        <tbody id="b-krit"></tbody>
+      </table>
+      <p class="s-note">
+        Dan ketiganya nol bersamaan &mdash; satu-satunya keadaan yang membuat
+        pembagi jadi nol dan ditangkap baris 2750 &mdash; terjadi
+        <b id="b-nol3">—</b>. Seluruh polanya berulang tiap
+        <b id="b-ulang">—</b>.
+      </p>
+    </section>
+
+    <section class="panel s-good">
+      <h2 class="panel__title">Yang justru sangat baik</h2>
+      <div class="s-code">1710 W=FIX((MONTH-14)/12)
+1720 JD=INT(1461*(YEAR+4800+W)/4)
+1730 X=FIX(367*(MONTH-2-W*12)/12)
+...  JD=JD+DAY-32075</div>
+      <p class="s-note">
+        Itu algoritma <b>Fliegel&ndash;Van Flandern</b> yang sungguhan &mdash;
+        rumus tanggal Julian yang diterbitkan di <i>Communications of the ACM</i>
+        tahun 1968, ditulis tangan dengan <code>INT</code> dan <code>FIX</code>
+        yang tepat di tempat yang tepat. Selisih hari antara dua tanggal apa pun
+        jadi benar, termasuk melintasi tahun kabisat.
+      </p>
+      <p class="s-note">
+        Baris 30 juga cerdas: <code>FILES"menu.bas"</code> dipakai untuk
+        <em>mendeteksi</em> apakah disket yang terpasang adalah disket program,
+        bukan disket data. Prasyarat yang diperiksa dari isi, bukan ditanyakan.
+      </p>
+      <p class="s-note">
+        Satu batas yang tidak bisa dihindari: baris 1590
+        <code>YEAR=1900+VAL(MID$(Z,7,2))</code> &mdash; tahun dua digit, jadi
+        tidak ada tanggal lahir sesudah 1999. Di sini tahunnya empat digit.
+      </p>
+    </section>
+
+    <p class="s-links">
+      <a href="../../docs/stats.md">Catatan lengkap port ini</a> ·
+      <a href="../../../reviews/STATS.md">Analisis BASIC aslinya</a> ·
+      <a href="../../index.html">Semua program</a>
+    </p>
+  </aside>
+</main>
+
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="stats-data.js"></script>
+<script src="stats.js"></script>
+</body>
+</html>

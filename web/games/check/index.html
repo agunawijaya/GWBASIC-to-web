@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Check Register (peluncur) — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari CHECK.BAS (Friendlyware, 1982): 65 baris yang ternyata bukan program buku cek, melainkan peluncur untuk info.sys — berkas yang tidak ada dalam koleksi. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="../../_shared/reader.css">
+<link rel="stylesheet" href="../history/history.css">
+<link rel="stylesheet" href="check.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap h-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="h-stage">
+        <div id="reader"></div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">65 baris</span>
+      <span class="ruleset__k">3 layar</span>
+      <span class="ruleset__k" id="k-disk"></span>
+      <span class="ruleset__k k-hilang">programnya hilang</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Layar</span>
+        <span class="stat__value mono" id="s-layar">—</span></div>
+      <div class="stat stat--bad"><span class="stat__label">Baris yang hilang</span>
+        <span class="stat__value mono" id="s-hilang">—</span></div>
+      <div class="stat"><span class="stat__label">Kata &ldquo;diskette&rdquo;</span>
+        <span class="stat__value mono" id="s-disk">—</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara memakai</summary>
+      <p class="k-lead">
+        Ini <strong>bukan program buku cek</strong>. Enam puluh lima barisnya
+        adalah <strong>peluncur</strong>: dua layar penjelasan, satu tanya-jawab
+        kesiapan disket, lalu <code>CHAIN "info.sys"</code> &mdash; dan
+        <strong><code>info.sys</code> tidak ada dalam koleksi ini</strong>.
+      </p>
+      <ol class="howto__steps">
+        <li>Ketiga layar bisa ditelusuri maju-mundur. Isinya persis yang keluar
+            di layar 1982, 80&times;25 aksara, warna per sel.</li>
+        <li>Layar ketiga adalah keadaan sesudah pemakai menjawab
+            <kbd>Y</kbd> pada pertanyaan pertama &mdash; ia
+            <strong>menimpa</strong> layar kedua, tidak menggantinya.</li>
+        <li>Sesudah <kbd>Y</kbd> yang kedua, program aslinya melompat ke baris
+            520 dan berakhir. Di sini tidak ada yang bisa dijalankan
+            sesudahnya, karena memang tidak ada.</li>
+      </ol>
+      <p>
+        Yang tersisa dari sebuah program bisnis 1982 kadang cuma kulitnya.
+        Halaman ini menampilkan kulit itu apa adanya, dan menghitung apa
+        persisnya yang hilang.
+      </p>
+    </details>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel k-bad">
+      <p class="eyebrow">Lubang di tengah program</p>
+<pre class="k-code">510 RUN"menu
+<b>520 CLS</b>
+        ← dua ratus nomor baris kosong
+<b>720 GOSUB 740:CLOSE:CHAIN"info.sys",4250</b></pre>
+      <p class="k-note">
+        Baris 520 membersihkan layar, dan baris berikutnya yang ada adalah
+        720. Di antaranya <strong>tidak ada apa-apa</strong>.
+      </p>
+      <p class="k-note">
+        Bukan berarti kodenya dihapus &mdash; nomor baris di BASIC memang tidak
+        harus berurutan rapat. Yang penting adalah apa yang <em>dilakukan</em>
+        baris 720: menyambung ke <code>info.sys</code> pada baris 4250.
+      </p>
+      <table class="h-tbl h-tbl--kiri" id="tbl-hilang"></table>
+      <p class="k-note">
+        Jadi <strong>program buku ceknya bukan berkas ini</strong>. Berkas ini
+        cuma memastikan disketnya benar, lalu menyerahkan kendali. Dan berkas
+        yang menerimanya tidak ikut terkumpul.
+      </p>
+      <p class="k-note">
+        Ini kali <strong>ketiga</strong> dalam koleksi ini separuh sebuah
+        program hilang: manual <a href="../anatomy/index.html">ANATOMY</a>
+        halaman 11&ndash;15, halaman 31 milik
+        <a href="../bio/index.html">BIO</a>, dan sekarang seluruh badan
+        program ini.
+      </p>
+    </div>
+
+    <div class="panel k-warn">
+      <p class="eyebrow">Sebuah program yang menuntut disket fisik</p>
+      <p class="k-note">
+        Kata <strong id="n-disk">…</strong> kali kata <em>diskette</em> muncul
+        di 65 baris. Layar pertama bukan penjelasan fitur &mdash; ia
+        <strong>daftar syarat perangkat keras</strong>:
+      </p>
+      <ul class="k-poin">
+        <li>satu disket data untuk <strong>tiap rekening</strong></li>
+        <li>satu disket <em>MASTER</em> untuk setiap sepuluh rekening</li>
+        <li>disket master wajib berisi <code>BASICA.COM</code></li>
+        <li>label disketnya ditentukan sampai kata demi kata:
+            <code>DATA DISKETTE #__, ACCOUNT #_______, 19__</code></li>
+      </ul>
+      <p class="k-note">
+        Perhatikan <code>19__</code> pada labelnya. Tahun 19-sesuatu, dicetak
+        sebagai bagian tetap dari petunjuk. Sepupu
+        <a href="../bio/index.html">BIO</a> baris 470, dan sama-sama tidak
+        pernah dianggap sebagai asumsi.
+      </p>
+      <p class="k-note">
+        Layar itu juga merujuk <em>&ldquo;your FriendlyWare manual, pages I and
+        II&rdquo;</em> &mdash; manual yang, seperti dua program lain di koleksi
+        ini, tidak ada.
+      </p>
+    </div>
+
+    <div class="panel k-good">
+      <p class="eyebrow">Galat sebagai cara bertanya &ldquo;disket mana yang masuk?&rdquo;</p>
+<pre class="k-code">730 ERX=0:CLOSE:OPEN "I",1,"MENU.BAS":IF ERX=0 THEN <b>ERROR 200</b>
+740 CLOSE:OPEN "I",1,"MENU.BAS":RETURN
+750 ERX=1
+754 IF ERR=70 OR ERR=72 OR ERR=71 THEN MG$="         Disk Not Ready"
+755 IF ERR=200 THEN MG$="Insert `CHECK REGISTER' Diskette"
+770 IF ERL=740 THEN MG$="Insert FriendlyWare Diskette #3"</pre>
+      <p class="k-note">
+        Tidak ada cara bertanya <em>&ldquo;disket apa yang sedang
+        masuk?&rdquo;</em>. Yang ada cuma: <strong>coba buka sebuah berkas, dan
+        lihat apa yang terjadi.</strong>
+      </p>
+      <p class="k-note">
+        Baris 730 mencoba membuka <code>MENU.BAS</code>. Kalau
+        <strong>berhasil</strong> (<code>ERX</code> masih 0), berarti yang masuk
+        adalah disket FriendlyWare &mdash; bukan yang dibutuhkan. Maka program
+        <strong>membangkitkan galat 200 sendiri</strong> untuk meminta disket
+        yang benar.
+      </p>
+      <p class="k-note">
+        Kode galat 200 tidak dipakai GW-BASIC. Ia dipilih sebagai
+        <strong>nomor pesan buatan sendiri</strong>, dan disalurkan lewat
+        mekanisme galat karena itu satu-satunya jalur yang sudah menganga ke
+        penangan bersama.
+      </p>
+      <table class="h-tbl h-tbl--kiri" id="tbl-galat"></table>
+      <p class="k-note">
+        Yang membuatnya rapi: satu penangan menangani <em>galat perangkat
+        keras</em> dan <em>pesan buatan sendiri</em> lewat jalur yang sama.
+        Yang membuatnya sulit dibaca: syarat <code>IF ERX=0 THEN ERROR 200</code>
+        terbaca terbalik dari maksudnya, dan tidak ada komentar yang menolong.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Sembilan jebakan kosong, untuk keempat kalinya</p>
+<pre class="k-code">20 FOR A=1 TO 9:KEY(A) ON:ON KEY(A) GOSUB 70:NEXT
+   …
+70 RETURN</pre>
+      <p class="k-note">
+        Idiom yang sama persis dengan
+        <a href="../heareye/index.html">HEAREYE</a> baris 1080&ndash;1180 dan
+        <a href="../bio/index.html">BIO</a> baris 30&ndash;120: sembilan tombol
+        fungsi dijebak ke penangan kosong, untuk mematikan makro bawaan
+        GW-BASIC agar tidak menumpahkan <code>LIST</code> ke dalam
+        <code>INKEY$</code>.
+      </p>
+      <p class="k-note">
+        Di sini bahkan lebih padat &mdash; satu baris memasang kesembilannya.
+        Dan seperti di dua program lain, baris 70 melayani dua peran: penangan
+        <em>dan</em> ekor rutin tunggu tombol di 40&ndash;60.
+      </p>
+      <p class="k-note">
+        Empat program Friendlyware, satu kebiasaan rumah yang sama, nol
+        komentar di keempatnya.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/check.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/CHECK.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/CHECK.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="../../_shared/reader.js"></script>
+<script src="screens.js"></script>
+<script src="check.js"></script>
+</body>
+</html>

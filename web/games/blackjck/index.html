@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CCII Blackjack — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari BLACKJCK.BAS (1978): blackjack aturan kasino -- 1,5:1, bandar ambil di 17 lunak, batas rumah $500. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="../../_shared/cards.css">
+<link rel="stylesheet" href="../../_shared/blackjack.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap bj-layout">
+
+  <section class="stack">
+
+    <div class="screen">
+      <div class="bj-meja">
+
+        <div class="bj-sisi">
+          <div class="bj-sisi__label">Dealer</div>
+          <div id="bjBandar"></div>
+          <div class="bj-sisi__nilai" id="bjBandarNilai">&mdash;</div>
+        </div>
+
+        <p class="bj-pesan" id="bjPesan"></p>
+
+        <div class="bj-sisi">
+          <div id="bjPemain"></div>
+          <div class="bj-sisi__label">Anda</div>
+        </div>
+
+        <div class="bj-taruh">
+          <button class="btn btn--ghost btn--sm" id="bjTaruhTurun" type="button">&minus;</button>
+          <span class="bj-taruh__n" id="bjTaruh">$0</span>
+          <button class="btn btn--ghost btn--sm" id="bjTaruhNaik" type="button">+</button>
+        </div>
+
+        <div class="bj-aksi">
+          <button class="btn" id="bjBagi" type="button">Deal</button>
+          <button class="btn" id="bjHit" type="button">Hit</button>
+          <button class="btn" id="bjStand" type="button">Stand</button>
+          <button class="btn btn--ghost" id="bjGanda" type="button">Double Down</button>
+          <button class="btn btn--ghost" id="bjSplit" type="button">Split</button>
+          <button class="btn" id="bjLagi" type="button">Deal again</button>
+          <span id="bjAsuransi">
+            <button class="btn" id="bjAsuransiYa" type="button">Insurance: Yes</button>
+            <button class="btn btn--ghost" id="bjAsuransiTidak" type="button">No</button>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">1 dek</span>
+      <span class="ruleset__k">blackjack 1,5:1</span>
+      <span class="ruleset__k"><strong>bandar ambil di 17 lunak</strong></span>
+      <span class="ruleset__k">asuransi</span>
+      <span class="ruleset__k">batas rumah $500</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat stat--good"><span class="stat__label">Uang</span>
+        <span class="stat__value" id="bjKas">$0</span></div>
+      <div class="stat"><span class="stat__label">Menang</span>
+        <span class="stat__value" id="bjMenang">0</span></div>
+      <div class="stat"><span class="stat__label">Kalah</span>
+        <span class="stat__value" id="bjKalah">0</span></div>
+      <div class="stat"><span class="stat__label">Seri</span>
+        <span class="stat__value" id="bjSeri">0</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <ol class="howto__steps">
+        <li>Taruhan kelipatan $5, <strong>batas rumah $500</strong> (baris 1220).</li>
+        <li>Blackjack dibayar <strong>1,5 : 1</strong> &mdash; aturan kasino sungguhan, dan program ini mengumumkannya di layarnya sendiri.</li>
+        <li>Bandar <strong>mengambil kartu di 17 lunak</strong>. Itu varian H17, dan menguntungkan bandar sekitar 0,2%.</li>
+      </ol>
+      <p>Yang tertua dari empat, dan satu-satunya yang aturannya benar seluruhnya. Tiga saudaranya yang lebih muda justru lebih longgar.</p>
+    </details>
+
+    <div class="row">
+      <button class="btn btn--ghost btn--sm" id="bjUlang" type="button">Mulai dari awal</button>
+      <span class="faint">Bandingkan: <a href="../21/index.html">21</a> &middot; <a href="../bj/index.html">BJ</a> &middot; <a href="../black/index.html">BLACK</a></span>
+    </div>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel bj-warn">
+      <p class="eyebrow">Bandar wajib ambil di 17 lunak</p>
+<pre class="bj-code">2740 IF T(1)&lt;17 THEN 3020      ' ambil
+2750 IF T(1)&gt;17 THEN 2770      ' berhenti
+2760 IF E(1)&gt;0  THEN 3020      ' 17 DAN punya As -> ambil</pre>
+      <p class="bj-note">
+        Baris 2760 adalah seluruh aturan <strong>H17</strong>: pada 17 yang
+        dibentuk dengan As (As + 6), bandar tetap mengambil kartu. Aturan itu
+        menguntungkan bandar sekitar <strong>0,2%</strong>.
+      </p>
+      <p class="bj-note">
+        <a href="../black/index.html">BLACK</a> memilih sebaliknya (baris
+        5070&ndash;5080, berhenti di 17 lunak). Dua program, dua varian yang
+        <strong>dua-duanya sungguhan ada di kasino</strong> &mdash; dan
+        keduanya konsisten dengan dirinya sendiri.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Aturannya diumumkan di layar</p>
+<pre class="bj-code">3360 LOCATE 15,63:PRINT"RULES:"
+3370 LOCATE 16,54:PRINT"HOUSE LIMIT IS $500.00"
+3380 LOCATE 17,54:PRINT"BLACKJACK PAYS 1.5 TO 1"</pre>
+      <p class="bj-note">
+        Panel aturan yang selalu terlihat di sisi kanan layar, seperti papan
+        di meja kasino sungguhan. Dan yang diumumkan
+        <strong>cocok dengan kodenya</strong> (baris 1550:
+        <code>W1 = W1 + 1.5*W</code>).
+      </p>
+      <p class="bj-note">
+        <a href="../21/index.html">21</a> dan <a href="../black/index.html">BLACK</a>
+        tidak mengumumkan pembayarannya di mana pun &mdash; dan keduanya
+        membayar 2:1. Program yang menuliskan aturannya untuk dibaca orang
+        cenderung juga menuliskannya dengan benar.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">1978, dan tangan yang sama lagi</p>
+      <p class="bj-note">
+        <code>REM ** CCII BLACKJACK - JAN 3,78 - JESSEN **</code><br>
+        <code>REM ADAPTED TO PC BY PATRICK LEABO--TUCSON</code>
+      </p>
+      <p class="bj-note">
+        Patrick Leabo muncul untuk ketiga kalinya di koleksi ini, setelah
+        <a href="../maxit1/index.html">MAXIT1</a> dan
+        <a href="../othello/index.html">OTHELLO</a> &mdash; dua-duanya juga
+        adaptasi, dua-duanya juga menuliskan nama, kota, dan tanggal.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/blackjack.md">Dokumen arsitektur (keempatnya)</a> &middot;
+      <a href="../../../reviews/BLACKJCK.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/BLACKJCK.BAS">Kode sumber 1978</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/cards.js"></script>
+<script src="../../_shared/blackjack.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="blackjck.js"></script>
+</body>
+</html>

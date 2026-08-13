@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lunar Lander — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari LANDER.BAS (IBM, 8 Maret 1982): 39 sprite dimuat dengan satu BLOAD yang menimpa tabel variabel BASIC, tiga belas sudut yang tidak rata, dan musik waltz yang diam-diam menjadi jam permainannya. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="lander.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap l-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="l-stage">
+        <div class="l-crt" id="crt">
+          <svg id="svg" class="l-svg" viewBox="0 0 320 240"
+               role="img" aria-label="Layar permainan Lunar Lander, 320 kali 200 piksel CGA"></svg>
+          <p class="l-pesan" id="pesan"></p>
+        </div>
+
+        <div class="l-row">
+          <button class="btn btn--primary" id="mulai" type="button">Mulai</button>
+          <button class="btn btn--primary" id="ulang" type="button" hidden>Coba lagi</button>
+          <button class="btn btn--ghost btn--sm" id="reset" type="button">Ulang dari skor 0</button>
+          <button class="btn btn--ghost btn--sm" id="mode" type="button"
+                  aria-pressed="false">Mode 1982</button>
+          <button class="btn btn--ghost btn--sm" id="gauge" type="button">Alat ukur: DIGITAL</button>
+          <span class="pill" id="t-lanjut" hidden>ADVANCED LANDER</span>
+        </div>
+
+        <div class="l-row l-pad">
+          <button class="btn btn--ghost btn--sm" type="button" data-tombol="H">
+            <kbd>&uarr;</kbd> dorong +1</button>
+          <button class="btn btn--ghost btn--sm" type="button" data-tombol="P">
+            <kbd>&darr;</kbd> dorong &minus;1</button>
+          <button class="btn btn--ghost btn--sm" type="button" data-tombol="K">
+            <kbd>&larr;</kbd> miring kiri</button>
+          <button class="btn btn--ghost btn--sm" type="button" data-tombol="M">
+            <kbd>&rarr;</kbd> miring kanan</button>
+        </div>
+
+        <div class="l-bar">
+          <span>FUEL</span>
+          <span class="l-jalur"><i id="bar-fuel" class="l-isi l-isi--fuel"></i></span>
+          <span>THRUST</span>
+          <span class="l-jalur"><i id="bar-thrust" class="l-isi l-isi--thrust"></i></span>
+        </div>
+
+        <div class="l-row l-row--kecil">
+          <label>Bingkai per detik
+            <input type="range" id="hz" min="2" max="20" step="1" value="6">
+            <span class="mono" id="hzv">6 /detik</span></label>
+          <button class="btn btn--ghost btn--sm" id="waltz" type="button">Pakai jam waltz</button>
+          <label>Detik jam (benih)
+            <input type="number" id="benih" min="0" max="59" step="1" value="7"></label>
+          <label class="l-cek"><input type="checkbox" id="bunyi" checked> Bunyi</label>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">399 baris BASIC</span>
+      <span class="ruleset__k">39 sprite, 1 BLOAD</span>
+      <span class="ruleset__k">13 sudut tak rata</span>
+      <span class="ruleset__k ruleset__k--mangsa">skor += INT(FUEL/30)</span>
+      <span class="ruleset__k ruleset__k--bahaya">musiknya adalah jamnya</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">SCORE</span>
+        <span class="stat__value mono" id="s-skor">0</span></div>
+      <div class="stat"><span class="stat__label">Rekor 1982</span>
+        <span class="stat__value mono" id="s-rekor">152 (You)</span></div>
+      <div class="stat"><span class="stat__label">FALL</span>
+        <span class="stat__value mono" id="s-fall">0</span></div>
+      <div class="stat"><span class="stat__label">THRUST</span>
+        <span class="stat__value mono" id="s-thrust">10</span></div>
+      <div class="stat"><span class="stat__label">FUEL</span>
+        <span class="stat__value mono" id="s-fuel">4000</span></div>
+      <div class="stat"><span class="stat__label">Gravitasi</span>
+        <span class="stat__value mono" id="s-grav">10.00</span></div>
+      <div class="stat"><span class="stat__label">Kemiringan</span>
+        <span class="stat__value mono" id="s-tilt">0° (1/13)</span></div>
+      <div class="stat"><span class="stat__label">Bingkai</span>
+        <span class="stat__value mono" id="s-bingkai">0</span></div>
+      <div class="stat"><span class="stat__label">Benih</span>
+        <span class="stat__value mono" id="s-benih">7</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <p class="l-lead">
+        Anda menerbangkan modul bulan dari pojok kiri atas dan harus
+        mendaratkannya di <span style="color:#ff8a72">landasan merah</span>.
+        Yang menentukan bukan tempat saja, melainkan <strong>kecepatan
+        jatuh</strong> dan <strong>tegak atau tidaknya</strong> pesawat.
+      </p>
+      <ol class="howto__steps">
+        <li><kbd>&uarr;</kbd> dan <kbd>&darr;</kbd> mengubah dorongan
+            <strong>satu satuan per bingkai</strong>, rentangnya
+            <strong>0&ndash;19</strong>. Gravitasi bernilai
+            <strong>10</strong> di awal, jadi <strong>dorongan 10 berarti
+            melayang</strong>. Itu bukan kebetulan angka bulat: baris 2280
+            layar petunjuknya benar-benar berbunyi <em>"Gravity = Vertical
+            thrust of about 10"</em>.</li>
+        <li><kbd>&larr;</kbd> dan <kbd>&rarr;</kbd> memiringkan pesawat.
+            <strong>Sudutnya tidak rata</strong> &mdash; hanya ada tiga belas,
+            dan daftarnya ada di panel sebelah. Dari 60&deg; langkah berikutnya
+            langsung 90&deg;, lalu <strong>180&deg;</strong>. Miring berarti
+            dorongan terbagi: yang menahan jatuh cuma
+            <code>T&times;cos(sudut)</code>, sisanya mendorong ke samping.</li>
+        <li><strong>Mendarat yang benar butuh tiga syarat sekaligus</strong>
+            (baris 920&ndash;1140): kaki pesawat berada di dalam landasan,
+            laju jatuh <strong>tidak lebih dari 15</strong>, dan kemiringan
+            <strong>tepat 0&deg;</strong>. Tegak tapi terlalu cepat, atau pelan
+            tapi miring &mdash; keduanya gagal.</li>
+        <li>Mendarat sempurna menambah <strong><code>INT(FUEL/30)</code></strong>
+            ke skor: <strong>makin irit makin besar</strong>. Gagal mengalikan
+            skor dengan <strong>0,7</strong>.</li>
+        <li><strong>Ronde berikutnya lebih berat, dan itu terhitung.</strong>
+            Bahan bakar <code>4000&times;(1&minus;S/1000)</code> dengan batas
+            bawah 1500; gravitasi <code>10+S/100</code> dengan batas atas 15;
+            dan medan makin bergelombang lewat faktor <code>1+S/600</code>.</li>
+        <li>Di atas <strong>100 poin</strong> muncul
+            <span style="color:#ff5a4e">tujuh titik merah</span> di atas
+            landasan. Melewatinya dengan laju jatuh di bawah 10 memindahkan
+            Anda ke <strong>Advanced Lander</strong> &mdash; medan tetap,
+            ada gedung berlogo IBM, dan syarat laju jatuhnya lebih ketat.</li>
+        <li><strong>Kehabisan bahan bakar tidak mematikan kemudi.</strong>
+            Dorongan dipaksa nol, tapi memiringkan pesawat tetap bisa. Itu
+            bukan pilihan saya &mdash; lihat panel "Penjaga yang tak pernah
+            dijalankan".</li>
+        <li>Tombol <strong>Mode 1982</strong> mengganti modul vektor dengan
+            <strong>sprite aslinya</strong>, piksel demi piksel dari
+            <code>LANDER.BIN</code>. Tombol <strong>Alat ukur</strong>
+            berpindah antara angka dan tiga bilah &mdash; keduanya ada di
+            aslinya, tombol <kbd>D</kbd> dan <kbd>A</kbd>.</li>
+      </ol>
+      <p class="l-kecil">
+        Penggeser <em>bingkai per detik</em> tidak ada di aslinya; kecepatan
+        aslinya ditentukan musik. Tombol <strong>Pakai jam waltz</strong>
+        menyetelnya ke kecepatan yang dihitung dari not-notnya sendiri.
+      </p>
+    </details>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel l-good">
+      <p class="eyebrow">Satu BLOAD mengisi empat puluh array</p>
+      <p class="l-note">
+        Ini trik paling berani di seluruh koleksi. Program mendeklarasikan
+        empat puluh array berurutan, lalu memuat <strong>satu berkas</strong> ke
+        alamat elemen pertama array pertama:
+      </p>
+<pre class="l-code">1680 DEFINT M,R,P,X,T,L,B: S=66: DIM PDATA(20)
+1690 DIM M1(S),M2(S),…,M13(S)
+1700 DIM R1(S),R2(S),…,R13(S)
+1710 DIM RR1(S),RR2(S),…,RR13(S)
+1720 DEF SEG=0:A=VARPTR(PDATA(0))
+1730 DEF SEG:BLOAD"LANDER.BIN",A</pre>
+      <p class="l-note">
+        GW-BASIC menaruh array di memori <em>menurut urutan
+        pendeklarasiannya</em>. Jadi berkas 5.760 bita itu bukan gambar &mdash;
+        ia <strong>potret mentah tabel variabel BASIC</strong>, lengkap dengan
+        deskriptor tiap array. Satu perintah mengisi semuanya. Ubah urutan
+        <code>DIM</code>-nya satu baris saja, dan seluruhnya berantakan.
+      </p>
+      <table class="l-tbl l-tbl--kiri">
+        <tbody>
+          <tr><td>Panjang berkas</td><td><strong>5.760 bita</strong></td></tr>
+          <tr><td>Kepala BSAVE</td><td>7 bita (FD, segmen, ofset, 5644)</td></tr>
+          <tr><td>Sprite ditemukan</td><td><strong id="b-sprite">—</strong></td></tr>
+          <tr><td>Ukuran tiap sprite</td><td>21 &times; 21, 2 bit/piksel</td></tr>
+          <tr><td>Piksel bukan-latar seluruhnya</td><td><strong id="b-piksel">—</strong></td></tr>
+        </tbody>
+      </table>
+      <p class="l-note">
+        Nama arraynya sendiri masih terbaca di dalam berkas, dan
+        <strong>panjang namanya membuktikan urutannya</strong>: jarak antar
+        sprite adalah 143 bita sembilan kali (<code>M2</code>…<code>M9</code>,
+        dua aksara), lalu 144 empat kali (<code>M10</code>…<code>M13</code>,
+        tiga aksara), dan di ujung 145 empat kali
+        (<code>RR10</code>…<code>RR13</code>, empat aksara). Pola itu cocok
+        persis dengan <code>DIM</code> di baris 1690&ndash;1710.
+      </p>
+    </div>
+
+    <div class="panel l-warn">
+      <p class="eyebrow">Tiga belas sudut, dan tidak satupun dihitung</p>
+      <p class="l-sudut" id="b-sudut">—</p>
+      <p class="l-note">
+        Itu isi <code>ANG(1..13)</code>, dibaca dari
+        <code>LANDER.BIN</code>. Perhatikan lubangnya: dari
+        <strong>90&deg; langsung ke 180&deg;, lalu ke 270&deg;</strong>.
+        Tiga puluh derajat berikutnya dibagi halus (285, 300, 315, 330, 345),
+        tapi seperempat lingkaran di tengah tidak ada sama sekali.
+      </p>
+      <p class="l-note">
+        Alasannya tidak estetis melainkan aritmetis: tiap sudut butuh
+        <strong>tiga gambar</strong> (tanpa semburan, semburan kecil, semburan
+        besar) seharga 402 bita. Tiga belas sudut sudah memakan 5,7 KB dari
+        RAM 64 KB. Sudut ke-14 tidak muat.
+      </p>
+      <p class="l-note">
+        Karena itu memutar pesawat <strong>bukan perhitungan</strong>, melainkan
+        pencarian tabel &mdash; <code>ON TILTOLD GOTO</code> dengan tiga belas
+        cabang. Angka 13 muncul di dua berkas terpisah: sebagai cacah cabang di
+        <code>LANDER.BAS</code>, dan sebagai <code>PDATA(0)=NANG</code> di
+        <code>LANDER.BIN</code>. Keduanya cocok.
+      </p>
+    </div>
+
+    <div class="panel l-bad">
+      <p class="eyebrow">Musiknya adalah jam permainannya</p>
+<pre class="l-code">510 PLAY "mb":SOUND TUNE(C,0),TUNE(C,1)
+             :SOUND TUNE(C+1,0),TUNE(C+1,1)
+             :C=C+2:IF C>149 THEN C=1</pre>
+      <p class="l-note">
+        Tiap bingkai mengantre <strong>dua nada</strong>. Antrean
+        <code>SOUND</code> di GW-BASIC dalamnya 32 nada; begitu penuh, BASIC
+        <em>berhenti dan menunggu</em>. Sesudah enam belas bingkai, permainan
+        tidak lagi berjalan secepat prosesornya &mdash; ia berjalan secepat
+        <em>Blue Danube</em>.
+      </p>
+      <table class="l-tbl">
+        <tbody>
+          <tr><td>Nada di <code>TUNE</code></td><td><strong id="b-nada">—</strong></td></tr>
+          <tr><td>Total durasi</td><td><strong id="b-tik">—</strong> detak</td></tr>
+          <tr><td>= detik (18,2 detak/detik)</td><td><strong id="b-detik">—</strong></td></tr>
+          <tr><td>Dibagi 75 bingkai</td><td><strong id="b-fps">—</strong> bingkai/detik</td></tr>
+        </tbody>
+      </table>
+      <p class="l-note">
+        Konsekuensinya nyata: menekan <kbd>S</kbd> (silence) di aslinya
+        tidak hanya mendiamkan permainan, ia <strong>mempercepatnya
+        berlipat</strong>. Bukti bahwa penulisnya sadar akan antrean itu ada di
+        empat tempat &mdash; <code>SOUND 99,0</code> di baris 530, 590, 1130,
+        dan 1220. Durasi nol adalah perintah <em>kosongkan antrean</em>, dan ia
+        memakainya persis di saat mendarat dan menabrak, ketika waltz yang
+        tertinggal akan terdengar konyol.
+      </p>
+    </div>
+
+    <div class="panel l-warn">
+      <p class="eyebrow">Penjaga yang tak pernah dijalankan</p>
+<pre class="l-code">640 K$=RIGHT$(INKEY$,1):IF (K$="")THEN RETURN:IF (F=0)THEN RETURN</pre>
+      <p class="l-note">
+        Di BASIC, <strong>semua yang ada sesudah <code>THEN</code> pada baris
+        yang sama ikut ke dalam <code>THEN</code></strong>. Jadi penjaga kedua
+        hanya bisa tercapai lewat jalur yang baru saja mengembalikan kendali
+        &mdash; artinya <strong>tidak pernah</strong>. Maksudnya jelas
+        ("kalau bahan bakar habis, kunci papan tombol"), tapi yang berjalan
+        bukan itu.
+      </p>
+      <p class="l-note">
+        Akibatnya tetap bisa dimiringkan tanpa bahan bakar. Itu
+        <em>dipertahankan</em> di sini, karena inilah yang benar-benar
+        dijalankan sejak 1982 &mdash; dan kebetulan ia menyelamatkan permainan:
+        baris 1130 menolak pendaratan yang miring, jadi kalau kemudi ikut mati
+        pesawat yang kehabisan bahan bakar dalam keadaan miring
+        <strong>pasti</strong> gagal.
+      </p>
+    </div>
+
+    <div class="panel l-good">
+      <p class="eyebrow">Dua berkas yang menyetujui satu angka</p>
+      <p class="l-note">
+        Baris 940 menguji tabrakan tanah memakai <code>Y+MY-6</code>, yaitu
+        enam piksel di atas dasar kotak sprite. Kenapa enam? Karena di
+        <code>LANDER.BIN</code>, baris terisi paling bawah pada sprite
+        <code>M1</code> adalah <strong id="b-kaki">—</strong>, tempat bantalan
+        kakinya digambar &mdash; dan <code>MY&minus;6</code> bernilai
+        <strong id="b-rumus">—</strong>.
+      </p>
+      <p class="l-note">
+        Angka yang sama datang dari dua berkas yang tak saling tahu: satu
+        program teks, satu potret memori. Itu bukti bahwa gambar dan aturannya
+        memang sepasang &mdash; dan bahwa ekstraksi sprite di halaman ini benar.
+      </p>
+      <p class="l-kecil">
+        Cara membaca yang sama dipakai di
+        <a href="../sub/index.html">SUB</a> (petak miring karena
+        <code>POKE A+156</code>) dan <a href="../attack/index.html">ATTACK</a>
+        (harga bom ditentukan kode aksara di layar).
+      </p>
+    </div>
+
+    <div class="panel l-bad">
+      <p class="eyebrow">Dua kekeliruan yang benar-benar ada</p>
+      <table class="l-tbl l-tbl--kiri">
+        <thead><tr><th>Baris</th><th>Yang tertulis</th><th>Akibatnya</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>3010</code></td>
+            <td><code>TILT=0</code></td>
+            <td><code>ANG(0)</code> tidak pernah diisi, dan
+                <code>ON TILTOLD GOTO</code> dengan nilai 0
+                <em>tidak bercabang ke mana-mana</em>: gambar lama tak terhapus.
+                Mendarat tanpa pernah menyentuh tombol miring pun dituduh
+                miring. <strong>Diperbaiki jadi 1 di sini.</strong></td>
+          </tr>
+          <tr>
+            <td><code>1120</code> / <code>1190</code></td>
+            <td><code>15-6*ADVAN</code> diuji,<br><code>15-5*ADVAN</code> ditulis</td>
+            <td>Di Advanced Lander pesan gagalnya berkata batasnya
+                <strong>10</strong>, padahal yang diuji <strong>9</strong>.
+                <strong>Dipertahankan</strong> &mdash; port ini menampilkan
+                kedua angka sekaligus supaya selisihnya terlihat.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Enam puluh medan, selamanya</p>
+<pre class="l-code">220 A=RND(100*-VAL(RIGHT$(TIME$,2)))</pre>
+      <p class="l-note">
+        <code>RIGHT$(TIME$,2)</code> adalah <strong>detik</strong> jam &mdash;
+        0 sampai 59. Itu satu-satunya hal yang membedakan satu permainan dari
+        yang lain, jadi program ini hanya punya <strong>enam puluh medan</strong>
+        seumur hidupnya. Dan pada detik "00" argumennya jadi 0, yang di GW-BASIC
+        berarti "ulangi bilangan terakhir" &mdash; benihnya tidak disetel ulang
+        sama sekali.
+      </p>
+      <p class="l-note">
+        Kotak <em>Detik jam</em> di bawah layar memperlihatkan hal itu: angka
+        yang sama selalu memberi medan yang sama. Bilangan acaknya sendiri bukan
+        bilangan GW-BASIC &mdash; LCG-nya tidak saya tiru, hanya strukturnya.
+      </p>
+      <p class="l-note">
+        Medan Advanced Lander lain lagi: ia dihitung di baris 1790&ndash;1840,
+        <strong>sebelum</strong> baris 220 menyetel ulang benih. Jadi medan itu
+        <strong>sama untuk semua orang, setiap kali</strong> &mdash; sebuah
+        tempat tetap, bukan tempat acak.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Rekor yang tertinggal di disket</p>
+      <p class="l-note">
+        <code>run/LANDER.SCR</code> masih berisi angkanya:
+      </p>
+<pre class="l-code">" 152          You\r\n" + CHR$(26)</pre>
+      <p class="l-note">
+        Seseorang mencapai <strong>152 poin</strong> &mdash; cukup untuk
+        melewati ambang 100 dan masuk Advanced Lander &mdash; lalu mengetikkan
+        tiga huruf untuk anak-cucu, dan yang diketiknya
+        <strong>"You"</strong>. Aksara <code>1A</code> di ujungnya adalah
+        penanda akhir berkas DOS. Angka itulah yang jadi rekor awal di sini.
+      </p>
+    </div>
+
+    <p class="faint l-links">
+      <a href="../../docs/lander.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/LANDER.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/LANDER.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/input.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="lander-data.js"></script>
+<script src="lander.js"></script>
+</body>
+</html>

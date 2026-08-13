@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ABM 2 — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari ABM2A.BAS (Ed Davis, 18 Juli 1982): Missile Command yang membela enam pabrik IBM sungguhan di pantai timur Amerika — termasuk Boca Raton, tempat IBM PC dirancang. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="abm2a.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap a-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="a-stage">
+        <div class="a-crt" id="crt">
+          <svg id="svg" class="a-svg" viewBox="0 0 320 200"
+               role="img" aria-label="Layar permainan ABM 2, CGA 320 kali 200"></svg>
+          <p class="a-pesan" id="pesan"></p>
+        </div>
+
+        <div class="a-row">
+          <button class="btn btn--primary" id="mulai" type="button">Mulai</button>
+          <label>Hulu ledak
+            <select id="hulu">
+              <option value="3">3 — SMALL (EXPERT)</option>
+              <option value="4" selected>4 — NORMAL (GOOD)</option>
+              <option value="5">5 — BIG (BEGINNER)</option>
+              <option value="9">9 — WOW! (CHICKEN)</option>
+            </select></label>
+          <label>Handicap musuh
+            <select id="handicap">
+              <option value="0">0 — MISSION-IMPOSSIBLE</option>
+              <option value="1">1 — VERY FAST</option>
+              <option value="2">2 — EXPERT</option>
+              <option value="3" selected>3 — NORMAL</option>
+              <option value="4">4 — PRACTICE</option>
+              <option value="5">5 — JUNIOR</option>
+            </select></label>
+        </div>
+        <p class="a-kecil" id="hulu-info"></p>
+
+        <div class="a-row a-pad">
+          <button class="btn btn--ghost btn--sm" id="b-kiri" type="button"><kbd>&larr;</kbd></button>
+          <button class="btn btn--ghost btn--sm" id="b-atas" type="button"><kbd>&uarr;</kbd></button>
+          <button class="btn btn--ghost btn--sm" id="b-bawah" type="button"><kbd>&darr;</kbd></button>
+          <button class="btn btn--ghost btn--sm" id="b-kanan" type="button"><kbd>&rarr;</kbd></button>
+          <button class="btn btn--ghost btn--sm a-ttembak" id="b-tembak" type="button">
+            <kbd>Spasi</kbd>/<kbd>Esc</kbd> luncurkan</button>
+          <button class="btn btn--ghost btn--sm" id="mode" type="button" hidden>x</button>
+        </div>
+
+        <div class="a-row a-row--kecil">
+          <label>Bingkai per detik
+            <input type="range" id="hz" min="10" max="60" step="5" value="30">
+            <span class="mono" id="hzv"></span></label>
+          <label class="a-cek"><input type="checkbox" id="bunyi" checked> Bunyi</label>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">231 baris BASIC</span>
+      <span class="ruleset__k">Ed Davis, 18 Juli 1982</span>
+      <span class="ruleset__k ruleset__k--mangsa">enam situs IBM sungguhan</span>
+      <span class="ruleset__k ruleset__k--bahaya">hulu ledak besar = skor kecil</span>
+      <span class="ruleset__k ruleset__k--bahaya">menang = naik tingkat</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">SCORE</span>
+        <span class="stat__value mono" id="s-skor">0</span></div>
+      <div class="stat"><span class="stat__label">Rekor hari ini</span>
+        <span class="stat__value mono" id="s-rekor">0</span></div>
+      <div class="stat"><span class="stat__label">Situs</span>
+        <span class="stat__value mono" id="s-situs">6 / 6</span></div>
+      <div class="stat"><span class="stat__label">Hulu ledak</span>
+        <span class="stat__value mono" id="s-hulu">4</span></div>
+      <div class="stat"><span class="stat__label">Handicap</span>
+        <span class="stat__value mono" id="s-handicap">3</span></div>
+      <div class="stat"><span class="stat__label">Rudal belum diluncurkan</span>
+        <span class="stat__value mono" id="s-sisa">11</span></div>
+      <div class="stat"><span class="stat__label">Benih</span>
+        <span class="stat__value mono" id="s-benih">—</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <p class="a-lead">
+        Anda komandan pertahanan rudal. Musuh punya <strong>12 rudal</strong>
+        untuk <strong>6 situs</strong> Anda &mdash; dan situs-situs itu
+        <strong>pabrik IBM sungguhan</strong>. Lihat panel di sebelah.
+      </p>
+      <ol class="howto__steps">
+        <li>Panah menggeser bidikan <strong>sepuluh piksel</strong> sekali
+            tekan (baris 1640&ndash;1710). <kbd>Spasi</kbd> atau <kbd>Esc</kbd>
+            meluncurkan &mdash; aslinya memang <kbd>Esc</kbd>.</li>
+        <li>Ledakannya tumbuh sepuluh bingkai, lalu <strong>menghitung yang
+            kena sekali saja di akhir</strong>. Jadi yang penting bukan kapan
+            Anda menekan, melainkan di mana rudal musuh berada saat
+            ledakannya <em>selesai</em>.</li>
+        <li><strong>Hulu ledak besar membuatnya mudah dan dibayar di skor.</strong>
+            Satu angka mengendalikan dua hal: kotak bunuh dan nilai per kena.</li>
+        <li><strong>Musuh punya MIRV.</strong> Satu rudal yang melewati
+            setengah layar pecah jadi empat, masing-masing ke situs berbeda
+            &mdash; sekali per ronde.</li>
+        <li>Menang berarti <strong>handicap musuh berkurang satu</strong>
+            (baris 1470). Permainannya naik tingkat sendiri sampai mustahil.</li>
+      </ol>
+    </details>
+
+    <div class="panel a-good">
+      <p class="eyebrow">Enam situs yang dibela</p>
+      <ul class="a-situs" id="daftar-situs"></ul>
+      <p class="a-note a-kecil">
+        Koordinatnya <code>T%(1,I)=48*(I+1)</code> &mdash; rata 48 piksel,
+        berurutan utara ke selatan dari kiri ke kanan.
+      </p>
+    </div>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel a-warn">
+      <p class="eyebrow">Enam kota yang dibela itu enam pabrik IBM</p>
+<pre class="a-code">1070 PRINT "Your mission is to defend the IBM"
+1080 PRINT "East coast sites from the enemy."
+ 870 T%(1,I)=48*(I+1)
+ 980 …PRINT"BTV";…"FSH";…"HPN";…"MAN";…"RAL";…"BOC";</pre>
+      <p class="a-note">
+        Enam label itu bukan kota sembarangan. Itu <strong>situs IBM di pantai
+        timur Amerika</strong>, berurutan dari utara ke selatan, dan
+        koordinatnya rata 48 piksel.
+      </p>
+      <table class="a-tbl a-tbl--kiri">
+        <thead><tr><th>x</th><th>Kode</th><th>Situs</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">48</td><td class="mono">BTV</td><td>Burlington / Essex Junction, Vermont</td></tr>
+          <tr><td class="mono">96</td><td class="mono">FSH</td><td>East Fishkill, New York</td></tr>
+          <tr><td class="mono">144</td><td class="mono">HPN</td><td>White Plains (Westchester), New York</td></tr>
+          <tr><td class="mono">192</td><td class="mono">MAN</td><td>Manassas, Virginia</td></tr>
+          <tr><td class="mono">240</td><td class="mono">RAL</td><td>Raleigh / Research Triangle Park, N. Carolina</td></tr>
+          <tr><td class="mono">288</td><td class="mono"><strong>BOC</strong></td>
+              <td><strong>Boca Raton, Florida</strong> &mdash; tempat IBM PC dirancang</td></tr>
+        </tbody>
+      </table>
+      <p class="a-note">
+        Jadi ini <em>Missile Command</em> yang membela pabrik IBM sendiri,
+        ditulis di disket IBM, dan sasaran paling kanan adalah
+        <strong>tempat komputer yang menjalankannya dilahirkan</strong>.
+      </p>
+      <p class="a-note">
+        Dua sisi mata uang yang sama di koleksi ini:
+        <a href="../attack/index.html">ATTACK</a> mengebom pabrik Apple, ABM 2
+        membela pabrik IBM. Dan satu tautan lagi: penulis
+        <code>BATSHIP.BAS</code> di koleksi ini beralamat di
+        <strong>Essex Junction, Vermont</strong> &mdash; situs BTV, sasaran
+        paling kiri.
+      </p>
+    </div>
+
+    <div class="panel a-good">
+      <p class="eyebrow">Satu angka mengendalikan dua hal</p>
+<pre class="a-code">230 IF ABS(M(2,I)-DX)&lt;WH%+1 AND ABS(M(3,I)-DY)&lt;WH% THEN …
+250 …SC=SC+(10-WH%)</pre>
+      <p class="a-note">
+        <code>WH%</code> (3&ndash;9) menentukan <strong>ukuran kotak
+        bunuh</strong> sekaligus <strong>nilai tiap kena</strong>. Petunjuknya
+        menyebut yang terbesar <em>"9=WOW! (CHICKEN)"</em>, dan angkanya
+        membenarkan ejekan itu:
+      </p>
+      <table class="a-tbl">
+        <thead><tr><th>WH%</th><th>Skor</th><th>Kotak bunuh</th><th>Luas</th></tr></thead>
+        <tbody>
+          <tr><td>3</td><td>7</td><td>7 × 5</td><td>35</td></tr>
+          <tr><td>4</td><td>6</td><td>9 × 7</td><td>63</td></tr>
+          <tr><td>5</td><td>5</td><td>11 × 9</td><td>99</td></tr>
+          <tr><td>9</td><td>1</td><td>19 × 17</td><td><strong>323</strong></td></tr>
+        </tbody>
+      </table>
+      <p class="a-note">
+        Dari 3 ke 9: luasnya <strong>9,2 kali lipat</strong>, imbalannya
+        <strong>sepertujuh</strong>. Satu variabel, satu garis tukar-menukar,
+        tanpa satu pun tabel kesulitan.
+      </p>
+    </div>
+
+    <div class="panel a-warn">
+      <p class="eyebrow">"3 = SMALL (EXPERT)" bukan sulit — sebagian besarnya mustahil</p>
+<pre class="a-code">1640 SY=SY-10  1660 SY=SY+10   <span class="a-c">' bidikan bergerak SEPULUH piksel</span>
+1680 X=X+10    1700 X=X-10
+ 230 IF ABS(M(2,I)-DX)&lt;WH%+1 AND ABS(M(3,I)-DY)&lt;WH%</pre>
+      <p class="a-note">
+        Bidikan hanya bisa berada di <strong>kisi 10 piksel</strong>. Tapi
+        rudal musuh bergerak <strong>pecahan piksel</strong> mendatar
+        (<code>M(4,I)=(T%(1,II)-M(5,I))/160</code>) dan satu piksel menurun.
+        Jadi rudal bisa berhenti di antara dua titik yang bisa dijangkau
+        bidikan.
+      </p>
+      <p class="a-note">
+        Kalau kotak bunuhnya lebih sempit daripada kisinya, ada
+        <strong>posisi yang tidak bisa dikenai sama sekali</strong> &mdash;
+        sekeras apa pun Anda membidik. Dihitung dengan mencuplik seluruh
+        layar per 0,1 piksel:
+      </p>
+      <table class="a-tbl">
+        <thead><tr><th>WH%</th><th>Kotak</th><th>x mustahil</th><th>y mustahil</th><th>Gabungan</th></tr></thead>
+        <tbody>
+          <tr><td><strong>3</strong> — SMALL (EXPERT)</td><td>7×5</td><td>21,0%</td><td>41,0%</td><td><strong>53,4%</strong></td></tr>
+          <tr><td>4 — NORMAL (GOOD)</td><td>9×7</td><td>1,0%</td><td>21,0%</td><td>21,8%</td></tr>
+          <tr><td>5 — BIG (BEGINNER)</td><td>11×9</td><td>0,0%</td><td>1,0%</td><td>1,0%</td></tr>
+          <tr><td>9 — WOW! (CHICKEN)</td><td>19×17</td><td>0,0%</td><td>0,0%</td><td><strong>0,0%</strong></td></tr>
+        </tbody>
+      </table>
+      <p class="a-note">
+        Dengan hulu ledak terkecil, <strong>lebih dari separuh layar tidak bisa
+        dikenai</strong>. Bukan sulit &mdash; <em>mustahil</em>. Dan
+        <strong>5 = BIG (BEGINNER)</strong> ternyata hulu ledak terkecil yang
+        selalu bisa menjangkau sasaran mana pun.
+      </p>
+      <p class="a-note">
+        Label "EXPERT" dan skor tertinggi menjanjikan tantangan yang bisa
+        dikuasai. Yang sebenarnya ditawarkan adalah <strong>lotre</strong>:
+        rudal yang kebetulan lewat di titik kisi mati tidak akan pernah
+        tertembak, dan pemainnya tidak punya cara tahu bedanya dengan salah
+        bidik.
+      </p>
+      <p class="a-note a-kecil">
+        Dipertahankan apa adanya di port ini &mdash; termasuk langkah 10 piksel.
+        Mengecilkan langkahnya akan menghapus cacatnya, dan cacat inilah yang
+        membuat pilihan hulu ledaknya jadi cerita.
+      </p>
+    </div>
+
+    <div class="panel a-good">
+      <p class="eyebrow">Handicap itu melewati bingkai, bukan mengubah kecepatan</p>
+<pre class="a-code">260 IF CT%&lt;RS% THEN CT%=CT%+1:GOTO 70
+1470 RS%=RS%-1:IF RS%&lt;0 THEN RS%=0</pre>
+      <p class="a-note">
+        <code>RS%</code> bukan pengali kecepatan &mdash; ia mencacah berapa
+        bingkai <strong>masukan</strong> yang lewat sebelum rudal musuh maju
+        satu langkah. Anda tetap bisa menggeser bidikan selama bingkai-bingkai
+        itu.
+      </p>
+      <table class="a-tbl">
+        <tbody>
+          <tr><td>0 — MISSION-IMPOSSIBLE</td><td>musuh maju tiap <strong>1</strong> bingkai</td></tr>
+          <tr><td>3 — NORMAL</td><td>tiap <strong>4</strong> bingkai</td></tr>
+          <tr><td>5 — JUNIOR</td><td>tiap <strong>6</strong> bingkai</td></tr>
+        </tbody>
+      </table>
+      <p class="a-note">
+        Dan baris 1470 <strong>menguranginya satu tiap kali Anda menang</strong>.
+        Permainannya naik tingkat sendiri sampai mustahil &mdash; tidak ada
+        layar "level 2", cuma satu variabel yang terus mengecil.
+      </p>
+    </div>
+
+    <div class="panel a-warn">
+      <p class="eyebrow">Satu tanda persen yang hilang</p>
+<pre class="a-code">400 <strong>FLAG</strong>=-1:N=0:PT%=M(1,MIRV%):TT%=PT%+1
+440 IF N&lt;4 THEN <strong>FLAG%</strong>=-1:GOTO 410</pre>
+      <p class="a-note">
+        Baris 400 menyetel <code>FLAG</code> &mdash; <strong>tanpa tanda
+        persen</strong>. Di BASIC itu variabel yang berbeda dari
+        <code>FLAG%</code>, dan ia tidak pernah dibaca di mana pun.
+      </p>
+      <p class="a-note">
+        Yang menyelamatkan programnya cuma kebetulan: baris 440 menyetel
+        <code>FLAG%</code> yang benar selama <code>N&lt;4</code>, jadi sesudah
+        gelung MIRV selesai nilainya <em>sudah</em> &minus;1 dan baris 340
+        tidak mengulanginya. Satu aksara yang salah, ditutup oleh baris lain
+        yang kebetulan berada di jalur yang sama.
+      </p>
+    </div>
+
+    <div class="panel a-good">
+      <p class="eyebrow">DRAW dipakai sebagai bahasa bersubrutin</p>
+<pre class="a-code">920 CT$ ="U2R4U18R7D8R3D3R3U9R3D7R5D4R3D5R5D2"
+950 PSET(0,180):DRAW "R32;<strong>X</strong>"+VARPTR$(CT2$)+"R16;<strong>X</strong>"+VARPTR$(CT$)
+960 DRAW "R16;<strong>X</strong>"+VARPTR$(CT3$)+"…<strong>X</strong>"+VARPTR$(CT$)+"…"</pre>
+      <p class="a-note">
+        Perintah <code>X</code> di dalam makro <code>DRAW</code>
+        <strong>menjalankan string lain</strong>, dan <code>VARPTR$</code>
+        memberi alamatnya. Jadi cakrawala kotanya disusun dari
+        <strong>tiga cetakan gedung</strong> yang dipanggil berulang.
+      </p>
+      <p class="a-note">
+        <a href="../flys/index.html">FLYS</a> memakai <code>DRAW</code> untuk
+        <em>membuat</em> sprite; ABM 2 memakai kemampuannya
+        <em>memanggil</em>. Pemakaian ulang di dalam bahasa makro, di sebuah
+        program 1982 &mdash; dan cakrawala di port ini disusun dengan cara yang
+        sama: tiga cetakan, dipakai bergantian.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Dua cara membuang penyangga papan ketik</p>
+<pre class="a-code">1210 DEF SEG=0:POKE 1050,PEEK(1052)   <span class="a-c">' ABM2A</span>
+  40 POKE 106,0                       <span class="a-c">' idiom GW-BASIC di program lain</span></pre>
+      <p class="a-note">
+        Alamat 1050 dan 1052 adalah <code>0040:001A</code> dan
+        <code>0040:001C</code> &mdash; penunjuk <strong>kepala</strong> dan
+        <strong>ekor</strong> penyangga papan ketik BIOS. Menyamakan keduanya
+        mengosongkan penyangga itu.
+      </p>
+      <p class="a-note">
+        Program lain di koleksi memakai <code>POKE 106,0</code>, yang menulis ke
+        ruang kerja <em>penafsir GW-BASIC</em>, bukan ke BIOS. Dua idiom, dua
+        lapisan sistem, satu maksud yang sama: <em>"jangan sampai tombol yang
+        sudah terlanjur ditekan melewati layar ini."</em> Keduanya jadi satu
+        baris di port: <code>input.flush()</code>.
+      </p>
+    </div>
+
+    <p class="faint a-links">
+      <a href="../../docs/abm2a.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/ABM2A.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/ABM2A.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/input.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="abm2a.js"></script>
+</body>
+</html>

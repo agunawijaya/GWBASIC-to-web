@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Yatzee — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari YAHTZEE.BAS (Helms &amp; Pezok / Patrick Leabo, 1980): tabel frekuensi yang menjawab semua pertanyaan, dan satu baris yang benar karena kebetulan. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="../../_shared/dice.css">
+<link rel="stylesheet" href="yahtzee.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap y-layout">
+
+  <section class="stack">
+    <div class="screen screen--scanlines">
+
+      <div class="y-setup" id="setup">
+        <p class="y-say">HOW MANY PLAYERS?</p>
+        <div class="row" id="players"></div>
+        <p class="faint">Aslinya menerima 1&ndash;5 pemain, dan menanyakan nama
+          tiap orang. Batasnya dipertahankan.</p>
+      </div>
+
+      <div class="y-stage hidden" id="play">
+        <div class="dice-row" id="dice"></div>
+        <p class="y-say" id="say"></p>
+        <div class="m-transport">
+          <button class="btn btn--primary" id="roll" type="button">Roll</button>
+          <button class="btn hidden" id="again" type="button">New game</button>
+        </div>
+        <table class="y-card" id="card"></table>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">tiga lemparan per giliran</span>
+      <span class="ruleset__k">klik dadu untuk menahan</span>
+      <span class="ruleset__k">bonus 35 kalau atas &ge; 63</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Giliran</span>
+        <span class="stat__value" id="sWho">&mdash;</span></div>
+      <div class="stat"><span class="stat__label">Lemparan</span>
+        <span class="stat__value" id="sRoll">0 / 3</span></div>
+      <div class="stat stat--good"><span class="stat__label">Rekor</span>
+        <span class="stat__value" id="sBest">0</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <ol class="howto__steps">
+        <li>Tiap giliran Anda melempar lima dadu, lalu boleh melempar ulang
+            <strong>dua kali lagi</strong> &mdash; tiga lemparan seluruhnya.</li>
+        <li>Di antara lemparan, <strong>klik dadu untuk menahannya</strong>.
+            Dadu yang ditahan menyala hijau dan tidak ikut dilempar lagi.</li>
+        <li>Setiap giliran <strong>harus</strong> diakhiri dengan mengisi satu
+            kotak di kartu skor. Kotak yang bisa diisi menunjukkan
+            <strong>nilai yang akan Anda dapat</strong>; klik untuk
+            mengambilnya.</li>
+        <li>Kalau tidak ada yang menguntungkan, Anda tetap harus mengisi
+            sesuatu &mdash; <strong>mengorbankan sebuah kotak dengan nilai
+            nol</strong> adalah langkah yang sah, dan kadang satu-satunya.
+            Kotak yang dikorbankan ditandai <code>&mdash;</code>.</li>
+        <li>Enam kotak atas (ACES&ndash;SIXES) memberi <strong>bonus 35</strong>
+            kalau jumlahnya mencapai <strong>63</strong>. Permainan selesai
+            saat ketiga belas kotak terisi.</li>
+      </ol>
+      <p>
+        Nilainya: <strong>3&nbsp;of&nbsp;a&nbsp;kind</strong> dan
+        <strong>4&nbsp;of&nbsp;a&nbsp;kind</strong> bernilai jumlah seluruh
+        dadu; <strong>full house</strong> 25; <strong>small straight</strong>
+        30; <strong>large straight</strong> 40; <strong>YATZEE</strong> 50, dan
+        <strong>+100</strong> untuk tiap yatzee berikutnya. <strong>Chance</strong>
+        selalu bernilai jumlah dadu, apa pun isinya.
+      </p>
+    </details>
+    <div class="row">
+      <button class="btn btn--ghost btn--sm" id="resetBest" type="button">Reset rekor</button>
+      <span class="faint">Dadu bersama dengan
+        <a href="../craps/index.html">Craps</a>.</span>
+    </div>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel y-good">
+      <p class="eyebrow">Tabel frekuensi yang sekaligus indeks</p>
+<pre class="y-code">2250 FOR J= 1 TO 5
+2260 X= C(J):S(X,0)= S(X,0)+ 1   <em>' berapa banyak mata X</em>
+2270 P= S(X,0):S(X,P)= J         <em>' dadu KE-BERAPA yang bermata X</em>
+2280 NEXT J</pre>
+      <p class="y-note">
+        Sembilan baris, dan sesudahnya <strong>setiap</strong> pertanyaan
+        tentang segenggam dadu dijawab dari tabel &mdash; bukan dengan
+        membandingkan dadu satu per satu:
+      </p>
+      <table class="y-tbl">
+        <thead><tr><th>Pertanyaan</th><th>Jawabannya</th></tr></thead>
+        <tbody>
+          <tr><td>three of a kind?</td><td><code>S(S(0,0),0) &ge; 3</code></td></tr>
+          <tr><td>four of a kind?</td><td><code>S(S(0,0),0) &ge; 4</code></td></tr>
+          <tr><td>full house?</td><td><code>=3 dan =2</code></td></tr>
+          <tr><td>yatzee?</td><td><code>S(S(0,0),0) = 5</code></td></tr>
+        </tbody>
+      </table>
+      <p class="y-note">
+        Baris 2320&ndash;2380 melengkapinya: mata diurutkan menurut
+        <strong>banyaknya</strong>, terbanyak dulu, ke dalam
+        <code>S(0,K)</code>. Jadi <code>S(0,0)</code> selalu "mata yang paling
+        sering muncul" tanpa perlu dicari lagi.
+      </p>
+      <p class="y-note">
+        Hitung frekuensi lebih dulu, lalu jawab semuanya dari situ. Namanya
+        sekarang histogram, <code>Counter</code>, atau <code>GROUP BY</code>
+        &mdash; dan bentuknya di sini, pada <strong>1980</strong>, sudah persis
+        sama. Modul <code>_shared/dice.js</code> port ini memakai bentuk yang
+        sama, dengan komentar yang menunjuk balik ke baris ini.
+      </p>
+    </div>
+
+    <div class="panel y-warn">
+      <p class="eyebrow">Baris yang benar karena kebetulan</p>
+<pre class="y-code">2580 IF S(1,0)&gt;0 AND S(2,0)&gt;0 AND S(3,0)&gt;0 AND S(4,0)&gt;0 THEN 2620
+     <em>' straight kecil — ditulis dengan benar</em>
+
+2630 IF S(1,0)AND S(2,0)AND S(3,0)AND S(4,0)AND S(5,0)= 1 THEN 2660
+     <em>' straight besar — empat `&gt;0` hilang</em></pre>
+      <p class="y-note">
+        Dua baris berdekatan, dua bentuk berbeda. Di BASIC, <code>=</code>
+        mengikat lebih erat daripada <code>AND</code>, dan <code>AND</code>
+        adalah operator <strong>bit</strong>. Jadi baris 2630 sebenarnya
+        menghitung:
+      </p>
+<pre class="y-code">S(1,0) &amp; S(2,0) &amp; S(3,0) &amp; S(4,0) &amp; (S(5,0)=1 ? &minus;1 : 0)</pre>
+      <p class="y-note">
+        Hanya mata <strong>kelima</strong> yang dibandingkan dengan 1; empat
+        sisanya cuma di-AND-kan bitnya. Itu jelas bukan yang dimaksud
+        penulisnya &mdash; satu baris sebelumnya ia menulis bentuk yang benar.
+      </p>
+      <div class="row">
+        <button class="btn btn--ghost btn--sm" id="straightRun" type="button">Uji seluruh 7.776 lemparan</button>
+      </div>
+      <p class="y-note" id="straightOut">
+        Pertanyaannya: apakah bentuk yang salah itu memberi jawaban yang salah?
+        Uji seluruh ruang lemparan, bukan sampel.
+      </p>
+      <p class="y-note">
+        Alasannya bisa ditelusuri: agar hasilnya bukan nol, keempat mata
+        pertama harus <strong>semuanya &ge; 1</strong> (kalau satu saja nol,
+        seluruh AND jadi nol), dan mata kelima harus <strong>tepat 1</strong>.
+        Dengan hanya lima dadu, empat mata yang tidak nol ditambah satu mata
+        yang tepat satu <strong>memaksa</strong> kelimanya masing-masing tepat
+        satu &mdash; yaitu straight besar. Tidak ada ruang untuk salah.
+      </p>
+      <p class="y-note">
+        Jadi ia <strong>benar</strong>, tapi bukan karena ia menanyakan hal
+        yang benar. Ia benar karena lima dadu terlalu sedikit untuk membuatnya
+        salah. Tambah satu dadu, dan baris itu mulai berbohong. Silsilah yang
+        sama dengan pagar tak sengaja di
+        <a href="../pegleap/index.html">PEGLEAP</a> dan angka 600 di
+        <a href="../maxit1/index.html">MAXIT1</a>: aman karena kebetulan,
+        bukan karena dijaga.
+      </p>
+    </div>
+
+    <div class="panel y-good">
+      <p class="eyebrow">Huruf yang dipetakan dengan benar</p>
+<pre class="y-code">2000 I=ASC(I$)-48 : <em>...</em> : IF I&gt;9 THEN I=I-7</pre>
+      <p class="y-note">
+        Tiga belas kotak tidak muat dalam angka satu digit, jadi kotak 10&ndash;13
+        diberi label <code>A B C D</code>. Pemetaannya <strong>satu
+        rumus</strong>: <code>'A'</code> = 65, 65&minus;48 = 17, 17&minus;7 = 10.
+      </p>
+      <p class="y-note">
+        Bandingkan dengan <a href="../crazy8/index.html">CRAZY8</a> (1986), yang
+        menulis pemetaan yang sama sebagai enam baris <code>IF</code> terpisah
+        &mdash; dan salah menyalin salah satunya, sehingga satu kartu tidak
+        pernah bisa dimainkan.
+      </p>
+      <p class="y-note">
+        Program yang <strong>enam tahun lebih tua</strong> memilih bentuk yang
+        tidak bisa salah. Satu rumus tidak punya baris kelima untuk salah
+        diketik.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Kursor yang tahu kapan gilirannya</p>
+<pre class="y-code">1590 <em>...</em> PRINT " HOW MANY DICE TO ROLL AGAIN? ";:LOCATE ,,1:
+     GOSUB 2100: <em>...</em> :LOCATE ,,0</pre>
+      <p class="y-note">
+        <code>LOCATE ,,1</code> <strong>menyalakan</strong> kursor sebelum
+        meminta masukan; <code>LOCATE ,,0</code> mematikannya sesudahnya. Jadi
+        kursor hanya terlihat saat pemakai memang sedang diminta mengetik.
+      </p>
+      <p class="y-note">
+        Detail sekecil ini hampir tidak ada di program lain di koleksi ini,
+        dan ia menjawab pertanyaan yang paling sering ditanyakan orang di depan
+        layar teks: <em>"ini nunggu saya, atau nunggu dia?"</em>
+      </p>
+      <p class="y-note">
+        Padanannya di halaman ini bukan kursor, melainkan kotak skor yang
+        menyala hijau: ia menyala <strong>hanya</strong> saat memang giliran
+        Anda memilih.
+      </p>
+    </div>
+
+    <div class="panel y-warn">
+      <p class="eyebrow">Benih yang sama, untuk kelima kalinya</p>
+<pre class="y-code">1170 RANDOMIZE VAL(RIGHT$(TIME$,2))</pre>
+      <p class="y-note">
+        Detik saja &mdash; <strong>60 kemungkinan</strong>. Pola yang sama
+        muncul di <a href="../maxit1/index.html">MAXIT1</a>,
+        <a href="../master/index.html">MASTER</a>,
+        <a href="../keno/index.html">KENO</a>, dan di sini.
+      </p>
+      <p class="y-note">
+        Bedanya, di sini ia <strong>paling tidak berbahaya</strong>: penyemaian
+        cuma sekali di awal (baris 1170), bukan tiap ronde seperti KENO, dan
+        satu permainan Yahtzee menarik 39 lemparan &mdash; jauh lebih panjang
+        daripada yang bisa dihafal orang dari 60 titik awal.
+      </p>
+      <p class="y-note">
+        Bahaya sebuah benih lemah tidak ditentukan oleh benihnya, melainkan
+        oleh <strong>berapa banyak yang bisa diramalkan dari sana</strong>.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Lawan komputer yang tidak diport</p>
+      <p class="y-note">
+        Aslinya menawarkan lawan bernama <code>"IBM PC"</code> (baris 1300),
+        dengan kecerdasannya sendiri di baris 2760&ndash;3460: daftar prioritas
+        &mdash; yatzee, lalu empat sama, lalu full house, lalu straight besar,
+        dan seterusnya &mdash; ditambah rutin terpisah untuk memilih dadu mana
+        yang dilempar ulang.
+      </p>
+      <p class="y-note">
+        Yang diport di sini hanya bagian <strong>manusianya</strong>: satu
+        sampai lima pemain bergantian, persis batas aslinya. Lawan komputernya
+        <strong>belum</strong> diport, dan itu dinyatakan sebagai kekurangan,
+        bukan sebagai penyederhanaan &mdash; sama seperti
+        <a href="../../docs/maxit1.md">MAXIT1</a>.
+      </p>
+      <p class="y-note">
+        Alasannya: memport separuh AI lebih buruk daripada tidak sama sekali.
+        Pemilihan kotaknya mudah dibaca; pemilihan dadunya tersebar di tiga
+        subrutin yang saling memanggil, dan menebak maksudnya berarti mengarang
+        lawan yang bukan lawan 1980.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/yahtzee.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/YAHTZEE.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/YAHTZEE.BAS">Kode sumber 1980</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/dice.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="yahtzee.js"></script>
+</body>
+</html>

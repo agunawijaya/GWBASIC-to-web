@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Business Simulation — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari sepuluh berkas BUSONE..BUSTEN (Friendlyware, 1982): 41 layar tutorial akuntansi yang dipecah jadi sepuluh program karena 50 KB tidak muat di satu PC. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="../../_shared/reader.css">
+<link rel="stylesheet" href="../history/history.css">
+<link rel="stylesheet" href="busone.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap h-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="h-stage">
+        <div id="reader"></div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k" id="k-layar"></span>
+      <span class="ruleset__k">10 berkas</span>
+      <span class="ruleset__k">12 langkah</span>
+      <span class="ruleset__k" id="k-bita"></span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Layar</span>
+        <span class="stat__value mono" id="s-layar">—</span></div>
+      <div class="stat"><span class="stat__label">Berkas</span>
+        <span class="stat__value mono" id="s-berkas">—</span></div>
+      <div class="stat"><span class="stat__label">Langkah</span>
+        <span class="stat__value" id="s-langkah">—</span></div>
+      <div class="stat" id="stat-tambah"><span class="stat__label">Terhadap layar sebelumnya</span>
+        <span class="stat__value" id="s-tambah">—</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara memakai</summary>
+      <p class="b-lead">
+        <em>&ldquo;A walk through the automated accounting world&rdquo;</em>
+        &mdash; tutorial akuntansi dua belas langkah, dari menyusun bagan akun
+        sampai neraca saldo penutup, memakai satu contoh:
+        <strong>ABC Hardware, Juni 1982</strong>.
+      </p>
+      <ol class="howto__steps">
+        <li><strong>Maju</strong> / <strong>Mundur</strong>, panah
+            <kbd>&larr;</kbd> <kbd>&rarr;</kbd>, atau rel angka. Aslinya hanya
+            bisa maju &mdash; dan hanya di dalam satu berkas.</li>
+        <li>Warna pasak menandai <strong>berkas asalnya</strong>. Sepuluh
+            berkas, dan tiap perpindahan berkas dulunya berarti seluruh
+            program diganti.</li>
+        <li>Perhatikan bagan alur di langkah I: layar berikutnya
+            <strong>menambah satu kotak</strong> ke bagan yang sama, bukan
+            menggambar bagan baru.</li>
+      </ol>
+      <p>
+        Sepuluh berkas ini di aslinya adalah sepuluh <em>program</em> yang
+        saling memanggil lewat <code>RUN</code>. Di sini keduanya jadi satu
+        urutan 41 layar, karena tidak ada lagi alasan untuk memisahkannya
+        &mdash; dan alasan aslinya bisa dihitung.
+      </p>
+    </details>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel b-good">
+      <p class="eyebrow">Sepuluh berkas, dan alasannya bisa dihitung</p>
+      <table class="h-tbl" id="tbl-berkas"></table>
+      <p class="b-note">
+        Lima puluh kilobita teks program. Sebuah IBM PC 1982 dengan 64&nbsp;KB
+        harus memuat penafsir BASIC, ruang kerjanya, <em>dan</em> programnya
+        &mdash; jadi lima puluh kilobita tidak akan pernah muat sekaligus.
+      </p>
+      <p class="b-note">
+        Karena itu tutorialnya dipecah jadi sepuluh program yang saling
+        memanggil:
+      </p>
+<pre class="b-code">1380 RUN"BUSTWO"     ← akhir BUSONE
+ …
+      RUN"BUSTEN"    ← akhir BUSNINE</pre>
+      <p class="b-note">
+        <code>RUN</code> <strong>membuang seluruh variabel</strong>. Jadi tidak
+        ada apa pun yang bisa dibawa dari satu langkah ke langkah berikutnya
+        &mdash; tiap berkas harus menggambar ulang bingkainya sendiri, dan
+        angka-angka ABC Hardware harus <strong>diketik ulang</strong> di tiap
+        berkas yang memakainya.
+      </p>
+      <p class="b-note">
+        Itu bentuk paling ekstrem dari pola yang berulang di koleksi ini:
+        <a href="../anatomy/index.html">ANATOMY</a> tidak bisa menyimpan
+        halaman sebagai tabel jadi memakai sembilan baris kode;
+        <strong>BUS tidak bisa menyimpannya di satu program sama sekali, jadi
+        memakai sepuluh berkas.</strong>
+      </p>
+    </div>
+
+    <div class="panel b-good">
+      <p class="eyebrow">Bagan yang tumbuh, bukan bagan yang diganti</p>
+      <p class="b-note">
+        Langkah I menggambarkan siklus akuntansi sebagai bagan alur kotak.
+        Layar berikutnya <strong>tidak menggambar ulang</strong> &mdash; ia
+        menambah satu kotak ke bagan yang sudah ada.
+      </p>
+      <table class="h-tbl" id="tbl-tambah"></table>
+      <p class="b-note">
+        Diukur <strong>per sel</strong> dari layar hasilnya sendiri:
+        <strong id="n-tambah">…</strong> dari <span id="n-total">…</span> layar
+        tidak menghapus <em>satu aksara pun</em> dari layar sebelumnya &mdash;
+        mereka hanya menambah. Kesembilannya ada di <code>BUSONE</code>, yaitu
+        bagan alur siklus akuntansi yang tumbuh kotak demi kotak.
+      </p>
+      <p class="b-note">
+        Ukuran per baris tidak cukup di sini, dan itu sendiri temuannya: bagan
+        tumbuh dengan <strong>memanjangkan</strong> baris yang sudah ada
+        &mdash; baris 18 berubah dari satu kotak jadi dua &mdash; jadi
+        barisnya memang tidak sama lagi, padahal tidak ada satu aksara pun
+        yang dihapus.
+      </p>
+      <p class="b-note">
+        Itu sebabnya port ini <strong>menjalankan</strong> programnya, bukan
+        menyalin layarnya &mdash; alasan yang sama dengan
+        <a href="../history/index.html">HISTORY</a>. Sebuah layar yang isinya
+        cuma selisih tidak bisa disalin sendirian.
+      </p>
+      <p class="b-note">
+        Dan efeknya di 4,77&nbsp;MHz bukan sekadar hemat: pemakai
+        <em>melihat</em> kotak baru muncul di bagan yang tetap diam. Menggambar
+        ulang seluruh bagan akan membuat layarnya berkedip dan hubungan
+        antar-langkahnya hilang.
+      </p>
+    </div>
+
+    <div class="panel b-warn">
+      <p class="eyebrow">Enam baris yang sama di sepuluh berkas</p>
+<pre class="b-code">40 POKE 106,0
+50 IF INKEY$&lt;&gt;"" THEN 40
+60 RESP$=INKEY$:IF RESP$="" THEN 60
+70 RETURN
+20 FOR A=1 TO 9:KEY(A) ON:ON KEY(A) GOSUB 70:NEXT
+30 GOTO 80</pre>
+      <p class="b-note">
+        Itu <strong>seluruh</strong> kode yang dipakai bersama sepuluh berkas
+        &mdash; enam baris, dan semuanya soal membaca tombol. Sembilan ratus
+        sebelas baris sisanya tidak ada yang sama.
+      </p>
+      <p class="b-note">
+        Jebakan sembilan tombol fungsi ke penangan kosong itu muncul lagi
+        &mdash; untuk <strong>kelima kalinya</strong> di koleksi ini, sesudah
+        <a href="../heareye/index.html">HEAREYE</a>,
+        <a href="../bio/index.html">BIO</a>, dan
+        <a href="../check/index.html">CHECK</a>. Alasannya sama: mematikan
+        makro bawaan GW-BASIC agar tidak menumpahkan <code>LIST</code> ke dalam
+        <code>INKEY$</code>.
+      </p>
+      <p class="b-note">
+        Lima program, satu kebiasaan rumah, nol komentar di kelimanya. Dan di
+        sini ia diketik ulang <strong>sepuluh kali</strong> dalam satu produk,
+        karena tidak ada cara lain.
+      </p>
+    </div>
+
+    <div class="panel b-warn">
+      <p class="eyebrow">Salah ketik yang ikut tergambar</p>
+      <p class="b-note">
+        Bagan alur langkah I memuat kotak berlabel
+        <code class="h-bad">TRANSCATION</code>. Seharusnya
+        <em>TRANSACTION</em>.
+      </p>
+      <p class="b-note">
+        Yang membuatnya menarik: label itu bukan teks biasa &mdash; ia bagian
+        dari <strong>gambar</strong>, diketik pas selebar kotaknya
+        (13&nbsp;aksara). Memperbaikinya berarti mengubah panjang teks di dalam
+        kotak yang lebarnya sudah tetap, dan itu berarti menghitung ulang
+        spasinya.
+      </p>
+      <p class="b-note">
+        Kebetulan <em>TRANSCATION</em> dan <em>TRANSACTION</em> sama-sama
+        sebelas aksara &mdash; jadi sebenarnya bisa diperbaiki tanpa
+        menyentuh apa pun yang lain. Tidak ada yang melakukannya.
+      </p>
+      <p class="b-note">
+        Dipertahankan apa adanya, seperti semua salah ketik lain di koleksi
+        ini.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Dua belas langkah, satu contoh</p>
+      <table class="h-tbl h-tbl--kiri" id="tbl-langkah"></table>
+      <p class="b-note">
+        Seluruh tutorial memakai satu perusahaan contoh: <strong>ABC
+        Hardware</strong>, bulan buku <strong>Juni 1982</strong>. Angka yang
+        sama &mdash; penjualan $12.045,00, laba bersih $2.500,00 &mdash;
+        muncul di beberapa berkas, dan tiap berkas mengetiknya ulang.
+      </p>
+      <p class="b-note">
+        Kalau angka itu perlu diubah, ia harus dicari di sepuluh berkas.
+        Tidak ada satu tempat pun yang bisa disebut &ldquo;sumber
+        kebenaran&rdquo;, karena tidak ada yang bertahan melewati
+        <code>RUN</code>.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/busone.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/BUSONE.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/BUSONE.BAS">BUSONE.BAS</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="../../_shared/reader.js"></script>
+<script src="pages.js"></script>
+<script src="busone.js"></script>
+</body>
+</html>

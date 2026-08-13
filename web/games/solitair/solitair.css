@@ -1,0 +1,132 @@
+/* ===========================================================================
+   solitair.css — khusus Klondyke Solitaire. Awalan `k-`.
+
+   Yang menyangkut KARTU tidak ada di sini; itu di `_shared/cards.css`, karena
+   sebelas program kartu sesudahnya akan memakainya. Yang di sini hanya MEJA:
+   tempat kartu diletakkan, dan jarak antar tempatnya.
+   =========================================================================== */
+
+.k-layout {
+  display: grid; gap: var(--s5);
+  grid-template-columns: minmax(500px, 1fr) minmax(300px, 400px);
+  align-items: start; padding-block: var(--s6) var(--s8);
+}
+@media (max-width: 1080px) { .k-layout { grid-template-columns: 1fr; } }
+
+/* Meja: hijau tua yang ikut tema, supaya kartu terang selalu punya lawan
+   gelap di belakangnya. Inilah permukaan yang berganti tema — kartunya
+   tidak, dan alasannya ada di cards.css. */
+.k-layout .screen {
+  background:
+    radial-gradient(120% 90% at 50% 0%,
+      color-mix(in srgb, var(--acc-phosphor) 13%, var(--bg-sunken)) 0%,
+      var(--bg-sunken) 70%);
+}
+
+.k-head {
+  display: flex; gap: var(--s5); align-items: flex-start;
+  flex-wrap: wrap; margin-bottom: var(--s5);
+}
+.k-found { display: flex; gap: var(--s3); margin-left: auto; }
+
+/* Tumpukan tertutup dan buangan: satu larik dan satu penunjuk di JS, dua
+   tempat di layar. Keduanya butuh tinggi tetap satu kartu supaya barisnya
+   tidak melompat saat kartu terakhir terangkat. */
+.k-stock, .k-waste { position: relative; height: 82px; }
+.k-stock { width: 58px; cursor: pointer; }
+.k-stock > .card { position: absolute; left: 0; }
+.k-stock:hover > .card:last-child { border-color: var(--acc-phosphor); }
+.k-waste { width: 58px; }
+.k-waste > .card { position: absolute; top: 0; }
+
+/* Hanya kartu teratas buangan yang bisa diambil; dua di bawahnya diredupkan
+   supaya jelas mana yang hidup tanpa harus dicoba dulu. */
+.k-waste > .card:not([data-pick]) { opacity: .55; }
+
+.k-num b { color: var(--ink-dim); font-variant-numeric: tabular-nums; }
+
+/* Zona jatuh sengaja SEDIKIT lebih besar daripada kartunya. Sasaran seret
+   yang persis sebesar kartu terasa meleset terus di layar sentuh. */
+.k-zone { padding: 3px; border-radius: var(--r); }
+.k-zone:has(.card--slot) { background: color-mix(in srgb, var(--ink) 4%, transparent); }
+
+.k-tab { display: flex; gap: var(--s3); align-items: flex-start; }
+.k-col { display: grid; gap: var(--s2); justify-items: start; }
+
+.k-num {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: .08em;
+  color: var(--ink-faint); text-transform: uppercase;
+}
+
+/* Tumpukan kosong pun harus tetap jadi sasaran seret, jadi `.fan` selalu
+   punya tinggi minimum satu kartu. */
+.fan { min-height: 82px; }
+
+.k-say {
+  font-family: var(--font-mono); font-size: var(--fs-sm);
+  color: var(--acc-phosphor); min-height: 1.6em;
+  margin-top: var(--s4); text-align: center;
+}
+.k-say--bad { color: var(--acc-red); }
+.k-say--big { color: var(--acc-amber); font-size: var(--fs-md); }
+
+/* Spanduk kemenangan: 82 bintang dari DATA baris 3040-3120, tidak diubah
+   satu titik pun. Aslinya digambar satu per satu dalam urutan acak di
+   SCREEN 1; di sini ia muncul utuh, dan urutannya diceritakan di bawahnya. */
+.k-banner {
+  margin-top: var(--s4); padding: var(--s4);
+  border: 1px solid var(--acc-amber); border-radius: var(--r);
+  background: var(--acc-amber-dim); text-align: center;
+}
+.k-banner pre {
+  margin: 0; font-family: var(--font-mono); font-size: 11px; line-height: 1.15;
+  color: var(--acc-amber); overflow-x: auto;
+}
+.k-banner p { margin-top: var(--s3); font-size: var(--fs-xs); color: var(--ink-dim); }
+
+/* Kartu yang sedang diseret. Melayang di atas segalanya dan tidak boleh
+   menangkap tetikus, supaya `elementFromPoint` melihat MEJA, bukan bayangan
+   kartunya sendiri. */
+.k-ghost {
+  position: fixed; z-index: 60; pointer-events: none;
+  width: 58px; opacity: .92;
+}
+.k-ghost > .card { position: absolute; left: 0; box-shadow: var(--shadow-3); }
+
+.k-cmdlbl { font-size: var(--fs-xs); color: var(--ink-dim);
+            text-transform: uppercase; letter-spacing: .08em; }
+.k-cmd {
+  width: 4.5rem; padding: 6px var(--s3);
+  border: 1px solid var(--edge); border-radius: var(--r-sm);
+  background: var(--bg-sunken); color: var(--acc-phosphor);
+  font-family: var(--font-mono); text-transform: uppercase; text-align: center;
+}
+.k-cmd:focus { border-color: var(--acc-phosphor); }
+
+.k-code {
+  margin-top: var(--s3); padding: var(--s3);
+  border: var(--border); border-radius: var(--r);
+  background: var(--bg-sunken); color: var(--acc-amber);
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.7;
+  overflow-x: auto; white-space: pre-wrap;
+}
+
+.k-table { width: 100%; border-collapse: collapse; margin-top: var(--s3);
+           font-size: var(--fs-xs); }
+.k-table td { padding: 4px var(--s2); border-bottom: 1px solid var(--line-soft);
+              color: var(--ink-dim); }
+.k-table td:first-child { font-family: var(--font-mono); color: var(--acc-amber);
+                          width: 7rem; }
+
+.k-note { font-size: var(--fs-sm); color: var(--ink-dim); margin-top: var(--s2);
+          line-height: var(--lh); }
+.k-warn { border-left: 3px solid var(--acc-amber); }
+
+/* Layar sempit: papannya DIGULUNG, bukan dikecilkan.
+
+   Godaannya adalah mengecilkan kartu lewat kueri media. Tapi jarak antar
+   kartu dalam satu jajaran dihitung di JS dalam piksel, jadi mengecilkan
+   kartu lewat CSS saja akan membuat jajarannya tumpang tindih — dua tempat
+   yang harus disepakati, dan CSS tidak bisa memberi tahu JS. Menggulung
+   tidak menuntut kesepakatan apa pun. */
+.k-tab { overflow-x: auto; padding-bottom: var(--s2); }

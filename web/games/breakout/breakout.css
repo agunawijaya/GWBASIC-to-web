@@ -1,0 +1,169 @@
+/* ===========================================================================
+   breakout.css — rupa lokal Spinout. Awalan `k-`.
+
+   PILOT ARKADE: keputusan rupa di sini diwarisi program arkade berikutnya.
+
+   ------------------------------------------------------------------------
+   DUA MODE, DAN KENAPA
+
+   Versi pertama halaman ini mengunci warnanya ke palet CGA, dengan alasan
+   "layar 1982 yang disesuaikan tema berhenti jadi bukti tentang layar 1982".
+   Alasan itu masih benar — tapi ia menjawab pertanyaan yang salah untuk
+   halaman ARKADE.
+
+   Halaman edukasi (HISTORY, ANATOMY, CHECK) memang alat baca: layarnya
+   adalah barang bukti, dan mengubahnya merusak gunanya. Halaman arkade
+   dimainkan. Yang harus setia di sini adalah FISIKANYA — dan fisika itu
+   justru lebih terlihat dengan jejak bola, bukan kurang.
+
+   Jadi: mode modern jadi bawaan, mode 1982 tetap ada satu tombol jauhnya,
+   dan keduanya menjalankan simulasi yang sama persis.
+
+   ------------------------------------------------------------------------
+   YANG TETAP BERLAKU DARI VERSI PERTAMA
+
+   TIDAK ADA TRANSISI CSS PADA APA PUN YANG DIPINDAH GELUNG PERMAINAN.
+   Bola, papan, dan partikel dipindah lewat atribut/transform tiap bingkai;
+   menambahkan `transition` di atasnya membuat CSS dan gelung berebut
+   mengendalikan nilai yang sama, dan hasilnya tersendat di laju bingkai
+   tertentu saja. Animasi CSS hanya dipakai untuk hal yang TIDAK dikendalikan
+   gelung: pecahnya bata, kembalinya bata, dan kedipan kemenangan.
+   =========================================================================== */
+
+.k-layout { display: grid; gap: var(--s5); align-items: start; }
+@media (min-width: 1000px) { .k-layout { grid-template-columns: minmax(0,1.15fr) minmax(0,1fr); } }
+
+.k-stage { display: grid; gap: var(--s4); }
+.k-lead { font-size: var(--fs-sm); }
+.k-lead strong { color: var(--ink); }
+.k-lead em { color: var(--ink); font-style: italic; }
+
+/* --- layar permainan ----------------------------------------------------- */
+
+.k-crt {
+  position: relative;
+  background:
+    radial-gradient(120% 90% at 50% -10%, #1b2a4a 0%, #0a1020 55%, #05070f 100%);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: inset 0 0 60px rgba(0,0,0,.55);
+}
+.k-svg { width: 100%; height: auto; display: block; }
+
+/* Kisi latar: sangat samar, hanya untuk memberi kedalaman. */
+.k-kisi { stroke: #ffffff; stroke-width: .3; opacity: .05; }
+
+/* Empat baris bata, empat rona. Urutannya mengikuti NILAI, bukan posisi:
+   baris terbawah bernilai 160 dan paling terang — supaya arah nilai yang
+   terbalik (lihat panel "6800 bukan angka ajaib") terlihat tanpa dibaca. */
+.k-bata { rx: 2.5; transform-box: fill-box; transform-origin: center; }
+.k-bata--r0 { fill: url(#g0); }
+.k-bata--r1 { fill: url(#g1); }
+.k-bata--r2 { fill: url(#g2); }
+.k-bata--r3 { fill: url(#g3); }
+
+@keyframes k-pecah {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(1.6); }
+}
+@keyframes k-kembali {
+  0%   { opacity: 0; transform: scale(2.2); }
+  60%  { opacity: 1; transform: scale(.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.k-bata--pecah  { opacity: 0; animation: k-pecah .22s ease-out; }
+.k-bata--kembali { animation: k-kembali .32s cubic-bezier(.2,1.4,.4,1); }
+
+.k-bingkai { stroke: #7f9bd6; stroke-width: 1; fill: none; opacity: .45; rx: 4; }
+
+.k-papan { fill: url(#gp); rx: 1.5; filter: url(#glow); }
+.k-papan--kena { fill: #ffffff; }
+
+.k-bola { fill: #fff8e6; filter: url(#glow); }
+.k-jejak { fill: #9fd8ff; }
+.k-spin  { fill: none; stroke: #ffd166; stroke-width: 1.2; stroke-linecap: round; }
+
+.k-pecahan { rx: .6; }
+.k-angka { fill: #ffffff; font-family: var(--font-mono); font-size: 7px;
+           font-weight: 700; text-anchor: middle; }
+
+/* Kedipan kemenangan (baris 980-1010): delapan putaran ganti warna. */
+@keyframes k-kilat { 0%,100% { filter: none; } 50% { filter: brightness(2.4) hue-rotate(70deg); } }
+.k-crt--menang { animation: k-kilat .16s steps(1) 8; }
+
+.k-pesan {
+  position: absolute; inset: auto 0 30% 0; text-align: center;
+  font-family: var(--font-mono); font-weight: 700;
+  font-size: clamp(11px, 2.4vw, 17px);
+  color: #ffffff; letter-spacing: .04em;
+  text-shadow: 0 0 10px rgba(120,180,255,.9), 0 2px 4px #000;
+  pointer-events: none;
+}
+.k-pesan:empty { display: none; }
+
+/* --- mode 1982: palet CGA apa adanya -------------------------------------
+   Satu kelas yang mengembalikan seluruh rupa ke SCREEN 1, COLOR 1,0. Efek
+   dimatikan di JS, bukan di sini — supaya tidak ada partikel yang tetap
+   dihitung lalu disembunyikan. */
+.k-crt--1982 { background: #0000aa; box-shadow: none; border-radius: var(--r); }
+.k-crt--1982 .k-kisi { display: none; }
+.k-crt--1982 .k-bata { rx: 0; }
+.k-crt--1982 .k-bata--r0, .k-crt--1982 .k-bata--r1 { fill: #aa0000; }
+.k-crt--1982 .k-bata--r2, .k-crt--1982 .k-bata--r3 { fill: #aa5500; }
+.k-crt--1982 .k-bata--pecah, .k-crt--1982 .k-bata--kembali { animation: none; }
+.k-crt--1982 .k-bingkai { stroke: #aa5500; opacity: 1; rx: 0; }
+.k-crt--1982 .k-papan { fill: #00aa00; filter: none; rx: 0; }
+.k-crt--1982 .k-bola { fill: #aa5500; filter: none; }
+.k-crt--1982 .k-pesan { color: #fff; text-shadow: 0 1px 3px #000; }
+
+/* --- hormati permintaan kurangi gerak ------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .k-crt--menang { animation: none; }
+  .k-bata--pecah, .k-bata--kembali { animation: none; }
+}
+
+/* --- kendali ------------------------------------------------------------- */
+
+.k-row { display: flex; gap: var(--s3); align-items: center; flex-wrap: wrap;
+         font-size: var(--fs-xs); color: var(--ink-dim); }
+.k-row--kecil input[type="range"] { width: 150px; vertical-align: middle; }
+.k-row select {
+  font: inherit; font-size: var(--fs-sm); font-family: var(--font-mono);
+  padding: 4px var(--s2);
+  background: var(--panel-2); color: var(--ink);
+  border: 1px solid var(--line); border-radius: var(--r-sm);
+}
+.k-cek { display: inline-flex; gap: 6px; align-items: center; }
+
+/* --- panel kanan --------------------------------------------------------- */
+
+.k-note { font-size: var(--fs-sm); color: var(--ink-dim); line-height: var(--lh); }
+.k-note + .k-note { margin-top: var(--s3); }
+.k-note strong { color: var(--ink); font-weight: 620; }
+.k-note em { color: var(--ink); font-style: italic; }
+.k-note code { font-family: var(--font-mono); font-size: .92em; color: var(--acc-blue); }
+
+.k-code {
+  font-family: var(--font-mono); font-size: var(--fs-xs);
+  background: var(--bg-sunken); border: 1px solid var(--line-soft);
+  border-radius: var(--r-sm); padding: var(--s3);
+  overflow-x: auto; color: var(--ink-dim); margin: var(--s3) 0; line-height: 1.6;
+}
+.k-code b { color: var(--acc-amber); font-weight: 700; }
+
+.k-tbl { width: 100%; border-collapse: collapse; margin: var(--s3) 0;
+         font-size: var(--fs-sm); }
+.k-tbl th { text-align: left; color: var(--ink-faint); font-weight: 600;
+            font-size: var(--fs-xs); text-transform: uppercase;
+            letter-spacing: .06em; padding: var(--s2) var(--s2) var(--s1); }
+.k-tbl td { padding: var(--s2); border-top: 1px solid var(--line-soft);
+            color: var(--ink-dim); vertical-align: top; }
+.k-tbl td:last-child { text-align: right; font-family: var(--font-mono); }
+.k-tbl--kiri td:last-child { text-align: left; font-family: inherit; }
+
+.k-good { border-left: 3px solid var(--acc-phosphor); }
+.k-warn { border-left: 3px solid var(--acc-amber); }
+.k-bad  { border-left: 3px solid var(--acc-red); }
+
+.m-links { font-size: var(--fs-xs); }

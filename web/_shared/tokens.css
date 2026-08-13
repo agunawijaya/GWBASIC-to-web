@@ -1,0 +1,137 @@
+/* ===========================================================================
+   tokens.css — satu-satunya tempat warna, jarak, dan tipografi ditetapkan.
+   Semua berkas lain hanya merujuk variabel di sini.
+
+   Jejak retro yang sengaja dipertahankan:
+     --acc-phosphor  hijau fosfor monitor monokrom
+     --acc-amber     kuning-jingga monitor amber
+     --font-mono     angka & kode tetap monospace, seperti di layar 80x25
+   Semua sisanya modern: kontras memenuhi WCAG AA, jarak berskala,
+   tipografi memakai font sistem (tidak ada font eksternal — harus jalan offline).
+   =========================================================================== */
+
+:root {
+  color-scheme: dark light;
+
+  /* --- permukaan ------------------------------------------------------- */
+  --bg:        #0e1116;   /* latar halaman */
+  --bg-sunken: #0a0d12;   /* area yang "masuk ke dalam", mis. layar permainan */
+  --panel:     #161b23;   /* kartu, panel, dialog */
+  --panel-2:   #1d242e;   /* panel bertumpuk di atas panel */
+  --line:      #252d38;   /* garis pemisah */
+  --line-soft: #1b222b;
+
+  /* --- teks ------------------------------------------------------------ */
+  --ink:       #e6edf3;   /* teks utama        — 13.6:1 di atas --bg */
+  --ink-dim:   #9aa7b6;   /* teks sekunder     —  6.4:1 */
+  --ink-faint: #667383;   /* teks paling redup —  3.9:1, hanya untuk non-teks */
+
+  /* --- aksen ----------------------------------------------------------- */
+  --acc-phosphor: #4ef08a;  /* aksi utama, keberhasilan */
+  --acc-amber:    #f0b429;  /* sorotan, peringatan lunak */
+  --acc-blue:     #4aa3df;  /* tautan, informasi */
+  --acc-red:      #f2726a;  /* galat, kalah */
+  --acc-violet:   #a97bd6;  /* aksen keempat untuk grafik */
+
+  --acc-phosphor-dim: #1e3f2c;
+  --acc-amber-dim:    #3d3117;
+  --acc-red-dim:      #3d211f;
+
+  /* --- tipografi ------------------------------------------------------- */
+  --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas,
+               "Liberation Mono", monospace;
+
+  --fs-xs:  0.75rem;   --fs-sm:  0.8125rem;  --fs-md: 0.9375rem;
+  --fs-lg:  1.125rem;  --fs-xl:  1.5rem;     --fs-2xl: clamp(1.5rem,3.2vw,2.1rem);
+  --lh-tight: 1.25;    --lh: 1.55;
+
+  /* --- ruang (skala 4px) ----------------------------------------------- */
+  --s1: 4px;  --s2: 8px;  --s3: 12px; --s4: 16px;
+  --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px;
+
+  /* --- bentuk ---------------------------------------------------------- */
+  --r-sm: 6px; --r: 10px; --r-lg: 16px; --r-pill: 999px;
+  --border: 1px solid var(--line);
+
+  /* --- garis untuk KONTROL, bukan untuk pemisah -------------------------
+     Dua kali di proyek ini `--line` dipakai sebagai batas tombol dan batas
+     pasak, dan dua kali hasilnya tidak terlihat. Bukan soal selera:
+
+         --line di atas --bg-sunken   1,40 : 1  (tema gelap)
+                                      1,10 : 1  (tema terang)
+
+     Ambang WCAG untuk komponen antarmuka non-teks adalah 3,0 : 1. `--line`
+     memang dirancang sebagai garis pemisah antar permukaan yang warnanya
+     berdekatan — tugasnya justru TIDAK menonjol.
+
+     Yang di bawah ini diturunkan dari warna TEKS, sehingga kontrasnya ikut
+     berpindah bersama tema. `var(--ink)` di dalamnya diselesaikan di tempat
+     ia DIPAKAI, jadi satu definisi ini otomatis benar di kedua tema.
+
+     Aturannya: batas yang harus terlihat -> --edge. Garis yang memisahkan
+     dua permukaan -> --line. */
+  --edge:        color-mix(in srgb, var(--ink) 48%, transparent);   /* >= 3:1 */
+  --edge-strong: color-mix(in srgb, var(--ink) 62%, transparent);   /* hover, pasak */
+  --edge-soft:   color-mix(in srgb, var(--ink) 32%, transparent);   /* tempat kosong */
+
+  --shadow-1: 0 1px 2px rgba(0,0,0,.35);
+  --shadow-2: 0 4px 14px rgba(0,0,0,.4);
+  --shadow-3: 0 12px 34px rgba(0,0,0,.5);
+  --glow: 0 0 0 3px color-mix(in srgb, var(--acc-phosphor) 28%, transparent);
+
+  /* --- gerak ----------------------------------------------------------- */
+  --t-fast: 110ms; --t: 200ms; --t-slow: 420ms;
+  --ease: cubic-bezier(.2,.7,.3,1);
+
+  --wrap: 1100px;   /* lebar konten maksimum */
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg:        #f2f5f8;
+    --bg-sunken: #e7ecf2;
+    --panel:     #ffffff;
+    --panel-2:   #f6f8fb;
+    --line:      #dbe2ea;
+    --line-soft: #e8edf3;
+
+    --ink:       #0f161d;
+    --ink-dim:   #4e5b6a;
+    --ink-faint: #6d7987;
+
+    --acc-phosphor: #12855a;
+    --acc-amber:    #a86c05;
+    --acc-blue:     #1668a8;
+    --acc-red:      #c2352c;
+    --acc-violet:   #7343a8;
+
+    --acc-phosphor-dim: #d7f2e4;
+    --acc-amber-dim:    #faeecd;
+    --acc-red-dim:      #fadedb;
+
+    --shadow-1: 0 1px 2px rgba(16,24,32,.08);
+    --shadow-2: 0 4px 14px rgba(16,24,32,.10);
+    --shadow-3: 0 12px 34px rgba(16,24,32,.14);
+  }
+}
+
+/* Pengguna bisa memaksa tema lewat <html data-theme="light|dark">.
+   Ini harus menang atas media query di atas, jadi ditulis sesudahnya. */
+:root[data-theme="light"] {
+  --bg:#f2f5f8; --bg-sunken:#e7ecf2; --panel:#fff; --panel-2:#f6f8fb;
+  --line:#dbe2ea; --line-soft:#e8edf3;
+  --ink:#0f161d; --ink-dim:#4e5b6a; --ink-faint:#6d7987;
+  --acc-phosphor:#12855a; --acc-amber:#a86c05; --acc-blue:#1668a8;
+  --acc-red:#c2352c; --acc-violet:#7343a8;
+  --acc-phosphor-dim:#d7f2e4; --acc-amber-dim:#faeecd; --acc-red-dim:#fadedb;
+}
+:root[data-theme="dark"] {
+  --bg:#0e1116; --bg-sunken:#0a0d12; --panel:#161b23; --panel-2:#1d242e;
+  --line:#252d38; --line-soft:#1b222b;
+  --ink:#e6edf3; --ink-dim:#9aa7b6; --ink-faint:#667383;
+  --acc-phosphor:#4ef08a; --acc-amber:#f0b429; --acc-blue:#4aa3df;
+  --acc-red:#f2726a; --acc-violet:#a97bd6;
+  --acc-phosphor-dim:#1e3f2c; --acc-amber-dim:#3d3117; --acc-red-dim:#3d211f;
+}

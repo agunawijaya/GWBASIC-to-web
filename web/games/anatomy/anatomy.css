@@ -1,0 +1,141 @@
+/* ===========================================================================
+   anatomy.css — rupa lokal ANATOMY. Yang umum ada di reader.css.
+
+   Bagian terpentingnya adalah tiruan layar 80x25: bukan hiasan, melainkan
+   ALAT UKUR. Baris 23 layar adalah tempat pesan nomor halaman ditulis, dan
+   di halaman 9 baris terakhir listingnya mendarat di baris yang sama. Kalau
+   layarnya digambar sebagai teks yang mengalir bebas, tabrakan itu tidak
+   akan pernah terlihat — jadi di sini tinggi baris dan nomor kolom dijaga
+   persis, dan kaki layarnya dipasang pada baris 23/24/25 secara mutlak.
+   =========================================================================== */
+
+.a-layout { display: grid; gap: var(--s5); align-items: start; }
+/* Kolom permainan lebih lebar daripada halaman lain di koleksi ini, dan
+   alasannya bisa dihitung: layarnya 80 kolom, dan di bawah 11px huruf
+   monospace-nya berhenti bisa dibaca. 80 kolom x 11px x 0,6 = 528px, jadi
+   kolomnya harus lebih lebar dari itu — bukan angka selera. */
+@media (min-width: 1000px) { .a-layout { grid-template-columns: minmax(0,1.5fr) minmax(0,1fr); } }
+
+.a-stage { display: grid; gap: var(--s4); }
+.a-lead { font-size: var(--fs-sm); }
+.a-lead strong { color: var(--ink); }
+
+/* --- layar 80x25 --------------------------------------------------------- */
+
+.a-crt {
+  container-type: inline-size;
+  background: #05070a;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: var(--s3);
+  overflow-x: auto;
+}
+
+/* 80 kolom monospace ≈ 48em, jadi 1,92cqi mengisi ≈ 92% lebar wadahnya.
+   Batas BAWAH-nya 11px dan itu yang menang kalau wadahnya sempit: lebih baik
+   layarnya digeser mendatar daripada listingnya menyusut sampai tidak
+   terbaca. Geometri 80 kolomnya tetap utuh di kedua kasus — dan itu syarat,
+   karena tabrakan di baris 23 hanya terukur kalau kolomnya benar. */
+.a-scr {
+  position: relative;
+  font-family: var(--font-mono);
+  font-size: clamp(11px, 1.92cqi, 15px);
+  --lh: 1.3em;
+  line-height: var(--lh);
+  width: 80ch;
+  min-height: calc(25 * var(--lh));
+  color: #4fd6e8;                 /* COLOR 3 — cyan CGA */
+  white-space: pre-wrap;
+  word-break: break-all;          /* teks 1982 memang dipotong di kolom 80 */
+}
+
+.a-inv { background: #b9c6cf; color: #05070a; }   /* COLOR 0,7 */
+.a-hi  { color: #eef4f8; }                        /* COLOR 15 */
+
+.a-row { position: absolute; left: 0; right: 0; height: var(--lh); }
+.a-r1  { top: 0;                    padding-left: 27ch; }
+.a-r23 { top: calc(22 * var(--lh)); padding-left: 16ch; }
+.a-r24 { top: calc(23 * var(--lh)); padding-left: 11ch; }
+.a-r25 { top: calc(24 * var(--lh)); padding-left: 22ch; }
+
+.a-list { padding-top: calc(2 * var(--lh)); }
+
+/* --- pewarnaan listing --------------------------------------------------- */
+
+.a-ln { display: block; }
+.a-num { color: #f0b429; }                        /* nomor baris MASTER MIND */
+.a-kw  { color: #eef4f8; font-weight: 600; }      /* kata kunci BASIC */
+.a-str { color: #6ee89a; }                        /* string */
+.a-cmt { color: #7f8c98; }
+
+/* Mode banding: latar tipis di belakang baris, bukan warna teks — supaya
+   pewarnaan sintaksis tidak hilang saat mode ini dinyalakan. Dua lapis
+   informasi di tempat yang sama hanya bisa hidup kalau memakai saluran yang
+   berbeda. */
+.a-scr--banding .a-ln--nomor { background: color-mix(in srgb, #f0b429 16%, transparent); }
+.a-scr--banding .a-ln--tulis { background: color-mix(in srgb, #f2726a 22%, transparent); }
+.a-scr--banding .a-ln--sama  { background: color-mix(in srgb, #4ef08a 10%, transparent); }
+
+.a-key { padding: 1px 6px; border-radius: var(--r-pill);
+         font-size: var(--fs-xs); font-family: var(--font-mono); }
+.a-key--sama  { background: color-mix(in srgb, var(--acc-phosphor) 22%, transparent);
+                color: var(--acc-phosphor); }
+.a-key--nomor { background: color-mix(in srgb, var(--acc-amber) 22%, transparent);
+                color: var(--acc-amber); }
+.a-key--tulis { background: color-mix(in srgb, var(--acc-red) 22%, transparent);
+                color: var(--acc-red); }
+
+/* --- kepala halaman ------------------------------------------------------ */
+
+.a-kepala { display: flex; align-items: baseline; gap: var(--s3); flex-wrap: wrap; }
+.a-kepala h2 { font-size: var(--fs-md); font-weight: 620; color: var(--ink); }
+.a-kepala .mono { font-size: var(--fs-xs); color: var(--ink-faint); }
+
+.a-alat { display: flex; gap: var(--s3); align-items: center; flex-wrap: wrap; }
+
+/* --- catatan halaman ----------------------------------------------------- */
+
+.a-catatan p { font-size: var(--fs-sm); color: var(--ink-dim); line-height: var(--lh); }
+.a-catatan p + p { margin-top: var(--s3); }
+.a-catatan strong { color: var(--ink); font-weight: 620; }
+.a-catatan code { font-family: var(--font-mono); font-size: .92em; color: var(--acc-blue); }
+
+.a-tag { margin-left: var(--s2); padding: 1px 8px; border-radius: var(--r-pill);
+         background: var(--acc-amber-dim); color: var(--acc-amber);
+         font-size: 10px; letter-spacing: .04em; text-transform: none; }
+
+/* --- panel kanan --------------------------------------------------------- */
+
+.a-note { font-size: var(--fs-sm); color: var(--ink-dim); line-height: var(--lh); }
+.a-note + .a-note { margin-top: var(--s3); }
+.a-note strong { color: var(--ink); font-weight: 620; }
+.a-note code, .a-catatan code { font-family: var(--font-mono); }
+
+.a-poin li { font-size: var(--fs-sm); color: var(--ink-dim); }
+.a-poin { margin-top: var(--s3); padding-left: var(--s5); display: grid; gap: var(--s1); }
+
+.a-code {
+  font-family: var(--font-mono); font-size: var(--fs-xs);
+  background: var(--bg-sunken); border: 1px solid var(--line-soft);
+  border-radius: var(--r-sm); padding: var(--s3);
+  overflow-x: auto; color: var(--ink-dim); margin: var(--s3) 0;
+  line-height: 1.5;
+}
+.a-code b { color: var(--acc-amber); font-weight: 700; }
+
+.a-tbl { width: 100%; border-collapse: collapse; margin: var(--s3) 0;
+         font-size: var(--fs-sm); }
+.a-tbl th { text-align: left; color: var(--ink-faint); font-weight: 600;
+            font-size: var(--fs-xs); text-transform: uppercase;
+            letter-spacing: .06em; padding: var(--s2) var(--s2) var(--s1); }
+.a-tbl td { padding: var(--s2); border-top: 1px solid var(--line-soft);
+            color: var(--ink-dim); vertical-align: top; }
+.a-tbl td:last-child { text-align: right; font-family: var(--font-mono); }
+.a-tbl--kiri td:last-child { text-align: left; font-family: inherit; }
+
+.a-good  { border-left: 3px solid var(--acc-phosphor); }
+.a-warn  { border-left: 3px solid var(--acc-amber); }
+.a-bad   { color: var(--acc-red); }
+.a-tbl .a-good, code.a-good { color: var(--acc-phosphor); border: 0; }
+
+.m-links { font-size: var(--fs-xs); }

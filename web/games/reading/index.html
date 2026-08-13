@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tachistoscope — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari READING.BAS + WORDS.BAS (1982): pelatih kecepatan baca yang datanya disisipkan lewat CHAIN MERGE, menghitung isinya dengan sengaja menabrak galat, dan satu dari enam pujiannya kosong. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="reading.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap r-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="r-stage">
+
+        <div class="r-crt">
+          <div class="r-scr" id="scr">
+            <div class="r-garis"></div>
+            <div class="r-kilat" id="kilat"></div>
+            <div class="r-garis"></div>
+          </div>
+          <p class="r-pesan" id="pesan">&nbsp;</p>
+        </div>
+
+        <div class="r-row">
+          <button class="btn btn--primary" id="mulai" type="button">Tampilkan kata</button>
+          <label class="r-inp">Ketik yang Anda baca
+            <input type="text" id="jawab" autocomplete="off" spellcheck="false" disabled>
+          </label>
+          <button class="btn btn--ghost" id="kirim" type="button" disabled>Periksa</button>
+        </div>
+
+        <div class="r-row r-row--kecil">
+          <label>Kalibrasi kilatan
+            <input type="range" id="ms" min="0.10" max="1.20" step="0.01" value="0.40">
+            <span class="mono" id="msv"></span> per putaran</label>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k" id="k-kata"></span>
+      <span class="ruleset__k">36 keluarga fonik</span>
+      <span class="ruleset__k">CHAIN MERGE</span>
+      <span class="ruleset__k">1 dari 6 pujian kosong</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">T1 · lama kilatan</span>
+        <span class="stat__value mono" id="s-t1">—</span></div>
+      <div class="stat"><span class="stat__label">T4 · langkah</span>
+        <span class="stat__value mono" id="s-t4">—</span></div>
+      <div class="stat stat--good"><span class="stat__label">Benar</span>
+        <span class="stat__value mono" id="s-benar">0</span></div>
+      <div class="stat stat--bad"><span class="stat__label">Salah</span>
+        <span class="stat__value mono" id="s-salah">0</span></div>
+      <div class="stat stat--warn"><span class="stat__label">Pujian kosong</span>
+        <span class="stat__value mono" id="s-kosong">0</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <p class="r-lead">
+        <strong>Tachistoscope</strong> &mdash; alat latih kecepatan baca. Sebuah
+        kata dikilatkan sebentar, lalu Anda mengetik apa yang sempat terbaca.
+        Benar, kilatannya dipersingkat; salah, dipanjangkan.
+      </p>
+      <ol class="howto__steps">
+        <li>Tekan <strong>Tampilkan kata</strong>. Kata muncul di antara dua
+            garis, lalu hilang.</li>
+        <li>Ketik persis apa yang Anda lihat, lalu <kbd>Enter</kbd>.
+            Perbandingannya <strong>peka huruf besar-kecil</strong>, sama
+            seperti <code>IF R=S</code> di baris 160.</li>
+        <li>Salah sekali, Anda dapat satu kesempatan lagi. Salah dua kali,
+            jawabannya ditampilkan.</li>
+      </ol>
+      <p>
+        Aslinya lama kilatan dihitung dalam <strong>putaran perulangan
+        kosong</strong> (<code>FOR I=1 TO T1:NEXT</code>), bukan dalam detik
+        &mdash; jadi kecepatannya tergantung kecepatan prosesor. Penggeser di
+        atas menyatakan berapa milidetik satu putaran itu di PC 4,77&nbsp;MHz;
+        panel di sebelah menjelaskan kenapa angka itu harus ditebak.
+      </p>
+    </details>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel r-good">
+      <p class="eyebrow">Data yang disisipkan ke dalam program yang sedang jalan</p>
+<pre class="r-code">74 <b>CHAIN MERGE "words", 75, ALL</b>
+75 GOSUB 1000:T1=1000:T4=100…</pre>
+      <p class="r-note">
+        <code>CHAIN MERGE</code> memuat <code>WORDS.BAS</code>
+        <strong>ke dalam program yang sedang berjalan</strong>, menggabungkan
+        baris-barisnya, lalu meneruskan eksekusi di baris 75. <code>ALL</code>
+        berarti seluruh variabel dipertahankan.
+      </p>
+      <p class="r-note">
+        Ini bukan <code>RUN "words"</code>, yang akan membuang programnya. Ini
+        <strong>penyisipan</strong>: sesudah baris 74, program yang berjalan
+        adalah <code>READING</code> <em>plus</em> 36 baris <code>DATA</code>
+        yang tadinya berkas terpisah.
+      </p>
+      <p class="r-note">
+        <code>WORDS.BAS</code> bernomor <strong>10000&ndash;10350</strong>,
+        sedangkan induknya 5&ndash;2020. Jarak itu bukan gaya &mdash; ia
+        satu-satunya cara mencegah tabrakan. <strong>Nomor baris adalah ruang
+        nama, dan pemisahannya dijaga dengan kesepakatan, bukan oleh
+        bahasa.</strong>
+      </p>
+      <p class="r-note">
+        Satu-satunya pemakaian <code>CHAIN MERGE</code> di seluruh koleksi ini.
+        Sepupunya yang lebih kasar: <code>RUN "nama"</code> yang dipakai
+        <a href="../intro/index.html">INTRO</a> dan
+        <a href="../history/index.html">HISTORY</a> &mdash; itu membuang semua
+        variabel; yang ini tidak.
+      </p>
+    </div>
+
+    <div class="panel r-good">
+      <p class="eyebrow">Menghitung isi <code>DATA</code> dengan sengaja menabraknya</p>
+<pre class="r-code">1000 ON ERROR GOTO 1050
+1010 RESTORE:L=0
+1020 READ X$:L=L+1:GOTO 1020
+1050 RETURN</pre>
+      <p class="r-note">
+        Perulangan tanpa syarat berhenti. Ia membaca butir demi butir sampai
+        <code>DATA</code> habis, dan <strong>galat &ldquo;Out of
+        DATA&rdquo;-lah yang menghentikannya</strong>. Penangan galat langsung
+        <code>RETURN</code>, membawa <code>L</code> berisi jumlahnya.
+      </p>
+      <p class="r-note">
+        Kenapa begitu? Karena BASIC tidak punya cara bertanya
+        <em>&ldquo;ada berapa butir <code>DATA</code>?&rdquo;</em>. Dan
+        menuliskan jumlahnya sebagai angka akan salah begitu ada yang menambah
+        satu baris ke <code>WORDS.BAS</code>.
+      </p>
+      <p class="r-note">
+        Jadi ini bukan penyalahgunaan &mdash; ini <strong>satu-satunya
+        cara</strong> membuat jumlahnya selalu benar. Hasilnya:
+        <strong id="n-butir">…</strong> butir, dihitung ulang tiap kali program
+        dijalankan.
+      </p>
+      <p class="r-note">
+        Harganya: <code>ON ERROR</code> menyala selama itu, jadi galat apa pun
+        yang lain juga akan diam-diam masuk ke <code>RETURN</code>. Baris 1050
+        tidak pernah memeriksa <em>galat apa</em> yang terjadi.
+      </p>
+    </div>
+
+    <div class="panel r-warn">
+      <p class="eyebrow">Satu dari enam pujian kosong</p>
+<pre class="r-code">78 C(1)="Right":C(2)="Correct":C(3)="Absolutely"
+   C(4)="You're doing OK!":C(5)="I knew you'd get that one"
+    …
+500 COLOR 0,7:I=<b>RND(6)*6+1</b>:X=40-LEN(C(I))/2:LOCATE 12,X:PRINT C(I)</pre>
+      <p class="r-note">
+        Lima pujian didefinisikan: <code>C(1)</code> sampai <code>C(5)</code>.
+        Tapi <code>RND(6)*6+1</code> menghasilkan nilai di rentang
+        <strong>[1, 7)</strong>, dan indeks larik BASIC memotong ke bawah
+        &mdash; jadi <code>I</code> bisa <strong>6</strong>.
+      </p>
+      <p class="r-note">
+        <code>C(6)</code> tidak pernah diisi, dan larik string BASIC berisi
+        string kosong. Jadi <strong>satu dari enam jawaban benar</strong>
+        dihargai dengan… tidak ada apa-apa. Bunyi kemenangannya tetap
+        berbunyi; layarnya diam.
+      </p>
+      <p class="r-note">
+        Perbaikannya satu aksara: <code>RND(6)*5+1</code>. Dan cacatnya nyaris
+        mustahil terlihat dari membaca, karena yang salah adalah
+        <strong>hubungan</strong> antara baris 78 dan baris 500 &mdash;
+        keduanya benar kalau dibaca sendiri-sendiri.
+      </p>
+      <p class="r-note">
+        Dipertahankan di port. Papan angka di bawah layar menghitung berapa
+        kali Anda mendapat pujian kosong &mdash; itu satu-satunya tambahan.
+      </p>
+    </div>
+
+    <div class="panel r-warn">
+      <p class="eyebrow">Satu kesalahan memperlambat kemajuan selamanya</p>
+<pre class="r-code">75  T1=1000:<b>T4=100</b>      ' awal
+520 T1=T1-T4:RETURN      ' benar  -> kilatan dipersingkat
+600 PLAY "n50n25":<b>T4=10</b>   ' salah  -> langkahnya diperkecil
+650 T1=T1+T4:RETURN      ' salah  -> kilatan dipanjangkan</pre>
+      <p class="r-note">
+        <code>T4</code> adalah besar langkah. Ia mulai dari 100 dan
+        <strong>diubah jadi 10 pada kesalahan pertama</strong> &mdash; lalu
+        tidak pernah dikembalikan.
+      </p>
+      <p class="r-note">
+        Jadi sesudah satu kesalahan, tiap jawaban benar hanya memangkas
+        kilatan <strong>sepersepuluh</strong> dari sebelumnya. Untuk turun dari
+        1000 ke 500 butuh 5 jawaban benar sebelum kesalahan pertama, dan
+        <strong>50 sesudahnya</strong>.
+      </p>
+      <p class="r-note">
+        Apakah ini disengaja? Bisa dibaca sebagai &ldquo;melangkah lebih
+        hati-hati sesudah gagal&rdquo; &mdash; itu masuk akal. Yang membuatnya
+        meragukan: tidak ada jalan kembali, dan tidak ada komentar. Sebuah
+        keputusan pedagogis dan sebuah kelalaian terlihat persis sama di sini.
+      </p>
+      <p class="r-note">
+        Dipertahankan, dan <code>T4</code> ditampilkan di papan angka supaya
+        perubahannya bisa dilihat saat terjadi.
+      </p>
+    </div>
+
+    <div class="panel r-warn">
+      <p class="eyebrow">Lama kilatan diukur dalam putaran, bukan detik</p>
+<pre class="r-code">140 FOR I=1 TO T1:NEXT I:CLS</pre>
+      <p class="r-note">
+        Perulangan kosong sebanyak <code>T1</code> putaran. Bukan
+        <code>SLEEP</code>, bukan pembacaan jam &mdash; hanya membuang waktu
+        prosesor.
+      </p>
+      <p class="r-note">
+        Akibatnya, <strong>lama kilatan ditentukan kecepatan mesin</strong>.
+        Pada PC 4,77&nbsp;MHz, seribu putaran <code>FOR/NEXT</code> yang
+        ditafsirkan GW-BASIC memakan sekitar empat persepuluh detik. Pada
+        mesin sekarang, perulangan yang sama selesai dalam mikrodetik &mdash;
+        katanya tidak akan pernah terlihat sama sekali.
+      </p>
+      <p class="r-note">
+        Karena itu port ini <strong>tidak bisa</strong> meniru baris 140 apa
+        adanya. Yang ditiru adalah <em>angkanya</em>: <code>T1</code> tetap
+        berjalan dari 1000 dan berubah dengan aturan yang sama, lalu dikalikan
+        sebuah konstanta milidetik yang <strong>bisa Anda geser sendiri</strong>
+        &mdash; karena angka aslinya memang tidak pernah tertulis di mana pun.
+      </p>
+      <p class="r-note">
+        Sepupunya: rutin tunggu di baris 2000&ndash;2020, yang justru
+        <em>membaca jam</em>. Program yang sama memakai dua cara mengukur waktu
+        yang berbeda, dan yang lebih baik dipakai untuk pekerjaan yang lebih
+        remeh.
+      </p>
+    </div>
+
+    <div class="panel r-warn">
+      <p class="eyebrow">Jam yang mengira satu jam sama dengan dua menit</p>
+<pre class="r-code">2000 T$=TIME$:T3=VAL(LEFT$(T$,2))*<b>120</b>+VAL(MID$(T$,4,2))*60+VAL(RIGHT$(T$,2))</pre>
+      <p class="r-note">
+        Menit dikalikan 60, detik dikalikan 1 &mdash; benar. Jam dikalikan
+        <strong>120</strong>, padahal seharusnya <strong>3600</strong>.
+      </p>
+      <p class="r-note">
+        Rumus yang sama muncul tiga kali: baris 75 (menyemai pengacak), 2000,
+        dan 2010. Salah ketik yang disalin bersama barisnya.
+      </p>
+      <p class="r-note">
+        Kenapa tidak pernah ketahuan? Karena rutin itu hanya memakai
+        <strong>selisih</strong> dua pembacaan yang berjarak lima detik. Selama
+        keduanya jatuh di jam yang sama, komponen jam saling menghapus dan
+        hasilnya tepat.
+      </p>
+      <p class="r-note">
+        Ia hanya salah kalau kilatan kebetulan melintasi pergantian jam
+        &mdash; satu kali dalam 720 kesempatan, dan akibatnya cuma menunggu
+        sedikit lebih sebentar. Cacat nyata yang tidak pernah cukup besar untuk
+        dilaporkan siapa pun.
+      </p>
+      <p class="r-note">
+        Pola yang sama persis dengan <a href="../../docs/bio.md">BIO</a>: rumus
+        yang salah, tapi dipakai lewat pengurangan sehingga salahnya lenyap.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Koma yang hilang, dan lima kata kembar</p>
+      <table class="r-tbl" id="tbl-kata"></table>
+      <p class="r-note">
+        Baris 10320 seharusnya <code>…,water,father</code>. Komanya tertinggal,
+        jadi <code>READ</code> membacanya sebagai <strong>satu butir</strong>
+        sepanjang dua belas aksara: <code>"water father"</code>.
+      </p>
+      <p class="r-note">
+        Kalau butir itu terpilih, Anda harus mengetik keduanya lengkap dengan
+        spasinya. Coba saja &mdash; ia masih ada di sini.
+      </p>
+      <p class="r-note">
+        Lima kata muncul dua kali, dan kelimanya karena baris terakhir
+        (<code>one</code>&hellip;<code>ten</code>) mengulang kata yang sudah
+        ada di keluarga fonik sebelumnya. Itu <em>bukan</em> cacat: baris
+        terakhir mengajarkan angka, bukan bunyi.
+      </p>
+      <p class="r-note">
+        Tiga puluh enam baris, tiga puluh enam <strong>keluarga fonik</strong>
+        &mdash; bunyi yang sama, bukan makna yang sama. Baris 10000 semuanya
+        /a/ pendek, 10010 /e/ pendek, 10070 bunyi <em>sh</em>. Sebuah kurikulum
+        membaca yang disimpan sebagai <code>DATA</code>.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/reading.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/READING.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/READING.BAS">READING.BAS</a> &middot;
+      <a href="../../../run/WORDS.BAS">WORDS.BAS</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="words.js"></script>
+<script src="reading.js"></script>
+</body>
+</html>

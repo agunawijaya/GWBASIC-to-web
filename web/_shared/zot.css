@@ -1,0 +1,128 @@
+/* ===========================================================================
+   zot.css — tata letak bersama WIZARD dan TEMPLE. Awalan `zot-`.
+
+   Petanya 8x8 dan tiap kamar dulu SATU HURUF. Sekarang tiap kamar sebuah
+   gambar — tapi hurufnya tetap dicetak di pojok petak, karena huruf itulah
+   bahasa layar bantuan di baris 3700-3740, dan itu yang dibaca pemain 1980.
+   =========================================================================== */
+
+.zot-layout { display: grid; gap: var(--s5); align-items: start; }
+@media (min-width: 1040px) {
+  .zot-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
+
+.zot-atas { display: grid; gap: var(--s4); min-width: 0; }
+.zot-petaLuar { min-width: 0; }
+.zot-peta {
+  background: #05070e; border: 1px solid var(--line); border-radius: var(--r);
+  padding: 4px; min-width: 0; overflow: hidden;
+}
+.zot-svg { display: block; width: 100%; height: auto; }
+
+/* Petak yang sedang ditempati berdenyut pelan — satu-satunya gerak di peta,
+   supaya mata langsung menemukan diri sendiri di antara 64 kamar. */
+.zot-kini { animation: zot-denyut 2.6s ease-in-out infinite; }
+@keyframes zot-denyut { 0%,100% { opacity: 1; } 50% { opacity: .72; } }
+@media (prefers-reduced-motion: reduce) { .zot-kini { animation: none; } }
+
+.zot-legenda { margin-top: var(--s2); }
+
+/* --- status ---------------------------------------------------------------- */
+
+.zot-status { margin: 0; display: grid; min-width: 0;
+             grid-template-columns: repeat(auto-fit, minmax(min(100%, 118px), 1fr));
+             gap: var(--s2) var(--s3); }
+.zot-pasang { min-width: 0; display: grid; gap: 1px; align-content: start; }
+.zot-pasang--lebar { grid-column: 1 / -1; }
+.zot-status dt { font-size: var(--fs-xs); color: var(--ink-dim);
+                text-transform: uppercase; letter-spacing: .05em;
+                white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.zot-status dd { margin: 0; min-width: 0; }
+.zot-nilai { font-size: var(--fs-sm); font-weight: 620;
+            font-variant-numeric: tabular-nums; }
+.zot-menangTeks { color: var(--acc-phosphor); }
+
+/* Delapan harta: yang belum dimiliki tetap terlihat, karena daftar lengkapnya
+   adalah bagian dari informasi — Anda perlu tahu apa yang masih kurang. */
+.zot-harta { display: flex; flex-wrap: wrap; gap: 4px; margin-top: var(--s3); }
+.zot-permata {
+  font-size: 10px; letter-spacing: .04em; padding: 2px 7px;
+  border-radius: var(--r-pill); border: 1px solid var(--line-soft);
+  color: var(--ink-faint); white-space: nowrap;
+}
+.zot-punya {
+  border-color: var(--acc-phosphor); color: var(--acc-phosphor);
+  background: color-mix(in srgb, var(--acc-phosphor) 12%, transparent);
+}
+
+/* --- catatan --------------------------------------------------------------- */
+
+.zot-log {
+  margin-top: var(--s3);
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.5;
+  color: #cfe0d4;
+  background: #070c10; border: 1px solid var(--line); border-radius: var(--r);
+  padding: var(--s3);
+  height: clamp(190px, 30vh, 320px);
+  overflow-y: auto; overflow-x: auto; white-space: pre; min-width: 0;
+}
+.zot-baris { min-height: 1.5em; }
+.zot-kamu   { color: var(--acc-amber); }
+.zot-judul  { color: #e6d9ff; }
+.zot-bahaya { color: var(--acc-red); }
+.zot-menang { color: var(--acc-phosphor); }
+
+/* --- masukan --------------------------------------------------------------- */
+
+.zot-masuk { display: flex; gap: var(--s2); align-items: center;
+            margin-top: var(--s3); min-width: 0; }
+.zot-prompt { font-family: var(--font-mono); font-size: var(--fs-xs);
+             color: var(--acc-phosphor); white-space: nowrap;
+             max-width: 26ch; overflow: hidden; text-overflow: ellipsis; }
+.zot-ketik {
+  flex: 1 1 auto; min-width: 0;
+  font-family: var(--font-mono); font-size: var(--fs-sm);
+  padding: .45rem .6rem;
+  background: var(--bg-sunken); color: var(--ink);
+  border: 1px solid var(--edge); border-radius: var(--r-sm);
+}
+.zot-ketik:focus-visible { outline: 2px solid var(--acc-phosphor); outline-offset: 1px; }
+.zot-ketik:disabled { opacity: .5; }
+
+.zot-tombolBaris { display: flex; flex-wrap: wrap; gap: var(--s2);
+                  margin-top: var(--s3); }
+.zot-alat { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s3);
+           align-items: center; margin-top: var(--s3); }
+.zot-kecil { font-size: var(--fs-xs); color: var(--ink-dim); }
+.zot-kecil code { font-family: var(--font-mono); color: var(--acc-amber); }
+.zot-skor { margin: 0; padding-left: 1.1em; font-size: var(--fs-sm); }
+
+/* --- panel ----------------------------------------------------------------- */
+
+.zot-note { font-size: var(--fs-sm); line-height: 1.65; }
+.zot-good { border-left: 3px solid #46c17f; }
+.zot-warn { border-left: 3px solid #e0a020; }
+.zot-bad  { border-left: 3px solid #c0503f; }
+.zot-salah { color: var(--acc-red); }
+
+.zot-code {
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.55;
+  white-space: pre; overflow-x: auto; min-width: 0;
+  background: var(--bg-sunken); border-radius: var(--r-sm);
+  padding: var(--s3); margin: var(--s3) 0; color: var(--ink-dim);
+}
+.zot-tbl {
+  width: 100%; border-collapse: collapse; font-size: var(--fs-xs);
+  margin: var(--s3) 0; display: block; overflow-x: auto; min-width: 0;
+}
+.zot-tbl td, .zot-tbl th {
+  padding: 3px 6px; border-bottom: 1px solid var(--line);
+  text-align: left; vertical-align: top;
+}
+.zot-tbl th { color: var(--ink-dim); font-weight: 600; }
+
+.zot-links { margin-top: var(--s4); font-size: var(--fs-sm); }
+
+/* Keterangan kecil di dalam label saklar kabut: ia harus terbaca sebagai
+   catatan, bukan sebagai bagian nama saklarnya. */
+.zot-kecil2 { color: var(--ink-faint); }

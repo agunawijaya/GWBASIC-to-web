@@ -1,0 +1,115 @@
+/* ===========================================================================
+   cards.css — tampilan kartu remi, dipakai bersama. Pasangan cards.js.
+
+   SATU KEPUTUSAN YANG PERLU DIBACA DULU
+
+   Kartu TIDAK ikut berganti tema. Merah tetap merah, hitam tetap hitam, muka
+   kartu tetap terang, di tema gelap maupun terang.
+
+   Alasannya: kartu remi adalah benda fisik yang dipinjam ke layar, bukan
+   permukaan antarmuka. Kalau muka kartu ikut menggelap, "hitam" dan "merah"
+   berhenti berarti apa-apa — padahal seluruh aturan solitaire bertumpu pada
+   perbedaan warna itu. Yang berganti tema adalah MEJA-nya, dan itu memang
+   sesuai: meja memang perabot, kartu tidak.
+
+   Konsekuensinya kartu punya paletnya sendiri di bawah, terpisah dari token
+   proyek. Itu satu-satunya tempat di seluruh proyek yang boleh begitu, dan
+   inilah alasannya.
+   =========================================================================== */
+
+.card {
+  /* palet milik kartu sendiri — sengaja tidak mengikuti tema */
+  --face:      #f7f9fc;
+  --face-edge: #b9c4d2;
+  --ink-black: #16202c;
+  --ink-red:   #c0271f;
+
+  position: relative;
+  flex: none;
+  width: var(--card-w, 58px);
+  height: var(--card-h, 82px);
+  border-radius: var(--r-sm);
+  background: var(--face);
+  border: 1px solid var(--face-edge);
+  box-shadow: var(--shadow-1);
+  user-select: none;
+  font-family: var(--font);
+  overflow: hidden;
+}
+
+.card--sm { --card-w: 42px; --card-h: 60px; }
+
+.card--black { color: var(--ink-black); }
+.card--red   { color: var(--ink-red); }
+
+/* Sudut kiri-atas: satu-satunya bagian yang terlihat saat kartu ditumpuk
+   berjajar, jadi di sinilah pangkat dan warna harus terbaca. Semua yang lain
+   boleh tertutup. */
+.card__ix {
+  position: absolute; top: 3px; left: 5px;
+  display: grid; justify-items: center; line-height: 1;
+}
+.card__ix b { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.card__ix i { font-size: 11px; font-style: normal; margin-top: 1px; }
+.card--sm .card__ix b { font-size: 12px; }
+.card--sm .card__ix i { font-size: 9px; }
+
+/* Lambang besar di tengah: hiasan, dan sengaja dibuat pudar supaya tidak
+   bersaing dengan sudutnya. */
+.card__pip {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  font-size: 30px; opacity: .17; pointer-events: none;
+}
+.card--sm .card__pip { font-size: 21px; }
+
+/* Punggung kartu: garis miring, bukan gambar — supaya tidak ada satu pun
+   berkas tambahan yang harus ikut diunduh saat halaman dibuka dari cakram. */
+.card--back {
+  background:
+    repeating-linear-gradient(45deg,
+      #2f4d7a 0 5px, #24406a 5px 10px);
+  border-color: #1b3157;
+}
+
+/* Tempat kosong: bukan kartu, jadi tidak boleh terlihat seperti kartu. */
+.card--slot {
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+  border: 1px dashed var(--edge-soft);
+  box-shadow: none;
+  display: grid; place-items: center;
+}
+.card__slot-txt {
+  font-size: var(--fs-xs); color: var(--ink-faint);
+  letter-spacing: .08em; text-transform: uppercase;
+}
+
+/* --- keadaan interaksi ---------------------------------------------------
+   Aturan proyek: sorotan mengubah WARNA dan BAYANGAN, tidak pernah geometri.
+   Kartu yang bergeser saat disentuh membuat tumpukan berjajar ikut bergoyang,
+   dan itu justru merusak keterbacaan susunannya. */
+.card--live { cursor: grab; }
+.card--live:hover { border-color: var(--acc-phosphor); box-shadow: var(--shadow-2); }
+
+.card.is-picked {
+  outline: 2px solid var(--acc-phosphor);
+  outline-offset: 1px;
+  box-shadow: var(--shadow-2);
+}
+.card.is-drag {
+  position: fixed; z-index: 60; pointer-events: none;
+  cursor: grabbing; box-shadow: var(--shadow-3);
+}
+.card.is-hint { outline: 2px dashed var(--acc-amber); outline-offset: 1px; }
+
+/* --- susunan berjajar ------------------------------------------------------
+   Tumpukan solitaire memperlihatkan sudut tiap kartu. Kartu tertutup diberi
+   jarak lebih rapat daripada kartu terbuka: yang tertutup tidak membawa
+   informasi apa pun, jadi tidak berhak makan ruang yang sama.
+
+   Jaraknya diatur dari JS lewat `top`, bukan dari CSS lewat margin negatif:
+   tiap kartu butuh jarak yang berbeda tergantung terbuka atau tertutup, dan
+   margin negatif tidak bisa menyatakan itu tanpa satu kelas per kemungkinan. */
+.fan { position: relative; width: var(--card-w, 58px); }
+.fan > .card { position: absolute; left: 0; }
+.fan > .card.is-drag { position: fixed; }

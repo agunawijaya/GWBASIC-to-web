@@ -1,0 +1,140 @@
+/* ===========================================================================
+   football.css — FOOTBALL.BAS
+
+   Lapangan dari atas. Warna di tabel hasil MEMBAWA ARTI (99 intersep,
+   98 fumble, negatif = kehilangan yard), jadi latarnya gelap tetap dan
+   tidak ikut tema halaman.
+   =========================================================================== */
+.f-layout { display: grid; gap: var(--s5); align-items: start; }
+@media (min-width: 1000px) {
+  .f-layout { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
+}
+@media (min-width: 1400px) { .f-layout { max-width: 1340px; } }
+
+.f-stage { display: grid; gap: var(--s3); }
+.f-crt { position: relative; background: #08140a;
+         border: 1px solid var(--line); border-radius: 16px;
+         padding: var(--s3); overflow: hidden;
+         box-shadow: inset 0 0 60px rgba(0,0,0,.7); }
+.f-svg { display: block; width: 100%; height: auto; }
+
+.f-latar { fill: #08140a; }
+.f-rumput { fill: #1f6b2d; }
+.f-ez { fill: #14486f; }
+.f-ez--kanan { fill: #6b2020; }
+.f-garis { stroke: rgba(255,255,255,.22); stroke-width: 1; }
+.f-garis--tebal { stroke: rgba(255,255,255,.5); stroke-width: 1.6; }
+.f-gol { stroke: #ffffff; stroke-width: 2.6; }
+.f-golTeks { fill: #cfe0ea; font: 700 10px var(--font-mono); text-anchor: middle;
+             letter-spacing: .1em; }
+.f-first { stroke: #ffd166; stroke-width: 2.4; stroke-dasharray: 6 4; }
+.f-angka { fill: #bfe0c2; font: 700 11px var(--font-mono); text-anchor: middle; }
+.f-bola { fill: #8a4b1e; stroke: #f2f6fa; stroke-width: 1.6; }
+.f-jahit { stroke: #f2f6fa; stroke-width: 1.6; }
+.f-panah { fill: #ffd166; }
+.f-pemilik { fill: #ffffff; font: 700 12px var(--font-mono); text-anchor: middle;
+             letter-spacing: .12em; }
+.f-pesan { fill: #ffd166; font: 700 17px var(--font-mono); text-anchor: middle;
+           letter-spacing: .2em; }
+.f-info { fill: #9ec4a4; font: 700 12px var(--font-mono); letter-spacing: .07em; }
+
+/* --- panel ------------------------------------------------------------------ */
+.f-panel { padding: var(--s3); border: 1px solid var(--line);
+           border-radius: var(--r-sm); background: var(--bg-raised); }
+.f-tanya { margin: 0 0 var(--s3); font-weight: 700; }
+.f-row { display: flex; flex-wrap: wrap; gap: var(--s2); align-items: center; }
+.f-catatan { margin: var(--s3) 0 0; font-size: var(--fs-xs);
+             color: var(--fg-dim); line-height: 1.55; }
+.f-kecil { font-size: var(--fs-xs); color: var(--fg-dim); font-weight: 400; }
+.f-nol { opacity: .6; }
+.f-angka2 { font-family: var(--font-mono); padding: 4px 6px; width: 7ch;
+            border: 1px solid var(--line); border-radius: var(--r-sm);
+            background: var(--bg-sunken); color: var(--fg); }
+
+/* --- catatan (latar gelap tetap) -------------------------------------------- */
+.f-log { height: 168px; overflow-y: auto; padding: var(--s3);
+         background: #0a0f16; border: 1px solid #1d2836; border-radius: var(--r-sm);
+         font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.55; }
+.f-baris { margin: 0 0 2px; color: #93a3b5; }
+.f-log .f-judul { color: #ffffff; font-weight: 700; letter-spacing: .06em; margin-top: 6px; }
+.f-log .f-awas { color: #ffa15c; }
+.f-log .f-baik { color: #7dffb0; }
+.f-log .f-bahaya { color: #ff6b5d; font-weight: 700; }
+.f-log .f-besar { color: #ffd166; font-weight: 700; letter-spacing: .05em; }
+
+.f-row--kecil { font-size: var(--fs-sm); color: var(--fg-dim);
+                display: flex; flex-wrap: wrap; gap: var(--s3); align-items: center; }
+.f-row--kecil label { display: flex; align-items: center; gap: var(--s2); }
+
+/* --- panel kanan ------------------------------------------------------------- */
+.f-lead { margin-top: 0; }
+.f-note { font-size: var(--fs-sm); line-height: 1.6; }
+.f-bad2 { border-left: 3px solid #c0503f; }
+.f-warn { border-left: 3px solid #e0a020; }
+.f-good { border-left: 3px solid #46c17f; }
+.f-code { font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.55;
+          background: var(--bg-sunken); border-radius: var(--r-sm);
+          padding: var(--s3); overflow-x: auto; white-space: pre; }
+.f-tbl { width: 100%; border-collapse: collapse; font-size: var(--fs-xs);
+         margin: var(--s3) 0; font-family: var(--font-mono); }
+.f-tbl td, .f-tbl th { padding: 4px 6px; border-bottom: 1px solid var(--line);
+                       text-align: right; }
+.f-tbl td:first-child, .f-tbl th:first-child { text-align: left; }
+.f-tbl tr.f-mati { opacity: .45; }
+.f-tbl tr.f-mati td { text-decoration: line-through; }
+.f-tbl tr.f-mati td:first-child { text-decoration: none; }
+.f-int { color: #c0503f; font-weight: 700; }
+.f-fum { color: #b07d10; font-weight: 700; }
+.f-neg { color: #b0603f; }
+.f-besar2 { color: #2f7a52; font-weight: 700; }
+.f-links { margin-top: var(--s4); }
+
+/* ===========================================================================
+   Tampilan dari pinggir lapangan — dua regu (football-scene.js)
+
+   Peta di bawahnya menjawab "di mana bola"; tampilan ini menjawab "apa yang
+   barusan terjadi". Warna jersey MEMBAWA ARTI (biru = Anda, merah = saya),
+   jadi latarnya gelap tetap dan tidak ikut tema halaman.
+   =========================================================================== */
+.f-crt--samping { padding: 0; background: #0b1220; }
+.e-svg { display: block; width: 100%; height: auto; cursor: pointer; }
+
+.e-langit { fill: #5f86ad; }
+.e-tribun { fill: #2b3a4c; }
+.e-penonton { fill: #6d7f93; }
+.e-penonton2 { fill: #93a5b8; }
+.e-pagar { fill: #16202c; }
+.e-rumput { fill: #1f6b2d; }
+.e-yard { stroke: rgba(255,255,255,.2); stroke-width: 1; }
+.e-yard--los { stroke: #ffd166; stroke-width: 2.4; }
+.e-yardTeks { fill: #bfe0c2; font: 700 10px var(--font-mono); text-anchor: middle; }
+.e-sumbu { fill: #cfe0ea; font: 700 9px var(--font-mono); letter-spacing: .1em; }
+
+.e-bayang { fill: rgba(0,0,0,.3); }
+.e-kaki { fill: #1d2733; }
+.e-orang.e-tim--anda .e-jersey { fill: #2f6fc4; }
+.e-orang.e-tim--anda .e-bahu { fill: #2456a0; }
+.e-orang.e-tim--anda .e-helm { fill: #dfe8f4; }
+.e-orang.e-tim--saya .e-jersey { fill: #c0392b; }
+.e-orang.e-tim--saya .e-bahu { fill: #96291d; }
+.e-orang.e-tim--saya .e-helm { fill: #f0d9a0; }
+.e-topeng { stroke: #2b3542; stroke-width: 1.4; fill: none; }
+
+.e-bola { fill: #8a4b1e; stroke: #ffffff; stroke-width: 1.2; }
+.e-jejak { fill: none; stroke: #ffffff; stroke-width: 2; stroke-dasharray: 3 4;
+           opacity: .85; }
+.e-label { fill: #12253a; font: 700 11px var(--font-mono); text-anchor: middle;
+           stroke: #ffffff; stroke-width: 3; paint-order: stroke;
+           stroke-linejoin: round; }
+.e-judul { fill: #14304a; font: 700 15px var(--font-mono); text-anchor: middle;
+           letter-spacing: .14em; stroke: #ffffff; stroke-width: 4;
+           paint-order: stroke; stroke-linejoin: round; }
+.e-hasil { fill: #14304a; font: 700 17px var(--font-mono); text-anchor: middle;
+           letter-spacing: .12em; stroke: #ffffff; stroke-width: 4.5;
+           paint-order: stroke; stroke-linejoin: round; }
+.e-hasil.e-baik2 { fill: #12522f; }
+.e-hasil.e-bahaya2 { fill: #7a1d13; }
+.e-endzone { fill: rgba(20,72,111,.55); }
+.e-gol { stroke: #ffffff; stroke-width: 3; }
+.e-golTeks { fill: #dfe8f4; font: 700 10px var(--font-mono); text-anchor: middle;
+             letter-spacing: .16em; }

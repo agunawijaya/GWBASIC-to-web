@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Draw — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari DRAW.BAS (Friendlyware, 30 Agustus 1982): penyunting gambar karakter CP437 yang paletnya berpasangan — Shift bukan huruf besar melainkan pelengkap glifnya. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="draw.css?v=3">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap w-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="w-stage">
+        <div class="w-crt">
+          <div class="w-kanvas" id="kanvas" role="img"
+               aria-label="Kanvas 80 kolom kali 19 baris karakter CP437"></div>
+        </div>
+
+        <div id="palet"></div>
+
+        <div class="w-panel">
+          <div class="w-row">
+            <button class="btn btn--primary btn--sm" id="f4" type="button">F4 · Simpan</button>
+            <input id="nama" class="w-angka" maxlength="8" placeholder="NAMA" value="PICT1">
+            <button class="btn btn--ghost btn--sm" id="f2" type="button">F2 · Sebelumnya</button>
+            <button class="btn btn--ghost btn--sm" id="f5" type="button">F5 · Grafis/huruf</button>
+            <button class="btn btn--ghost btn--sm" id="f6" type="button">F6 · Bersihkan</button>
+            <button class="btn btn--ghost btn--sm" id="contoh" type="button">Contoh</button>
+          </div>
+          <p class="w-pesan" id="pesan">Ketik <b>A</b>&ndash;<b>Y</b> dan <b>a</b>&ndash;<b>y</b>, atau klik glif di bilah palet.</p>
+          <div class="w-row--kecil">
+            <label>Depan
+              <select id="fg" class="w-angka">
+                <option value="0">0 hitam</option><option value="1">1 biru</option>
+                <option value="2">2 hijau</option><option value="3">3 cyan</option>
+                <option value="4">4 merah</option><option value="5">5 ungu</option>
+                <option value="6">6 coklat</option><option value="7" selected>7 abu</option>
+                <option value="8">8 abu tua</option><option value="9">9 biru terang</option>
+                <option value="10">10 hijau terang</option><option value="11">11 cyan terang</option>
+                <option value="12">12 merah terang</option><option value="13">13 ungu terang</option>
+                <option value="14">14 kuning</option><option value="15">15 putih</option>
+              </select></label>
+            <label>Latar
+              <select id="bg" class="w-angka">
+                <option value="0" selected>0 hitam</option><option value="1">1 biru</option>
+                <option value="2">2 hijau</option><option value="3">3 cyan</option>
+                <option value="4">4 merah</option><option value="5">5 ungu</option>
+                <option value="6">6 coklat</option><option value="7">7 abu</option>
+              </select></label>
+          </div>
+          <p class="w-kecil" style="margin:.4rem 0 0">PICTURE.FLE:</p>
+          <div id="daftar"></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">287 baris BASIC</span>
+      <span class="ruleset__k">kanvas 80 &times; 19</span>
+      <span class="ruleset__k ruleset__k--mangsa">50 glif berpasangan</span>
+      <span class="ruleset__k ruleset__k--bahaya">DRAW.EXE hilang dari koleksi</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Kursor</span>
+        <span class="stat__value mono" id="s-pos">—</span></div>
+      <div class="stat"><span class="stat__label">Warna (depan/latar)</span>
+        <span class="stat__value mono" id="s-warna">7 / 0</span></div>
+      <div class="stat"><span class="stat__label">Mode</span>
+        <span class="stat__value mono" id="s-mode">Graphics</span></div>
+      <div class="stat"><span class="stat__label">Sel terisi</span>
+        <span class="stat__value mono" id="s-isi">0</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara memakainya</summary>
+      <p class="w-note">
+        Ini bukan permainan melainkan <strong>penyunting gambar karakter</strong>:
+        kanvas 80 kolom &times; 19 baris yang diisi lima puluh karakter CP437.
+      </p>
+      <ol class="howto__steps">
+        <li><strong>Tekan <code>A</code>&ndash;<code>Y</code> atau
+            <code>a</code>&ndash;<code>y</code></strong> untuk menaruh glif dan
+            memajukan kursor. Atau klik langsung glifnya di bilah palet.</li>
+        <li><strong>Shift bukan huruf besar &mdash; ia pasangan.</strong>
+            <code>A</code> memberi <span class="w-g">╔</span>,
+            <code>a</code> memberi <span class="w-g">╚</span>;
+            <code>I</code> memberi <span class="w-g">─</span>,
+            <code>i</code> memberi <span class="w-g">│</span>. Lihat panel
+            sebelah untuk seluruh pasangannya.</li>
+        <li><strong>Panah</strong> menggerakkan kursor; <b>Ctrl+panah</b> sepuluh
+            kolom, <b>PgUp/PgDn</b> lima baris, <b>Home</b> ke pojok kiri atas,
+            <b>End</b> ke ujung baris. Klik sel mana pun untuk melompat.</li>
+        <li><strong>F5</strong> berganti ke huruf biasa (baris 2150), sehingga
+            <code>A</code> menghasilkan huruf A, bukan <span class="w-g">╔</span>.</li>
+        <li><strong>F4</strong> menyimpan dengan nama maksimal delapan huruf,
+            <strong>F6</strong> membersihkan layar, <strong>F2</strong>
+            memulihkan gambar sebelum pembersihan terakhir. Semuanya tersimpan
+            di peramban, bukan disket.</li>
+      </ol>
+    </details>
+  </section>
+
+  <aside class="stack">
+
+    <section class="panel w-bad2">
+      <h2 class="panel__title">Shift bukan huruf besar — ia pasangan</h2>
+      <div class="w-code">2310 DATA 200,188,186,202,185,197,192,217,179,...
+2320 DATA 201,187,205,203,204,206,218,191,196,...
+2290 FOR A=0 TO 1:FOR B=1 TO 25:READ ARRAY%(A,B)
+ 490 PRINT CHR$(ARRAY%(1,ASC(Z)-64));   ' A-Y
+ 510 PRINT CHR$(ARRAY%(0,ASC(Z)-96));   ' a-y</div>
+      <p class="w-note">
+        Dua baris <code>DATA</code>, dua puluh lima kode masing-masing. Kode
+        ke-<i>n</i> di kedua baris selalu <b>sepasang</b>, dan hubungan tiap
+        pasang punya alasannya sendiri:
+      </p>
+      <table class="w-tbl">
+        <thead><tr><th>hubungan</th><th>Shift</th><th>biasa</th></tr></thead>
+        <tbody id="b-pasang"></tbody>
+      </table>
+      <p class="w-note">
+        Jadi papan ketik bukan daftar lima puluh benda melainkan
+        <b>dua puluh lima tombol dengan dua sisi</b>. Untuk membuat kotak
+        berbingkai Anda hanya perlu <code>A B C a b c</code>: sudut atas,
+        garis, sudut bawah. Tekan Shift = balikkan potongannya.
+      </p>
+      <p class="w-note">
+        <b>Tidak ada satu baris pun</b> di seluruh 287 baris yang menjelaskan
+        ini. Layar bantuan di baris 1980&ndash;2071 hanya menerangkan tombol
+        kursor dan perintah warna. Paletnya dicetak di baris 720&ndash;780
+        sebagai dua deret glif dengan hurufnya di tengah &mdash; susunannya
+        <em>memperlihatkan</em> pasangannya, tapi tidak pernah menyebutnya.
+      </p>
+      <p class="w-note">
+        Diperiksa dari datanya sendiri: <b id="b-jumlah">—</b> glif, dan kode
+        yang muncul dua kali: <b id="b-ganda">—</b>. Tidak ada satu pun yang
+        terbuang untuk pengulangan.
+      </p>
+    </section>
+
+    <section class="panel w-warn">
+      <h2 class="panel__title">Sebuah .PIC adalah salinan mentah memori layar</h2>
+      <div class="w-code"> 310 IF (PEEK(&amp;H410) AND 48)=48 THEN SEGMENT=&amp;HB000
+                              ELSE SEGMENT=&amp;HB800
+1740 DEF SEG=SEGMENT
+1750 BLOAD KEEP$,480
+1960 BSAVE "tempory.tmp",480,3040</div>
+      <p class="w-note">
+        Tidak ada format berkas. Menyimpan gambar berarti menyalin
+        <b>memori layar</b> apa adanya, dan memuatnya berarti menuliskannya
+        kembali. Offset <b id="b-offset">—</b> = 80 kolom &times; 3 baris
+        &times; 2 bita, yaitu persis tiga baris menu di atas yang tidak boleh
+        ikut tertimpa. Panjang <code>3040</code> = 80 &times; 19 &times; 2,
+        yaitu sisa layarnya.
+      </p>
+      <p class="w-note">
+        Baris 310 memilih segmennya dengan mengintip bita konfigurasi BIOS di
+        <code>&amp;H410</code>: kalau kartunya monokrom, layar ada di
+        <code>&amp;HB000</code>; kalau CGA, di <code>&amp;HB800</code>. Program
+        1982 yang mendeteksi perangkat kerasnya sendiri alih-alih menuntut satu
+        jenis &mdash; itu praktik yang baik, dan jarang di koleksi ini.
+      </p>
+      <p class="w-note">
+        Di sini kanvasnya larik <code>sel[y][x]</code> berisi
+        <code>{kode, depan, latar}</code>, dan gambarnya disimpan di peramban.
+        Ukuran dan batasnya dipertahankan: 80 &times; 19, nama maksimal
+        <b>delapan huruf</b> (baris 1830), dan huruf kecil diubah jadi besar
+        (baris 1850).
+      </p>
+    </section>
+
+    <section class="panel w-bad2">
+      <h2 class="panel__title">DRAW.EXE hilang, jadi bagian itu dibangun ulang</h2>
+      <div class="w-code">  40 DEF SEG=&amp;HE00
+  50 BLOAD"DRAW.EXE",0
+ 400 CODE=0   : CALL CODE
+2210 CODE=&amp;H40: CALL CODE
+ 180 BSAVE "DRAW.EXE",0,200</div>
+      <p class="w-note">
+        Dua ratus bita kode mesin dimuat ke <code>&amp;HE00</code> dan dipanggil
+        di <b>dua titik masuk</b>: offset <code>0</code> dan offset
+        <code>&amp;H40</code>. Berkasnya <b>tidak ada di koleksi ini</b> &mdash;
+        yang tersimpan hanya <code>DRAW.BAS</code> yang memuatnya.
+      </p>
+      <p class="w-note">
+        Isinya tidak bisa dipulihkan, tapi <em>perilakunya</em> bisa dibaca dari
+        tempat ia dipanggil. <code>CALL 0</code> selalu muncul tepat
+        <b>sebelum</b> <code>CLS</code> (baris 620, 2340); <code>CALL &amp;H40</code>
+        muncul tepat <b>sesudah</b> <code>CLS</code> di rutin F2 &mdash;
+        <i>"Runs Previous Picture (memory)"</i>. Jadi keduanya sepasang:
+        simpan-layar dan pulihkan-layar, dalam kode mesin karena BASIC terlalu
+        lambat untuk menyalin 4.000 bita.
+      </p>
+      <p class="w-note">
+        Yang dibangun ulang di sini adalah <b>perilaku itu</b>, bukan isinya:
+        F6 menyimpan salinan sebelum membersihkan, F2 memulihkannya. Ini
+        satu-satunya bagian port ini yang <b>tidak</b> diturunkan dari kode yang
+        ada, dan karena itu disebut terpisah.
+      </p>
+    </section>
+
+    <section class="panel w-good">
+      <h2 class="panel__title">Kursor yang membungkus, bukan yang mentok</h2>
+      <div class="w-code"> 970 IF X>22 THEN X=22
+ 980 IF X&lt;4 THEN X=4
+ 990 IF Y>80 THEN IF X&lt;22 THEN X=X+1:Y=Y-80
+1000 IF Y&lt;1  THEN IF X>4  THEN X=X-1:Y=Y+80</div>
+      <p class="w-note">
+        Perhatikan susunannya: melewati kolom 80 tidak menahan kursor &mdash; ia
+        <b>turun satu baris dan kembali ke kiri</b>, seperti mesin tik. Tapi di
+        baris terakhir ia berhenti. Menggambar sepanjang tepi jadi mengalir
+        sendiri tanpa pemakai harus menekan Enter, dan itu satu-satunya alasan
+        program ini enak dipakai. Dipertahankan persis, termasuk batas
+        barisnya.
+      </p>
+    </section>
+
+    <p class="w-links">
+      <a href="../../docs/draw.md">Catatan lengkap port ini</a> ·
+      <a href="../../../reviews/DRAW.md">Analisis BASIC aslinya</a> ·
+      <a href="../../index.html">Semua program</a>
+    </p>
+  </aside>
+</main>
+
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="draw.js?v=3"></script>
+</body>
+</html>

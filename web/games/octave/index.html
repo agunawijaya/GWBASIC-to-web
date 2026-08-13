@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Octave — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari OCTAVE.BAS (What Micro?, 1990) dengan bug satu-barisnya diperbaiki — dan bugnya kini terlihat di not balok, bukan cuma terdengar.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="../../_shared/music.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap m-layout">
+
+  <section class="stack">
+    <div class="screen screen--scanlines" id="stage">
+      <div class="m-stage">
+        <div id="staff"></div>
+        <div id="piano"></div>
+        <div class="m-transport">
+          <button class="btn btn--primary" id="play" type="button">Mainkan satu oktaf</button>
+          <button class="btn btn--ghost" id="reset" type="button" disabled>Ulang</button>
+          <span class="m-now m-now--idle" id="now">—</span>
+        </div>
+        <div class="picker" id="instruments"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Kode yang dijalankan — enam baris asli, dua baris tambahan</p>
+      <div class="m-score" id="score"></div>
+      <p class="m-note">
+        Baris <strong>10–50</strong> disalin apa adanya dari disket 1990. Dua
+        baris bertanda terang, <strong>55</strong> dan <strong>60</strong>,
+        adalah tambalannya. Aslinya baris 60 berbunyi <code>GOTO 30</code>
+        saja — melompat balik tanpa pernah menaikkan <code>note</code>.
+      </p>
+      <p class="m-note">
+        Rumus di baris <strong>30</strong> tidak disentuh sedikit pun. Itu inti
+        ceritanya: bagian yang sulit sudah benar, yang hilang justru
+        satu baris paling sepele.
+      </p>
+    </div>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel">
+      <p class="eyebrow">Rumus, dihitung langsung</p>
+      <p class="mono" style="font-size:var(--fs-sm);line-height:2">
+        freq = 440 &times; 2^(<span id="fOct">-2</span> +
+        (<span id="fNote">1</span> &minus; 10) / 12)
+      </p>
+      <div class="hud">
+        <div class="stat"><span class="stat__label">note</span>
+          <span class="stat__value" id="sNote">1</span></div>
+        <div class="stat stat--good"><span class="stat__label">Frekuensi</span>
+          <span class="stat__value" id="sFreq">65.4</span></div>
+        <div class="stat"><span class="stat__label">Nada</span>
+          <span class="stat__value" id="sName">C2</span></div>
+      </div>
+      <p class="m-note">
+        Ini <strong>rumus temperamen sama</strong>: 440 Hz adalah A di atas C
+        tengah, naik satu oktaf berarti dikali dua, dan satu oktaf dibagi dua
+        belas semitone yang rasionya sama. Setiap tuner, synthesizer, dan
+        aplikasi musik memakai rumus yang sama.
+      </p>
+    </div>
+
+    <div class="panel m-warn">
+      <p class="eyebrow">Bug</p>
+      <p class="m-note">
+        <code>README.CAR</code> di disket aslinya menulis program ini
+        <em>"uses the SOUND command and a standard formula to play an
+        octave"</em>. Tapi <strong>ia tidak pernah memainkan satu oktaf</strong>
+        — hanya satu nada yang sama, berulang selamanya. Rumusnya benar; yang
+        hilang adalah perulangan yang menaikkan <code>note</code>.
+      </p>
+      <p class="m-note">
+        Kalau versi aslinya dijalankan, not balok di atas akan menunjukkan
+        <strong>dua deret mendatar</strong> — semua not di ketinggian yang sama.
+        Versi yang diperbaiki menunjukkan tangga yang menanjak di atas deret C
+        yang tetap datar. Bug yang sama, tapi kini bisa dilihat, bukan cuma
+        didengar.
+      </p>
+      <p class="m-note">
+        Buktinya ada di koleksi yang sama:
+        <a href="../notetabl/index.html">NOTETABL.BAS</a> memakai rumus yang
+        <strong>persis sama</strong>, tapi dengan
+        <code>FOR note = 1 TO 12</code> — dan ia bekerja.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/octave.md">Dokumen arsitektur</a> ·
+      <a href="../../../reviews/OCTAVE.md">Analisis BASIC aslinya</a> ·
+      <a href="../../../run/OCTAVE.BAS">Kode sumber 1990</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/piano.js"></script>
+<script src="../../_shared/staff.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="octave.js"></script>
+</body>
+</html>

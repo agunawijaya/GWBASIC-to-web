@@ -1,0 +1,146 @@
+/* ===========================================================================
+   eliza.css — rupa lokal ELIZA. Awalan `e-`.
+
+   Yang khas di halaman ini: layarnya BUKAN kisi 80x25 yang harus ditiru
+   bentuknya, melainkan gulungan teks yang tumbuh ke bawah. Yang penting
+   dipertahankan cuma satu hal dari aslinya — bahwa baris DIPOTONG pada lebar
+   layar (baris 4610-4640, dengan WD dari BIOS), dan potongan itu terjadi di
+   sela KATA. Karena itu teksnya monospace dan pemotongannya dikerjakan di JS,
+   bukan diserahkan ke `word-wrap` peramban: kalau peramban yang memotong,
+   yang diperlihatkan bukan lagi perilaku programnya.
+   =========================================================================== */
+
+.e-layout { display: grid; gap: var(--s5); align-items: start; }
+@media (min-width: 1040px) {
+  .e-layout { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); }
+}
+
+/* --- layar ---------------------------------------------------------------- */
+
+.e-crt {
+  background: #05100a;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: var(--s3);
+  min-width: 0;
+}
+.e-layar {
+  font-family: var(--font-mono);
+  font-size: clamp(11px, 1.55vw, 13.5px);
+  line-height: 1.5;
+  color: var(--acc-phosphor);
+  height: clamp(280px, 46vh, 460px);
+  overflow-y: auto;
+  overflow-x: auto;
+  white-space: pre;
+}
+.e-baris { min-height: 1.5em; }
+.e-kamu { color: var(--acc-amber); }
+.e-judul { color: #d8f5e4; }
+.e-peringatan { color: var(--acc-red); }
+
+/* --- baris masukan -------------------------------------------------------- */
+
+.e-masuk {
+  display: flex; gap: var(--s2); align-items: center;
+  margin-top: var(--s3); min-width: 0;
+}
+.e-prompt { font-family: var(--font-mono); color: var(--acc-phosphor); }
+.e-ketik {
+  flex: 1 1 auto; min-width: 0;
+  font-family: var(--font-mono); font-size: var(--fs-sm);
+  padding: .45rem .6rem;
+  background: var(--bg-sunken); color: var(--ink);
+  border: 1px solid var(--edge); border-radius: var(--r-sm);
+}
+.e-ketik:focus-visible { outline: 2px solid var(--acc-phosphor); outline-offset: 1px; }
+
+.e-alat {
+  display: flex; flex-wrap: wrap; gap: var(--s2) var(--s3);
+  align-items: center; margin-top: var(--s3);
+}
+.e-angka {
+  font-family: var(--font-mono); font-size: var(--fs-xs);
+  background: var(--bg-sunken); color: var(--ink);
+  border: 1px solid var(--edge); border-radius: var(--r-sm); padding: .2rem .3rem;
+}
+.e-kecil { font-size: var(--fs-xs); color: var(--ink-dim); }
+.e-kecil code {
+  font-family: var(--font-mono); color: var(--acc-phosphor);
+  background: var(--bg-sunken); padding: 0 .25em; border-radius: 3px;
+}
+
+.e-simpanan {
+  display: flex; flex-wrap: wrap; gap: var(--s2);
+  align-items: center; margin-top: var(--s2);
+}
+.e-simpanan > div { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.e-file { display: inline-flex; }
+.e-x { padding-inline: .45rem; }
+
+/* --- panel ---------------------------------------------------------------- */
+
+.e-note { font-size: var(--fs-sm); line-height: 1.65; }
+.e-good { border-left: 3px solid #46c17f; }
+.e-warn { border-left: 3px solid #e0a020; }
+.e-bad  { border-left: 3px solid #c0503f; }
+.e-live { border-left: 3px solid var(--acc-blue, #5b9bd5); }
+
+.e-code {
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.55;
+  white-space: pre; overflow-x: auto;
+  background: var(--bg-sunken); border-radius: var(--r-sm);
+  padding: var(--s3); margin: var(--s3) 0; color: var(--ink-dim);
+  /* Anak grid/flex tidak boleh menyusut di bawah lebar isinya tanpa ini —
+     pelajaran yang dibayar sekali di DRAW dan tidak perlu dibayar dua kali. */
+  min-width: 0;
+}
+
+.e-tbl {
+  width: 100%; border-collapse: collapse; font-size: var(--fs-xs);
+  margin: var(--s3) 0; display: block; overflow-x: auto; min-width: 0;
+}
+.e-tbl td, .e-tbl th {
+  padding: 3px 6px; border-bottom: 1px solid var(--line);
+  text-align: left; vertical-align: top; white-space: nowrap;
+}
+.e-tbl th { color: var(--ink-dim); font-weight: 600; }
+.e-tbl tr.e-menang td {
+  background: color-mix(in srgb, var(--acc-phosphor) 16%, transparent);
+  color: var(--ink); font-weight: 600;
+}
+
+/* --- pipa "di balik layar" ------------------------------------------------ */
+
+.e-pipa { margin: 0; display: grid; gap: var(--s2); min-width: 0; }
+.e-pipa dt {
+  font-size: var(--fs-xs); color: var(--ink-dim);
+  text-transform: uppercase; letter-spacing: .04em;
+  margin-top: var(--s2);
+}
+.e-pipa dd {
+  margin: 0; font-size: var(--fs-sm); min-width: 0;
+}
+.e-brs {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--acc-amber); background: var(--bg-sunken);
+  padding: 0 .3em; border-radius: 3px; margin-left: .3em;
+  letter-spacing: 0; text-transform: none;
+}
+.e-mono {
+  font-family: var(--font-mono); font-size: var(--fs-xs);
+  background: var(--bg-sunken); border-radius: var(--r-sm);
+  padding: .4rem .5rem; overflow-x: auto; white-space: pre; min-width: 0;
+}
+.e-pre { white-space: pre-line; }
+.e-langkah { margin: 0; padding-left: 1.1em; font-size: var(--fs-sm); line-height: 1.6; }
+.e-langkah li { margin-bottom: .25em; }
+
+/* Penanda dibuat terlihat. Di aslinya CHR$(0) tidak mencetak apa pun — itu
+   yang membuatnya berguna sekaligus mustahil diamati. */
+.e-nul { color: var(--acc-phosphor); font-weight: 700; }
+.e-bintang { color: var(--acc-amber); font-weight: 700; }
+.e-bahaya { color: var(--acc-red); }
+.e-ok { color: var(--acc-phosphor); }
+
+.e-links { margin-top: var(--s4); font-size: var(--fs-sm); }

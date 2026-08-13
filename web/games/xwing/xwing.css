@@ -1,0 +1,145 @@
+/* ===========================================================================
+   xwing.css — rupa lokal XWING. Awalan `xw-`.
+
+   Layarnya PANDANGAN DARI KOKPIT, dan itu keputusan aslinya, bukan saya:
+   di seluruh 732 baris tidak ada satu pun sprite pesawat pemain. Yang ada
+   cuma HUD dan tiga sasaran yang membesar. Jadi tata letak ini meniru
+   susunan baris 2190-2270 — torpedo, arah, kecepatan, tiga jarak, waktu.
+   =========================================================================== */
+
+.xw-layout { display: grid; gap: var(--s5); align-items: start; }
+@media (min-width: 1040px) {
+  .xw-layout { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
+}
+
+.xw-kokpitBungkus { position: relative; min-width: 0; }
+.xw-kokpit { background: #03060e; border: 1px solid var(--line);
+             border-radius: var(--r); padding: 4px; min-width: 0; overflow: hidden; }
+
+/* Pembuka sekali-jalan. Aslinya layar petunjuknya panjang dan wajib dilewati
+   sebelum bermain (7490-7930); di sini disaring jadi tiga kalimat yang benar-
+   benar mengubah cara main, dan bisa dibuka lagi dari panel Cara memainkannya. */
+.xw-pembuka { position: absolute; inset: 4px; display: flex; flex-direction: column;
+              justify-content: center; gap: var(--s3);
+              padding: var(--s4) clamp(var(--s3), 5vw, var(--s6));
+              background: rgba(3, 6, 14, .93); border-radius: var(--r);
+              border: 1px solid var(--line); overflow: auto; }
+.xw-pembuka[hidden] { display: none; }
+.xw-pembukaJudul { margin: 0; font-size: var(--fs-md); color: var(--acc-phosphor);
+                   letter-spacing: .02em; }
+.xw-pembukaDaftar { margin: 0; padding-left: 1.25em; display: grid; gap: var(--s2);
+                    font-size: var(--fs-sm); line-height: 1.55; color: #cfd8e3; }
+.xw-pembuka .btn { align-self: flex-start; }
+.xw-oranye { color: #ffb347; }
+.xw-svg { display: block; width: 100%; height: auto; }
+
+/* Peluru TIDAK memakai animasi CSS. Ia digambar ulang tiap putaran gelung
+   dengan posisi yang dihitung, karena `innerHTML` diganti tiap bingkai:
+   animasi CSS pada elemen yang lahir baru tiap 55 ms tidak akan pernah lewat
+   dari beberapa persen pertama garis waktunya. Itu sebabnya versi pertama
+   halaman ini seolah tidak menembakkan apa pun. */
+/* Ledakannya juga tidak: bentuknya dihitung dari `S.ledak.sisa`, satu-satunya
+   pencacah yang memang sudah ada di keadaan permainan. Menaruhnya di CSS
+   berarti menaruh waktu di dua tempat sekaligus. */
+
+/* --- jalur pendekatan -----------------------------------------------------
+   Tambahan port, dan tambahan terbesar di halaman ini. Aslinya ketiga
+   jaraknya cuma tiga angka; yang menentukan permainan ini justru HUBUNGAN
+   antara jarak, kecepatan, dan waktu — dan hubungan itu tidak pernah
+   diperlihatkan di mana pun. */
+.xw-jalur { margin-top: var(--s3); background: #070c10;
+            border: 1px solid var(--line); border-radius: var(--r);
+            padding: var(--s3); min-width: 0; }
+.xw-jalurKepala { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s4);
+                  align-items: baseline; margin-bottom: var(--s2); }
+.xw-jalurJudul { font-size: var(--fs-xs); text-transform: uppercase;
+                 letter-spacing: .05em; color: var(--ink-dim); }
+.xw-tiba { font-size: var(--fs-sm); color: var(--ink-dim); }
+.xw-tibaNilai { font-weight: 700; font-variant-numeric: tabular-nums;
+                color: var(--acc-phosphor); }
+.xw-awasTeks { color: #e0a020; }
+.xw-jalurSvg { display: block; width: 100%; height: auto; }
+.xw-kunciTombol { margin-top: var(--s2); font-size: var(--fs-xs);
+                  color: var(--ink-dim); line-height: 1.6; }
+.xw-saran { color: #cfd8e3; }
+
+/* --- HUD ------------------------------------------------------------------ */
+.xw-hud { margin: 0; display: grid; min-width: 0;
+          grid-template-columns: repeat(auto-fit, minmax(min(100%, 118px), 1fr));
+          gap: var(--s2) var(--s3); margin-top: var(--s3); }
+.xw-pasang { min-width: 0; display: grid; gap: 1px; align-content: start; }
+.xw-pasang--lebar { grid-column: 1 / -1; }
+.xw-hud dt { font-size: var(--fs-xs); color: var(--ink-dim);
+             text-transform: uppercase; letter-spacing: .05em;
+             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.xw-hud dd { margin: 0; min-width: 0; }
+.xw-nilai { font-size: var(--fs-sm); font-weight: 620;
+            font-variant-numeric: tabular-nums; }
+.xw-dekat { color: var(--acc-red); }
+.xw-mati  { color: var(--ink-faint); text-decoration: line-through; }
+.xw-menangTeks { color: var(--acc-phosphor); }
+.xw-bahayaTeks { color: var(--acc-red); }
+
+.xw-pesan { margin-top: var(--s3); font-family: var(--font-mono);
+            font-size: var(--fs-xs); line-height: 1.6; color: #cfe0d4;
+            background: #070c10; border: 1px solid var(--line);
+            border-radius: var(--r); padding: var(--s3);
+            height: 8.5em; overflow-y: auto; min-width: 0; }
+.xw-bahaya { color: var(--acc-red); }
+.xw-menang { color: var(--acc-phosphor); }
+.xw-redup  { color: var(--ink-dim); }
+
+.xw-tombolBaris { display: flex; flex-wrap: wrap; gap: var(--s2);
+                  margin-top: var(--s3); }
+.xw-alat { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s3);
+           align-items: center; margin-top: var(--s3); }
+.xw-kecil { font-size: var(--fs-xs); color: var(--ink-dim); }
+.xw-pilih { font: inherit; font-size: var(--fs-xs); margin-left: 4px;
+            padding: 2px 4px; border: 1px solid var(--line);
+            border-radius: var(--r-sm); background: var(--panel-2);
+            color: var(--ink); }
+.xw-skor { margin: 0; padding-left: 1.1em; font-size: var(--fs-sm); }
+
+/* Keping aturan. `--bahaya` dan `--mangsa` dipakai di banyak halaman tapi
+   hanya pernah DIBERI WARNA di serpent.css — di halaman lain kelas itu ada
+   tanpa efek apa pun. Di sini diberi warna, supaya kepingnya benar-benar
+   menandakan sesuatu alih-alih cuma menempel di markah. */
+.ruleset__k--bahaya {
+  background: color-mix(in srgb, #c0503f 18%, transparent);
+  color: #d9705f; border-color: color-mix(in srgb, #c0503f 45%, transparent);
+}
+.ruleset__k--mangsa {
+  background: color-mix(in srgb, #7fd7ff 16%, transparent);
+  color: #7fd7ff; border-color: color-mix(in srgb, #7fd7ff 42%, transparent);
+}
+
+/* --- panel ---------------------------------------------------------------- */
+.xw-note { font-size: var(--fs-sm); line-height: 1.65; }
+.xw-good { border-left: 3px solid #46c17f; }
+.xw-warn { border-left: 3px solid #e0a020; }
+.xw-bad  { border-left: 3px solid #c0503f; }
+.xw-code { font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.55;
+           white-space: pre; overflow-x: auto; min-width: 0;
+           background: var(--bg-sunken); border-radius: var(--r-sm);
+           padding: var(--s3); margin: var(--s3) 0; color: var(--ink-dim); }
+.xw-tbl { width: 100%; border-collapse: collapse; font-size: var(--fs-xs);
+          margin: var(--s3) 0; display: block; overflow-x: auto; min-width: 0; }
+.xw-tbl td, .xw-tbl th { padding: 3px 6px; border-bottom: 1px solid var(--line);
+                         text-align: left; vertical-align: top; }
+.xw-tbl th { color: var(--ink-dim); font-weight: 600; }
+
+.xw-kapal { display: block; width: 100%; max-width: 230px; height: auto;
+            margin: var(--s3) auto; }
+.xw-tieContoh { display: flex; gap: var(--s4); align-items: flex-end;
+                justify-content: center; flex-wrap: wrap; margin: var(--s3) 0; }
+.xw-bukti { margin: 0; text-align: center; }
+.xw-bukti > div { display: flex; align-items: flex-end; justify-content: center;
+                  min-height: 76px; }
+.xw-bukti figcaption { margin-top: var(--s2); font-size: var(--fs-xs);
+                       line-height: 1.4; color: var(--ink-dim); }
+.xw-tieTangan { display: flex; justify-content: center; margin: var(--s3) 0; }
+.xw-armada { display: flex; gap: var(--s3); align-items: flex-end;
+             justify-content: center; flex-wrap: wrap; margin: var(--s3) 0; }
+.xw-armada .xw-bukti > div { min-height: 130px; }
+.xw-armada svg { max-width: 100%; height: auto; }
+.xw-links { margin-top: var(--s4); font-size: var(--fs-sm); }

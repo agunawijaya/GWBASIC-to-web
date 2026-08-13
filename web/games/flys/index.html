@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Flys — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari FLYS.BAS (1985): lalatnya digambar oleh bahasa makro DRAW lalu dipotret ke larik, dan salah satu dari tiga 'fase kepakan' ternyata persegi kosong. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="flys.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap f-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="f-stage">
+        <div class="f-crt" id="crt">
+          <svg id="svg" class="f-svg" viewBox="0 0 320 200"
+               role="img" aria-label="Layar permainan Flys, CGA 320 kali 200"></svg>
+          <p class="f-pesan" id="pesan"></p>
+        </div>
+
+        <p class="f-hint" id="hint" hidden>
+          <strong>Klik pemukulnya langsung di layar</strong> &mdash; atau tekan
+          <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd>, seperti aslinya.
+        </p>
+
+        <div class="f-row">
+          <button class="btn btn--primary" id="mulai" type="button">Mulai</button>
+          <button class="btn btn--ghost" id="stop" type="button">Berhenti</button>
+          <button class="btn btn--ghost btn--sm" id="mode" type="button"
+                  aria-pressed="false">Mode 1985</button>
+        </div>
+
+        <div class="f-row f-row--kecil">
+          <label>Kecepatan gambar
+            <input type="range" id="hz" min="20" max="120" step="10" value="60">
+            <span class="mono" id="hzv"></span></label>
+          <label class="f-cek"><input type="checkbox" id="bunyi" checked> Bunyi</label>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">180 baris BASIC</span>
+      <span class="ruleset__k">3 GOTO</span>
+      <span class="ruleset__k">0 bitmap</span>
+      <span class="ruleset__k ruleset__k--mangsa">31 lalat untuk menang</span>
+      <span class="ruleset__k ruleset__k--bahaya">kurvanya rata di lalat ke-12</span>
+    </p>
+
+    <div class="f-bar" role="img" aria-label="Kemajuan SPEED menuju 9999">
+      <div class="f-bar__isi" id="bar-isi"></div>
+      <span class="f-bar__tanda f-bar__tanda--a"><i>8000</i></span>
+      <span class="f-bar__tanda f-bar__tanda--b"><i>9000</i></span>
+      <span class="f-bar__tanda f-bar__tanda--c"><i>9999</i></span>
+    </div>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">SPEED</span>
+        <span class="stat__value mono" id="s-speed">0</span></div>
+      <div class="stat"><span class="stat__label">RECORD</span>
+        <span class="stat__value mono" id="s-rekor">0</span></div>
+      <div class="stat"><span class="stat__label">DELAY</span>
+        <span class="stat__value mono" id="s-delay">3000</span></div>
+      <div class="stat"><span class="stat__label">Kepak per hinggapan</span>
+        <span class="stat__value mono" id="s-ulang">31</span></div>
+      <div class="stat"><span class="stat__label">Pangkat</span>
+        <span class="stat__value mono" id="s-rank">—</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <p class="f-lead">
+        Seekor lalat hinggap di salah satu dari <strong>tiga tempat</strong>,
+        mendengung sebentar, lalu pindah &mdash; tujuh sampai sebelas kali.
+        Lalu ia <strong>menghilang</strong>, tiga pemukul turun menutupi
+        ketiganya, dan Anda harus menyebut di mana ia terakhir berada.
+      </p>
+      <ol class="howto__steps">
+        <li><strong>Klik pemukulnya langsung</strong> begitu ketiganya turun.
+            Tuts <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> juga jalan &mdash; itu
+            satu-satunya cara di aslinya, dan layarnya sendiri yang
+            menuliskannya. <kbd>Esc</kbd> berhenti.</li>
+        <li><strong>Kena</strong> &rarr; <code>DELAY</code> dikali
+            <strong>0,7370001</strong> dan lalat berikutnya lebih cepat.
+            <strong>Meleset</strong> &rarr; dikali <strong>1,47</strong>,
+            dibatasi 3000.</li>
+        <li><code>SPEED = (3000 &minus; DELAY) × 10 ÷ 3</code>. Lewat
+            <strong>8000</strong> Anda jadi <em>Senior De-Bugger</em>, lewat
+            <strong>9000</strong> jadi <em>Professional</em>, dan lewat
+            <strong>9999</strong> permainannya tamat.</li>
+        <li>Yang membuatnya sulit bukan lalatnya bersembunyi, melainkan
+            <strong>hinggapnya makin singkat</strong> &mdash; sampai satu titik.
+            Lihat panel <em>Kurva yang rata</em>.</li>
+      </ol>
+      <p>
+        Penggeser <strong>kecepatan gambar</strong> menentukan berapa
+        <code>PUT</code> per detik. Aslinya tidak punya penggeser ini: lamanya
+        satu hinggapan diukur dengan <strong>menghitung PUT</strong>, bukan
+        dengan jam &mdash; jadi kecepatannya ditentukan CPU. Penggeser inilah
+        satuan waktu yang tidak pernah dimiliki aslinya.
+      </p>
+      <p>
+        Tombol <strong>Mode 1985</strong> mengembalikan lalat dan pemukulnya ke
+        <strong>sprite piksel asli</strong> &mdash; yang dibangun makro
+        <code>DRAW</code> 1985 &mdash; dan mematikan seluruh cahaya, bayangan,
+        gema sayap, guncangan, serta bantalan. Gambar modernnya memakai kotak
+        yang sama persis, jadi letak dan aturan mainnya tidak berubah sedikit
+        pun di antara keduanya.
+      </p>
+    </details>
+</section>
+
+  <section class="stack">
+
+    <div class="panel f-good">
+      <p class="eyebrow">Sprite yang digambar oleh kode, lalu dipotret</p>
+      <p class="f-note">
+        Tidak ada satu pun bitmap di berkas ini. Lalatnya digambar dengan
+        <strong>bahasa makro <code>DRAW</code></strong> &mdash; bahasa penyu
+        yang tertanam di BASIC &mdash; lalu <em>dipotret</em> ke larik dengan
+        <code>GET</code>:
+      </p>
+<pre class="f-code">200 BODY$   ="c1u5be1d6r1u6bf1d5"
+210 URWING$ ="c3bu3br1e3r1g3r1e3"
+250 DRAW BODY$+URWING$+ULWING$      <span class="f-c">' lalat pertama</span>
+260 DRAW "bd20br6"                  <span class="f-c">' turun 20, geser 6</span>
+270 DRAW BODY$+DRWING$+DLWING$      <span class="f-c">' lalat kedua</span>
+280 GET (131,91)-(152,103),FLY0
+290 GET (151,91)-(172,103),FLY1
+300 GET (151,105)-(172,117),FLY2</pre>
+      <p class="f-note">
+        Halaman ini <strong>menjalankan string itu</strong>, bukan menggambar
+        ulang lalatnya dengan tangan. Ada penafsir <code>DRAW</code> di
+        <code>flys.js</code>; hasilnya dirasterkan jadi piksel, lalu ketiga
+        persegi <code>GET</code> diambil dari peta piksel yang sama. Lalat yang
+        Anda lihat di atas memang lalat 1985 itu.
+      </p>
+      <div class="f-sprites">
+        <figure><svg class="f-spr" id="c-fly1"></svg><figcaption>FLY1</figcaption></figure>
+        <figure><svg class="f-spr" id="c-fly2"></svg><figcaption>FLY2</figcaption></figure>
+        <figure><svg class="f-spr f-spr--kosong" id="c-fly0"></svg><figcaption>FLY0</figcaption></figure>
+        <figure><svg class="f-spr f-spr--besar" id="c-swat"></svg><figcaption>SWAT</figcaption></figure>
+      </div>
+      <p class="f-note f-kecil">
+        Keempatnya dibangun saat halaman ini dibuka, dengan menjalankan makro
+        aslinya. Permainannya sendiri sekarang memakai gambar baru &mdash; lihat
+        panel <em>Rupa modern</em> di bawah &mdash; tapi keempat sprite ini
+        tetap bisa dimainkan lewat tombol <strong>Mode 1985</strong>.
+      </p>
+    </div>
+
+    <div class="panel f-warn">
+      <p class="eyebrow">FLY0 bukan fase kepakan — ia penghapus</p>
+      <p class="f-note">
+        Menjalankan makronya menjawab sesuatu yang tidak bisa dijawab dengan
+        membacanya. Angka di tabel ini <strong>dihitung oleh halaman ini saat
+        dibuka</strong>, dari sprite yang baru saja dibangun:
+      </p>
+      <table class="f-tbl">
+        <thead><tr><th>Larik</th><th>Persegi GET</th><th>Piksel</th></tr></thead>
+        <tbody>
+          <tr><td><code>FLY0</code></td><td>(131,91)-(152,103)</td>
+              <td><strong id="b-fly0">—</strong> &larr; kosong</td></tr>
+          <tr><td><code>FLY1</code></td><td>(151,91)-(172,103)</td>
+              <td id="b-fly1">—</td></tr>
+          <tr><td><code>FLY2</code></td><td>(151,105)-(172,117)</td>
+              <td id="b-fly2">—</td></tr>
+        </tbody>
+      </table>
+      <p class="f-note">
+        Seluruh penanya menggambar <strong id="b-total">—</strong> piksel, di
+        kotak <strong id="b-kotak">—</strong>. Persegi <code>FLY0</code>
+        berhenti di kolom 152; lalat pertama baru mulai di kolom 154. Jadi
+        <code>FLY0</code> <strong>tidak memotret apa pun</strong>.
+      </p>
+      <p class="f-note">
+        Gunanya ada di baris 630: <code>PUT (74*FLY,67),FLY0,PSET</code>.
+        <code>PSET</code> menimpa seluruh persegi termasuk piksel kosongnya
+        &mdash; jadi menaruh sprite kosong berarti <strong>menghapus</strong>.
+        Kepakannya <strong>dua fase, bukan tiga</strong>.
+      </p>
+      <p class="f-note">
+        Dan itu menentukan permainannya: baris 630 berjalan di akhir
+        <em>setiap</em> hinggapan, termasuk yang terakhir. Lalatnya sudah
+        hilang sebelum pemukulnya turun. Ini bukan permainan ketangkasan
+        &mdash; ini permainan <strong>ingatan</strong>.
+      </p>
+    </div>
+
+    <div class="panel f-good">
+      <p class="eyebrow">Ukuran lariknya dihitung, bukan ditebak</p>
+<pre class="f-code">130 DIM FLY0(21),FLY1(21),FLY2(21)
+140 DIM SWAT(714)</pre>
+      <p class="f-note">
+        Kenapa 21? Kenapa 714? Ukuran larik <code>GET</code> di GW-BASIC punya
+        rumusnya: <code>4 + INT((lebar × bit_per_piksel + 7) ÷ 8) × tinggi</code>,
+        dan <code>SCREEN 1</code> memakai 2 bit per piksel.
+      </p>
+      <table class="f-tbl">
+        <thead><tr><th></th><th>Ukuran</th><th>Butuh</th><th>DIM × 4 bita</th><th>Sisa</th></tr></thead>
+        <tbody>
+          <tr><td>lalat</td><td>22×13</td><td>82</td><td>21 → <strong>84</strong></td><td>2</td></tr>
+          <tr><td>swat</td><td>76×150</td><td>2.854</td><td>714 → <strong>2.856</strong></td><td>2</td></tr>
+        </tbody>
+      </table>
+      <p class="f-note">
+        Keduanya <strong>minimum yang muat</strong>. Dan sisa dua bita itu bukan
+        pilihan &mdash; ia dipaksa oleh pembulatan ke kelipatan empat, karena
+        larik presisi tunggal empat bita per elemen. Angka 21 dan 714
+        <strong>tidak mungkin ditebak</strong>; keduanya dihitung dengan rumus
+        itu sebelum satu baris permainannya ditulis.
+      </p>
+    </div>
+
+    <div class="panel f-warn">
+      <p class="eyebrow">Kurva yang rata di lalat ke-12</p>
+<pre class="f-code">570 WHILE+ BUZZ &lt; DELAY
+580 PUT(74*FLY,67),FLY1,PSET
+590 PUT(74*FLY,67),FLY2,PSET
+600 BUZZ=BUZZ+99
+610 WEND
+850 DELAY=0.7370001*DELAY   <span class="f-c">' kena</span>
+1260 DELAY=1.47*DELAY       <span class="f-c">' meleset</span></pre>
+      <p class="f-note">
+        Lama satu hinggapan bukan waktu &mdash; ia <strong>cacah
+        kerja</strong>: <code>ceil(DELAY ÷ 99)</code> pasang <code>PUT</code>.
+        Dan 99 adalah kuantum terkecil yang bisa dihitung, jadi begitu
+        <code>DELAY</code> turun di bawah 99, cacahnya <strong>terkunci di
+        1</strong> dan tidak bisa mengecil lagi.
+      </p>
+      <svg class="f-kurva" id="kurva" role="img"
+           aria-label="Grafik jumlah kepakan per hinggapan terhadap jumlah lalat yang dibunuh"></svg>
+      <p class="f-note f-kecil">
+        Titik terang menandai posisi Anda sekarang. Garis tegak di bunuh ke-12
+        adalah tempat <code>ceil(DELAY÷99)</code> terkunci di 1 &mdash; batang
+        datar di kanannya adalah dua puluh lalat terakhir. Kurvanya
+        <strong>dihitung dari rumus yang sama dengan permainannya</strong>,
+        bukan digambar terpisah.
+      </p>
+      <table class="f-tbl">
+        <thead><tr><th>Bunuh ke-</th><th>DELAY</th><th>SPEED</th><th>Kepak</th><th></th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td>3.000</td><td>0</td><td>31</td><td></td></tr>
+          <tr><td>1</td><td>2.211</td><td>2.630</td><td>23</td><td></td></tr>
+          <tr><td>6</td><td>480,8</td><td>8.397</td><td>5</td><td>Senior De-Bugger</td></tr>
+          <tr><td>8</td><td>261,1</td><td>9.130</td><td>3</td><td>Professional</td></tr>
+          <tr><td>11</td><td>104,5</td><td>9.651</td><td>2</td><td></td></tr>
+          <tr><td><strong>12</strong></td><td>77,0</td><td>9.743</td><td><strong>1</strong></td><td>kurvanya rata di sini</td></tr>
+          <tr><td>20</td><td>6,71</td><td>9.978</td><td>1</td><td></td></tr>
+          <tr><td><strong>31</strong></td><td>0,234</td><td>9.999,2</td><td>1</td><td>menang</td></tr>
+        </tbody>
+      </table>
+      <p class="f-note">
+        Jadi dari bunuh ke-12 sampai ke-31 &mdash; <strong>dua puluh
+        lalat</strong> &mdash; tingkat kesulitannya <strong>persis
+        sama</strong>. Anda mengulang tugas yang identik dua puluh kali sambil
+        angka SPEED terus naik.
+      </p>
+      <p class="f-note">
+        Ini bukan rancangan; ini akibat langsung dari mengukur waktu dengan
+        menghitung pekerjaan. Dan ini juga sebabnya program seperti
+        <code>SLOWDOWN.COM</code> pernah ada.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Lagu sebagai pewaktu</p>
+<pre class="f-code">1080 PRINT "YOU JUST MADE 'SENIOR DE-BUGGER'!!!"
+1090 PLAY"<strong>MF</strong> O3 T200 L5 MS cde.cffcd.cde.cffcd..."
+1180 LINE (15,15)-(304,184),0,BF   <span class="f-c">' langsung menghapusnya</span></pre>
+      <p class="f-note">
+        Baris 1180 menghapus layar tepat setelah pesan pujian dicetak. Kalau
+        tidak ada apa-apa di antaranya, pesannya <strong>tidak akan sempat
+        terbaca</strong>.
+      </p>
+      <p class="f-note">
+        Yang menahannya adalah <code>MF</code> di awal baris 1090 &mdash;
+        <em>music foreground</em>, yang <strong>memblokir</strong> di GW-BASIC
+        sampai lagunya habis. Jadi lagunya bukan hiasan: <strong>ia satu-satunya
+        alasan pujian itu terlihat.</strong>
+      </p>
+      <p class="f-note">
+        Port ini memainkan ketiga makro <code>PLAY</code> aslinya apa adanya
+        lewat penafsir di <code>_shared/audio.js</code>, dan menahan pesannya
+        sampai lagunya selesai &mdash; sebab yang sama, mekanisme yang sama.
+      </p>
+    </div>
+
+    <div class="panel f-warn">
+      <p class="eyebrow">Dua hal kecil yang layak disebut</p>
+      <p class="f-note">
+        <strong>Baris 570 salah ketik, dan tetap jalan.</strong>
+        <code>WHILE+ BUZZ &lt; DELAY</code> &mdash; ada tanda tambah setelah
+        <code>WHILE</code>. GW-BASIC membacanya sebagai plus uner pada
+        <code>BUZZ</code>, jadi tidak berpengaruh apa-apa. Ia sudah berada di
+        sana sejak 1985.
+      </p>
+      <p class="f-note">
+        <strong>Layar menangnya tidak punya jalan keluar.</strong> Baris 1660
+        sampai 1700 mengulang lagunya <em>selamanya</em> sambil
+        <code>COLOR BGD,PLT</code> mengacak warna layar, dan diakhiri
+        <code>GOTO 1660</code>. Tidak ada tombol, tidak ada <code>INKEY$</code>.
+        Satu-satunya cara keluar dari kemenangan adalah mematikan komputernya.
+        Di sini lagunya diputar sekali.
+      </p>
+    </div>
+
+    <div class="panel f-good">
+      <p class="eyebrow">Rupa modern, dan jaminannya</p>
+      <p class="f-note">
+        Lalat dan pemukul di layar <strong>digambar sendiri</strong>, atas
+        permintaan pemilik koleksi &mdash; bukan turunan sprite 1985. Itu
+        pembalikan dari cara koleksi ini biasanya bekerja, dan disebutkan
+        terang-terangan.
+      </p>
+      <p class="f-note">
+        Yang membuatnya aman: <strong>aset aslinya tidak dibuang.</strong> Panel
+        di atas tetap <em>menjalankan</em> makro <code>DRAW</code> aslinya dan
+        mencacah pikselnya, dan tombol <strong>Mode 1985</strong> mengembalikan
+        permainannya ke sprite piksel asli &mdash; lalat dan pemukul, keduanya.
+        Yang berubah cuma mana yang jadi bawaan.
+      </p>
+      <p class="f-note">
+        Kotaknya pun sama persis dengan <code>GET</code>-nya: lalat 22&times;13
+        pada <code>(74×FLY, 67)</code>, pemukul 76&times;150 pada
+        <code>(87×SWIPE&minus;51, 35)</code>. Bahkan jumlah lubang pemukulnya
+        diwarisi &mdash; <strong>7&times;8 = 56</strong>, cacah yang sama dengan
+        gelung baris 340&ndash;370.
+      </p>
+      <p class="f-note">
+        Dua yang paling tergoda dilakukan, dan sengaja <strong>tidak</strong>
+        dilakukan: lalatnya <strong>tidak diberi lintasan terbang</strong> antar
+        tempat &mdash; ia melompat, persis seperti aslinya, karena lintasan akan
+        membuat mata bisa mengikutinya tanpa perlu mengingat apa pun; dan
+        bantalannya menunjukkan <strong>letak</strong> ketiga tempat, tidak
+        pernah tempat mana yang sedang dipakai.
+      </p>
+      <p class="f-note">
+        Hiasan lalatnya dibuang di baris yang <em>sama</em> dengan penghapusnya
+        &mdash; kalau bayangannya tertinggal satu bingkai saja, ia membocorkan
+        persis hal yang disembunyikan baris 630.
+      </p>
+      <p class="f-note">
+        Tekan <strong>Mode 1985</strong> untuk membuktikannya. Sidik jari
+        piksel sprite di kedua mode:
+      </p>
+      <table class="f-tbl">
+        <thead><tr><th></th><th>Modern</th><th>Mode 1985</th></tr></thead>
+        <tbody>
+          <tr><td>Lalat</td><td>gambar SVG</td><td>50 piksel makro</td></tr>
+          <tr><td>Pemukul</td><td>3 gambar, 56 lubang</td><td>3 × <strong>210</strong> persegi</td></tr>
+          <tr><td>Elemen hiasan</td><td>52</td><td><strong>0</strong></td></tr>
+          <tr><td>Panel bukti di atas</td><td colspan="2"><strong>0 / 50 / 50 &mdash; tidak berubah</strong></td></tr>
+        </tbody>
+      </table>
+      <p class="f-note f-kecil">
+        Angka 210 bisa diturunkan sendiri: 1 bantalan + 56 lubang + 152 jalur
+        tegak pita &ldquo;V&rdquo; + 1 gagang. Dan perhatikan baris terakhir
+        &mdash; panel buktinya sama di kedua mode, karena ia tidak pernah
+        bergantung pada rupa permainannya. Itulah yang membuat penggantian
+        gambar ini aman.
+      </p>
+      <p class="f-note f-kecil">
+        Hiasannya dimatikan di JavaScript, bukan sekadar disembunyikan di CSS
+        &mdash; supaya tidak ada elemen yang tetap dibuat lalu ditutupi.
+      </p>
+    </div>
+
+    <p class="faint f-links">
+      <a href="../../docs/flys.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/FLYS.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/FLYS.BAS">Kode sumber 1985</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/input.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="flys.js"></script>
+</body>
+</html>

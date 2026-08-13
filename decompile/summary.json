@@ -1,0 +1,60 @@
+[
+ {
+  "target": "HOPPER.EXE",
+  "end": 7863,
+  "far": 776,
+  "entries": 117,
+  "base": 26916,
+  "strcalls": 31,
+  "hits": {
+   "8": 11,
+   "10": 8,
+   "28": 4,
+   "46": 3,
+   "48": 3,
+   "37": 1,
+   "103": 1
+  },
+  "text": 52,
+  "draw": 4,
+  "play": 0,
+  "data": 4
+ },
+ {
+  "target": "3DTTT.EXE",
+  "end": 29069,
+  "far": 2345,
+  "entries": 87,
+  "base": 18563,
+  "strcalls": 62,
+  "hits": {
+   "11": 19,
+   "5": 33,
+   "19": 3,
+   "37": 7
+  },
+  "text": 68,
+  "draw": 0,
+  "play": 0,
+  "data": 1
+ },
+ {
+  "target": "PAC-GAL.EXE",
+  "end": 11988,
+  "far": 1349,
+  "entries": 71,
+  "base": 28084,
+  "strcalls": 18,
+  "hits": {
+   "1": 8,
+   "8": 5,
+   "14": 1,
+   "12": 3,
+   "39": 1
+  },
+  "text": 45,
+  "draw": 0,
+  "play": 6,
+  "data": 0
+ }
+]

@@ -1,0 +1,10 @@
+10 REM ******A German Folk Tune******
+20 PLAY "o2 t200 l8"
+30 PLAY "d g a b >c d4 ml e c< "
+40 PLAY "mn b p8 a p8 g4 p8 "
+50 PLAY "d g a b >c d4 ml"
+60 PLAY " e c <b p8 a8 p8 g4 p4"
+70 PLAY ">d8. c16 <b >d c <b"
+80 PLAY "a4 >d8. c16 <b >d c <b a4"
+90 PLAY "g a b >c d4 ml e c mn"
+100 PLAY "<b p8 a p8 g4."

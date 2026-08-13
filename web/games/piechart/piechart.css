@@ -1,0 +1,62 @@
+/* ===========================================================================
+   piechart.css — khusus IBM Piechart. Awalan `p-`.
+   =========================================================================== */
+
+.p-layout {
+  display: grid; gap: var(--s5);
+  grid-template-columns: minmax(340px, 1fr) minmax(300px, 420px);
+  align-items: start; padding-block: var(--s6) var(--s8);
+}
+@media (max-width: 1040px) { .p-layout { grid-template-columns: 1fr; } }
+
+.p-stage { display: grid; gap: var(--s4); }
+.p-judul { font-family: var(--font-mono); color: var(--acc-phosphor); }
+
+.p-row { display: flex; gap: var(--s3); align-items: center; flex-wrap: wrap;
+         font-size: var(--fs-xs); color: var(--ink-dim); }
+.p-row input[type="text"] { flex: 1; min-width: 180px; padding: 5px var(--s2); }
+.p-data { width: 100%; min-height: 120px; resize: vertical;
+          font-family: var(--font-mono); font-size: var(--fs-sm);
+          padding: var(--s2); }
+
+.p-svg { width: 100%; height: auto; display: block;
+         background: var(--bg-sunken); border-radius: var(--r); }
+/* Potongan digambar dengan tepi gelap, bukan tanpa tepi: aslinya memakai
+   CIRCLE untuk busurnya (warna 1) lalu PAINT untuk isinya, jadi tiap potongan
+   memang punya garis luar. */
+.p-slice { stroke: #10161d; stroke-width: 1.5; }
+.p-lab { fill: var(--ink); font-size: 11px; font-family: var(--font-mono); }
+.p-title { fill: var(--acc-phosphor); font-size: 13px;
+           font-family: var(--font-mono); }
+.p-titlebox { fill: none; stroke: var(--acc-phosphor); stroke-width: 1; }
+
+.p-legend { display: grid; gap: 4px; margin-top: var(--s3); }
+.p-key { display: flex; align-items: center; gap: var(--s2);
+         font-size: var(--fs-sm); color: var(--ink-dim); }
+.p-key i { width: 14px; height: 14px; border-radius: 3px; flex: none;
+           border: 1px solid var(--edge-strong); }
+.p-hilang { color: var(--acc-red); font-size: var(--fs-xs); }
+
+.p-code {
+  margin-top: var(--s3); padding: var(--s3);
+  border: var(--border); border-radius: var(--r);
+  background: var(--bg-sunken); color: var(--acc-amber);
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.7;
+  overflow-x: auto;
+}
+.p-code em { color: var(--ink-faint); font-style: normal; }
+.p-note { font-size: var(--fs-sm); color: var(--ink-dim); margin-top: var(--s2); }
+.p-warn { border-left: 3px solid var(--acc-amber); }
+.p-good { border-left: 3px solid var(--acc-phosphor); }
+.p-bad  { border-left: 3px solid var(--acc-red); }
+
+.p-tbl { width: 100%; border-collapse: collapse; margin-top: var(--s3);
+         font-size: var(--fs-xs); }
+.p-tbl th, .p-tbl td { padding: 4px var(--s2); text-align: left;
+                       border-bottom: 1px solid var(--line-soft);
+                       vertical-align: top; }
+.p-tbl th { color: var(--ink-dim); font-weight: 600; }
+
+.howto > .p-lead {
+  border-top: none; padding-top: 0; margin-top: var(--s3); color: var(--ink);
+}

@@ -1,0 +1,99 @@
+/* ===========================================================================
+   towers.css — khusus Towers of Atlantis. Awalan `w-` supaya tidak pernah
+   bertabrakan dengan komponen bersama di base.css.
+   =========================================================================== */
+
+.w-layout {
+  display: grid; gap: var(--s5);
+  grid-template-columns: minmax(340px, 1fr) minmax(280px, 420px);
+  align-items: start; padding-block: var(--s6) var(--s8);
+}
+@media (max-width: 940px) { .w-layout { grid-template-columns: 1fr; } }
+
+.w-stage { display: grid; gap: var(--s4); justify-items: stretch; }
+.w-board { width: 100%; height: auto; display: block; }
+
+/* --- tiang & alas -------------------------------------------------------- */
+
+.w-post { fill: var(--ink-faint); }
+.w-base { fill: var(--acc-blue); opacity: .55; }
+
+/* Daerah klik satu tiang penuh. Dibuat setinggi papan supaya tidak perlu
+   membidik cakram kecil — target 240x210 jauh lebih mudah dikenai daripada
+   sebuah cakram setinggi 24 piksel. */
+.w-zone { fill: transparent; cursor: grab; touch-action: none; }
+.w-zone:active { cursor: grabbing; }
+.w-zone:hover ~ .w-hl, .w-zone:focus-visible ~ .w-hl { opacity: .12; }
+.w-hl { fill: var(--acc-phosphor); opacity: 0; pointer-events: none;
+        transition: opacity var(--t-fast) var(--ease); }
+.w-hl.is-sel { opacity: .18; }
+/* Tujuan yang tidak sah saat diseret. Merah menjawab pertanyaan sebelum
+   cakramnya dilepas, bukan sesudahnya. */
+.w-hl.is-bad { fill: var(--acc-red); opacity: .2; }
+
+/* Penunjuk `**` yang berkedip di aslinya, baris 240. */
+.w-star { fill: var(--acc-amber); text-anchor: middle;
+          font-family: var(--font-mono); font-size: 26px; font-weight: 700; }
+@keyframes w-blink { 50% { opacity: .25; } }
+.w-star { animation: w-blink 1s steps(1, end) infinite; }
+@media (prefers-reduced-motion: reduce) { .w-star { animation: none; } }
+
+/* --- cakram -------------------------------------------------------------- */
+
+/* Hanya `transform` yang dianimasikan — bukan x/y — supaya perpindahan
+   dikerjakan compositor dan tidak memicu tata letak ulang tiap frame. */
+/* Cakram tidak pernah menerima penunjuk: seluruh tiang yang jadi sasarannya.
+   Sebelum ini cakram digambar DI ATAS daerah kliknya, sehingga menekan tepat
+   di atas sebuah cakram justru tidak melakukan apa-apa - satu-satunya tempat
+   yang paling wajar ditekan malah jadi titik mati. */
+.w-disc { transition: transform var(--t-slow) var(--ease); pointer-events: none; }
+/* Selama diseret transisinya dimatikan, supaya cakramnya menempel di jari. */
+.w-disc.is-drag { transition: none; }
+.w-disc rect { stroke: rgba(0,0,0,.45); stroke-width: 1; }
+.w-disc text { text-anchor: middle; font-family: var(--font-mono);
+               font-size: 13px; font-weight: 700; fill: rgba(0,0,0,.55);
+               pointer-events: none; user-select: none; }
+.w-disc.is-held { filter: drop-shadow(0 6px 10px rgba(0,0,0,.5)); }
+@media (prefers-reduced-motion: reduce) { .w-disc { transition: none; } }
+
+.w-say {
+  font-family: var(--font-mono); font-size: var(--fs-sm);
+  color: var(--acc-phosphor); min-height: 1.6em; text-align: center;
+}
+.w-say--bad { color: var(--acc-red); }
+.w-say--idle { color: var(--ink-dim); }
+
+/* --- panel kanan --------------------------------------------------------- */
+
+.w-code {
+  margin-top: var(--s3); padding: var(--s3);
+  border: var(--border); border-radius: var(--r);
+  background: var(--bg-sunken); color: var(--acc-phosphor);
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.7;
+  overflow-x: auto;
+}
+
+/* Jejak rekursi: satu batang per tingkat kedalaman. Ini gambar dari sesuatu
+   yang biasanya cuma bisa dibayangkan. */
+.w-trace { display: grid; gap: 2px; margin-top: var(--s3); min-height: 96px; }
+.w-trace__row {
+  display: grid; grid-template-columns: 2.6rem 1fr; gap: var(--s2);
+  font-family: var(--font-mono); font-size: var(--fs-xs);
+  color: var(--ink-dim); align-items: center;
+}
+.w-trace__d { color: var(--ink-faint); text-align: right; }
+.w-trace__bar {
+  height: 14px; border-radius: var(--r-sm);
+  background: var(--acc-phosphor-dim); border: 1px solid var(--acc-phosphor);
+  display: grid; place-items: center; padding-inline: 6px;
+  color: var(--acc-phosphor); font-size: 10px; white-space: nowrap;
+}
+
+.w-table { width: 100%; border-collapse: collapse; margin-top: var(--s3);
+           font-family: var(--font-mono); font-size: var(--fs-xs); }
+.w-table th, .w-table td { padding: 4px var(--s3); text-align: right;
+                           border-bottom: 1px solid var(--line-soft); }
+.w-table th { color: var(--ink-dim); font-weight: 600; }
+
+.w-note { font-size: var(--fs-sm); color: var(--ink-dim); margin-top: var(--s2); }
+.w-warn { border-left: 3px solid var(--acc-amber); }

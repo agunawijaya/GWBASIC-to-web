@@ -1,0 +1,49 @@
+# --- keluaran Python -------------------------------------------------------
+# Skrip .py-nya SENGAJA ikut terbit (perkakas dekompilasi di decompile/tools/
+# dan generator di scripts/). Yang dikecualikan hanya bytecode-nya.
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# --- sampah sistem operasi -------------------------------------------------
+Thumbs.db
+ehthumbs.db
+desktop.ini
+.DS_Store
+._*
+
+# --- penyunting ------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# --- berkas sementara ------------------------------------------------------
+*.tmp
+*.bak
+*.orig
+*.rej
+
+# --- keluaran DOSBox saat mencoba ------------------------------------------
+# Beberapa program menulis berkas datanya sendiri ke run/ waktu dijalankan.
+run/PICTURE.FLE
+run/NAME.FLE
+run/*.PIC
+run/tempory.tmp
+
+# --- keadaan mesin, bukan isi proyek --------------------------------------
+.claude/
+
+# --- berkas kerja ----------------------------------------------------------
+PROMPT-GIT.md
+
+# --- pekerjaan yang masih berjalan ----------------------------------------
+# Penelusur baris sedang dikerjakan agen lain SAAT INI. Dua alasan ia belum
+# ikut commit pertama: berkasnya bisa tertangkap di tengah penulisan, dan
+# repo yang dibuka dengan fitur setengah jadi memberi kesan pertama yang
+# salah. Begitu pekerjaan itu selesai, cukup hapus satu baris di bawah ini
+# lalu commit -- tidak ada yang hilang, semuanya tetap ada di disk.
+tracer/

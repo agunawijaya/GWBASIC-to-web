@@ -1,0 +1,51 @@
+/* studio.css — ASCII Studio (turunan modern DRAW.BAS) */
+.p-layout { display: grid; gap: var(--s5); align-items: start; }
+@media (min-width: 1150px) {
+  .p-layout { grid-template-columns: minmax(0, 1fr) 20rem; }
+}
+@media (min-width: 1500px) { .p-layout { max-width: 1460px; } }
+.p-stage { display: grid; gap: var(--s3); min-width: 0; }
+.p-layout .screen { overflow-x: auto; }        /* base.css memotong senyap */
+.p-crt { background: #000; border: 1px solid var(--line); border-radius: 12px;
+         padding: 10px; overflow-x: auto; min-width: 0; }
+.p-kanvas { font-family: var(--font-mono); font-size: 13px; line-height: 1.05;
+            white-space: pre; display: inline-block; cursor: crosshair;
+            touch-action: none; user-select: none; }
+.p-kanvas--teks { cursor: text; }
+.p-baris { display: flex; }
+.p-sel { display: inline-block; width: 1ch; text-align: center; }
+.p-bar { display: flex; flex-wrap: wrap; gap: var(--s2); align-items: center;
+         min-width: 0; }
+.p-bar .btn { min-width: 0; }
+.p-grup { display: flex; align-items: center; gap: 2px; flex-wrap: wrap;
+          margin-bottom: 3px; }
+.p-grupLabel { font: 700 9px var(--font-mono); color: var(--fg-dim);
+               width: 6.6rem; flex: none; letter-spacing: .07em; }
+.p-glif { font-family: var(--font-mono); font-size: 15px; line-height: 1;
+          width: 1.55rem; height: 1.55rem; flex: none; padding: 0;
+          border: 1px solid var(--line); border-radius: 4px;
+          background: var(--bg-sunken); color: var(--fg); cursor: pointer; }
+.p-glif:hover { background: var(--bg-raised); }
+.p-warna { width: 1.5rem; height: 1.5rem; flex: none; padding: 0; cursor: pointer;
+           border: 1px solid var(--line); border-radius: 4px; }
+.p-aktif { outline: 2px solid #46c17f; outline-offset: 1px; }
+.p-panel { padding: var(--s3); border: 1px solid var(--line);
+           border-radius: var(--r-sm); background: var(--bg-raised); min-width: 0; }
+.p-pesan { font-family: var(--font-mono); font-size: var(--fs-xs);
+           color: var(--fg-dim); min-height: 1.2em; margin: var(--s2) 0 0; }
+.p-kecil { font-size: var(--fs-xs); color: var(--fg-dim); }
+.p-angka { font-family: var(--font-mono); padding: 4px 6px; width: 10ch;
+           min-width: 6ch; flex: 0 1 auto;
+           border: 1px solid var(--line); border-radius: var(--r-sm);
+           background: var(--bg-sunken); color: var(--fg); }
+.p-keluaran { width: 100%; min-height: 9rem; font-family: var(--font-mono);
+              font-size: 11px; background: #000; color: #cfe; border: 1px solid var(--line);
+              border-radius: var(--r-sm); padding: var(--s2); margin-top: var(--s2); }
+.p-file { display: inline-flex; margin: 0 4px 4px 0; }
+.p-x { padding-left: 6px; padding-right: 6px; }
+.p-note { font-size: var(--fs-sm); line-height: 1.6; }
+.p-good { border-left: 3px solid #46c17f; }
+.p-links { margin-top: var(--s4); }
+.p-tbl { width: 100%; border-collapse: collapse; font-size: var(--fs-xs); margin: var(--s3) 0; }
+.p-tbl td, .p-tbl th { padding: 3px 5px; border-bottom: 1px solid var(--line); text-align: left; }
+.p-g { font-family: var(--font-mono); font-size: 15px; }

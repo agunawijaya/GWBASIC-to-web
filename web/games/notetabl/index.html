@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Note Table — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari NOTETABL.BAS (What Micro?, 1990): tabel nada dan frekuensi.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="../../_shared/music.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap m-layout">
+
+  <section class="stack">
+    <div class="screen screen--scanlines" id="stage">
+      <div class="m-stage">
+        <div id="staff"></div>
+        <div id="piano"></div>
+        <div class="m-transport">
+          <button class="btn btn--primary" id="play" type="button">Mainkan seluruh tabel</button>
+          <button class="btn btn--ghost" id="reset" type="button" disabled>Ulang</button>
+          <span class="m-now m-now--idle" id="now">—</span>
+        </div>
+        <div class="picker" id="instruments"></div>
+      </div>
+    </div>
+
+    <div class="panel panel--flush">
+      <div class="m-tablewrap">
+        <table class="m-table">
+          <thead>
+            <tr>
+              <th>Note&nbsp;no</th><th>Note</th>
+              <th>Frequency in Htz</th><th>Pitch number</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </div>
+    <p class="m-note">Klik baris mana pun untuk mendengar nadanya.</p>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel">
+      <p class="eyebrow">Kode asli, 26 baris</p>
+      <p class="m-note">
+        Satu-satunya program di seluruh koleksi yang ditulis dengan gaya modern:
+        nama variabel huruf kecil dan bermakna (<code>noteno</code>,
+        <code>notename$</code>, <code>oct</code>), indentasi sungguhan di dalam
+        blok <code>FOR</code>, dan <code>OPTION BASE 1</code> di baris pertama.
+      </p>
+      <p class="m-note">
+        <code>OPTION BASE 1</code> membuat indeks array mulai dari 1, bukan 0 —
+        satu baris yang menghapus seluruh kelas bug kurang-satu. Tersedia di
+        GW-BASIC sejak awal, tapi nyaris tidak ada yang memakainya.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Rumus yang sama</p>
+      <p class="mono" style="font-size:var(--fs-sm);line-height:1.9">
+        freq&nbsp;&nbsp;= 440 &times; 2^(oct + (note &minus; 10) / 12)<br>
+        pitch = CINT(125000 / freq)
+      </p>
+      <p class="m-note">
+        Baris pertama identik dengan <a href="../octave/index.html">OCTAVE.BAS</a>
+        — tapi di sini dibungkus <code>FOR note = 1 TO 12</code>, jadi ia
+        benar-benar berjalan menaiki oktaf.
+      </p>
+    </div>
+
+    <div class="panel m-warn">
+      <p class="eyebrow">Kolom "pitch number" itu untuk apa?</p>
+      <p class="m-note">
+        Bukan untuk speaker IBM PC. Pencacah PC memakai pembagi
+        <strong>1.193.180 / f</strong>, bukan 125.000.
+      </p>
+      <p class="m-note">
+        Angka 125.000 adalah rumus periode nada untuk chip suara PSG berpembagi
+        16 pada denyut 2 MHz. Jadi tabel ini kemungkinan besar melayani
+        <strong>dua keluarga mesin sekaligus</strong> — kolom Hz untuk
+        <code>SOUND</code> di PC, kolom pitch untuk mesin lain. Wajar untuk
+        majalah Inggris yang pembacanya memakai banyak merek komputer.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/notetabl.md">Dokumen arsitektur</a> ·
+      <a href="../../../reviews/NOTETABL.md">Analisis BASIC aslinya</a> ·
+      <a href="../../../run/NOTETABL.BAS">Kode sumber 1990</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/piano.js"></script>
+<script src="../../_shared/staff.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="notetabl.js"></script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+{
+ "3DTTT.EXE": {
+  "region": 26374,
+  "covered": 26298,
+  "kinds": {
+   "teks": 0,
+   "padding/nol": 0,
+   "tabel pointer": 0,
+   "kode tak terjangkau": 18,
+   "lain": 59
+  },
+  "codelike": [
+   [
+    7864,
+    7876,
+    "4 instruksi, 1 alur kendali"
+   ],
+   [
+    23214,
+    23220,
+    "2 instruksi, 1 alur kendali"
+   ]
+  ]
+ },
+ "PAC-GAL.EXE": {
+  "region": 12262,
+  "covered": 12068,
+  "kinds": {
+   "teks": 0,
+   "padding/nol": 0,
+   "tabel pointer": 0,
+   "kode tak terjangkau": 108,
+   "lain": 87
+  },
+  "codelike": [
+   [
+    10538,
+    10623,
+    "32 instruksi, 7 alur kendali"
+   ],
+   [
+    11983,
+    11989,
+    "2 instruksi, 1 alur kendali"
+   ],
+   [
+    11999,
+    12016,
+    "6 instruksi, 3 alur kendali"
+   ]
+  ]
+ },
+ "HOPPER.EXE": {
+  "region": 7837,
+  "covered": 7827,
+  "kinds": {
+   "teks": 0,
+   "padding/nol": 0,
+   "tabel pointer": 0,
+   "kode tak terjangkau": 10,
+   "lain": 0
+  },
+  "codelike": [
+   [
+    7655,
+    7665,
+    "3 instruksi, 1 alur kendali"
+   ]
+  ]
+ }
+}

@@ -1,0 +1,240 @@
+/* ===========================================================================
+   attack.css — ATTACK.BAS (7 Oktober 1982, MOD-5-5-M)
+
+   Lanskap, pesawat, musuh, dan bomnya DIGAMBAR SENDIRI. Yang menentukan
+   permainan tetap petak 40x25 di attack.js — baris 1460 menilai bom dengan
+   SCREEN(23,3), jadi harus ada layar yang bisa ditanya, dan gambar di sini
+   diturunkan per sel dari petak itu.
+
+   Satu pemetaan yang BUKAN selera: kode 210 dan 193 adalah dua yang dinilai
+   baris 1510 dengan pengganda ketinggian, dan keduanya satu-satunya bangunan
+   berwarna hangat di seluruh lanskap. Sasaran termahal harus paling mudah
+   dikenali.
+
+   Tombol "Mode 1982" memperlihatkan petaknya sebagai aksara.
+   =========================================================================== */
+
+.a-layout { display: grid; gap: var(--s5); align-items: start; }
+@media (min-width: 1000px) {
+  .a-layout { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+}
+@media (min-width: 1400px) { .a-layout { max-width: 1320px; } }
+
+.a-stage { display: grid; gap: var(--s3); }
+
+.a-crt {
+  position: relative;
+  background: #04070f;
+  border: 1px solid var(--line); border-radius: 16px;
+  padding: var(--s3);
+  overflow: hidden;
+  box-shadow: inset 0 0 60px rgba(0,0,0,.75);
+}
+.a-crt::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(104deg, rgba(255,255,255,.05) 0 26%, transparent 44%),
+    radial-gradient(115% 95% at 50% 45%, transparent 58%, rgba(0,0,0,.5) 100%),
+    repeating-linear-gradient(to bottom, rgba(255,255,255,.045) 0 1px, transparent 1px 3px);
+}
+
+@keyframes a-guncang {
+  0%,100% { transform: translate(0,0); }
+  25% { transform: translate(-3px, 2px); }
+  50% { transform: translate(3px, -2px); }
+  75% { transform: translate(-2px, -1px); }
+}
+.a-crt--guncang { animation: a-guncang .2s ease-in-out 1; }
+.a-crt--mati::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(60% 50% at 12% 50%, rgba(255,70,40,.4), transparent 70%);
+}
+
+.a-svg { display: block; width: 100%; height: auto; }
+.a-svg[hidden], .a-glif[hidden] { display: none; }
+
+.a-glif {
+  font-family: var(--font-mono);
+  font-size: clamp(8px, 2.35cqi, 18px);
+  line-height: 1.1; white-space: pre; margin: 0;
+  color: #f0a02a;
+}
+.a-crt { container-type: inline-size; }
+
+/* --- langit & medan ------------------------------------------------------ */
+.a-langit { fill: url(#glangit); }
+/* Garis atmosfer baris 5: BUKAN hiasan. Melewatinya membuat Y5=1 dan kendali
+   hilang (baris 810), jadi ia digambar setegas fungsinya. */
+.a-atmosfer {
+  stroke: #4fb0ff; stroke-width: 2; opacity: .65; stroke-dasharray: 10 6;
+}
+.a-bumi  { fill: #0d1710; }
+.a-tanah { fill: none; stroke: #6f9e78; stroke-width: 2.4; stroke-linecap: round; }
+.a-ujung { fill: #ffd166; opacity: .8; }
+
+.a-gedung  { fill: url(#ggedung); stroke: #10161f; stroke-width: .8; }
+.a-jendela { fill: #ffe9a8; opacity: .55; }
+.a-pintu   { fill: #0c1119; }
+.a-rangka  { fill: none; stroke: #8c9bb2; stroke-width: 1.5; stroke-linecap: round; }
+.a-lampu   { fill: #ff5a4e; }
+.a-tangki  { fill: #55606f; stroke: #10161f; stroke-width: .8; }
+.a-tangkiGaris { stroke: #2c333d; stroke-width: 1.2; }
+
+/* PABRIK — satu-satunya yang hangat, dan itu bukan selera: kode 210/193 yang
+   dinilai (25-Y2)x12 oleh baris 1510. */
+.a-pabrik   { fill: url(#gpabrik); stroke: #4a2a04; stroke-width: 1; }
+.a-atap     { fill: #b06f18; }
+.a-cerobong { fill: #8a5a12; stroke: #3c2404; stroke-width: .8; }
+@keyframes a-asap-naik {
+  0%   { opacity: .55; transform: translateY(0) scale(.8); }
+  100% { opacity: 0;   transform: translateY(-14px) scale(1.5); }
+}
+.a-asap { fill: #cbd5e1; transform-box: fill-box; transform-origin: center;
+          animation: a-asap-naik 2.4s ease-out infinite; }
+
+/* --- pesawat ------------------------------------------------------------- */
+.a-badan  { fill: url(#gbadan); stroke: #1a2130; stroke-width: 1; }
+.a-sayapP { fill: #8d9bb0; stroke: #1a2130; stroke-width: .8; }
+.a-ekor   { fill: #8d9bb0; stroke: #1a2130; stroke-width: .8; }
+.a-kokpit { fill: #7fd4ff; stroke: #123047; stroke-width: .8; }
+.a-api    { fill: #ffa23a; filter: url(#apijatuh); opacity: .9; }
+@keyframes a-api-kedip { 0%,100% { opacity: .95; } 50% { opacity: .45; } }
+.a-api { animation: a-api-kedip .18s steps(2) infinite; }
+/* Kehilangan kendali di atas atmosfer: pesawatnya menukik. */
+.a-pesawat--jatuh { transform-box: fill-box; transform-origin: center;
+                    transform: rotate(16deg); }
+
+/* --- musuh --------------------------------------------------------------- */
+.a-mbadan  { fill: url(#gmusuh); stroke: #3d0c06; stroke-width: 1; }
+.a-msayap  { fill: #c0442f; stroke: #3d0c06; stroke-width: .8; }
+.a-mkokpit { fill: #ffd166; }
+
+/* --- bom & laser --------------------------------------------------------- */
+.a-bbadan { fill: #cfd8e3; stroke: #1a2130; stroke-width: .9; }
+.a-bsirip { fill: #7b8797; }
+/* Sinar laser: KEJADIAN, bukan keadaan.
+
+   Ia dibuat sekali saat menembak, memudar lewat animasi ini, lalu menghapus
+   dirinya sendiri. `gambar()` tidak pernah menyentuhnya — dan itu bukan soal
+   rasa: kalau ia digambar ulang di bingkai berikutnya, ia akan terlihat
+   melintasi musuh yang tidak pernah diuji, karena musuh bergerak dua kolom per
+   bingkai. Persis itu yang dilaporkan pemilik koleksi. */
+@keyframes a-sinar-pudar {
+  0%   { opacity: 1; }
+  55%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+.a-sinar { animation: a-sinar-pudar .26s ease-out forwards; }
+.a-sinar__pijar { fill: #ff4d4d; opacity: .5; filter: url(#apijatuh); }
+.a-sinar__inti  { fill: #ffd9d9; }
+.a-sinar--kena .a-sinar__pijar { fill: #fff2a8; opacity: .95; }
+.a-sinar--kena .a-sinar__inti  { fill: #ffffff; }
+.a-sinar--kena { animation-duration: .4s; }
+
+/* --- persediaan: terlihat di tombolnya sendiri, bukan cuma di papan angka -- */
+.a-n { font-family: var(--font-mono); font-weight: 700; margin-left: 4px; }
+.a-tipis .a-n { color: #ffb347; }
+.a-habis { opacity: .5; }
+.a-habis .a-n { color: #ff6b6b; }
+
+.a-amunisi {
+  display: grid; grid-template-columns: auto 1fr auto 1fr;
+  gap: var(--s2) var(--s3); align-items: center;
+  font-size: var(--fs-xs); color: var(--fg-dim);
+}
+.a-amunisi__jalur {
+  height: 6px; border-radius: 999px; background: var(--bg-sunken);
+  border: 1px solid var(--line); overflow: hidden;
+}
+.a-amunisi__isi {
+  display: block; height: 100%; width: 100%; border-radius: 999px;
+  transition: width .2s ease-out;
+}
+.a-amunisi__isi--bom   { background: linear-gradient(90deg, #7a4408, #ffb347); }
+.a-amunisi__isi--laser { background: linear-gradient(90deg, #7c1a10, #ff6b6b); }
+
+@keyframes a-letus-mekar {
+  from { r: 6; opacity: .95; stroke-width: 5; }
+  to   { r: 44; opacity: 0; stroke-width: .5; }
+}
+.a-letus { fill: none; stroke: #ffb347; animation: a-letus-mekar .5s ease-out forwards; }
+@keyframes a-angka-naik {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-26px); }
+}
+.a-angka { fill: #7dffb0; font: 700 18px var(--font-mono);
+           animation: a-angka-naik .9s ease-out forwards; }
+.a-angka--pabrik { fill: #ffd166; font-size: 22px; }
+
+/* Baris status di dalam layar, baris 4 — `COLOR 7` di baris 600 adalah
+   kelabu terang CGA. Ia bagian dari layar permainan, bukan panel di luarnya. */
+.a-status {
+  fill: #d6dde8; font: 700 25px var(--font-mono);
+  paint-order: stroke; stroke: #050a14; stroke-width: 4;
+}
+
+.a-besar { fill: #ffffff; font: 700 26px var(--font-mono);
+           letter-spacing: .06em;
+           paint-order: stroke; stroke: #000; stroke-width: 5; }
+
+@media (prefers-reduced-motion: reduce) {
+  .a-crt--guncang, .a-api, .a-asap { animation: none; }
+  .a-letus, .a-angka { animation-duration: .01s; }
+}
+
+/* --- Mode 1982 ----------------------------------------------------------- */
+
+/* --- kendali ------------------------------------------------------------- */
+.a-row { display: flex; flex-wrap: wrap; gap: var(--s2); align-items: center; }
+.a-row[hidden] { display: none; }
+.a-row--kecil { font-size: var(--fs-sm); color: var(--fg-dim); gap: var(--s4); }
+.a-row--kecil label { display: flex; align-items: center; gap: var(--s2); }
+.a-cek { cursor: pointer; }
+.a-pad kbd { margin-right: 4px; }
+.a-tbom  { border-color: #e0912a; }
+.a-tlaser { border-color: #ff4d4d; }
+
+/* Tombol arah yang SEDANG berlaku. Tanpa ini tidak ada cara melihat pesawatnya
+   sedang naik, datar, atau turun — dan pemilik koleksi menyangka ia memang
+   tidak bisa didiamkan. Aturannya benar; yang kurang penunjuknya. */
+.a-aktif {
+  border-color: #7fd4ff; color: #eaf6ff;
+  background: rgba(79,176,255,.16);
+  box-shadow: 0 0 0 1px rgba(127,212,255,.5), 0 0 12px -2px rgba(79,176,255,.7);
+}
+.a-nilai-bahaya { color: #ff6b6b; }
+
+.a-pesan {
+  position: absolute; left: var(--s3); bottom: var(--s3);
+  margin: 0; font-size: var(--fs-xs); color: #ffd166;
+  background: rgba(0,0,0,.6); padding: 2px 8px; border-radius: var(--r-sm);
+}
+.a-pesan:empty { display: none; }
+
+/* --- panel --------------------------------------------------------------- */
+.a-lead { margin-top: 0; }
+.a-note { font-size: var(--fs-sm); line-height: 1.6; }
+.a-kecil { font-size: var(--fs-xs); color: var(--fg-dim); }
+.a-good { border-left: 3px solid #46c17f; }
+.a-warn { border-left: 3px solid #e0a020; }
+.a-ip { color: #e0912a; font-weight: 600; }
+.a-ia { color: #4fb0ff; font-weight: 600; }
+.a-im { color: #ff6b6b; font-weight: 600; }
+.a-ik { color: var(--fg); font-weight: 700; }
+
+.a-code {
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.55;
+  background: var(--bg-sunken); border-radius: var(--r-sm);
+  padding: var(--s3); overflow-x: auto; white-space: pre;
+}
+.a-c { color: var(--fg-dim); }
+
+.a-tbl { width: 100%; border-collapse: collapse; font-size: var(--fs-sm);
+         margin: var(--s3) 0; }
+.a-tbl th, .a-tbl td { padding: 6px 8px; border-bottom: 1px solid var(--line);
+                       text-align: right; }
+.a-tbl th:first-child, .a-tbl td:first-child { text-align: left; }
+.a-tbl--kiri th, .a-tbl--kiri td { text-align: left; }
+.a-tbl th { color: var(--fg-dim); font-weight: 600; text-transform: uppercase;
+            font-size: var(--fs-xs); letter-spacing: .04em; }
+.a-links { margin-top: var(--s4); }

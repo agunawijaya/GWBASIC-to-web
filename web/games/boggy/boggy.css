@@ -1,0 +1,95 @@
+/* ===========================================================================
+   boggy.css — khusus Boggy Marsh. Awalan `y-`.
+   =========================================================================== */
+
+.y-layout {
+  display: grid; gap: var(--s5);
+  grid-template-columns: minmax(320px, 1fr) minmax(280px, 400px);
+  align-items: start; padding-block: var(--s6) var(--s8);
+}
+@media (max-width: 960px) { .y-layout { grid-template-columns: 1fr; } }
+
+.y-stage { display: grid; gap: var(--s4); justify-items: center; }
+
+.y-grid { display: grid; grid-template-columns: repeat(10, 36px);
+          grid-auto-rows: 36px; gap: 2px; }
+@media (max-width: 440px) {
+  .y-grid { grid-template-columns: repeat(10, 28px); grid-auto-rows: 28px; }
+}
+
+.y-c {
+  display: grid; place-items: center; border-radius: var(--r-sm);
+  background: var(--bg-sunken); border: 1px solid var(--edge-soft);
+  cursor: pointer; font-family: var(--font-mono); font-size: var(--fs-sm);
+  color: var(--ink-dim);
+  transition: background var(--t-fast) var(--ease);
+}
+/* Hover mengubah warna saja — aturan yang sama di seluruh proyek. */
+.y-c:hover { background: color-mix(in srgb, var(--acc-phosphor) 16%, var(--bg-sunken)); }
+.y-c--shot { background: var(--panel-2); color: var(--ink-faint); }
+.y-c--kill { background: var(--acc-phosphor-dim); border-color: var(--acc-phosphor);
+             color: var(--acc-phosphor); font-weight: 700; }
+.y-c--miss { background: var(--acc-red-dim); border-color: var(--acc-red);
+             color: var(--acc-red); font-weight: 700; }
+
+.y-say {
+  font-family: var(--font-mono); font-size: var(--fs-sm);
+  color: var(--acc-phosphor); min-height: 1.6em; text-align: center;
+}
+.y-say--big { color: var(--acc-amber); font-size: var(--fs-md); }
+.y-say--bad { color: var(--acc-red); }
+
+/* Riwayat tebakan — teks aslinya dipertahankan apa adanya. */
+/* Tinggi riwayat disamakan dengan tinggi papan di sebelahnya, supaya kedua
+   kolom berakhir di garis yang sama dan tidak ada satu pun yang menjulur. */
+.y-log { display: grid; gap: var(--s2); max-height: 388px; overflow-y: auto;
+         margin-top: var(--s3); }
+.y-empty { font-size: var(--fs-sm); color: var(--ink-faint); line-height: var(--lh); }
+.y-turn { padding: var(--s2); border-radius: var(--r-sm);
+          background: var(--bg-sunken); border: 1px solid var(--edge-soft); }
+.y-turn__h { font-size: 10px; color: var(--ink-faint); text-transform: uppercase;
+             letter-spacing: .05em; margin-bottom: 2px; }
+.y-line { font-family: var(--font-mono); font-size: var(--fs-xs);
+          color: var(--ink-dim); }
+.y-line--kill { color: var(--acc-phosphor); font-weight: 700; }
+.y-line--dead { color: var(--ink-faint); }
+
+.y-code {
+  margin-top: var(--s3); padding: var(--s3);
+  border: var(--border); border-radius: var(--r);
+  background: var(--bg-sunken); color: var(--acc-amber);
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.7;
+  overflow-x: auto; white-space: pre-wrap;
+}
+
+.y-table { width: 100%; border-collapse: collapse; margin-top: var(--s3);
+           font-size: var(--fs-xs); }
+.y-table td { padding: 4px var(--s2); border-bottom: 1px solid var(--line-soft); }
+.y-table td:first-child { font-family: var(--font-mono); color: var(--acc-amber);
+                          width: 5.5rem; }
+
+.y-note { font-size: var(--fs-sm); color: var(--ink-dim); margin-top: var(--s2); }
+.y-warn { border-left: 3px solid var(--acc-amber); }
+
+
+/* Ringkasan aturan satu baris, tepat di bawah papan.
+
+   Versi pertama menaruh tujuh langkah bernomor DI ATAS papan. Akibatnya
+   halaman terbuka dengan dinding teks dan permainannya terdorong ke bawah
+   layar — persis kebalikan dari yang dibutuhkan.
+
+   Sekarang dua lapis: tiga kata kunci di sini, tempat mata memang jatuh
+   setelah melihat papan; dan penjelasan penuh sebagai panel pertama di kolom
+   kanan, bersama panel-panel lain. Yang butuh diingat sambil bermain ada di
+   dekat papan; yang butuh dibaca sekali ada di tempat membaca. */
+
+/* Urutan kolom kanan: RIWAYAT dulu, baru cara bermain, baru esai.
+
+   Riwayat adalah satu-satunya panel yang dibaca tiap giliran -- di permainan
+   ini seluruh informasinya memang hidup di sana, bukan di papan; papan cuma
+   mencatat ke mana Anda sudah menembak. Menaruhnya di bawah tiga panel esai
+   berarti menyuruh pemain menggulung layar tiap kali menebak.
+
+   Menaruhnya paling atas tidak merugikan pemain baru, karena pada saat
+   petunjuk paling dibutuhkan riwayatnya masih kosong dan hampir tak makan
+   tempat. Saat riwayatnya sudah panjang, petunjuknya sudah tidak dibutuhkan. */

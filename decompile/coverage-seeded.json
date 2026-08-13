@@ -1,0 +1,44 @@
+{
+ "3DTTT.EXE": {
+  "E": 26400,
+  "cov": 14833,
+  "rounds": 3,
+  "br": 761,
+  "loops": 10,
+  "gotos": 55,
+  "fwd": 696,
+  "dyn": 1853,
+  "gosub": 31,
+  "rest": 11542,
+  "rest_zero": 4,
+  "rest_text": 3127
+ },
+ "PAC-GAL.EXE": {
+  "E": 12288,
+  "cov": 5608,
+  "rounds": 3,
+  "br": 220,
+  "loops": 11,
+  "gotos": 12,
+  "fwd": 197,
+  "dyn": 80,
+  "gosub": 3,
+  "rest": 6655,
+  "rest_zero": 13,
+  "rest_text": 1223
+ },
+ "HOPPER.EXE": {
+  "E": 7863,
+  "cov": 4157,
+  "rounds": 2,
+  "br": 246,
+  "loops": 22,
+  "gotos": 19,
+  "fwd": 205,
+  "dyn": 341,
+  "gosub": 2,
+  "rest": 3680,
+  "rest_zero": 82,
+  "rest_text": 1410
+ }
+}

@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Classic DOS BASIC Games — versi web</title>
+<meta name="description" content="83 program BASIC dari 1978–1995, diport ke web dan bisa dijalankan offline.">
+<link rel="stylesheet" href="_shared/tokens.css">
+<link rel="stylesheet" href="_shared/base.css">
+<style>
+  /* Gaya khusus halaman peluncur saja. Apa pun yang dipakai lebih dari satu
+     halaman harus pindah ke _shared/base.css. */
+  .hero { padding: var(--s7) 0 var(--s6); }
+  .hero .h1 { max-width: 22ch; }
+  .hero__lead { max-width: 62ch; margin-top: var(--s3); }
+  .metrics { display: flex; gap: var(--s6); flex-wrap: wrap; margin-top: var(--s5); }
+
+  .filters { position: sticky; top: 56px; z-index: 10; padding: var(--s3) 0;
+             background: color-mix(in srgb, var(--bg) 92%, transparent);
+             backdrop-filter: blur(8px); border-bottom: var(--border);
+             margin-bottom: var(--s5); }
+  .search { flex: 1 1 220px; min-width: 180px; padding: 9px var(--s3);
+            background: var(--panel); border: var(--border);
+            border-radius: var(--r); }
+  .chip { padding: 5px var(--s3); border-radius: var(--r-pill); cursor: pointer;
+          border: var(--border); background: var(--panel);
+          font-size: var(--fs-xs); font-weight: 560; color: var(--ink-dim);
+          transition: all var(--t-fast) var(--ease); }
+  .chip:hover { color: var(--ink); }
+  .chip[aria-pressed="true"] { background: var(--acc-phosphor-dim);
+                               border-color: var(--acc-phosphor);
+                               color: var(--acc-phosphor); }
+
+  .section + .section { margin-top: var(--s7); }
+  .section__head { display: flex; align-items: baseline; gap: var(--s3);
+                   margin-bottom: var(--s4); }
+  .section__count { font-family: var(--font-mono); font-size: var(--fs-xs);
+                    color: var(--ink-faint); }
+
+  .launch-tile__row { display: flex; gap: var(--s2); align-items: center;
+               flex-wrap: wrap; margin-top: auto; padding-top: var(--s2); }
+  .status { font-size: var(--fs-xs); font-weight: 600; letter-spacing: .03em; }
+  .status--soon  { color: var(--ink-faint); }
+  .status--ready { color: var(--acc-phosphor); }
+  .status--merge { color: var(--acc-amber); }
+
+  footer { margin-top: var(--s8); padding: var(--s6) 0; border-top: var(--border);
+           color: var(--ink-dim); font-size: var(--fs-sm); }
+  footer a { color: var(--acc-blue); }
+  .empty { padding: var(--s7) 0; text-align: center; color: var(--ink-dim); }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar__inner">
+    <div class="topbar__title">
+      Classic DOS BASIC Games
+      <small data-i18n="topbar.sub">1978 – 1995 · versi web, jalan offline</small>
+    </div>
+    <div class="topbar__spacer"></div>
+    <div class="row" id="topbar-actions">
+      <a class="btn btn--ghost btn--sm" href="PLAN.md" data-i18n="topbar.rencana">Rencana</a>
+      <a class="btn btn--ghost btn--sm" href="svg-demo.html" data-i18n="topbar.svg">Demo SVG</a>
+      <a class="btn btn--ghost btn--sm" href="katalog.html" data-i18n="topbar.katalog">Katalog arsip</a>
+      <button class="btn btn--ghost btn--sm" id="bahasa" type="button"
+              data-i18n="topbar.bahasa" data-i18n-attr="title:topbar.bahasaTitel">English</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <p class="eyebrow" data-i18n="hero.eyebrow">Peluncur</p>
+    <h1 class="h1" data-i18n="hero.judul">Delapan puluh tiga program BASIC, ditulis ulang untuk peramban.</h1>
+    <p class="prose hero__lead" data-i18n-html="hero.lead"></p>
+    <div class="metrics" id="metrics"></div>
+  </section>
+
+  <div class="filters">
+    <div class="row">
+      <input class="search" id="q" type="search"
+             data-i18n-attr="placeholder:cari.placeholder,aria-label:cari.label">
+      <div class="row" id="chips" role="group" data-i18n-attr="aria-label:saring.label"></div>
+    </div>
+  </div>
+
+  <div id="list"></div>
+  <p class="empty hidden" id="empty" data-i18n="kosong">Tidak ada yang cocok.</p>
+
+  <footer>
+    <p data-i18n-html="footer.1"></p>
+    <p data-i18n-html="footer.2"></p>
+    <p><button class="btn btn--ghost btn--sm" id="wipe" type="button" data-i18n="hapus">Hapus data tersimpan</button></p>
+  </footer>
+</main>
+
+<script src="_shared/catalog.js"></script>
+<script src="_shared/i18n.js"></script>
+<script src="_shared/ui.js"></script>
+<script>
+(function () {
+  'use strict';
+  const { CATALOG, EXTRAS, GROUPS, ui, i18n } = window.RETRO;
+  const T = (k) => i18n.t(k);
+
+  /* Perkakas yang bukan port program mana pun, jadi tidak ada tempatnya di
+     catalog.js — berkas itu data 83 program BASIC dan dibangkitkan otomatis.
+     Yang di sini ditulis tangan, di halaman yang menampilkannya, dan dikenali
+     dari medan `href` yang tidak dimiliki entri katalog. */
+  const PERKAKAS = [{
+    id: 'tracer',
+    href: '../tracer/index.html',
+    file: 'PENELUSUR',
+    base: 'TRACER',
+    title: 'Penelusur Baris',
+    year: 'baru',
+    source: 'Perkakas belajar',
+    group: 'edukasi',
+    lines: 0, subs: 0, phase: null, merged: null, ready: true, extra: true,
+    note: 'Menelusuri program BASIC baris demi baris: layar CGA 80x25 di kiri, ' +
+          'kode .BAS asli tersorot di kanan, peta alur dan pseudokode di bawah. ' +
+          'Mulai dari MENU.BAS, dan tombol menunya benar-benar membawa ke ' +
+          'programnya.',
+    ringkas: 'Menelusuri program BASIC baris demi baris: layar CGA di kiri, ' +
+             'kode aslinya tersorot di kanan, peta alur di bawah. Pelajaran: ' +
+             'melihat sendiri bagaimana GOTO dan GOSUB memindahkan alur.'
+  }];
+
+  /* Statistik memakai CATALOG saja; daftar memakai keduanya. Pemisahan itu
+     disengaja — lihat catatan di catalog.js. */
+  const ALL = CATALOG.concat(EXTRAS || []).concat(PERKAKAS);
+  const { el } = ui;
+  ui.initTheme();
+  /* Tombol tema dibangun ulang saat bahasa berganti — labelnya ditentukan
+     saat pembuatan, dan membangun ulang lebih jujur daripada menambal
+     teksnya dari luar lalu berebut dengan penangan kliknya sendiri. */
+  const aksiTopbar = document.getElementById('topbar-actions');
+  let tombolTema = null;
+  function pasangTema() {
+    if (tombolTema) tombolTema.remove();
+    tombolTema = ui.themeToggle({
+      title: T('tema.judul'),
+      label: { system: T('tema.sistem'), dark: T('tema.gelap'),
+               light: T('tema.terang') }
+    });
+    aksiTopbar.append(tombolTema);
+  }
+  pasangTema();
+
+  // --- ringkasan angka ----------------------------------------------------
+  const total   = CATALOG.length;
+  const apps    = CATALOG.filter(p => !p.merged).length;
+  const ready   = CATALOG.filter(p => p.ready).length;
+  const lines   = CATALOG.reduce((s, p) => s + p.lines, 0);
+
+  /* Nilainya angka, jadi tidak ikut berubah bahasa — yang berubah labelnya.
+     Pemisah ribuan ikut bahasa: 18.414 di Indonesia, 18,414 di Inggris. */
+  function gambarMetrik() {
+    const lokal = i18n.bahasa === 'en' ? 'en-GB' : 'id-ID';
+    const metrics = [
+      ['metrik.total', total],
+      ['metrik.aplikasi', apps],
+      ['metrik.siap', ready + ' / ' + apps],
+      ['metrik.baris', lines.toLocaleString(lokal)]
+    ];
+    const kotak = document.getElementById('metrics');
+    kotak.textContent = '';
+    kotak.append(...metrics.map(([kunci, value]) =>
+      el('div', { class: 'stat' }, [
+        el('div', { class: 'stat__label', text: T(kunci) }),
+        el('div', { class: 'stat__value', text: String(value) })
+      ])
+    ));
+  }
+  gambarMetrik();
+
+  // --- saringan -----------------------------------------------------------
+  const order = ['puzzle', 'kartu', 'arkade', 'musik', 'matematika', 'edukasi',
+                 'simulasi', 'petualangan', 'bisnis', 'percakapan', 'shell',
+                 'data', 'anomali'];
+  const active = new Set();
+  const chips = document.getElementById('chips');
+
+  const chipKelompok = [];
+  order.filter(g => ALL.some(p => p.group === g)).forEach(g => {
+    const b = el('button', {
+      class: 'chip', type: 'button', 'aria-pressed': 'false',
+      text: GROUPS[g].icon + '  ' + i18n.kelompok(g, GROUPS[g].label)
+    });
+    chipKelompok.push([b, g]);
+    b.addEventListener('click', () => {
+      if (active.has(g)) { active.delete(g); b.setAttribute('aria-pressed', 'false'); }
+      else { active.add(g); b.setAttribute('aria-pressed', 'true'); }
+      render();
+    });
+    chips.append(b);
+  });
+
+  const q = document.getElementById('q');
+  q.addEventListener('input', render);
+
+  // --- daftar -------------------------------------------------------------
+  const list = document.getElementById('list');
+  const empty = document.getElementById('empty');
+
+  function launchTile(p) {
+    const isApp = !p.merged;
+    /* `p.href` hanya dimiliki entri PERKAKAS, yang tidak tinggal di games/. */
+    const href  = p.href || (p.ready ? 'games/' + p.id + '/index.html' : null);
+    const node  = el(href ? 'a' : 'div', {
+      class: 'launch-tile' + (href ? '' : ' launch-tile--soon'),
+      href: href
+    });
+
+    node.append(
+      el('div', { class: 'launch-tile__file', text: p.file }),
+      el('div', { class: 'launch-tile__title', text: p.title }),
+      el('div', { class: 'launch-tile__note', text: ringkas(p) })
+    );
+
+    const row = el('div', { class: 'launch-tile__row' });
+    row.append(el('span', { class: 'badge badge--year', text: p.year }));
+    if (p.lines) row.append(el('span', { class: 'badge',
+      text: p.lines + ' ' + T('satuan.baris') }));
+    if (p.subs > 1) row.append(el('span', { class: 'badge',
+      text: p.subs + ' ' + T('satuan.subrutin') }));
+
+    let status, cls;
+    /* `dariExe` diperiksa LEBIH DULU dari `extra`: keempat program yang
+       dibongkar dari .EXE juga bertanda extra (supaya tidak ikut terhitung di
+       statistik 66 program BASIC), tapi menyebutnya "program baru" salah —
+       mereka program 1980-an, bukan tambahan 2026 seperti FREEPLAY. */
+    if (p.dariExe)   { status = T('status.exe');                 cls = 'status--ready'; }
+    else if (p.href) { status = T('status.perkakas');            cls = 'status--ready'; }
+    else if (p.extra){ status = T('status.baru');                cls = 'status--ready'; }
+    else if (!isApp) { status = T('status.merge');               cls = 'status--merge'; }
+    else if (p.ready){ status = T('status.siap');                cls = 'status--ready'; }
+    else             { status = T('status.fase') + (p.phase || '—'); cls = 'status--soon'; }
+    row.append(el('span', { class: 'status ' + cls, text: status }));
+    node.append(row);
+    return node;
+  }
+
+  /* Yang TAMPIL di kartu adalah `ringkas`; yang DICARI tetap `note`.
+     Dua kebutuhan yang berbeda: kartu harus terbaca sekilas, sementara
+     catatan temuan yang panjang itulah yang membuat mengetik "POINT" atau
+     "RANDOMIZE" menemukan tiap program yang menyebutnya. Memangkas `note`
+     berarti membuang badan pengetahuan yang sudah terkumpul.
+     Pagar 300 aksara di bawah cuma jaring pengaman untuk entri yang belum
+     punya `ringkas` — tanpa itu, satu catatan 17.000 aksara pernah lolos ke
+     kartu dan merusak seluruh kolomnya. */
+  function ringkas(p) {
+    const t = p.merged ? i18n.gabung(p.merged)
+                       : (i18n.medan(p, 'ringkas') || p.note || '');
+    if (t.length <= 300) return t;
+    const potong = t.slice(0, 297);
+    const spasi = potong.lastIndexOf(' ');
+    return (spasi > 200 ? potong.slice(0, spasi) : potong) + '…';
+  }
+
+  function render() {
+    const term = q.value.trim().toLowerCase();
+    const rows = ALL.filter(p => {
+      if (active.size && !active.has(p.group)) return false;
+      if (!term) return true;
+      return (p.file + ' ' + p.title + ' ' + p.year + ' ' + p.source + ' ' + p.note)
+        .toLowerCase().includes(term);
+    });
+
+    list.textContent = '';
+    empty.classList.toggle('hidden', rows.length > 0);
+
+    order.forEach(g => {
+      const inGroup = rows.filter(p => p.group === g);
+      if (!inGroup.length) return;
+      const sec = el('section', { class: 'section' });
+      sec.append(el('div', { class: 'section__head' }, [
+        el('h2', { class: 'h2', text: i18n.kelompok(g, GROUPS[g].label) }),
+        el('span', { class: 'section__count',
+                     text: inGroup.length + ' ' + T('satuan.program') })
+      ]));
+      const grid = el('div', { class: 'grid' });
+      inGroup.forEach(p => grid.append(launchTile(p)));
+      sec.append(grid);
+      list.append(sec);
+    });
+  }
+
+  /* --- hapus data tersimpan ------------------------------------------------
+     Semua kunci berawalan `retro:` — awalan itu dipilih justru supaya
+     penghapusan seperti ini mungkin tanpa menyentuh milik situs lain yang
+     kebetulan berbagi origin `file://`. Itu alasan kedua adanya awalan;
+     yang pertama ada di docs/_fondasi.md §2.5. */
+  document.getElementById('wipe').addEventListener('click', async () => {
+    let keys = [];
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith('retro:')) keys.push(k);
+      }
+    } catch (e) { /* localStorage dilarang: memang tidak ada yang tersimpan */ }
+
+    if (!keys.length) return ui.toast(T('hapus.kosong'));
+
+    const ok = await ui.confirmYesNo(T('hapus.judul'),
+                                     keys.length + T('hapus.isi'));
+    if (!ok) return;
+
+    keys.forEach(k => { try { localStorage.removeItem(k); } catch (e) {} });
+    ui.toast(keys.length + T('hapus.selesai'));
+  });
+
+  /* --- pengalih bahasa ---------------------------------------------------
+     Menggambar ulang, bukan memuat ulang halaman: saringan dan kata pencarian
+     yang sedang aktif tidak boleh hilang cuma karena bahasanya berganti. */
+  i18n.terapkan();
+  document.documentElement.lang = T('html.lang');
+  document.getElementById('bahasa').addEventListener('click', () => {
+    i18n.ganti(i18n.bahasa === 'id' ? 'en' : 'id');
+  });
+  i18n.onGanti(() => {
+    i18n.terapkan();
+    gambarMetrik();
+    pasangTema();
+    chipKelompok.forEach(([b, g]) => {
+      b.textContent = GROUPS[g].icon + '  ' + i18n.kelompok(g, GROUPS[g].label);
+    });
+    render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

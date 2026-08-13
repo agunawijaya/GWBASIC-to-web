@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Klondyke Solitaire — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari SOLITAIR.BAS (Jeff Littlefield, 1982-84): Klondike buang-tiga dengan seret-dan-jatuhkan, plus perintah asli 1984. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="../../_shared/cards.css">
+<link rel="stylesheet" href="solitair.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap k-layout">
+
+  <section class="stack">
+
+    <div class="screen">
+      <div class="k-head">
+        <div class="k-col">
+          <div class="k-num">Tertutup &middot; <b id="stockN">21</b></div>
+          <div class="k-stock" id="stock" title="Klik untuk membuang tiga"></div>
+        </div>
+        <div class="k-col">
+          <div class="k-num">Buangan</div>
+          <div class="k-waste" id="waste"></div>
+        </div>
+        <div class="k-found" id="found"></div>
+      </div>
+
+      <div class="k-tab" id="tab"></div>
+
+      <p class="k-say" id="say"></p>
+
+      <div class="k-banner" id="banner" hidden>
+        <pre>*   *  ***  *   *    *   *  ***  *   *
+ * *  *   * *   *    *   * *   * **  *
+  *   *   * *   *    * * * *   * *** *
+  *   *   * *   *    * * * *   * * ***
+  *   *   * *   *    * * * *   * *  **
+  *    ***   ***      * *   ***  *   *</pre>
+        <p>82 bintang, digambar satu per satu dalam urutan acak &mdash;
+           baris 3040&ndash;3120 aslinya.</p>
+      </div>
+
+      <div class="m-transport">
+        <button class="btn" id="next" type="button">Buang tiga &nbsp;<kbd>N</kbd></button>
+        <button class="btn" id="claim" type="button">Claim Victory &nbsp;<kbd>C</kbd></button>
+        <button class="btn btn--ghost" id="restart" type="button">Papan baru</button>
+        <button class="btn btn--ghost" id="giveup" type="button">Menyerah</button>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">tumpukan turun, warna berselang</span>
+      <span class="ruleset__k">fondasi naik, satu lambang</span>
+      <span class="ruleset__k">buang tiga sekaligus</span>
+      <span class="ruleset__k">deret boleh pindah sebagian</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Sisa kartu</span>
+        <span class="stat__value" id="sLeft">24</span></div>
+      <div class="stat"><span class="stat__label">Langkah</span>
+        <span class="stat__value" id="sMoves">0</span></div>
+      <div class="stat"><span class="stat__label">Waktu</span>
+        <span class="stat__value" id="sTime">0:00</span></div>
+      <div class="stat stat--good"><span class="stat__label">Rekor</span>
+        <span class="stat__value" id="sBest">&mdash;</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <ol class="howto__steps">
+        <li>Klik kartu terbuka lalu klik tujuannya &mdash; atau
+            <strong>seret</strong>. Yang terangkat adalah kartu yang Anda
+            pegang <strong>ke bawah</strong>, jadi deret boleh dipindah
+            sebagian. Klik ganda mengirimnya ke fondasi.</li>
+        <li>Tumpukan disusun <strong>menurun</strong> dengan warna
+            <strong>berselang</strong>; fondasi disusun <strong>menaik</strong>
+            dalam satu lambang. Hanya <strong>Raja</strong> boleh masuk
+            tumpukan kosong, hanya <strong>As</strong> ke fondasi kosong.</li>
+        <li>Klik <strong>tumpukan tertutup</strong> untuk membalik tiga
+            kartu sekaligus; tiga terakhir tetap terlihat di buangan. Kalau
+            habis, ia memutar kembali ke pangkal.</li>
+      </ol>
+      <p>
+        Kartu yang sudah naik ke fondasi <strong>boleh diturunkan lagi</strong>
+        &mdash; kadang itu satu-satunya jalan keluar. Aslinya tidak bisa;
+        lihat panel <em>Empat perubahan</em> di bawah.
+      </p>
+    </details>
+
+    <div class="row">
+      <label class="k-cmdlbl" for="cmd">Perintah 1984</label>
+      <input class="k-cmd" id="cmd" type="text" maxlength="2" spellcheck="false"
+             autocomplete="off" placeholder="P3">
+      <button class="btn btn--ghost btn--sm" id="resetBest" type="button">Reset rekor</button>
+    </div>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel">
+      <p class="eyebrow">Layar F1 aslinya, baris 970&ndash;1060</p>
+      <p class="k-note">
+        Perintahnya masih hidup di port ini. Ketik di kotak
+        <em>Perintah 1984</em> lalu tekan Enter:
+      </p>
+<pre class="k-code">C    Claim Victory
+N    Show the Next Card on the Pile
+P#   Card on Pile to Stack No. #
+PT   Card on Pile to Top
+##   Visible Cards on Stack #1 to Stack #2
+#T   Bottom Card on Stack #1 to the Top
+Q    Quit This Game (and Try Again or Exit)</pre>
+      <p class="k-note">
+        Dua karakter, tanpa pemisah, tanpa Enter di aslinya &mdash; program
+        membaca tiap tombol lewat <code>INKEY$</code> dan langsung bertindak
+        begitu perintahnya lengkap.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Empat perubahan, dan alasan masing-masing</p>
+      <table class="k-table">
+        <tbody>
+          <tr><td>As di atas 2</td><td><strong>Diperbaiki.</strong> Baris 1640
+              menuliskan aturannya; baris 1610 membuatnya tak terjangkau.
+              Maksud penulisnya jelas.</td></tr>
+          <tr><td>Deret sebagian</td><td>Aslinya selalu memindahkan
+              <em>seluruh</em> deret terbuka (baris 1920/2030). Itu
+              <strong>aturan program ini</strong>, bukan aturan Klondike.
+              Sekarang yang terangkat adalah kartu yang Anda pegang ke
+              bawah.</td></tr>
+          <tr><td>Turun dari fondasi</td><td>Aslinya tidak punya satu pun
+              perintah untuk itu &mdash; sekali naik, selamanya di atas.
+              Klondike mengizinkannya, dan kadang itu satu-satunya jalan
+              keluar.</td></tr>
+          <tr><td>Tertutup vs buangan</td><td>Bukan aturan, melainkan
+              gambar. <code>at</code> selalu memisahkan kartu yang sudah
+              dibalik dari yang belum; layar 80&times;25 hanya tidak punya
+              tempat untuk menggambarnya.</td></tr>
+        </tbody>
+      </table>
+      <p class="k-note">
+        Dua yang di tengah adalah tempat <strong>aturan Klondike menang atas
+        aturan program</strong>. Batasnya: aturan yang membuat permainan ini
+        <em>permainan ini</em> dipertahankan; batasan yang hanya lahir dari
+        antarmuka dua-huruf tidak.
+      </p>
+      <p class="k-note">
+        Buktinya batasan itu memang lahir dari antarmukanya: perintah
+        <code>##</code> di kotak <em>Perintah 1984</em> <strong>masih</strong>
+        memindahkan seluruh deret. Dua huruf memang tidak punya cara
+        menyatakan &ldquo;mulai dari kartu yang mana&rdquo;.
+      </p>
+    </div>
+
+    <div class="panel k-warn">
+      <p class="eyebrow">Baris yang tidak pernah dijalankan</p>
+<pre class="k-code">1610 IF SIZE$&gt;"9" THEN 1650
+1620 IF SIZE$="0" AND SIZEST$="J" THEN 1700
+1630 IF SIZE$="9" AND SIZEST$="0" THEN 1700
+1640 IF SIZE$="A" AND SIZEST$="2" THEN 1700</pre>
+      <p class="k-note">
+        Pangkat disimpan sebagai <strong>satu huruf</strong>:
+        <code>A</code>, <code>2</code>&ndash;<code>9</code>, <code>0</code>
+        untuk sepuluh, lalu <code>J Q K</code>. Baris 1610 membelokkan semua
+        pangkat berupa huruf ke 1650 &mdash; dan <code>"A"</code> adalah
+        huruf (65 &gt; 57).
+      </p>
+      <p class="k-note">
+        Jadi baris 1640, yang ditulis penulisnya sendiri untuk mengizinkan
+        <strong>As ditumpuk di atas 2</strong>, tidak pernah sekali pun
+        dijalankan. Penelusuran menyeluruh 13&times;14 pasangan pangkat:
+        baris 1640 diterima <strong>0 kali</strong>, dan tepat
+        <strong>satu</strong> langkah sah Klondike yang tertolak.
+      </p>
+      <p class="k-note">
+        Di port ini baris itu hidup &mdash; diubah bukan karena berdampak,
+        melainkan karena <strong>kodenya sendiri menyatakan maksud
+        sebaliknya</strong>. Diukur atas 400 papan, perbaikannya tidak
+        mengubah peluang menang sama sekali.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Kenapa penunjuknya mulai di 31</p>
+<pre class="k-code">550 DECKPTR=31 : ENDDECK=52 : DECK$(28)="   " : NC=24</pre>
+      <p class="k-note">
+        Buangan menempati <code>DECK$(29..52)</code>. Kalau penunjuknya mulai
+        di <strong>31</strong>, artinya <strong>tiga kartu sudah dibuang</strong>
+        sebelum pemain menyentuh apa pun. Itu bukan angka ajaib &mdash; itu
+        Klondike buang-tiga, dan keadaan awalnya identik dengan
+        <em>&ldquo;sudah sekali tekan N&rdquo;</em>.
+      </p>
+      <p class="k-note">
+        <code>DECK$(28)</code> yang diisi spasi adalah <strong>penjaga</strong>:
+        kartu kosong yang ditunjuk saat penunjuk memutar kembali ke pangkal,
+        supaya tidak ada satu pun baris yang perlu memeriksa &ldquo;sudah di
+        ujung belum&rdquo;.
+      </p>
+      <p class="k-note">
+        Port ini membuat keadaan awalnya dengan <strong>memanggil fungsi
+        buangnya sekali</strong>, bukan dengan menulis angka 3. Kalau suatu
+        saat aturannya jadi buang-satu, hanya satu tempat yang berubah.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Penyemaian yang keenam &mdash; dan yang pertama benar</p>
+<pre class="k-code">220 RANDOMIZE(VAL(MID$(TIME$,7,2))
+             + (VAL(MID$(TIME$,4,2))*60))</pre>
+      <p class="k-note">
+        Lima program sebelumnya memakai
+        <code>RANDOMIZE VAL(RIGHT$(TIME$,2))</code> dan kelimanya salah
+        dengan cara yang berbeda-beda. Yang ini benar, dan benar di
+        <strong>tiga</strong> hal sekaligus:
+      </p>
+      <table class="k-table">
+        <tbody>
+          <tr><td>jangkauan</td><td>detik + menit&times;60 &rarr; 0&ndash;3599, bukan 0&ndash;59</td></tr>
+          <tr><td>tempat</td><td>sekali, di luar semua perulangan</td></tr>
+          <tr><td>main ulang</td><td>baris 340 melompat ke 230, <strong>melewati</strong> baris 220</td></tr>
+        </tbody>
+      </table>
+      <p class="k-note">
+        Yang ketiga itu yang paling halus: menyemai ulang saat main lagi akan
+        membuat papan kedua bergantung pada jam, bukan pada urutan acak yang
+        sedang berjalan. Penulisnya sengaja tidak melakukannya.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Pengocokannya, dan pembandingnya</p>
+<pre class="k-code">410 FOR I=52 TO 1 STEP -1
+420   X=INT(RND(1)*I)+1
+430   DECK$(I)=CARD$(X)
+440   CARD$(X)=CARD$(I)
+450 NEXT I</pre>
+      <p class="k-note">
+        Ini Fisher&ndash;Yates yang benar. Kuncinya baris 440: lubangnya
+        ditutup dengan <strong>menukar</strong>, bukan menggeser. MAXIT1
+        mengocok dengan menggeser seluruh sisa larik &mdash; sama seragamnya,
+        tapi O(n&sup2;).
+      </p>
+      <table class="k-table">
+        <tbody>
+          <tr><td>SOLITAIR</td><td>&chi;&sup2; = 2777 &mdash; seragam, O(n)</td></tr>
+          <tr><td>MAXIT1</td><td>&chi;&sup2; = 2687 &mdash; seragam, O(n&sup2;)</td></tr>
+          <tr><td>kontrol bias</td><td>&chi;&sup2; = 137&thinsp;362 &mdash; <strong>bias</strong></td></tr>
+        </tbody>
+      </table>
+      <p class="k-note">
+        200.000 kocokan, 2601 derajat bebas, ambang 99,9% = 2830. Kontrolnya
+        adalah kesalahan klasik &ldquo;undi dari seluruh 52 tiap putaran&rdquo;,
+        dipasang untuk membuktikan ujinya memang bisa gagal.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/solitair.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/SOLITAIR.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/SOLITAIR.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/cards.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="solitair.js"></script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+/* ===========================================================================
+   master.css — khusus Mastermind. Awalan `k-`.
+   =========================================================================== */
+
+.k-layout {
+  display: grid; gap: var(--s5);
+  grid-template-columns: minmax(340px, 1fr) minmax(300px, 440px);
+  align-items: start; padding-block: var(--s6) var(--s8);
+}
+@media (max-width: 980px) { .k-layout { grid-template-columns: 1fr; } }
+
+.k-stage { display: grid; gap: var(--s4); }
+
+/* --- rahasia --- */
+.k-secret { display: grid; gap: var(--s2); justify-items: center;
+            padding-bottom: var(--s3); border-bottom: 1px dashed var(--line); }
+
+/* --- kepala kolom, mengikuti tiga judul di baris 830-880 --- */
+.k-head {
+  display: grid; grid-template-columns: 1fr 7rem 9rem; gap: var(--s3);
+  font-size: var(--fs-xs); color: var(--ink-dim);
+  text-transform: uppercase; letter-spacing: .06em; text-align: center;
+}
+.k-head > :first-child { text-align: left; }
+@media (max-width: 560px) { .k-head { grid-template-columns: 1fr 4rem 4rem; } }
+
+.k-sheet { display: grid; gap: 4px; }
+
+.k-line {
+  display: grid; grid-template-columns: 1fr 7rem 9rem; gap: var(--s3);
+  align-items: center; padding: 3px var(--s2); border-radius: var(--r-sm);
+  border: 1px solid transparent;
+}
+@media (max-width: 560px) { .k-line { grid-template-columns: 1fr 4rem 4rem; } }
+.k-line.is-now { border-color: var(--acc-phosphor);
+                 background: var(--acc-phosphor-dim); }
+.k-line.is-done { opacity: .82; }
+
+.k-row { display: flex; gap: 6px; }
+.k-row--secret { gap: 8px; }
+
+/* Satu angka. Aslinya digambar dengan CHR$(220) — setengah blok bawah —
+   sebagai tempat kosong, lalu ditimpa angkanya. Di sini kotak sungguhan. */
+.k-slot {
+  width: 34px; height: 38px; display: grid; place-items: center;
+  border-radius: var(--r-sm); border: 1px solid var(--edge-soft);
+  background: var(--bg-sunken); color: var(--ink);
+  font-family: var(--font-mono); font-size: var(--fs-lg); font-weight: 700;
+}
+.k-slot--empty { color: transparent; }
+.k-slot--cursor { border-color: var(--acc-phosphor);
+                  box-shadow: 0 0 0 2px var(--acc-phosphor-dim); }
+.k-slot--hidden { color: var(--ink-faint); background: var(--panel-2); }
+
+/* --- mode warna ---------------------------------------------------------
+   Pasak berwarna SELALU membawa huruf. Warna semata menutup pintu bagi
+   sekitar 8% laki-laki yang buta warna merah-hijau — dan merah/hijau justru
+   pasangan yang paling sering ada di papan Mastermind sungguhan.
+
+   Hurufnya digelapkan lewat `color-mix` terhadap warna pasaknya sendiri,
+   bukan diberi warna tetap, supaya tetap terbaca di atas kuning maupun ungu. */
+.k-slot--peg {
+  background: var(--peg);
+  border-color: color-mix(in srgb, var(--peg) 55%, #000);
+  color: color-mix(in srgb, var(--peg) 22%, #000);
+  font-size: var(--fs-sm); font-weight: 800;
+}
+
+/* Pasak petunjuk hitam-putih, seperti papan yang dijual toko.
+
+   ISINYA sengaja tetap hitam dan putih harfiah di kedua tema — "pasak hitam"
+   dan "pasak putih" adalah NAMA bidaknya, bukan pilihan warna. Menukarnya
+   mengikuti tema akan merusak kosakata permainannya.
+
+   Tapi isi saja tidak pernah cukup, dan ini terukur:
+
+       pasak putih di atas latar tema terang   1,10 : 1
+       pasak hitam di atas latar tema gelap    1,07 : 1
+
+   Masing-masing lenyap di salah satu tema. Yang membuat bentuknya selalu ada
+   adalah GARIS TEPI-nya, yang diturunkan dari warna teks (--edge-strong,
+   3,9-6,7 : 1 di keempat latar tempat pasak ini bisa berada). */
+.k-pegs {
+  display: flex; flex-wrap: wrap; gap: 4px; justify-content: center;
+  align-content: center;
+}
+.k-peg {
+  width: 13px; height: 13px; border-radius: 50%;
+  border: 1px solid var(--edge-soft);      /* tempat kosong: sengaja lebih lemah */
+  background: transparent;
+}
+.k-peg--b { background: #12161c; border-color: var(--edge-strong); }
+.k-peg--w { background: #f4f7fa; border-color: var(--edge-strong); }
+
+/* Tombol pasak di papan masukan. */
+.keycap--peg {
+  background: var(--peg);
+  border-color: color-mix(in srgb, var(--peg) 55%, #000);
+  color: color-mix(in srgb, var(--peg) 22%, #000);
+  font-weight: 800;
+}
+
+.k-picks { display: grid; gap: var(--s2); }
+
+.k-score {
+  font-family: var(--font-mono); font-size: var(--fs-lg); font-weight: 700;
+  text-align: center; color: var(--ink-dim);
+}
+.k-score--hit { color: var(--acc-phosphor); }
+
+.k-say {
+  font-family: var(--font-mono); font-size: var(--fs-sm);
+  color: var(--acc-phosphor); min-height: 1.6em; text-align: center;
+}
+.k-say--bad { color: var(--acc-amber); }
+.k-say--idle { color: var(--ink-dim); }
+
+/* --- papan angka --- */
+.k-pad { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+
+/* --- panel kanan --- */
+.k-code {
+  margin-top: var(--s3); padding: var(--s3);
+  border: var(--border); border-radius: var(--r);
+  background: var(--bg-sunken); color: var(--acc-amber);
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.7;
+  overflow-x: auto;
+}
+
+/* Sebaran hasil percobaan: sepuluh batang, satu per angka 0-9. */
+.k-hist { display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px;
+          align-items: end; height: 92px; margin-top: var(--s3); }
+.k-hist__b { background: var(--acc-phosphor-dim);
+             border: 1px solid var(--acc-phosphor);
+             border-radius: var(--r-sm) var(--r-sm) 0 0;
+             min-height: 2px; position: relative; }
+.k-hist__b span {
+  position: absolute; bottom: -16px; left: 0; right: 0; text-align: center;
+  font-family: var(--font-mono); font-size: 10px; color: var(--ink-faint);
+}
+.k-hist--bug .k-hist__b { background: var(--acc-amber-dim);
+                          border-color: var(--acc-amber); }
+
+.k-note { font-size: var(--fs-sm); color: var(--ink-dim); margin-top: var(--s2); }
+.k-warn { border-left: 3px solid var(--acc-amber); }

@@ -1,0 +1,177 @@
+/* ===========================================================================
+   dominoes.css — khusus Dominoes (All Fives). Awalan `d-`.
+
+   Domino TIDAK dimasukkan ke _shared/, dan itu keputusan, bukan kelalaian:
+   syarat yang ditulis di cards.js adalah "dapat modulnya sendiri kalau
+   terbukti dipakai lebih dari sekali". Sampai sekarang hanya satu program di
+   koleksi ini yang memakai domino. Kalau kelak ada yang kedua, berkas ini
+   yang dipindahkan — bukan disalin.
+   =========================================================================== */
+
+.d-layout {
+  display: grid; gap: var(--s5);
+  grid-template-columns: minmax(340px, 1fr) minmax(300px, 430px);
+  align-items: start; padding-block: var(--s6) var(--s8);
+}
+@media (max-width: 1040px) { .d-layout { grid-template-columns: 1fr; } }
+
+.d-stage { display: grid; gap: var(--s4); justify-items: center; }
+.d-setup { display: grid; gap: var(--s4); justify-items: center;
+           padding-block: var(--s6); }
+
+/* --- meja: salib berlengan empat -----------------------------------------
+   Aslinya menaruh keempat lengan pada koordinat layar tetap (baris 190-220:
+   baris 5/10/15, kolom 25/40/55). Kisi 3x3 di sini adalah bentuk yang sama,
+   dinyatakan sebagai tata letak alih-alih sebagai empat pasang angka. */
+/* Meja: salib yang RANTAINYA IKUT DIGAMBAR.
+
+   Aslinya hanya menyimpan ujung terbuka tiap lengan dan melupakan sisanya —
+   dan port pertama menggambar persis itu: lima batu terpisah dalam kotak
+   besar. Setia pada modelnya, tapi tidak terbaca sebagai permainan domino,
+   dan pemain kehilangan satu-satunya hal yang membuat meja domino masuk akal:
+   melihat rantainya tumbuh.
+
+   Sekarang rantainya digambar penuh. Alasannya di dominoes.md §2b; yang
+   penting di sini: itu keputusan TAMPILAN, dan aturannya tetap membaca ujung
+   terbuka saja.
+
+   Kolom dan barisnya `auto` supaya rantai bisa memanjang ke arahnya
+   masing-masing tanpa mendorong lengan yang lain. */
+.d-table {
+  display: grid; gap: 2px;
+  grid-template-columns: auto auto auto;
+  grid-template-rows: auto auto auto;
+  justify-content: center; align-items: center;
+  max-width: 100%; overflow-x: auto;
+}
+.d-pusat { grid-area: 2 / 2; display: grid; place-items: center;
+           padding: 2px; min-width: 44px; min-height: 44px;
+           border-radius: var(--r-sm); border: 1px dashed transparent; }
+/* Tempat batu pertama. Hanya menyala saat sebuah batu sudah dipilih — sama
+   aturannya dengan lengan: penanda yang selalu menyala berhenti berarti. */
+.d-pusat--bisa { border-color: var(--acc-phosphor); cursor: pointer;
+                 background: color-mix(in srgb, var(--acc-phosphor) 14%, transparent); }
+
+/* Tiap lengan tumbuh ke arahnya sendiri. `column-reverse` dan `row-reverse`
+   membuat batu terbaru mendarat di UJUNG LUAR, bukan di dekat pusat — jadi
+   urutan gambarnya sama dengan urutan bermainnya. */
+.d-arm { display: flex; align-items: center; gap: 2px; cursor: pointer; }
+.d-arm--0 { grid-area: 1 / 2; flex-direction: column-reverse;
+            justify-content: flex-start; }
+.d-arm--1 { grid-area: 2 / 3; flex-direction: row; }
+.d-arm--2 { grid-area: 3 / 2; flex-direction: column; }
+.d-arm--3 { grid-area: 2 / 1; flex-direction: row-reverse;
+            justify-content: flex-start; }
+
+/* Kotak ujung: tempat batu berikutnya mendarat, dan pemikul angka ujung
+   terbuka. Ukurannya tetap supaya bentuk salibnya tidak lenyap saat lengan
+   masih kosong — persoalan yang sudah muncul sekali di versi sebelumnya. */
+.d-ujung {
+  flex: none; min-width: 26px; min-height: 26px;
+  display: grid; place-items: center;
+  border-radius: var(--r-sm);
+  border: 1px dashed var(--edge-strong);
+  font-family: var(--font-mono); font-size: var(--fs-sm);
+  color: var(--ink-dim);
+}
+.d-ujung--angka { border-style: solid; border-color: var(--acc-amber);
+                  color: var(--acc-amber); font-weight: 700;
+                  background: var(--acc-amber-dim); }
+.d-ujung--bisa  { border-color: var(--acc-phosphor); color: var(--acc-phosphor);
+                  background: color-mix(in srgb, var(--acc-phosphor) 18%, transparent); }
+/* Lengan yang TERTUTUP (pusat belum dobel) dibedakan dari yang terbuka tapi
+   masih kosong. Tanpa pembedaan ini, pemain tidak punya cara tahu kenapa dua
+   tempat menolak semua batunya. */
+.d-ujung--tutup { border-style: solid; opacity: .3; }
+
+.d-kosong { font-size: var(--fs-xs); color: var(--ink-faint); }
+
+/* Jumlah ujung terbuka — angka yang menentukan skor, dan yang aslinya tidak
+   pernah ditampilkan. Pemain 1982 menjumlahkannya sendiri tiap giliran. */
+.d-ends { display: flex; flex-wrap: wrap; align-items: baseline;
+          gap: 5px; justify-content: center; font-size: var(--fs-sm); }
+.d-ends__l { color: var(--ink-dim); font-size: var(--fs-xs); }
+.d-ends__op { color: var(--ink-faint); }
+.d-ends b { font-family: var(--font-mono); color: var(--acc-amber); }
+.d-ends__tot { color: var(--ink) !important; font-size: var(--fs-md); }
+.d-ends__v { font-size: var(--fs-xs); color: var(--ink-dim); }
+.d-ends__v--ok { color: var(--acc-phosphor); font-weight: 700; }
+
+/* --- batu domino ---------------------------------------------------------
+   Baris 2130 menggambar mata dadu sebagai pola titik dalam tiga karakter
+   (" . ", ". .", ".:."). Di sini polanya kisi 3x3 yang sama untuk ketujuh
+   nilai — jadi mata 6 dan mata 3 sejajar titiknya, seperti pada domino
+   sungguhan. */
+.d-bone {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 4px 5px; border-radius: 5px;
+  background: #f2efe6; border: 1px solid #a9a396;
+  box-shadow: 0 1px 2px rgb(0 0 0 / .25);
+}
+:root[data-theme="dark"] .d-bone { background: #e6e2d6; }
+.d-bone--tegak { flex-direction: column; gap: 2px; }
+.d-bone--kecil { transform: scale(.8); }
+
+.d-half { display: grid; grid-template-columns: repeat(3, 5px);
+          grid-auto-rows: 5px; gap: 1px; }
+.d-pip { width: 5px; height: 5px; border-radius: 50%; background: #24211c; }
+.d-pip--off { background: transparent; }
+.d-bar { width: 1px; align-self: stretch; background: #a9a396; }
+.d-bone--tegak .d-bar { width: auto; height: 1px; align-self: auto;
+                        justify-self: stretch; }
+
+/* --- tangan --------------------------------------------------------------- */
+.d-hand { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.d-pick { cursor: pointer; font: inherit;
+          transition: transform var(--t-fast) var(--ease); }
+.d-pick:hover { transform: translateY(-4px); }
+.d-pick--sel { outline: 2px solid var(--acc-phosphor); outline-offset: 2px; }
+.d-pick:focus-visible { outline: none; box-shadow: var(--glow); }
+
+/* Tangan komputer: jumlahnya yang penting, bukan isinya. */
+.d-cpu { display: flex; gap: 2px; }
+.d-back { width: 10px; height: 20px; border-radius: 2px;
+          background: var(--panel-2); border: 1px solid var(--edge-strong); }
+.d-side { display: flex; align-items: center; gap: var(--s3);
+          font-size: var(--fs-xs); color: var(--ink-dim); }
+.d-side b { font-family: var(--font-mono); font-size: var(--fs-md); color: var(--ink); }
+
+.d-say {
+  font-family: var(--font-mono); font-size: var(--fs-sm);
+  color: var(--acc-phosphor); min-height: 1.6em; text-align: center;
+}
+.d-say--bad { color: var(--acc-red); }
+
+/* --- panel kanan --------------------------------------------------------- */
+
+.d-code {
+  margin-top: var(--s3); padding: var(--s3);
+  border: var(--border); border-radius: var(--r);
+  background: var(--bg-sunken); color: var(--acc-amber);
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.7;
+  overflow-x: auto;
+}
+.d-code em { color: var(--ink-faint); font-style: normal; }
+
+.d-note { font-size: var(--fs-sm); color: var(--ink-dim); margin-top: var(--s2); }
+.d-warn { border-left: 3px solid var(--acc-amber); }
+.d-good { border-left: 3px solid var(--acc-phosphor); }
+.d-bad  { border-left: 3px solid var(--acc-red); }
+
+.d-tbl { width: 100%; border-collapse: collapse; margin-top: var(--s3);
+         font-size: var(--fs-xs); }
+.d-tbl th, .d-tbl td { padding: 5px var(--s2); text-align: left;
+                       border-bottom: 1px solid var(--line-soft);
+                       vertical-align: top; }
+.d-tbl th { color: var(--ink-dim); font-weight: 600; }
+.d-tbl td:last-child, .d-tbl th:last-child {
+  text-align: right; font-family: var(--font-mono); }
+
+/* Paragraf pembuka di panel "Cara bermain" — alasan yang sama dengan
+   `.l-lead` di LIFE2: hal pertama yang perlu diketahui bukan cara menaruh
+   batu, melainkan bahwa ini All Fives dan menangnya dari ANGKA. */
+.howto > .d-lead {
+  border-top: none; padding-top: 0; margin-top: var(--s3);
+  color: var(--ink);
+}
+.g-bad { color: var(--acc-amber); font-weight: 700; }

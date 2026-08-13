@@ -1,0 +1,71 @@
+/* ===========================================================================
+   heareye.css — tambahan lokal. Layar 80x25 dan panelnya dari history.css.
+
+   Yang khas di sini cuma dua: penyetel ukuran layar untuk kartu mata, dan
+   papan uji nada.
+   =========================================================================== */
+
+/* --- penyetel ukuran fisik ------------------------------------------------
+   Kartu Snellen hanya jadi alat ukur kalau ukuran fisiknya diketahui. Aslinya
+   tidak pernah menanyakannya (lihat panel "Stand back 20 feet"), jadi
+   angka 20/20-nya tidak bisa berarti apa-apa. Di sini ukurannya ditanyakan —
+   dengan benda yang ukurannya sama di seluruh dunia. */
+
+.e-kalib { display: grid; gap: var(--s3); padding: var(--s3);
+           background: var(--panel-2); border: 1px solid var(--line);
+           border-radius: var(--r-sm); }
+.e-kalib__judul { font-size: var(--fs-xs); letter-spacing: .1em;
+                  text-transform: uppercase; color: var(--ink-dim); font-weight: 600; }
+.e-kalib__baris { display: flex; align-items: center; gap: var(--s3); flex-wrap: wrap; }
+.e-kalib input[type="range"] { flex: 1 1 200px; }
+
+/* Bilah acuan: lebar kartu ATM/kredit, 85,6 mm menurut ISO/IEC 7810 ID-1. */
+.e-kartu-acuan {
+  height: 34px; border-radius: 4px;
+  background: linear-gradient(120deg,
+              color-mix(in srgb, var(--acc-blue) 45%, var(--panel)),
+              color-mix(in srgb, var(--acc-violet) 45%, var(--panel)));
+  border: 1px solid var(--edge);
+  display: grid; place-items: center;
+  font-family: var(--font-mono); font-size: 10px; color: var(--ink);
+}
+
+.e-hasil { font-size: var(--fs-sm); color: var(--ink-dim); }
+.e-hasil b { color: var(--acc-phosphor); font-family: var(--font-mono); }
+.e-hasil .e-jauh { color: var(--acc-amber); }
+
+/* --- uji nada ------------------------------------------------------------ */
+
+.e-nada { display: grid; gap: var(--s3); }
+.e-nada__baris { display: flex; align-items: center; gap: var(--s3); flex-wrap: wrap; }
+
+.e-hz { font-family: var(--font-mono); font-size: var(--fs-xl);
+        color: var(--acc-phosphor); font-variant-numeric: tabular-nums; }
+.e-hz--diam { color: var(--ink-faint); }
+
+/* Bilah sapuan. Bagian di atas Nyquist diberi arsir, bukan warna lain:
+   arsir membaca sebagai "tidak sah", warna lain membaca sebagai "kategori
+   lain". Bedanya penting — di atas 22.050 Hz nadanya bukan nada yang salah,
+   melainkan bukan nada sama sekali. */
+.e-sapu { position: relative; height: 26px; border-radius: var(--r-sm);
+          background: var(--bg-sunken); border: 1px solid var(--line);
+          overflow: hidden; }
+.e-sapu__isi { position: absolute; inset: 0 auto 0 0; width: 0;
+               background: color-mix(in srgb, var(--acc-phosphor) 32%, transparent); }
+.e-sapu__ambang, .e-sapu__nyquist {
+  position: absolute; top: 0; bottom: 0; width: 2px;
+}
+.e-sapu__ambang  { background: var(--acc-amber); }
+.e-sapu__nyquist { background: var(--acc-red); }
+.e-sapu__mati {
+  position: absolute; top: 0; bottom: 0; right: 0;
+  background: repeating-linear-gradient(45deg,
+    color-mix(in srgb, var(--acc-red) 22%, transparent) 0 5px,
+    transparent 5px 10px);
+}
+.e-sapu__label { display: flex; justify-content: space-between;
+                 font-size: 10px; font-family: var(--font-mono);
+                 color: var(--ink-faint); }
+
+.e-catat { font-size: var(--fs-xs); color: var(--ink-faint); }
+.e-catat b { color: var(--acc-amber); }

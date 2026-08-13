@@ -1,0 +1,149 @@
+/* ===========================================================================
+   maze.css — khusus labirin orang-pertama. Awalan `z-`.
+   =========================================================================== */
+
+.z-layout {
+  display: grid; gap: var(--s5);
+  grid-template-columns: minmax(340px, 1fr) minmax(300px, 440px);
+  align-items: start; padding-block: var(--s6) var(--s8);
+}
+@media (max-width: 1000px) { .z-layout { grid-template-columns: 1fr; } }
+
+.z-stage { display: grid; gap: var(--s4); justify-items: stretch; }
+
+/* --- pandangan orang-pertama --------------------------------------------
+   Aslinya digambar dengan karakter blok, langsung ke memori layar. Di sini
+   SVG — tapi bentuknya sengaja dipertahankan: kerangka lorong, bukan tekstur.
+   Perspektifnya juga tetap "lima bingkai yang disiapkan", bukan proyeksi. */
+.z-view {
+  width: 100%; height: auto; display: block;
+  background: #05070a; border-radius: var(--r);
+  border: 1px solid var(--edge-soft);
+}
+/* Empat permukaan, dan yang paling penting adalah bedanya DINDING dari
+   BUKAAN. Versi pertama memberi keduanya warna yang nyaris sama:
+
+       dinding #101720 lawan bukaan #05070a  ->  1,12 : 1
+       bukaan  #05070a lawan latar   #05070a  ->  1,00 : 1
+
+   Bukaannya digambar dengan warna yang persis sama dengan latarnya, dan
+   dindingnya cuma 12% lebih terang. Jadi lorong yang bercabang ke samping
+   terlihat sama saja dengan tembok buntu.
+
+   Aslinya justru tidak punya masalah ini: ia mode teks, dindingnya blok
+   penuh dan bukaannya spasi kosong. Kontras maksimal, gratis. Mengganti
+   blok dengan poligon SVG-lah yang menghilangkannya.
+
+   Sekarang: dinding 3,45 : 1 terhadap bukaan, dan tiap bukaan diberi tiang
+   tegak terang di kedua tepinya supaya terbaca sebagai AMBANG PINTU. */
+.z-wall  { fill: #55677a; stroke: var(--acc-phosphor); stroke-width: 1.4;
+           stroke-linejoin: round; }
+.z-side  { fill: #2c3846; stroke: color-mix(in srgb, var(--acc-phosphor) 55%, transparent);
+           stroke-width: 1; }
+.z-open  { fill: #05080d; stroke: none; }
+.z-post  { stroke: var(--acc-phosphor); stroke-width: 2.2; stroke-linecap: round; }
+.z-end   { fill: #6d8195; stroke: var(--acc-phosphor); stroke-width: 2; }
+.z-exit  { fill: color-mix(in srgb, var(--acc-amber) 45%, transparent);
+           stroke: var(--acc-amber); stroke-width: 3; }
+/* Jarak disampaikan oleh bingkai yang mengecil, bukan oleh warna yang
+   memudar - kalau memudarnya terlalu kuat, kontras dinding/bukaan yang
+   barusan diperbaiki ikut hilang lagi di kedalaman. */
+.z-far   { opacity: .82; }
+
+.z-say {
+  font-family: var(--font-mono); font-size: var(--fs-sm);
+  color: var(--acc-phosphor); min-height: 1.6em; text-align: center;
+}
+.z-say--bad { color: var(--acc-red); }
+.z-say--win { color: var(--acc-amber); font-size: var(--fs-md); }
+
+/* --- peta (tambahan, aslinya tidak ada) ---------------------------------- */
+
+.z-plan { display: grid; grid-template-columns: repeat(8, 34px);
+          grid-auto-rows: 34px; gap: 0; margin-top: var(--s3);
+          justify-content: center; }
+.z-cell {
+  background: var(--bg-sunken); position: relative;
+  border: 1px solid transparent;
+  border-top-color: transparent; border-right-color: transparent;
+  border-bottom-color: transparent; border-left-color: transparent;
+}
+.z-cell.w-n { border-top-color: var(--acc-phosphor); }
+.z-cell.w-e { border-right-color: var(--acc-phosphor); }
+.z-cell.w-s { border-bottom-color: var(--acc-phosphor); }
+.z-cell.w-w { border-left-color: var(--acc-phosphor); }
+.z-cell.is-seen { background: color-mix(in srgb, var(--acc-phosphor) 10%, var(--bg-sunken)); }
+.z-cell.is-exit { background: color-mix(in srgb, var(--acc-amber) 34%, var(--bg-sunken)); }
+.z-cell.is-here { background: var(--acc-phosphor-dim); }
+.z-cell.is-here::after {
+  content: "▲"; position: absolute; inset: 0; display: grid; place-items: center;
+  color: var(--acc-phosphor); font-size: 15px; line-height: 1;
+  transform: rotate(var(--rot, 0deg));
+}
+
+/* --- panel kanan --------------------------------------------------------- */
+
+.z-code {
+  margin-top: var(--s3); padding: var(--s3);
+  border: var(--border); border-radius: var(--r);
+  background: var(--bg-sunken); color: var(--acc-phosphor);
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.7;
+  overflow-x: auto; white-space: pre-wrap;
+}
+
+/* Empat bit sel yang sedang ditempati. */
+.z-bits { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s2);
+          margin-top: var(--s3); text-align: center; }
+.z-bit { padding: var(--s2); border-radius: var(--r-sm);
+         background: var(--bg-sunken); border: 1px solid var(--edge-soft);
+         font-family: var(--font-mono); font-size: var(--fs-xs);
+         color: var(--ink-faint); }
+.z-bit b { display: block; font-size: var(--fs-lg); color: var(--ink-dim); }
+.z-bit--on { background: var(--acc-phosphor-dim); border-color: var(--acc-phosphor);
+             color: var(--acc-phosphor); }
+.z-bit--on b { color: var(--acc-phosphor); }
+
+.z-note { font-size: var(--fs-sm); color: var(--ink-dim); margin-top: var(--s2); }
+.z-warn { border-left: 3px solid var(--acc-amber); }
+
+/* --- panel pelajaran: menjamin labirin bisa diselesaikan ------------------
+   Dipisah dari gaya permainannya, sepola dengan lesson.js — kalau panel ini
+   dibuang, satu blok ini yang dihapus. */
+
+.z-lesson { border-left: 3px solid var(--acc-phosphor); }
+.z-sub {
+  margin-top: var(--s4); font-size: var(--fs-xs); font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--acc-amber);
+}
+
+/* Labirin yang dibangkitkan. Warna sel = jarak dari titik mulai; sel yang
+   TIDAK tercapai dibiarkan hitam, jadi labirin cacat langsung terlihat
+   sebagai lubang — tanpa perlu membaca satu angka pun. */
+.z-gen { width: 100%; max-width: 260px; display: block; margin: var(--s3) auto 0;
+         background: #05080d; border-radius: var(--r-sm); }
+.z-gw { stroke: var(--acc-phosphor); stroke-width: 1.6; stroke-linecap: square; }
+.z-gstart { fill: #fff; stroke: #000; stroke-width: 1.5; }
+
+.z-tbl { width: 100%; border-collapse: collapse; margin-top: var(--s3);
+         font-size: var(--fs-xs); }
+.z-tbl th, .z-tbl td { padding: 4px var(--s2); text-align: left;
+                       border-bottom: 1px solid var(--line-soft); }
+.z-tbl th { color: var(--ink-dim); font-weight: 600; }
+.z-tbl td:last-child, .z-tbl th:last-child {
+  text-align: right; font-family: var(--font-mono); }
+.z-row-bad td { color: var(--acc-red); }
+
+.z-ok  { color: var(--acc-phosphor); }
+.z-bad { color: var(--acc-red); font-weight: 700; }
+.z-opt { display: flex; gap: var(--s2); align-items: center;
+         font-size: var(--fs-xs); color: var(--ink-dim); }
+.z-opt input { width: 88px; }
+
+/* Tabel rantai-akibat hanya punya SATU kolom, jadi aturan "kolom terakhir
+   rata kanan dan monospace" di `.z-tbl` mengenai satu-satunya kolomnya —
+   dan kalimatnya jadi rata kanan berhuruf mesin ketik. Dikembalikan di sini. */
+/* Spesifisitasnya harus MENANDINGI `.z-tbl td:last-child` (0,2,1), bukan
+   sekadar `.z-tbl--rantai td` (0,1,1) — versi pertama kalah dan tabelnya
+   tetap rata kanan. Sama kelasnya, dan menang karena ditulis belakangan. */
+.z-tbl--rantai td:last-child { text-align: left; font-family: inherit;
+                               color: var(--ink-dim); }

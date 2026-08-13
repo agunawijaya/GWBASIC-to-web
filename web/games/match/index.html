@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Match — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari MATCH.BAS (Friendlyware, 1982): mencocokkan hadiah bergaya acara kuis, dengan daftar hadiah yang jadi potret 1982 — Betamax, Winnebago, dan Friendlyware seharga $49,95. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="match.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap m-layout">
+
+  <section class="stack">
+    <div class="screen screen--scanlines">
+      <div class="m-stage">
+        <div class="m-grid" id="grid"></div>
+        <p class="m-say" id="say"></p>
+
+        <div class="m-guess hidden" id="guessRow">
+          <label>Guess my secret number
+            <input type="number" id="guess" min="1" max="99" value="50"></label>
+          <button class="btn btn--primary" id="guessGo" type="button">Guess</button>
+        </div>
+
+        <div class="m-transport">
+          <button class="btn hidden" id="again" type="button">New game</button>
+        </div>
+
+        <div class="m-players">
+          <div class="m-player" id="w0">
+            <div class="m-phead"><span id="n0">PLAYER 1</span><b id="t0">$0</b></div>
+            <div class="m-prizes" id="p0"></div>
+          </div>
+          <div class="m-player" id="w1">
+            <div class="m-phead"><span id="n1">PLAYER 2</span><b id="t1">$0</b></div>
+            <div class="m-prizes" id="p1"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">20 hadiah, masing-masing dua kali</span>
+      <span class="ruleset__k">cocok &rarr; main lagi</span>
+      <span class="ruleset__k">WILD CARD cocok dengan apa pun</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Kotak tersisa</span>
+        <span class="stat__value" id="sLeft">40</span></div>
+      <div class="stat"><span class="stat__label">Tebakan terakhir</span>
+        <span class="stat__value" id="sGuess">&mdash;</span></div>
+      <div class="stat stat--good"><span class="stat__label">Rekor hadiah</span>
+        <span class="stat__value" id="sBest">$0</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <p class="m-lead">
+        Permainan ingatan bergaya acara kuis televisi, untuk
+        <strong>dua pemain bergantian di satu layar</strong>. Empat puluh kotak
+        menyembunyikan dua puluh hadiah &mdash; tiap hadiah muncul
+        <strong>dua kali</strong>.
+      </p>
+      <ol class="howto__steps">
+        <li>Buka <strong>dua kotak</strong>. Kalau isinya sama, hadiahnya jadi
+            milik Anda dan <strong>Anda main lagi</strong>. Kalau tidak,
+            keduanya ditutup kembali dan giliran berpindah.</li>
+        <li>Tiga kotak bukan hadiah, melainkan <strong>kartu khusus</strong>:
+            <br><strong>WILD CARD</strong> &mdash; cocok dengan apa pun.
+            <br><strong>TAKE ONE</strong> &mdash; ambil satu hadiah lawan.
+            <br><strong>LOSE ONE</strong> &mdash; serahkan satu hadiah Anda.</li>
+        <li>Babak papan berakhir saat <strong>tidak ada pasangan tersisa</strong>
+            &mdash; belum tentu saat papan kosong. Kartu wild yang dipakai pada
+            hadiah lain meninggalkan pasangan hadiah itu <strong>yatim</strong>,
+            dan kotak yatim dibuka saat babaknya berakhir.</li>
+        <li>Setelah itu permainan <strong>belum selesai</strong>.
+            Pemain yang sedang mendapat giliran menebak <strong>angka
+            rahasia</strong>, dengan petunjuk terlalu tinggi atau terlalu
+            rendah &mdash; dan gilirannya <strong>tidak berpindah</strong>
+            sampai ia tepat.</li>
+        <li>Yang menebak tepat <strong>memenangkan permainan</strong>. Nilai
+            hadiah tidak menentukan siapa yang menang; ia cuma menyatakan apa
+            yang dibawa pulang.</li>
+      </ol>
+      <p>
+        Satu peringatan yang berasal dari programnya sendiri: layar meminta
+        angka <strong>11 sampai 99</strong>, tapi yang dibangkitkan
+        <strong>10 sampai 98</strong>. Lihat panel di samping.
+      </p>
+    </details>
+    <div class="panel">
+      <p class="eyebrow">Tampilan kotak</p>
+      <div class="row" id="themes" role="group" aria-label="Pilih tampilan kotak"></div>
+      <p class="m-note">
+        Aslinya hanya punya nama hadiah &mdash; empat belas kolom teks per
+        kotak. Ikonnya <strong>ditambahkan</strong>, dan namanya tetap
+        ditampilkan: dua hadiah berbeda bisa berbagi ikon, dan di permainan
+        ingatan itu akan menyesatkan.
+      </p>
+    </div>
+
+    <div class="row">
+      <button class="btn btn--ghost btn--sm" id="resetBest" type="button">Reset rekor</button>
+    </div>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel m-good">
+      <p class="eyebrow">Pemain sebagai indeks, bukan variabel bernomor</p>
+<pre class="m-code">130 DIM A(20),B(40),PV(40),PZ(81),VL(81),TBL(1,50),
+    PL(1),T(1),MATCH(1),KEEP(1,21)</pre>
+      <p class="m-note">
+        <code>DIM</code> terpanjang di koleksi &mdash; sepuluh larik dalam satu
+        baris. Yang penting pola <code>(1)</code> yang muncul empat kali:
+        <code>PL(1)</code>, <code>T(1)</code>, <code>MATCH(1)</code>,
+        <code>KEEP(1,21)</code>.
+      </p>
+      <p class="m-note">
+        Larik berukuran dua adalah cara program ini menyimpan
+        <strong>data per pemain</strong>. Jadi <code>PL(0)</code> dan
+        <code>PL(1)</code> nama kedua pemain, <code>MATCH(0)</code> dan
+        <code>MATCH(1)</code> skornya.
+      </p>
+      <p class="m-note">
+        Pemain menjadi <strong>indeks</strong>, bukan sekumpulan variabel
+        bernomor (<code>PL1$</code>, <code>PL2$</code>) &mdash; dan akibatnya
+        seluruh logika giliran cukup ditulis <strong>sekali</strong>, dengan
+        satu penunjuk pemain aktif. Port ini memakai bentuk yang sama
+        (<code>pemain[0]</code>, <code>pemain[1]</code>) karena alasannya masih
+        berlaku persis.
+      </p>
+      <p class="m-note">
+        Yang tidak ditiru: baris 1490 menulis <code>Q(T(T))</code> &mdash;
+        larik <code>T</code> diindeks oleh variabel skalar <code>T</code>. Sah
+        di BASIC karena nama larik dan nama skalar hidup di ruang nama berbeda,
+        tapi hampir mustahil dibaca benar sekali lihat.
+      </p>
+    </div>
+
+    <div class="panel m-bad">
+      <p class="eyebrow">Angka rahasia yang tidak cocok dengan petunjuknya</p>
+<pre class="m-code">270  SC=FIX(RND*89)+10                <em>' 10 sampai 98</em>
+3320 PRINT "... Guess My Secret Number &lt;11 to 99&gt;"</pre>
+      <p class="m-note">
+        Rentang yang diminta layar: <strong>11&ndash;99</strong>. Rentang yang
+        benar-benar dibangkitkan: <strong>10&ndash;98</strong>. Meleset satu di
+        <strong>kedua</strong> ujungnya.
+      </p>
+      <p class="m-note">
+        Akibatnya bagi pemain yang percaya pada petunjuknya: ia
+        <strong>tidak akan pernah menebak 10</strong> &mdash; dan kalau angka
+        rahasianya 10, ia tidak akan pernah menang. Sebaliknya ia akan membuang
+        tebakan pada 99, yang mustahil.
+      </p>
+      <p class="m-note">
+        Dipertahankan apa adanya, karena inilah aturan yang benar-benar
+        dijalankan program 1982. Yang ditambahkan cuma pemberitahuannya
+        &mdash; sesuatu yang tidak dimiliki pemain aslinya.
+      </p>
+      <p class="m-note">
+        Perhatikan juga <strong>di mana</strong> baris 270 berada: di dalam
+        perulangan <code>FOR A=1 TO 20</code> yang memilih hadiah. Angka
+        rahasianya dibangkitkan ulang dua puluh kali, dan hanya yang terakhir
+        yang terpakai.
+      </p>
+    </div>
+
+    <div class="panel m-warn">
+      <p class="eyebrow"><code>RANDOMIZE</code> di dalam perulangan, untuk ketiga kalinya</p>
+<pre class="m-code">210 FOR A=1 TO 20
+220  RANDOMIZE(VAL(RIGHT$(TIME$,2)))   <em>' di DALAM perulangan</em>
+230  A(A)=(RND*80):IF A(A)=0 THEN 230
+250    IF A(B)=A(A) THEN B=A:A=A-1     <em>' tolak duplikat</em></pre>
+      <p class="m-note">
+        Penyakit yang sama dengan <a href="../craps/index.html">CRAPS</a>:
+        menyemai ulang dari detik, <strong>di dalam</strong> perulangan yang
+        sedang membangkitkan angka. Selama satu detik berjalan,
+        <code>RND</code> dikembalikan ke keadaan yang sama tiap putaran.
+      </p>
+      <p class="m-note">
+        Yang menyelamatkan papannya dari berisi dua puluh hadiah yang sama
+        adalah baris 240&ndash;260, yang <strong>menolak duplikat</strong> dan
+        memundurkan pencacahnya (<code>B=A:A=A-1</code>) &mdash; trik yang sama
+        dengan <a href="../keno/index.html">KENO</a>.
+      </p>
+      <p class="m-note">
+        Jadi pemeriksaan duplikat di sini bukan kehalusan tambahan; ia
+        satu-satunya hal yang membuat program ini bisa dimainkan sama sekali.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Delapan puluh hadiah, dan potret 1982 yang tidak disengaja</p>
+      <p class="m-note">
+        Daftar hadiahnya (baris 2520&ndash;3310) kini jadi arsip yang jauh lebih
+        tajam daripada yang dimaksudkan penulisnya:
+      </p>
+      <table class="m-tbl">
+        <tbody>
+          <tr><td>BRICK HOME</td><td>$55.000</td></tr>
+          <tr><td>MOBILE HOME</td><td>$21.000</td></tr>
+          <tr><td>WINNABAGO</td><td>$13.540</td></tr>
+          <tr><td>IBM P.C.</td><td>$2.300</td></tr>
+          <tr><td>BETAMAX</td><td>$1.150</td></tr>
+          <tr><td>DISK DRIVE</td><td>$350</td></tr>
+          <tr><td><strong>FRIENDLYWARE</strong></td><td><strong>$49,95</strong></td></tr>
+          <tr><td>BYTE MAGAZINE</td><td>$3</td></tr>
+          <tr><td>TAMPA NUGGET</td><td>$0,75</td></tr>
+          <tr><td>BAR OF SOAP</td><td>$0,25</td></tr>
+        </tbody>
+      </table>
+      <p class="m-note">
+        Sebuah <strong>IBM PC seharga $2.300</strong> dan
+        <strong>Betamax $1.150</strong> berdiri di daftar yang sama dengan
+        rumah bata $55.000 &mdash; dan penerbitnya menaruh
+        <strong>produknya sendiri</strong> di sana seharga $49,95, satu-satunya
+        hadiah yang bisa Anda beli dari orang yang menulis programnya.
+      </p>
+      <p class="m-note">
+        Salah ketiknya juga ikut dipertahankan: <code>PET SQURRIEL</code>,
+        <code>WINNABAGO</code>, dan <em>&ldquo;Congradulations&rdquo;</em> di
+        baris 3340. Empat puluh tahun, dan tidak ada seorang pun yang punya
+        cara mengirimkan perbaikan.
+      </p>
+    </div>
+
+    <div class="panel m-good">
+      <p class="eyebrow">Templat <code>PRINT USING</code> yang diberi nama</p>
+<pre class="m-code">140 PTR="$$##,###.##"
+<em>...</em>
+1710 PRINT USING PTR;VL(TBL(T,A))</pre>
+      <p class="m-note">
+        Format uang disimpan <strong>sekali</strong> dalam variabel bernama,
+        lalu dipakai ulang di setiap tempat yang mencetak nilai hadiah.
+      </p>
+      <p class="m-note">
+        Kecil, dan hampir tidak ada program lain di koleksi yang melakukannya
+        &mdash; sebagian besar menyebarkan literal formatnya di enam tempat,
+        lalu satu di antaranya berbeda tanpa ada yang menyadari.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/match.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/MATCH.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/MATCH.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="prizepics.js"></script>
+<script src="match.js"></script>
+</body>
+</html>

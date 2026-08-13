@@ -1,0 +1,173 @@
+/* ===========================================================================
+   abm2a.css — ABM2A.BAS (Ed Davis, 18 Juli 1982)
+
+   Cakrawalanya disusun dari TIGA cetakan gedung yang dipakai bergantian —
+   meniru cara baris 950-960 memanggil CT$/CT2$/CT3$ lewat perintah X di makro
+   DRAW. Bentuknya baru; polanya milik programnya.
+   =========================================================================== */
+
+.a-layout { display: grid; gap: var(--s5); align-items: start; }
+@media (min-width: 1000px) {
+  .a-layout { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+}
+@media (min-width: 1400px) { .a-layout { max-width: 1320px; } }
+
+.a-stage { display: grid; gap: var(--s3); }
+
+.a-crt {
+  position: relative; background: #05070f;
+  border: 1px solid var(--line); border-radius: 16px;
+  padding: var(--s3); overflow: hidden;
+  box-shadow: inset 0 0 60px rgba(0,0,0,.8);
+}
+.a-crt::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(104deg, rgba(255,255,255,.045) 0 26%, transparent 44%),
+    radial-gradient(115% 95% at 50% 45%, transparent 58%, rgba(0,0,0,.5) 100%),
+    repeating-linear-gradient(to bottom, rgba(255,255,255,.04) 0 1px, transparent 1px 3px);
+}
+@keyframes a-guncang {
+  0%,100% { transform: translate(0,0); }
+  25% { transform: translate(-3px, 2px); }
+  50% { transform: translate(3px, -2px); }
+  75% { transform: translate(-2px, -1px); }
+}
+.a-crt--guncang { animation: a-guncang .22s ease-in-out 2; }
+
+.a-svg { display: block; width: 100%; height: auto; }
+
+/* --- langit, tanah, kota -------------------------------------------------- */
+.a-langit  { fill: url(#glangit); }
+.a-bintang { fill: #ffffff; }
+.a-tanah   { fill: #16210f; }
+.a-gedung  { fill: url(#gkota); stroke: #0b1119; stroke-width: .4; }
+.a-jendela { fill: #ffe9a8; opacity: .6; }
+.a-puing   { fill: #3a2c22; stroke: #16100c; stroke-width: .5; }
+.a-kota--rusak { opacity: .85; }
+/* --- meriam ABM ----------------------------------------------------------
+   Aslinya peluncurnya TIDAK DIGAMBAR sama sekali — baris 150 cuma menarik garis
+   dari (168,160). Bentuk ini seluruhnya tambahan; yang bukan tambahan cuma
+   titik asalnya, x=168, dan itu tidak digeser sedikit pun.
+
+   Lebarnya +-11 dipilih supaya tidak bertumpuk dengan cakrawala HPN (144) dan
+   MAN (192) yang setengah lebarnya 12 — sela 2 satuan di kiri, 1 di kanan.
+   Versi pertama menimpa keduanya. */
+.a-bunker { fill: #46566e; stroke: #0b1119; stroke-width: .6; }
+.a-pita   { fill: #ffb347; opacity: .85; }
+.a-turret { fill: #5b6e8a; stroke: #0b1119; stroke-width: .6; }
+.a-poros  { fill: #22303f; }
+.a-laras  { fill: #8fa6c2; stroke: #0b1119; stroke-width: .5; }
+.a-muzzle { fill: #c9d8ea; stroke: #0b1119; stroke-width: .4; }
+.a-kilat  { fill: #ffd166; filter: url(#aglow); }
+.a-tiang  { stroke: #46566e; stroke-width: 1; }
+
+/* Piringan radar: satu-satunya bagian yang bergerak sendiri, dan ia menandai
+   meriamnya hidup bahkan saat tidak ada yang terjadi. */
+@keyframes a-radar-sapu {
+  0%,100% { transform: scaleX(1); }
+  50%     { transform: scaleX(.25); }
+}
+.a-radar {
+  fill: #7fd4ff; opacity: .9;
+  transform-box: fill-box; transform-origin: center;
+  animation: a-radar-sapu 2.4s ease-in-out infinite;
+}
+
+.a-label {
+  fill: #9fb4cc; font: 700 7px var(--font-mono); letter-spacing: .05em;
+}
+.a-label--mati { fill: #6b3630; text-decoration: line-through; }
+
+/* --- rudal ---------------------------------------------------------------- */
+.a-jejak { stroke: #ff6b6b; stroke-width: .7; opacity: .8; }
+.a-hulu  { fill: #ffd9d9; filter: url(#aglow); }
+
+/* --- ABM & ledakan -------------------------------------------------------- */
+.a-abm   { stroke: #7fd4ff; stroke-width: 1; }
+.a-ledak { fill: none; stroke: #ffd166; stroke-width: 1.4; filter: url(#aglow); }
+
+@keyframes a-letus-mekar {
+  from { r: 3; opacity: .95; stroke-width: 3; }
+  to   { r: 24; opacity: 0; stroke-width: .4; }
+}
+@keyframes a-letus-besar {
+  from { r: 4; opacity: 1; stroke-width: 4; }
+  to   { r: 42; opacity: 0; stroke-width: .4; }
+}
+.a-letus { fill: none; stroke: #ffb347; animation: a-letus-mekar .5s ease-out forwards; }
+.a-letus--besar { stroke: #ff5a4e; animation: a-letus-besar .8s ease-out forwards; }
+
+@keyframes a-angka-naik {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-14px); }
+}
+.a-angka { fill: #7dffb0; font: 700 8px var(--font-mono);
+           animation: a-angka-naik .9s ease-out forwards;
+           paint-order: stroke; stroke: #05070f; stroke-width: 2.5; }
+
+/* --- bidikan: baris 820-850 menggambar lingkaran + empat garis ------------ */
+.a-bidik circle { fill: none; stroke: #ffffff; stroke-width: .9; }
+.a-bidik line   { stroke: #ffffff; stroke-width: .9; }
+.a-bidik { filter: drop-shadow(0 0 2px rgba(255,255,255,.6)); }
+
+/* --- papan angka di dalam layar ------------------------------------------- */
+.a-status {
+  fill: #d6dde8; font: 700 9px var(--font-mono);
+  paint-order: stroke; stroke: #05070f; stroke-width: 2.5;
+}
+.a-besar {
+  fill: #ffffff; font: 700 16px var(--font-mono); letter-spacing: .06em;
+  paint-order: stroke; stroke: #000; stroke-width: 4;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .a-crt--guncang, .a-radar { animation: none; }
+  .a-letus, .a-angka { animation-duration: .01s; }
+}
+
+/* --- kendali -------------------------------------------------------------- */
+.a-row { display: flex; flex-wrap: wrap; gap: var(--s2); align-items: center; }
+.a-row--kecil { font-size: var(--fs-sm); color: var(--fg-dim); gap: var(--s4); }
+.a-row label { display: flex; align-items: center; gap: var(--s2);
+               font-size: var(--fs-sm); color: var(--fg-dim); }
+.a-cek { cursor: pointer; }
+.a-ttembak { border-color: #7fd4ff; }
+.a-kecil { font-size: var(--fs-xs); color: var(--fg-dim); margin: 0; }
+
+.a-pesan {
+  position: absolute; left: var(--s3); bottom: var(--s3);
+  margin: 0; font-size: var(--fs-xs); color: #ffd166;
+  background: rgba(0,0,0,.6); padding: 2px 8px; border-radius: var(--r-sm);
+}
+.a-pesan:empty { display: none; }
+
+/* --- daftar situs --------------------------------------------------------- */
+.a-situs { list-style: none; margin: 0; padding: 0;
+           font-size: var(--fs-sm); display: grid; gap: 4px; }
+.a-situs li { display: flex; gap: var(--s2); align-items: baseline; }
+.a-situs b { color: #7fd4ff; }
+.a-situs li.a-mati { opacity: .45; }
+.a-situs li.a-mati b { color: #ff6b6b; text-decoration: line-through; }
+
+/* --- panel ---------------------------------------------------------------- */
+.a-lead { margin-top: 0; }
+.a-note { font-size: var(--fs-sm); line-height: 1.6; }
+.a-good { border-left: 3px solid #46c17f; }
+.a-warn { border-left: 3px solid #e0a020; }
+.a-c { color: var(--fg-dim); }
+
+.a-code {
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.55;
+  background: var(--bg-sunken); border-radius: var(--r-sm);
+  padding: var(--s3); overflow-x: auto; white-space: pre;
+}
+.a-tbl { width: 100%; border-collapse: collapse; font-size: var(--fs-sm);
+         margin: var(--s3) 0; }
+.a-tbl th, .a-tbl td { padding: 5px 8px; border-bottom: 1px solid var(--line);
+                       text-align: right; }
+.a-tbl th:first-child, .a-tbl td:first-child { text-align: left; }
+.a-tbl--kiri th, .a-tbl--kiri td { text-align: left; }
+.a-tbl th { color: var(--fg-dim); font-weight: 600; text-transform: uppercase;
+            font-size: var(--fs-xs); letter-spacing: .04em; }
+.a-links { margin-top: var(--s4); }

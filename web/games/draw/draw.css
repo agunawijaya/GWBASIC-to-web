@@ -1,0 +1,94 @@
+/* ===========================================================================
+   draw.css — DRAW.BAS
+   Kanvasnya meniru layar teks CGA: 80 kolom, warna per sel, latar hitam
+   tetap. Warna di sini MEMBAWA ARTI (ia bagian dari gambar pemakai), jadi
+   ia tidak boleh ikut tema halaman.
+   =========================================================================== */
+.w-layout { display: grid; gap: var(--s5); align-items: start; }
+@media (min-width: 1100px) {
+  .w-layout { grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); }
+}
+@media (min-width: 1500px) { .w-layout { max-width: 1440px; } }
+.w-stage { display: grid; gap: var(--s3); }
+.w-crt { background: #000; border: 1px solid var(--line); border-radius: 12px;
+         padding: 10px; overflow-x: auto; }
+.w-kanvas { font-family: var(--font-mono); font-size: 13px; line-height: 1.05;
+            white-space: pre; display: inline-block; }
+.w-baris { display: flex; }
+.w-sel { display: inline-block; width: 1ch; text-align: center; cursor: cell; }
+.w-kursor { outline: 1px solid #ffff55; outline-offset: -1px; }
+/* Bilah palet.
+
+   Cacat versi pertama: tiap baris punya `overflow-x: auto` sendiri, tapi
+   TIDAK punya `min-width: 0`. Anak sebuah grid/flex secara bawaan tidak boleh
+   menyusut di bawah lebar isinya, jadi baris selebar 762 px itu memaksa
+   seluruh kolom kiri ikut selebar itu -- dan di jendela yang lebih sempit
+   halamannya bergeser mendatar sehingga tombol di tepi kanan keluar layar.
+   Yang terlihat pemakai: "ada tombol yang tidak kelihatan".
+
+   Perbaikannya dua bagian. Pertama `min-width: 0` di setiap tingkat, supaya
+   penyusutan diizinkan. Kedua, ketiga barisnya digulung dalam SATU kotak
+   gulir -- kalau masing-masing punya kotaknya sendiri, menggulir baris atas
+   tidak menggeser baris hurufnya, dan glif jadi tidak lagi sejajar dengan
+   nama tombolnya. */
+.w-stage, .w-crt, .w-panel { min-width: 0; }
+
+/* `.screen` di base.css punya `overflow: hidden` -- perlu untuk sudut
+   membulatnya, tapi artinya apa pun yang melebihi lebarnya DIPOTONG TANPA
+   BATANG GULIR. Isi yang tidak muat jadi hilang begitu saja, dan tidak ada
+   cara mencapainya. Halaman ini punya dua benda yang memang selebar layar
+   teks 80 kolom -- kanvas dan bilah palet -- jadi di sini pemotongan senyap
+   itu diganti gulir mendatar. Sumbu tegaknya ikut jadi `auto` menurut aturan
+   CSS, tapi tinggi `.screen` mengikuti isinya sehingga tidak pernah ada
+   batang gulir tegak. */
+.w-layout .screen { overflow-x: auto; }
+
+/* Baris tombol harus BOLEH melipat, dan kotak namanya harus boleh menyusut --
+   `width: 10ch` tanpa `min-width` membuatnya menolak mengalah, dan tombol
+   terakhir ("Contoh") terdorong keluar tepi. */
+.w-row { min-width: 0; }
+.w-row > .w-angka { flex: 0 1 auto; min-width: 6ch; }
+.w-palet { overflow-x: auto; min-width: 0; padding-bottom: 2px; }
+.w-paletBaris { display: flex; align-items: center; gap: 1px; flex-wrap: nowrap;
+                width: max-content; }
+.w-paletLabel { font: 700 10px var(--font-mono); color: var(--fg-dim);
+                width: 3.4rem; flex: none; letter-spacing: .08em;
+                position: sticky; left: 0; z-index: 1;
+                background: var(--bg); }
+.w-tombolGlif, .w-tombolHuruf {
+  font-family: var(--font-mono); font-size: 15px; line-height: 1;
+  width: 1.55rem; height: 1.55rem; flex: none; border-radius: 4px;
+  border: 1px solid var(--line); background: var(--bg-sunken); color: var(--fg);
+  cursor: pointer; padding: 0; }
+.w-tombolGlif:hover { background: var(--bg-raised); border-color: #6b8; }
+.w-tombolHuruf { border: none; background: none; color: var(--fg-dim);
+                 font-size: 11px; cursor: default; }
+.w-panel { padding: var(--s3); border: 1px solid var(--line);
+           border-radius: var(--r-sm); background: var(--bg-raised); }
+.w-row { display: flex; flex-wrap: wrap; gap: var(--s2); align-items: center; }
+.w-row--kecil { font-size: var(--fs-sm); color: var(--fg-dim);
+                display: flex; flex-wrap: wrap; gap: var(--s3); align-items: center; }
+.w-row--kecil label { display: flex; align-items: center; gap: var(--s2); }
+.w-angka { font-family: var(--font-mono); padding: 4px 6px; width: 10ch;
+           border: 1px solid var(--line); border-radius: var(--r-sm);
+           background: var(--bg-sunken); color: var(--fg); }
+select.w-angka { width: auto; }
+.w-file { display: inline-flex; margin: 0 4px 4px 0; }
+.w-x { padding-left: 6px; padding-right: 6px; }
+.w-pesan { font-family: var(--font-mono); font-size: var(--fs-xs);
+           color: var(--fg-dim); min-height: 1.2em; }
+.w-kecil { font-size: var(--fs-xs); color: var(--fg-dim); }
+.w-note { font-size: var(--fs-sm); line-height: 1.6; }
+.w-good { border-left: 3px solid #46c17f; }
+.w-warn { border-left: 3px solid #e0a020; }
+.w-bad2 { border-left: 3px solid #c0503f; }
+.w-code { font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.55;
+          background: var(--bg-sunken); border-radius: var(--r-sm);
+          padding: var(--s3); overflow-x: auto; white-space: pre; }
+.w-tbl { width: 100%; border-collapse: collapse; font-size: var(--fs-xs);
+         margin: var(--s3) 0; }
+.w-tbl td, .w-tbl th { padding: 3px 5px; border-bottom: 1px solid var(--line);
+                       text-align: center; }
+.w-tbl th:first-child, .w-tbl td:first-child { text-align: left; }
+.w-g { font-family: var(--font-mono); font-size: 15px; }
+.w-links { margin-top: var(--s4); }

@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Introduction To Computers (menu) — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari INTRO.BAS (Friendlyware, 1982): satu layar menu 23 baris yang tidak mengajarkan apa pun — ia hanya melempar ke tiga program lain. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="../history/history.css">
+<link rel="stylesheet" href="intro.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap h-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="h-stage">
+        <div id="layar"></div>
+        <div class="i-pilih" id="pilih" role="group" aria-label="Pilihan menu"></div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">23 baris</span>
+      <span class="ruleset__k">1 layar</span>
+      <span class="ruleset__k">3 tujuan</span>
+      <span class="ruleset__k">0 halaman</span>
+    </p>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara memakai</summary>
+      <p class="h-lead">
+        Ini <strong>menu</strong>, dan itu saja. Program aslinya
+        <strong>tidak mengajarkan apa pun</strong>: ia menggambar satu layar,
+        menunggu tombol <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd>, lalu
+        <strong>mengganti dirinya sendiri</strong> dengan program lain lewat
+        <code>RUN</code>.
+      </p>
+      <ol class="howto__steps">
+        <li>Tekan <kbd>1</kbd>, <kbd>2</kbd>, atau <kbd>3</kbd> &mdash; tombol
+            yang sama dengan aslinya &mdash; atau klik kartunya.</li>
+        <li>Layar di atas adalah layar 1982 apa adanya, 80&times;25 aksara,
+            warna per sel. Ia dihasilkan dengan <strong>menjalankan</strong>
+            <code>INTRO.BAS</code>, sama seperti
+            <a href="../history/index.html">HISTORY</a>.</li>
+      </ol>
+      <p>
+        Di aslinya, <code>RUN</code> membuang seluruh keadaan program
+        sebelumnya &mdash; itu satu-satunya cara berpindah antarprogram di
+        BASIC. Di sini ia jadi tautan biasa, dan tidak ada yang hilang.
+      </p>
+    </details>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel h-warn">
+      <p class="eyebrow">Dua puluh tiga baris, nol halaman</p>
+      <p class="h-note">
+        Saat <code>_shared/reader.js</code> dibuat di sesi 14, alasannya
+        ditulis begini: <em>&ldquo;tujuh program berikutnya &mdash; HISTORY,
+        INTRO, HEAREYE, BIO, READING, CHECK, BUSONE &mdash; semuanya berbentuk
+        yang sama, yaitu urutan layar yang dibalik maju-mundur oleh
+        pemakai.&rdquo;</em>
+      </p>
+      <p class="h-note">
+        <strong>INTRO membantahnya paling telak.</strong> Ia tidak punya
+        halaman, tidak punya <code>BACKFLAG</code>, tidak punya
+        <code>ON KEY(1)</code>. Yang ada cuma:
+      </p>
+<pre class="h-code">160 RESP$=INKEY$:IF RESP$="" THEN 160
+170 IF RESP$="1" THEN RUN"HISTORY"
+180 IF RESP$="2" THEN RUN"anatomy"
+185 IF RESP$="3" THEN RUN"HINTS
+190 GOTO 160</pre>
+      <p class="h-note">
+        Jadi port ini <strong>tidak memakai <code>reader.js</code></strong>.
+        Memaksakannya berarti menambahkan tombol maju/mundur ke sesuatu yang
+        tidak punya urutan &mdash; antarmuka yang berbohong tentang bentuk
+        programnya.
+      </p>
+      <p class="h-note">
+        Klaim yang salah itu <strong>dicoret, bukan dihapus</strong>, di kepala
+        <code>reader.js</code>. Itu persis kesalahan yang dibahas
+        <a href="../../docs/anatomy.md">anatomy.md &sect;2</a>: dokumentasi yang
+        menyalin keadaan lalu kalah balapan dengan kenyataannya.
+      </p>
+    </div>
+
+    <div class="panel h-good">
+      <p class="eyebrow">Tiga tujuan, dan nasibnya di koleksi ini</p>
+      <table class="h-tbl h-tbl--kiri" id="tbl-tujuan"></table>
+      <p class="h-note">
+        Perhatikan ejaannya di baris 180: <code>RUN"anatomy"</code> huruf
+        kecil, sedangkan dua yang lain huruf besar. DOS tidak peduli; yang
+        peduli cuma pembaca berikutnya, dan tidak ada yang merapikannya.
+      </p>
+      <p class="h-note">
+        <code>HINTS.BAS</code> ada di koleksi (132 baris) tapi
+        <strong>tidak dijadwalkan sebagai aplikasi tersendiri</strong> &mdash;
+        <code>PLAN.md</code> meleburnya ke shell, karena isinya teks bantuan
+        yang dipakai bersama beberapa program Friendlyware.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Kerangka yang dipakai bersama HEAREYE</p>
+      <p class="h-note">
+        Baris 10&ndash;90 hampir sama dengan <code>HEAREYE.BAS</code>: layar
+        bersih, <code>POKE 106,0</code>, jebakan <kbd>F10</kbd>, kotak
+        <code>┌──┐</code>, dan pita <code>F R I E N D L Y W A R E</code>.
+      </p>
+      <table class="h-tbl">
+        <tbody>
+          <tr><td>Baris kerangka</td><td>~20</td></tr>
+          <tr><td><b>Identik byte demi byte</b></td><td><b>13</b></td></tr>
+          <tr><td>Berbeda</td><td>baris 41, 50, dan isi menunya</td></tr>
+        </tbody>
+      </table>
+      <p class="h-note">
+        Berkas tinjauan otomatis menyebut baris 10&ndash;90
+        <em>&ldquo;identik&rdquo;</em>. Setelah dibandingkan satu per satu:
+        <strong>13 dari sekitar 20</strong>. Sudah dikoreksi di sana.
+      </p>
+      <p class="h-note">
+        Penyebabnya sama dengan <a href="../../docs/space.md">SPACE dan
+        PIECHART</a>: BASIC tidak punya cara berbagi kode antarprogram, jadi
+        kerangka yang sama diketik ulang di tiap berkas &mdash; lalu
+        pelan-pelan menyimpang.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/intro.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/INTRO.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/INTRO.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="screen.js"></script>
+<script src="intro.js"></script>
+</body>
+</html>

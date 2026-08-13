@@ -1,0 +1,160 @@
+/* ===========================================================================
+   3dttt.css — khusus LU's 3D Game. Awalan `t-`.
+
+   Berbeda dari `pacgal.css`: di sini TIDAK ada warna literal. PAC-GAL meniru
+   palet perangkat keras CGA, jadi warnanya bagian dari yang ditiru; 3DTTT
+   berlayar teks berwarna biasa, dan tidak ada alasan melepaskan token tema.
+   =========================================================================== */
+
+.t-layout {
+  display: grid; gap: var(--s5);
+  grid-template-columns: minmax(420px, 1.3fr) minmax(300px, 400px);
+  align-items: start; padding-block: var(--s6) var(--s8);
+}
+@media (max-width: 1080px) { .t-layout { grid-template-columns: 1fr; } }
+
+/* --- panggung 3D --------------------------------------------------------
+   Kubus digambar sebagai kubus, bukan empat kisi datar.
+
+   Layar teks 80x25 tahun 1984 tidak punya pilihan lain; peramban punya. Dan
+   pilihan itu bukan hiasan: empat DIAGONAL RUANG menembus keempat lapis
+   sekaligus, dan di tampilan datar tidak ada satu pun cara melihatnya — pemain
+   harus membayangkannya. Di kubus yang bisa diputar, ia terlihat.
+
+   Tampilan datarnya tetap ada sebagai saklar. Ia yang asli, dan untuk membaca
+   satu lapis dengan cepat ia memang lebih jelas. */
+/* Panggungnya punya LATAR GELAP SENDIRI, tidak mewarisi tema.
+
+   Ini perbaikan cacat, bukan gaya. Versi pertama membiarkan sel kubus tembus
+   pandang di atas `--bg-sunken` — dan token itu `#0a0d12` di tema gelap tapi
+   `#e7ecf2` di tema TERANG. Pelat biru transparan yang terbaca jelas di atas
+   hitam jadi nyaris hilang di atas putih, dan sel kosongnya tidak bisa dibedakan
+   dari latar. Dilaporkan pemilik proyek: "kotak placement-nya tidak terlihat".
+
+   Presedennya `pacgal.css`, yang juga memberi layarnya latar hitam sendiri.
+   Bedanya alasannya: di sana meniru monitor CGA, di sini menjamin kontras di
+   kedua tema. */
+.t-panggung {
+  perspective: 1100px; perspective-origin: 50% 45%;
+  height: 460px; display: grid; place-items: center;
+  cursor: grab; touch-action: none;
+  border-radius: var(--r); outline: none;
+  /* Kerangka kubus dalam perspektif bisa menjulur keluar panggung saat
+     diputar tajam; dipotong di sini supaya tidak menabrak tata letak. */
+  overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 50% 18%, rgba(70,120,220,.30), transparent 60%),
+    radial-gradient(90% 70% at 50% 100%, rgba(120,70,220,.26), transparent 58%),
+    #070a12;
+}
+.t-panggung.is-seret { cursor: grabbing; }
+.t-panggung:focus-visible { box-shadow: 0 0 0 2px var(--acc-phosphor); }
+
+.t-kubus {
+  position: relative; width: 0; height: 0;
+  transform-style: preserve-3d;
+  transition: transform .18s var(--ease);
+}
+.t-panggung.is-seret .t-kubus { transition: none; }
+
+/* Rusuk: dua belas garis yang memberi tahu mata di mana ruangnya berakhir.
+   Tanpa kerangka, 64 pelat melayang dan arah putarnya sulit dibaca. */
+.t-rusuk {
+  position: absolute; left: 0; top: 0;
+  background: rgba(120,190,255,.42);
+  box-shadow: 0 0 6px rgba(110,180,255,.35);
+  transform-origin: 0 0; pointer-events: none;
+}
+
+/* Sel: pelat kaca. `translate(-50%,-50%)` ditaruh di elemen LUAR lewat margin,
+   bukan digabung ke transform, karena transform sel sudah dipakai penuh untuk
+   penempatan 3D-nya dan menambah translate akan mengacaukan urutan matriksnya. */
+/* Sel kosong harus terbaca sebagai SASARAN, bukan sebagai kabut. Nilai di sini
+   sengaja jauh lebih tegas daripada versi pertama: rangkanya 1,5 px dengan alfa
+   0,55 (dulu 1 px / 0,28), isinya 0,14 (dulu 0,10 memudar ke 0,03), dan ada
+   titik tengah kecil supaya sel yang jauh pun punya sesuatu untuk dilihat. */
+.t-sel {
+  position: absolute; left: 0; top: 0;
+  width: 46px; height: 46px; margin: -23px 0 0 -23px;
+  display: grid; place-items: center;
+  font-family: var(--font-mono); font-size: 22px; font-weight: 700;
+  color: rgba(200,220,255,.85);
+  background: rgba(120,170,255,.22);
+  border: 2px solid rgba(175,210,255,.80);
+  border-radius: 8px; cursor: pointer;
+  box-shadow: inset 0 0 12px rgba(140,185,255,.30);
+  transition: background .15s var(--ease), box-shadow .15s var(--ease),
+              border-color .15s var(--ease);
+}
+/* Titik tengah: penanda "di sini bisa ditaruh" yang tetap terlihat walau selnya
+   di belakang dan mengecil karena perspektif. */
+.t-sel:not(.is-isi)::after {
+  content: ''; width: 7px; height: 7px; border-radius: 50%;
+  background: rgba(205,230,255,.92);
+}
+.t-sel:not(:disabled):hover {
+  background: rgba(150,195,255,.34);
+  border-color: rgba(190,220,255,.95);
+  box-shadow: 0 0 22px rgba(130,180,255,.8), inset 0 0 12px rgba(160,200,255,.35);
+}
+.t-sel:not(:disabled):hover::after { background: #fff; }
+.t-sel:disabled { cursor: default; }
+
+/* Bidak menyala, bukan sekadar berwarna: di kubus tembus pandang, sel yang
+   terisi harus menonjol dari yang di belakangnya. */
+.t-sel.is-p1 {
+  color: #ffd25e; border-color: rgba(255,210,94,.65);
+  background: rgba(255,200,80,.14);
+  text-shadow: 0 0 12px rgba(255,210,94,.85);
+}
+.t-sel.is-p2 {
+  color: #6fd0ff; border-color: rgba(111,208,255,.65);
+  background: rgba(90,190,255,.14);
+  text-shadow: 0 0 12px rgba(111,208,255,.85);
+}
+.t-sel.is-akhir { box-shadow: 0 0 0 2px var(--acc-phosphor), 0 0 22px rgba(80,255,180,.5); }
+.t-sel.is-menang {
+  background: rgba(80,255,180,.28); border-color: var(--acc-phosphor);
+  box-shadow: 0 0 26px rgba(80,255,180,.8);
+  animation: t-menang .7s ease-in-out infinite alternate;
+}
+@keyframes t-menang { to { box-shadow: 0 0 40px rgba(80,255,180,1); } }
+
+/* Sel kosong diredupkan SEDIKIT saja supaya bidak tetap menonjol menembus
+   tumpukan — 0,5 di versi pertama terlalu jauh dan membuatnya hilang. */
+.t-sel:not(.is-isi) { opacity: .86; }
+.t-sel:not(.is-isi):hover { opacity: 1; }
+
+/* --- tampilan datar: yang asli 1984 -------------------------------------- */
+.t-panggung.is-datar { perspective: none; height: auto; padding: var(--s3) 0; }
+.t-panggung.is-datar .t-kubus {
+  transform: none !important;
+  display: grid; grid-template-columns: repeat(4, auto); gap: var(--s4);
+  width: auto; height: auto; transform-style: flat;
+}
+.t-panggung.is-datar .t-rusuk { display: none; }
+.t-panggung.is-datar .t-sel {
+  position: static; margin: 0; transform: none !important;
+  width: 44px; height: 44px; font-size: 20px; opacity: 1;
+}
+.t-panggung.is-datar .t-sel::after { width: 5px; height: 5px; }
+/* Empat lapis dipisah dengan menaruh tiap 16 sel di kolom kisi yang sama —
+   urutan DOM-nya memang sudah lapis demi lapis. */
+.t-panggung.is-datar .t-kubus {
+  grid-auto-flow: column; grid-template-rows: repeat(4, auto);
+}
+@media (max-width: 620px) { .t-panggung { height: 360px; } }
+@media (prefers-reduced-motion: reduce) {
+  .t-kubus { transition: none; }
+  .t-sel.is-menang { animation: none; }
+}
+
+.t-note  { font-size: var(--fs-sm); color: var(--ink-dim); margin-top: var(--s2); }
+.t-tabel { width: 100%; border-collapse: collapse; font-size: var(--fs-sm);
+           margin-top: var(--s3); }
+.t-tabel th, .t-tabel td { text-align: left; padding: var(--s2) var(--s3);
+                           border-bottom: var(--line-soft); }
+.t-tabel td:last-child { font-family: var(--font-mono); color: var(--acc-phosphor);
+                         text-align: right; white-space: nowrap; }
+.t-hasil { font-family: var(--font-mono); font-size: var(--fs-sm);
+           color: var(--acc-phosphor); margin-top: var(--s3); min-height: 1.4em; }

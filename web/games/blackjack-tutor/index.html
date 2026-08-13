@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Blackjack Tutor — Classic DOS BASIC Games</title>
+<meta name="description" content="Belajar blackjack di meja 21.BAS (1982): tiap keputusan disertai saran, alasannya, dan nilai harapan yang dihitung dari kartu yang tersisa. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="../../_shared/cards.css">
+<link rel="stylesheet" href="../../_shared/blackjack.css">
+<link rel="stylesheet" href="tutor.css?v=1">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap bt-layout">
+
+  <section class="stack">
+
+    <div class="screen">
+      <div class="bj-meja">
+
+        <div class="bj-sisi">
+          <div class="bj-sisi__label" id="lblBandar">Dealer</div>
+          <div id="bjBandar"></div>
+          <div class="bj-sisi__nilai" id="bjBandarNilai"></div>
+        </div>
+
+        <div class="bj-sisi">
+          <div id="bjPemain"></div>
+          <div class="bj-sisi__label" id="lblAnda">You</div>
+        </div>
+
+        <div class="bj-taruh">
+          <button class="btn btn--ghost btn--sm" id="bjTaruhTurun" type="button">&minus;</button>
+          <span class="bj-taruh__n" id="bjTaruh">$0</span>
+          <button class="btn btn--ghost btn--sm" id="bjTaruhNaik" type="button">+</button>
+        </div>
+
+        <div class="bj-aksi">
+          <button class="btn" id="bjBagi" type="button">Deal</button>
+          <button class="btn" id="bjHit" type="button">Hit</button>
+          <button class="btn" id="bjStand" type="button">Stand</button>
+          <button class="btn btn--ghost" id="bjGanda" type="button">Double Down</button>
+          <button class="btn btn--ghost" id="bjSplit" type="button">Split</button>
+          <button class="btn" id="bjLagi" type="button">Next hand</button>
+        </div>
+
+        <div class="bj-pesan" id="bjPesan"></div>
+      </div>
+    </div>
+
+    <!-- ================= PENASIHAT ================= -->
+    <section class="panel bt-nasihat" id="btNasihat" hidden>
+      <div class="bt-kepala">
+        <span class="bt-cap" id="btCap">SARAN</span>
+        <span class="bt-aksi" id="btAksi">—</span>
+        <span class="bt-tepi" id="btTepi"></span>
+      </div>
+      <p class="bt-alasan" id="btAlasan"></p>
+      <table class="bt-ev" id="btEv"></table>
+      <p class="bt-catatanKecil" id="btHampiran" hidden></p>
+    </section>
+
+    <!-- ================= PENILAIAN SESUDAH BERTINDAK ================= -->
+    <section class="panel bt-nilai" id="btNilai" hidden>
+      <div class="bt-kepala">
+        <span class="bt-cap" id="btNilaiCap">PENILAIAN</span>
+        <span class="bt-aksi" id="btNilaiAksi">—</span>
+      </div>
+      <p class="bt-alasan" id="btNilaiAlasan"></p>
+    </section>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label" id="lblSkor">Optimal decisions</span>
+        <span class="stat__value mono" id="btSkor">0 / 0</span></div>
+      <div class="stat"><span class="stat__label" id="lblBiaya">Cost of mistakes</span>
+        <span class="stat__value mono" id="btBiaya">0,00</span></div>
+      <div class="stat"><span class="stat__label" id="lblSisa">Cards left in shoe</span>
+        <span class="stat__value mono" id="bjSisa">52</span></div>
+      <div class="stat"><span class="stat__label" id="lblHitung">Running count</span>
+        <span class="stat__value mono" id="btHitung">0</span></div>
+    </div>
+
+    <div class="bt-alat">
+      <button class="btn btn--ghost btn--sm" id="btReset" type="button">Reset</button>
+      <label class="bt-kecil"><input type="checkbox" id="btSembunyi">
+        <span id="lblSembunyi">Hide advice until after I decide</span></label>
+      <span class="bt-kecil"><span id="lblKas">Bankroll</span>:
+        <b id="bjKas" class="mono">$0</b></span>
+      <span class="bt-kecil"><span id="lblMKS">W / L / P</span>:
+        <b class="mono"><span id="bjMenang">0</span> /
+        <span id="bjKalah">0</span> / <span id="bjSeri">0</span></b></span>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary id="lblCara">How this works</summary>
+      <div id="btCara"></div>
+    </details>
+  </section>
+
+  <aside class="stack" id="btPanel"></aside>
+</main>
+
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="../../_shared/i18n.js"></script>
+<script src="../../_shared/cards.js"></script>
+<script src="../../_shared/blackjack.js"></script>
+<script src="nasihat.js?v=1"></script>
+<script src="tutor.js?v=1"></script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+/* ===========================================================================
+   pacgal.css — khusus Pac-Gal. Awalan `p-`.
+
+   Warna labirin dan hantu SENGAJA literal, dan itu pengecualian yang
+   dibolehkan prinsip 4 di `_teknik-svg.md`: keempatnya meniru palet perangkat
+   keras CGA, jadi mengambilnya dari token tema akan menghapus justru hal yang
+   sedang ditiru. Sisanya — bingkai, teks, latar panel — memakai token.
+   =========================================================================== */
+
+.p-layout {
+  display: grid; gap: var(--s5);
+  grid-template-columns: minmax(420px, 1.35fr) minmax(300px, 400px);
+  align-items: start; padding-block: var(--s6) var(--s8);
+}
+@media (max-width: 1080px) { .p-layout { grid-template-columns: 1fr; } }
+
+/* Layar permainan. Latarnya hitam pekat, bukan token: monitor CGA hitam, dan
+   labirin fosfor di atas latar tema terang tidak terbaca sebagai layar. */
+.p-svg {
+  width: 100%; height: auto; display: block;
+  background: #000; border-radius: var(--r); border: var(--border);
+}
+
+/* --- ubin labirin ------------------------------------------------------- */
+.p-dinding   { stroke: #5c6cff; stroke-width: 2.4; stroke-linecap: round; }
+.p-blok      { fill: #2b3aa8; }
+.p-terowongan{ stroke: #3a4470; stroke-width: 2; stroke-dasharray: 2 3; }
+.p-pelet     { fill: #ffd9a0; }
+
+/* --- energizer ----------------------------------------------------------- */
+/* Berdenyut supaya terbedakan dari 464 pelet biasa tanpa perlu keterangan. */
+.p-energi { fill: #fff3c4; animation: p-denyut .9s ease-in-out infinite; }
+@keyframes p-denyut { 50% { r: 2.6; opacity: .75; } }
+@media (prefers-reduced-motion: reduce) { .p-energi { animation: none; } }
+
+/* --- tokoh -------------------------------------------------------------- */
+.p-pemain { fill: #ffe14d; }
+
+/* Angka bonus yang muncul selama permainan membeku. Dibuat sekecil mungkin
+   yang masih terbaca supaya tidak menutupi lorong di sekitarnya. */
+.p-nilai {
+  fill: #7ff0ff;
+  font: 700 11px/1 ui-monospace, "Cascadia Mono", Consolas, monospace;
+  paint-order: stroke;
+  stroke: #000;
+  stroke-width: 3px;
+}
+
+.p-hantu__badan { fill: currentColor; }
+.p-hantu__mata  { fill: #fff; }
+.p-hantu__pupil { fill: #1a1a3a; }
+
+/* Empat warna untuk empat WATAK, bukan sekadar variasi. Aslinya keempat hantu
+   memakai pengejar yang sama; sasaran yang berbeda di port ini perlu terlihat
+   berbeda juga, kalau tidak pemain tak punya cara mengenali mana yang menjepit. */
+.p-hantu[data-watak="0"] { color: #ff5b5b; }   /* Pengejar  — langsung */
+.p-hantu[data-watak="1"] { color: #ff9ed8; }   /* Pembayang — empat sel di depan */
+.p-hantu[data-watak="2"] { color: #6fe3ff; }   /* Penjepit  — cerminan si Pengejar */
+.p-hantu[data-watak="3"] { color: #ffb454; }   /* Pemalu    — mundur kalau dekat */
+
+/* Rentan: biru pucat, sama seperti aslinya mengganti atribut warna jadi 26
+   (berkedip) di baris 2910. Kedipnya dimatikan bila pengguna minta gerak
+   dikurangi. */
+.p-hantu.is-takut { color: #6a7bd8; animation: p-kedip .35s steps(2) infinite; }
+@keyframes p-kedip { 50% { opacity: .45; } }
+@media (prefers-reduced-motion: reduce) {
+  .p-hantu.is-takut { animation: none; opacity: .6; }
+}
+/* Dimakan: badannya hilang, tinggal sepasang mata yang pulang ke kandang —
+   penanda paling jelas bahwa pemain sedang aman dari hantu itu. */
+.p-hantu.is-dimakan .p-hantu__mata { fill: #9fb4ff; }
+
+/* --- panel penjelasan --------------------------------------------------- */
+.p-note  { font-size: var(--fs-sm); color: var(--ink-dim); margin-top: var(--s2); }
+.p-tabel { width: 100%; border-collapse: collapse; font-size: var(--fs-sm);
+           margin-top: var(--s3); }
+.p-tabel th, .p-tabel td { text-align: left; padding: var(--s2) var(--s3);
+                           border-bottom: var(--line-soft); }
+.p-tabel td:last-child { font-family: var(--font-mono); color: var(--acc-phosphor);
+                         text-align: right; white-space: nowrap; }
+.p-ubin { font-family: var(--font-mono); font-size: var(--fs-lg);
+          color: var(--acc-amber); }
+
+/* --- saklar mode hantu ----------------------------------------------------
+   Ditaruh tepat di bawah tombol Mulai, bukan di panel: ia mengubah cara
+   permainannya berjalan, jadi ia kendali, bukan keterangan. */
+.p-saklar { flex-wrap: wrap; gap: var(--s3) var(--s4); align-items: baseline; }
+.p-tog { display: inline-flex; align-items: center; gap: var(--s2);
+         font-size: var(--fs-sm); color: var(--ink-dim); cursor: pointer;
+         user-select: none; }
+.p-tog input { accent-color: var(--acc-phosphor); cursor: pointer; }
+.p-tog:hover { color: var(--ink); }
+.p-tog__ket { font-size: var(--fs-xs); color: var(--ink-faint);
+              font-family: var(--font-mono); }
+
+/* Tabel banding tiga kolom berisi KALIMAT, bukan angka. Aturan bawaan
+   `.p-tabel` membuat kolom terakhir monospace, rata kanan, dan `nowrap` —
+   benar untuk angka, dan itu yang mendorong teksnya keluar panel. */
+.p-tabel--banding td:last-child,
+.p-tabel--banding td:not(:first-child) {
+  font-family: inherit; color: var(--ink-dim);
+  text-align: left; white-space: normal;
+}
+.p-tabel--banding th:not(:first-child) { text-align: left; }
+.p-tabel--banding td, .p-tabel--banding th { padding: var(--s2); vertical-align: top; }
+.p-tabel--banding td:first-child { color: var(--ink); width: 26%; }

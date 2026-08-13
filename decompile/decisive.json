@@ -1,0 +1,116 @@
+{
+ "3DTTT.EXE": [
+  {
+   "routine": 32897,
+   "calls": 3,
+   "hits": {
+    "cmpsw": 1
+   }
+  },
+  {
+   "routine": 30869,
+   "calls": 2,
+   "hits": {
+    "mul": 1,
+    "stosb": 1
+   }
+  }
+ ],
+ "PAC-GAL.EXE": [
+  {
+   "routine": 16936,
+   "calls": 5,
+   "hits": {
+    "stosw": 1
+   }
+  },
+  {
+   "routine": 14465,
+   "calls": 4,
+   "hits": {
+    "mul": 3
+   }
+  },
+  {
+   "routine": 17237,
+   "calls": 3,
+   "hits": {
+    "int": 1
+   }
+  },
+  {
+   "routine": 19834,
+   "calls": 2,
+   "hits": {
+    "movsb": 1,
+    "stosb": 1
+   }
+  },
+  {
+   "routine": 15726,
+   "calls": 1,
+   "hits": {
+    "cmpsw": 1
+   }
+  },
+  {
+   "routine": 15731,
+   "calls": 1,
+   "hits": {
+    "cmpsw": 1
+   }
+  }
+ ],
+ "HOPPER.EXE": [
+  {
+   "routine": 13841,
+   "calls": 3,
+   "hits": {
+    "stosb": 1
+   }
+  },
+  {
+   "routine": 19156,
+   "calls": 2,
+   "hits": {
+    "int": 1
+   }
+  },
+  {
+   "routine": 15316,
+   "calls": 2,
+   "hits": {
+    "mul": 3
+   }
+  },
+  {
+   "routine": 20372,
+   "calls": 2,
+   "hits": {
+    "mul": 2
+   }
+  },
+  {
+   "routine": 14578,
+   "calls": 1,
+   "hits": {
+    "mul": 1,
+    "stosb": 1
+   }
+  },
+  {
+   "routine": 12329,
+   "calls": 1,
+   "hits": {
+    "mul": 1
+   }
+  },
+  {
+   "routine": 18311,
+   "calls": 1,
+   "hits": {
+    "cmpsw": 1
+   }
+  }
+ ]
+}

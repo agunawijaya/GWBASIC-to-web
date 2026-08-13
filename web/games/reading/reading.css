@@ -1,0 +1,96 @@
+/* ===========================================================================
+   reading.css — rupa lokal READING. Awalan `r-`.
+
+   Layarnya tidak memakai kisi 80x25 seperti HISTORY: yang penting di sini
+   bukan tata letak seluruh layar, melainkan SATU kata di antara dua garis,
+   dan berapa lama ia terlihat. Meniru 80 kolom di sini akan mengecilkan
+   katanya sampai ujinya tidak berarti lagi.
+   =========================================================================== */
+
+.r-layout { display: grid; gap: var(--s5); align-items: start; }
+@media (min-width: 1000px) { .r-layout { grid-template-columns: minmax(0,1.1fr) minmax(0,1fr); } }
+
+.r-stage { display: grid; gap: var(--s4); }
+.r-lead { font-size: var(--fs-sm); }
+.r-lead strong { color: var(--ink); }
+
+/* --- area kilatan -------------------------------------------------------- */
+
+.r-crt {
+  background: #000; border: 1px solid var(--line); border-radius: var(--r);
+  padding: var(--s5) var(--s3);
+}
+
+/* Dua garis putus di baris 12 dan 14 (baris 110), kata di baris 13. Jaraknya
+   dipertahankan supaya mata punya titik jangkar — itulah gunanya garis itu di
+   sebuah tachistoscope, dan bukan hiasan. */
+.r-scr { display: grid; gap: 0; }
+.r-garis {
+  height: 1px; background: #00aa00;
+  background-image: repeating-linear-gradient(to right, #00aa00 0 6px, transparent 6px 8px);
+  background-size: auto 1px; background-repeat: repeat-x;
+}
+.r-kilat {
+  height: 2.6em; display: grid; place-items: center;
+  font-family: var(--font-mono); font-size: clamp(18px, 3.6vw, 30px);
+  color: #ffffff; letter-spacing: .06em;
+  /* Tanpa transisi: sebuah tachistoscope mengukur AMBANG, dan apa pun yang
+     memudar pelan-pelan mengubah yang diukur. */
+  visibility: hidden;
+}
+.r-kilat.is-on { visibility: visible; }
+
+.r-pesan {
+  margin-top: var(--s3); min-height: 1.5em; text-align: center;
+  font-family: var(--font-mono); font-size: var(--fs-sm);
+}
+.r-pesan--benar { color: #55ff55; }
+.r-pesan--salah { color: #ff5555; }
+.r-pesan--kosong { color: var(--acc-amber); }
+
+/* --- kendali ------------------------------------------------------------- */
+
+.r-row { display: flex; gap: var(--s3); align-items: flex-end; flex-wrap: wrap; }
+.r-row--kecil { font-size: var(--fs-xs); color: var(--ink-dim); }
+.r-row--kecil input[type="range"] { width: 160px; vertical-align: middle; }
+
+.r-inp { display: grid; gap: 4px; font-size: var(--fs-xs); color: var(--ink-dim);
+         flex: 1 1 200px; }
+.r-inp input {
+  font: inherit; font-family: var(--font-mono); font-size: var(--fs-md);
+  padding: 6px var(--s2);
+  background: var(--panel-2); color: var(--ink);
+  border: 1px solid var(--line); border-radius: var(--r-sm);
+}
+.r-inp input:focus-visible { outline: none; box-shadow: var(--glow); }
+.r-inp input[disabled] { opacity: .5; }
+
+/* --- panel kanan --------------------------------------------------------- */
+
+.r-note { font-size: var(--fs-sm); color: var(--ink-dim); line-height: var(--lh); }
+.r-note + .r-note { margin-top: var(--s3); }
+.r-note strong { color: var(--ink); font-weight: 620; }
+.r-note code { font-family: var(--font-mono); font-size: .92em; color: var(--acc-blue); }
+
+.r-code {
+  font-family: var(--font-mono); font-size: var(--fs-xs);
+  background: var(--bg-sunken); border: 1px solid var(--line-soft);
+  border-radius: var(--r-sm); padding: var(--s3);
+  overflow-x: auto; color: var(--ink-dim); margin: var(--s3) 0; line-height: 1.6;
+}
+.r-code b { color: var(--acc-amber); font-weight: 700; }
+
+.r-tbl { width: 100%; border-collapse: collapse; margin: var(--s3) 0;
+         font-size: var(--fs-sm); }
+.r-tbl th { text-align: left; color: var(--ink-faint); font-weight: 600;
+            font-size: var(--fs-xs); text-transform: uppercase;
+            letter-spacing: .06em; padding: var(--s2) var(--s2) var(--s1); }
+.r-tbl td { padding: var(--s2); border-top: 1px solid var(--line-soft);
+            color: var(--ink-dim); vertical-align: top; }
+.r-tbl td:last-child { text-align: right; font-family: var(--font-mono); }
+
+.r-good { border-left: 3px solid var(--acc-phosphor); }
+.r-warn { border-left: 3px solid var(--acc-amber); }
+.r-bad  { color: var(--acc-red); }
+
+.m-links { font-size: var(--fs-xs); }

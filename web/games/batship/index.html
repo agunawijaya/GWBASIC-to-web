@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Battleship — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari BATSHIP.BAS (G.S. Alberts, IBM Vermont, 27 Juli 1982): kapal induknya berbentuk salib tujuh petak, papannya tidak pernah menandai kena, dan 86.400 detik dalam sehari hanya menghasilkan 7.152 benih. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="batship.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap b-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="b-stage">
+        <div class="b-crt">
+          <svg id="svg" class="b-svg" viewBox="0 0 780 566"
+               role="img" aria-label="Papan Battleship 10 kali 10 dengan kartu skor enam kapal"></svg>
+          <p class="b-pesan" id="pesan"></p>
+        </div>
+
+        <div class="b-row">
+          <button class="btn btn--primary" id="mulai" type="button">Mulai</button>
+          <button class="btn btn--ghost btn--sm" id="b-intip" type="button"
+                  aria-pressed="false" disabled>Intip kapal</button>
+          <span class="b-kecil">Klik petak untuk menembak &mdash; tiga tembakan per giliran.</span>
+        </div>
+
+        <div class="b-row b-row--kecil">
+          <label>Benih papan
+            <input type="number" id="benih" min="0" max="999999" step="1" value="1982"></label>
+          <label class="b-cek"><input type="checkbox" id="bunyi" checked> Bunyi</label>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">544 baris BASIC</span>
+      <span class="ruleset__k">6 kapal, 22 petak</span>
+      <span class="ruleset__k">3 tembakan per giliran</span>
+      <span class="ruleset__k ruleset__k--mangsa">kapal induk berbentuk salib</span>
+      <span class="ruleset__k ruleset__k--bahaya">papan tidak menandai kena</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Giliran</span>
+        <span class="stat__value mono" id="s-giliran">1</span></div>
+      <div class="stat"><span class="stat__label">Salvo</span>
+        <span class="stat__value mono" id="s-salvo">0 / 3</span></div>
+      <div class="stat"><span class="stat__label">Kena</span>
+        <span class="stat__value mono" id="s-kena">0 / 22</span></div>
+      <div class="stat"><span class="stat__label">Tembakan</span>
+        <span class="stat__value mono" id="s-tembakan">0</span></div>
+      <div class="stat"><span class="stat__label">Rekor Anda</span>
+        <span class="stat__value mono" id="s-rekor">—</span></div>
+      <div class="stat"><span class="stat__label">Benih</span>
+        <span class="stat__value mono" id="s-benih">1982</span></div>
+      <div class="stat"><span class="stat__label">Undian penempatan</span>
+        <span class="stat__value mono" id="s-coba">—</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <p class="b-lead">
+        Komputer menyembunyikan <strong>enam kapal</strong> di petak 10&times;10.
+        Anda menembak <strong>tiga petak tiap giliran</strong> dan harus
+        menenggelamkan semuanya dalam giliran sesedikit mungkin.
+      </p>
+      <ol class="howto__steps">
+        <li><strong>Papannya tidak pernah memberi tahu petak mana yang
+            kena.</strong> Petak yang sudah ditembak hanya diberi
+            <strong>nomor giliran</strong>. Itu bukan kekurangan port ini
+            &mdash; baris 5850 aslinya memang cuma mencetak nomor giliran, dan
+            tidak ada satu pun baris yang menandai kena di papan.</li>
+        <li>Yang memberi tahu Anda adalah <strong>kartu skor</strong> di sebelah
+            kanan. Sesudah ketiga tembakan, tiap kapal yang kena mendapat
+            <strong>nomor giliran</strong> di kotak berikutnya. Jadi Anda tahu
+            <em>giliran ke-5 mengenai kapal penjelajah</em>, tapi
+            <strong>tidak tahu tembakan yang mana</strong> dari ketiganya.
+            Menyempitkannya adalah permainannya.</li>
+        <li><strong>Kotak yang terisi bukan bagian kapal yang kena.</strong>
+            Petunjuk aslinya menyatakan ini terang-terangan (baris 1400&ndash;1420):
+            kotak diisi berurutan, semata sebagai catatan giliran. Bentuk kartu
+            skornya tetap gambar kapalnya &mdash; termasuk salib kapal induk.</li>
+        <li><strong>Kapal induknya bukan garis lurus.</strong> Ia
+            <strong>tujuh petak</strong>: lima lurus, ditambah dua petak
+            melintang di salah satu ujungnya. Total keenam kapal
+            <strong>7+5+4+3+2+1 = 22 petak</strong>, dan itulah angka yang
+            diuji baris 1610.</li>
+        <li><strong>Kapal tidak boleh bersentuhan</strong>, bahkan menyudut.
+            Karena itu satu petak kena memberi tahu lebih banyak daripada yang
+            terlihat: kedelapan tetangganya pasti kosong &mdash; kecuali sepanjang
+            arah kapal itu sendiri.</li>
+        <li>Petak yang sama <strong>tidak bisa ditembak dua kali</strong>. Karena
+            hanya ada 100 petak dan tiga tembakan per giliran, permainan
+            terpanjang yang mungkin <strong>34 giliran</strong>; yang terpendek
+            <strong>8</strong>.</li>
+        <li><strong>Intip kapal</strong> hanya hidup <em>sebelum tembakan
+            pertama</em>, karena di situlah aslinya menawarkannya. Lihat panel
+            "Tawaran yang tidak pernah ditepati".</li>
+        <li>Kapalnya <strong>selalu diungkap saat selesai</strong>, supaya
+            penalaran Anda bisa diperiksa &mdash; seperti di
+            <a href="../sub/index.html">SUB</a>.</li>
+      </ol>
+    </details>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel b-good">
+      <p class="eyebrow">Kapal induk berbentuk salib</p>
+      <p class="b-note">
+        Ini yang membuat BATSHIP bukan Battleship biasa. Baris 2920
+        mengatakannya sendiri:
+      </p>
+<pre class="b-code">2920 REM CHOOSE RANDOM NUMBERS FOR START OF SHIP,
+     DIRECTION OF SHIP AND <b>WHICH END OF THE
+     AIRCRAFT CARRIER HAS THE CROSS</b></pre>
+      <p class="b-note">
+        Lima petak lurus, ditambah <code>X(6)</code> dan <code>X(7)</code> yang
+        melintang di salah satu ujung &mdash; ujung mana ditentukan
+        <code>E=INT(2*RND)+1</code>. Bentuknya:
+      </p>
+<pre class="b-salib">   E = 1              E = 2
+   ┌─┐                      ┌─┐
+   │▓│                      │▓│
+┌─┐└─┘┌─┐┌─┐┌─┐┌─┐┌─┐┌─┐┌─┐└─┘┌─┐
+│▓││▓││▓││▓││▓││▓││▓││▓││▓││▓││▓│
+└─┘┌─┐└─┘└─┘└─┘└─┘└─┘└─┘└─┘┌─┐└─┘
+   │▓│                      │▓│
+   └─┘                      └─┘</pre>
+      <p class="b-note">
+        Karena itu jumlah petaknya <strong>7 + 5 + 4 + 3 + 2 + 1 = 22</strong>,
+        bukan 17 seperti Battleship standar. Dan kartu skornya
+        <strong>berbentuk kapalnya</strong>: baris 6130 dan 6140 menaruh kotak
+        keenam dan ketujuh di baris 2 dan 6, tepat di atas dan di bawah kotak
+        pertama.
+      </p>
+    </div>
+
+    <div class="panel b-bad">
+      <p class="eyebrow">Papannya tidak pernah menandai kena</p>
+<pre class="b-code">5830 A=((YY(TURN,J)*2)+3):B=((XX(TURN,J)*5)+4)
+5840 LOCATE A,B
+5850 PRINT TURN;</pre>
+      <p class="b-note">
+        Itu seluruh kode yang menulis ke papan. Tidak ada cabang kena, tidak
+        ada warna, tidak ada aksara lain. Perhitungan kena baru terjadi
+        <em>sesudah</em> ketiga tembakan (baris 5900&ndash;6010), dan hasilnya
+        ditulis ke <strong>kartu skor</strong>, bukan ke papan.
+      </p>
+      <p class="b-note">
+        Akibatnya informasi yang Anda terima tiap giliran adalah:
+        <em>"giliran ke-n mengenai kapal X sebanyak k kali"</em> &mdash; tanpa
+        alamat. Tiga tembakan, satu kabar. Itu sebabnya salvo tiga tembakan
+        bukan sekadar mempercepat: ia <strong>alat pengaburan</strong>.
+      </p>
+      <p class="b-note">
+        Port ini <strong>tidak memperbaikinya</strong>. Menandai kena akan
+        membuat permainannya sepele, dan menghapus satu-satunya hal yang
+        membuatnya menarik.
+      </p>
+    </div>
+
+    <div class="panel b-warn">
+      <p class="eyebrow">Tawaran yang tidak pernah ditepati</p>
+<pre class="b-code">1440 INPUT "DO YOU WANT TO SEE THE PLAYING BOARD
+     AND SHIPS USED BEFORE STARTING";ANS$
+…
+1470 REM THIS SECTION JUST SHOWS THE BOARD AND SHIPS
+     WITHOUT HIDING THEM
+1480 GOSUB 1700</pre>
+      <p class="b-note">
+        Baris 1700 hanya menggambar papan kosong. Kapalnya belum ada
+        &mdash; <code>GOSUB 2850</code> yang menempatkannya baru dipanggil di
+        baris 1580, jauh sesudahnya. Jadi menjawab "ya" memperlihatkan
+        <strong>papan kosong</strong>, dan komentar penulisnya sendiri di baris
+        1470 menjanjikan hal yang tidak dilakukan kodenya.
+      </p>
+      <p class="b-note">
+        Tombol <strong>Intip kapal</strong> di port ini menepati janji itu, di
+        tempat yang sama: sebelum tembakan pertama, dan mati sesudahnya.
+      </p>
+    </div>
+
+    <div class="panel b-warn">
+      <p class="eyebrow">86.400 detik, 7.152 benih</p>
+<pre class="b-code">1170 H=1+VAL(LEFT$(TIME$,2)):M=1+VAL(MID$(TIME$,4,2))
+     :S=1+VAL(RIGHT$(TIME$,2))
+1180 IF H&gt;16 THEN H=H-12
+1190 IF H&gt;8  THEN H=8-H
+1200 N=H*M*S:RANDOMIZE(N)</pre>
+      <p class="b-note">
+        Benihnya <strong>hasil kali</strong> jam, menit, dan detik &mdash; dan
+        perkalian menghancurkan keacakan. Halaman ini menghitung sendiri, atas
+        seluruh <strong id="bk-detik">—</strong> detik dalam sehari:
+      </p>
+      <table class="b-tbl">
+        <tbody>
+          <tr><td>Nilai <code>N</code> yang berbeda</td><td><strong id="bk-benih">—</strong></td></tr>
+          <tr><td>Yang bernilai <strong>negatif</strong></td><td><strong id="bk-neg">—</strong></td></tr>
+        </tbody>
+      </table>
+      <p class="b-note">
+        Baris 1190 hampir pasti salah ketik: <code>H=8-H</code> membuat
+        <code>H</code> menjadi negatif untuk jam 8&ndash;15 dan 20&ndash;23 &mdash;
+        <strong>separuh hari</strong>. Yang dimaksud kemungkinan besar
+        <code>H=H-8</code>, yang akan menjaga <code>H</code> di 1&ndash;8.
+        <code>RANDOMIZE</code> menerima bilangan negatif tanpa mengeluh, jadi
+        kekeliruan ini tidak pernah kelihatan &mdash; ia hanya mengecilkan
+        ruang benihnya.
+      </p>
+      <p class="b-kecil">
+        Kotak <em>Benih papan</em> di bawah layar memperlihatkan strukturnya:
+        benih sama, papan sama. Bilangan acaknya sendiri bukan bilangan
+        GW-BASIC &mdash; LCG-nya tidak ditiru, hanya strukturnya.
+      </p>
+    </div>
+
+    <div class="panel b-good">
+      <p class="eyebrow">Kapal tidak boleh bersentuhan — dengan larik coretan</p>
+<pre class="b-code">5100 FOR I=1 TO ZZZ
+5110 J=(((I-1)*9)+1)
+5120 XED(J)=X(I):YED(J)=Y(I)+1
+5130 XED(J+1)=X(I):YED(J+1)=Y(I)-1
+…                       ' sembilan petak: petaknya sendiri
+5200 XED(J+8)=X(I):YED(J+8)=Y(I)   ' + delapan tetangganya</pre>
+      <p class="b-note">
+        Tiap petak yang sudah terisi <strong>mencoret 3&times;3</strong> di
+        sekelilingnya. Kapal berikutnya ditolak kalau salah satu petaknya jatuh
+        di daerah tercoret (baris 5290). Sederhana, dan &mdash; tidak seperti
+        banyak program di koleksi ini &mdash; <strong>benar</strong>.
+      </p>
+      <p class="b-note">
+        Harganya penolakan berulang. Rata-rata atas 500 papan yang dibangun
+        halaman ini sendiri: <strong id="bk-coba">—</strong> undian per papan,
+        <strong id="bk-tolak">—</strong> di antaranya ditolak.
+      </p>
+      <p class="b-note">
+        Aturan ini punya akibat yang bisa dipakai pemain: sekali Anda tahu satu
+        petak kapal, <strong>kedelapan tetangganya pasti kosong</strong> kecuali
+        di sepanjang arah kapal itu. Menembak menyerong dari petak yang kena
+        selalu sia-sia.
+      </p>
+      <p class="b-kecil">
+        Baris 5230&ndash;5270 adalah kode <em>debug</em> yang di-REM: hapus
+        REM-nya dan program menggambar "X" di tiap petak tercoret. Penulisnya
+        meninggalkan alat pemeriksanya sendiri di dalam berkas.
+      </p>
+    </div>
+
+    <div class="panel b-bad">
+      <p class="eyebrow">Tiga hal kecil yang keliru</p>
+      <table class="b-tbl b-tbl--kiri">
+        <thead><tr><th>Baris</th><th>Yang tertulis</th><th>Akibatnya</th></tr></thead>
+        <tbody>
+          <tr><td><code>1660</code></td>
+              <td><code>"…DID IT IN ";TURN;"SHOTS"</code></td>
+              <td><code>TURN</code> menghitung <strong>giliran</strong>, dan tiap
+                  giliran tiga tembakan. Angkanya meleset <strong>tiga kali
+                  lipat</strong>. Port menampilkan keduanya.</td></tr>
+          <tr><td><code>5780</code></td>
+              <td><code>IF S$(TURN,J)=S$(K,L)</code></td>
+              <td>Perbandingannya <strong>peka huruf besar-kecil</strong>,
+                  padahal baris 5470&ndash;5660 menerima <code>A1</code> dan
+                  <code>a1</code>. Jadi petak yang sama bisa ditembak dua kali
+                  hanya dengan mengganti besar-kecilnya. Port memakai koordinat
+                  petak, bukan teks, jadi tidak bisa terjadi.</td></tr>
+          <tr><td><code>1100</code></td>
+              <td><code>DIM S$(100,3)</code></td>
+              <td>Disiapkan untuk 100 giliran, padahal permainan
+                  <strong>tidak mungkin</strong> melewati
+                  <strong id="bk-maks">—</strong>: hanya ada 100 petak dan
+                  pengulangan ditolak. Yang tersingkat
+                  <strong id="bk-min">—</strong> giliran.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Bunyinya, lagi-lagi, adalah jamnya</p>
+<pre class="b-code">5820 FOR I=2000 TO 80 STEP -5:SOUND I,0.2:NEXT I
+     :SOUND 300,2:SOUND 200,10</pre>
+      <p class="b-note">
+        Itu <strong>385 nada</strong> berturut-turut per tembakan. Pada 0,2
+        detak masing-masing, total <strong>4,2 detik</strong> &mdash; dan
+        antrean <code>SOUND</code> GW-BASIC cuma 32 nada dalam, jadi BASIC ikut
+        tertahan. Tiga tembakan per giliran berarti <strong>lebih dari dua belas
+        detik</strong> menunggu bunyi, tiap giliran.
+      </p>
+      <p class="b-note">
+        Persis mekanisme yang membuat <a href="../lander/index.html">LANDER</a>
+        berjalan 2,32 bingkai per detik. Dua penulis berbeda, dua tahun berbeda,
+        satu akibat: <strong>di IBM PC, memutar bunyi berarti menghentikan
+        program</strong>. Port ini memadatkan sapuannya jadi 24 nada dengan
+        jangkauan yang sama, dan tidak menahan apa pun.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Ditulis di Essex Junction, Vermont</p>
+      <p class="b-note">
+        Kepala berkasnya menyebut penulisnya <strong>G.S. Alberts</strong>,
+        <strong>IBM Burlington, Vermont</strong>, Dept. KO2 Bldg 965-2, revisi
+        terakhir <strong>27 Juli 1982</strong>. Itu pabrik semikonduktor yang
+        sama yang muncul sebagai sasaran <strong>BTV</strong> di
+        <a href="../abm2a/index.html">ABM2A</a>.
+      </p>
+      <p class="b-kecil">
+        Baris 1040&ndash;1050 juga memuat alamat rumah dan nomor telepon
+        penulisnya. Keduanya <strong>sengaja tidak disalin</strong> ke halaman
+        ini; data pribadi orang yang masih mungkin hidup tidak perlu diterbitkan
+        ulang, dan berkas aslinya tetap ada di <code>run/</code> bagi yang
+        memerlukannya.
+      </p>
+    </div>
+
+    <p class="faint b-links">
+      <a href="../../docs/batship.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/BATSHIP.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/BATSHIP.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="batship.js"></script>
+</body>
+</html>

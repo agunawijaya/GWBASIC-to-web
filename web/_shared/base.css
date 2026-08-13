@@ -1,0 +1,440 @@
+/* ===========================================================================
+   base.css — reset ringkas + komponen yang dipakai bersama seluruh aplikasi.
+   Bergantung pada tokens.css. Tidak ada satu pun warna literal di sini.
+   =========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: var(--fs-md)/var(--lh) var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, p, ul, ol, figure { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+img, svg { display: block; max-width: 100%; }
+
+/* `[hidden]` HARUS menang. Aturan bawaan peramban hanya `[hidden]{display:none}`
+   tanpa !important, jadi setiap komponen yang menyetel `display` sendiri --
+   `.btn` inline-flex, `.row` flex, `.panel` grid -- diam-diam mengalahkannya.
+   Akibatnya elemen yang disembunyikan dari JS tetap terlihat, dan tidak ada
+   pesan galat apa pun. Ditemukan saat seluruh tombol aksi blackjack muncul
+   sekaligus. */
+[hidden] { display: none !important; }
+button, input, select, textarea { font: inherit; color: inherit; }
+
+:focus-visible {
+  outline: 2px solid var(--acc-phosphor);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    transition-duration: .001ms !important;
+  }
+}
+
+/* --- tata letak ---------------------------------------------------------- */
+
+.wrap { width: 100%; max-width: var(--wrap); margin-inline: auto;
+        padding-inline: var(--s4); }
+
+.stack   > * + * { margin-top: var(--s4); }
+.stack-s > * + * { margin-top: var(--s2); }
+
+.row { display: flex; gap: var(--s3); align-items: center; flex-wrap: wrap; }
+.row-between { display: flex; gap: var(--s3); align-items: center;
+               justify-content: space-between; flex-wrap: wrap; }
+
+.grid { display: grid; gap: var(--s4);
+        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+
+.center { display: grid; place-items: center; }
+
+/* --- bilah atas ---------------------------------------------------------- */
+
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: var(--border);
+}
+.topbar__inner { display: flex; align-items: center; gap: var(--s4);
+                 min-height: 56px; }
+.topbar__title { font-size: var(--fs-md); font-weight: 650;
+                 letter-spacing: -.01em; }
+.topbar__title small { display: block; font-weight: 400; font-size: var(--fs-xs);
+                       color: var(--ink-dim); letter-spacing: .04em; }
+.topbar__spacer { margin-left: auto; }
+
+/* --- tipografi ----------------------------------------------------------- */
+
+.h1 { font-size: var(--fs-2xl); font-weight: 680; letter-spacing: -.022em;
+      line-height: var(--lh-tight); }
+.h2 { font-size: var(--fs-xl); font-weight: 640; letter-spacing: -.015em; }
+.eyebrow { font-size: var(--fs-xs); letter-spacing: .1em; text-transform: uppercase;
+           color: var(--ink-dim); font-weight: 600; }
+.dim   { color: var(--ink-dim); }
+.faint { color: var(--ink-faint); }
+.mono  { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.prose { max-width: 68ch; color: var(--ink-dim); }
+.prose strong { color: var(--ink); font-weight: 620; }
+
+/* --- panel --------------------------------------------------------------- */
+
+.panel {
+  background: var(--panel); border: var(--border);
+  border-radius: var(--r-lg); padding: var(--s5);
+}
+.panel--flush { padding: 0; overflow: hidden; }
+.panel--sunken { background: var(--bg-sunken); border-color: var(--line-soft); }
+
+/* Layar permainan: area gelap "masuk ke dalam", jejak dari monitor CRT
+   yang selalu lebih gelap daripada casing di sekelilingnya. */
+.screen {
+  background: var(--bg-sunken);
+  border: var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--s5);
+  position: relative;
+  overflow: hidden;
+}
+/* Garis pindai — sangat tipis (opacity .05) supaya jadi tekstur, bukan gangguan.
+   Dimatikan otomatis kalau pengguna minta gerak/efek dikurangi. */
+.screen--scanlines::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(
+      to bottom, rgba(0,0,0,.05) 0 1px, transparent 1px 3px);
+}
+@media (prefers-reduced-motion: reduce) { .screen--scanlines::after { display: none; } }
+
+/* --- tombol -------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: var(--s2);
+  padding: 9px var(--s4); min-height: 38px;
+  /* BUKAN var(--border) — lihat catatan `--edge` di tokens.css. */
+  border: 1px solid var(--edge);
+  border-radius: var(--r);
+  background: var(--panel-2); color: var(--ink);
+  font-size: var(--fs-sm); font-weight: 560; cursor: pointer;
+  transition: background var(--t-fast) var(--ease),
+              border-color var(--t-fast) var(--ease),
+              transform var(--t-fast) var(--ease);
+  text-decoration: none;
+}
+/* Hover harus MENEGASKAN, jadi garisnya menguat dari 48% ke 62%. Versi
+   sebelumnya mencampur `--line` dengan sedikit ink dan justru menghasilkan
+   garis yang lebih redup daripada saat diam — kebalikan dari maksudnya. */
+.btn:hover { background: color-mix(in srgb, var(--panel-2) 70%, var(--ink) 6%);
+             border-color: var(--edge-strong); }
+.btn:active { transform: translateY(1px); }
+/* Cukup redup untuk terbaca "belum bisa dipakai", tapi tidak sampai
+   melarutkan garisnya. Pada 45% sebuah tombol sekunder yang nonaktif di dalam
+   layar gelap sudah tidak terlihat sebagai tombol sama sekali. */
+.btn[disabled] { opacity: .55; cursor: not-allowed; }
+
+.btn--primary {
+  background: var(--acc-phosphor);
+  border-color: var(--acc-phosphor);
+  color: #06110b; font-weight: 640;
+}
+:root[data-theme="light"] .btn--primary,
+html:not([data-theme]) .btn--primary { color: #fff; }
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme]) .btn--primary { color: #06110b; }
+}
+.btn--primary:hover { background: color-mix(in srgb, var(--acc-phosphor) 86%, #fff); }
+
+/* Tombol sekunder.
+
+   Aturannya: sesuatu yang bisa diklik harus terlihat bisa diklik SEBELUM
+   disentuh. Hover itu penegasan, bukan pengumuman.
+
+   Dua kali gagal di sini, dan keduanya karena menebak alih-alih mengukur.
+
+   Percobaan 1 — `border-color: transparent`. Tombolnya baru berwujud setelah
+   kursor menyentuhnya. Di dalam `.screen` yang gelap, yang tampak cuma teks.
+
+   Percobaan 2 — `border-color: var(--line)`. Terlihat benar di kode, dan
+   ternyata tidak mengubah apa pun. `--line` memang dirancang sebagai garis
+   pemisah antar permukaan yang warnanya berdekatan, bukan sebagai batas
+   sebuah kontrol. Rasio kontrasnya terhadap latar:
+
+       tema gelap   #252d38 di atas #0a0d12  ->  1,40 : 1
+       tema terang  #dbe2ea di atas #e7ecf2  ->  1,10 : 1
+
+   Ambang WCAG untuk komponen antarmuka non-teks adalah 3,0 : 1. Keduanya
+   jauh di bawahnya — jadi memang tidak terlihat, dan itu bukan soal selera.
+
+   Sekarang garisnya diturunkan dari warna TEKS, bukan dari warna garis
+   pemisah, sehingga kontrasnya ikut berpindah bersama tema. 48% adalah nilai
+   terendah yang lolos 3:1 di kedua tema dan di ketiga permukaan tempat tombol
+   ini dipakai (--bg-sunken, --bg, --panel):
+
+       gelap  4,43 : 1        terang  3,14 : 1
+
+   Isian `--panel-2` sendirian hanya 1,25:1 — nyaris tak berarti sebagai
+   kontras, tapi bidang berwarna jauh lebih mudah dikenali mata daripada garis
+   setebal satu piksel. Keduanya dipakai bersama.
+
+   Garisnya sekarang diwarisi dari `.btn`, karena cacatnya sama di sana. Yang
+   tersisa sebagai pembeda tombol sekunder hanyalah teks yang lebih redup —
+   dan itu memang cukup, karena tombol UTAMA sudah dibedakan dengan warna
+   fosfor yang mencolok. */
+.btn--ghost {
+  background: var(--panel-2);
+  color: var(--ink-dim);
+}
+.btn--ghost:hover { color: var(--ink); }   /* latar & garis dari .btn:hover */
+
+/* Tombol yang menyatakan pilihan aktif — dipakai pemilih mode di MASTER.
+   `aria-pressed` sudah wajib demi pembaca layar, jadi ia sekalian dipakai
+   sebagai penanda visual: satu sumber kebenaran, bukan dua. */
+.btn[aria-pressed="true"] {
+  background: var(--acc-phosphor-dim);
+  border-color: var(--acc-phosphor);
+  color: var(--acc-phosphor);
+}
+
+.btn--sm { min-height: 30px; padding: 4px var(--s3); font-size: var(--fs-xs); }
+.btn--icon { padding: 0; width: 38px; }
+
+/* Tombol huruf/angka (dipakai HANGMAN, MASTER, KENO, …) */
+.keycap {
+  font-family: var(--font-mono); font-weight: 600;
+  min-width: 38px; min-height: 38px; padding: 0 6px;
+  display: inline-grid; place-items: center;
+  border: var(--border); border-radius: var(--r-sm);
+  background: var(--panel-2); color: var(--ink); cursor: pointer;
+  transition: all var(--t-fast) var(--ease);
+}
+.keycap:hover:not([disabled]) { border-color: var(--acc-phosphor);
+                                color: var(--acc-phosphor); }
+.keycap[data-state="hit"]  { background: var(--acc-phosphor-dim);
+                             border-color: var(--acc-phosphor);
+                             color: var(--acc-phosphor); }
+.keycap[data-state="miss"] { background: var(--acc-red-dim);
+                             border-color: var(--acc-red);
+                             color: var(--acc-red); opacity: .8; }
+.keycap[disabled] { cursor: not-allowed; }
+
+/* --- HUD / papan angka --------------------------------------------------- */
+
+.hud { display: flex; gap: var(--s5); flex-wrap: wrap; }
+.stat { display: grid; gap: 2px; }
+.stat__label { font-size: var(--fs-xs); letter-spacing: .07em;
+               text-transform: uppercase; color: var(--ink-dim); font-weight: 600; }
+.stat__value { font-family: var(--font-mono); font-size: var(--fs-xl);
+               font-weight: 620; font-variant-numeric: tabular-nums;
+               line-height: 1.1; }
+.stat--good .stat__value { color: var(--acc-phosphor); }
+.stat--warn .stat__value { color: var(--acc-amber); }
+.stat--bad  .stat__value { color: var(--acc-red); }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 2px 9px; border-radius: var(--r-pill);
+  font-size: var(--fs-xs); font-weight: 600;
+  background: var(--panel-2); color: var(--ink-dim); border: var(--border);
+}
+.badge--year { font-family: var(--font-mono); }
+
+/* --- kartu peluncur (dipakai index.html) --------------------------------- */
+
+.launch-tile {
+  display: flex; flex-direction: column; gap: var(--s2);
+  padding: var(--s4); text-align: left;
+  background: var(--panel); border: var(--border); border-radius: var(--r-lg);
+  color: inherit; text-decoration: none; cursor: pointer;
+  transition: transform var(--t) var(--ease), border-color var(--t) var(--ease),
+              box-shadow var(--t) var(--ease);
+}
+.launch-tile:hover { transform: translateY(-2px); box-shadow: var(--shadow-2);
+              border-color: color-mix(in srgb, var(--acc-phosphor) 45%, var(--line)); }
+.launch-tile__title { font-weight: 620; letter-spacing: -.01em; }
+.launch-tile__file  { font-family: var(--font-mono); font-size: var(--fs-xs);
+               color: var(--ink-faint); }
+.launch-tile__note  { font-size: var(--fs-sm); color: var(--ink-dim); }
+.launch-tile--soon { opacity: .55; cursor: default; }
+.launch-tile--soon:hover { transform: none; box-shadow: none; border-color: var(--line); }
+
+/* --- dialog & toast ------------------------------------------------------ */
+
+dialog.modal {
+  border: var(--border); border-radius: var(--r-lg); padding: var(--s5);
+  background: var(--panel); color: var(--ink);
+  max-width: 460px; width: calc(100% - var(--s6));
+  box-shadow: var(--shadow-3);
+}
+dialog.modal::backdrop { background: rgba(0,0,0,.55); backdrop-filter: blur(3px); }
+
+.toast-host {
+  position: fixed; left: 50%; bottom: var(--s5); translate: -50% 0;
+  display: grid; gap: var(--s2); z-index: 60; pointer-events: none;
+}
+.toast {
+  padding: 10px var(--s4); border-radius: var(--r-pill);
+  background: var(--panel-2); border: var(--border); box-shadow: var(--shadow-2);
+  font-size: var(--fs-sm); animation: toast-in var(--t) var(--ease);
+}
+@keyframes toast-in { from { opacity: 0; translate: 0 8px; } }
+
+/* Pemilih instrumen — deretan tombol, ditaruh di dekat papan tuts.
+   Dulu sebuah <select> di bilah atas; alasan penggantiannya ada di ui.js. */
+.picker {
+  display: flex; flex-wrap: wrap; gap: var(--s2); align-items: center;
+}
+.picker__label {
+  font-size: var(--fs-xs); color: var(--ink-faint);
+  text-transform: uppercase; letter-spacing: .06em; margin-right: var(--s1);
+}
+.picker__btn {
+  padding: 5px var(--s3); border-radius: var(--r-pill);
+  border: var(--border); background: var(--panel-2); color: var(--ink-dim);
+  font: inherit; font-size: var(--fs-xs); cursor: pointer;
+  transition: background var(--t-fast) var(--ease),
+              border-color var(--t-fast) var(--ease),
+              color var(--t-fast) var(--ease);
+}
+.picker__btn:hover { color: var(--ink); background: var(--panel); }
+.picker__btn[aria-pressed="true"] {
+  background: var(--acc-phosphor-dim);
+  border-color: var(--acc-phosphor);
+  color: var(--acc-phosphor);
+}
+.picker__btn:focus-visible { outline: none; box-shadow: var(--glow); }
+
+/* --- utilitas ------------------------------------------------------------ */
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap;
+}
+.hidden { display: none !important; }
+
+/* --- panel "cara bermain" -------------------------------------------------
+   Dipakai halaman yang aturannya tidak bisa ditebak dari papannya sendiri.
+   Ditaruh di sini, bukan di CSS tiap permainan, karena versi pertama ditulis
+   dua kali dengan gaya buatan sendiri — dan hasilnya panel yang terlihat
+   seperti tempelan, bukan bagian halaman.
+
+   LETAKNYA BAGIAN DARI KOMPONENNYA, dan urutannya sama di semua halaman:
+
+       .screen  ->  .ruleset  ->  .howto  ->  .hud
+
+   Selalu di KOLOM PERMAINAN, tidak pernah di kolom kanan. Versi pertama
+   menaruhnya sebagai panel pertama kolom kanan — semata karena bentuknya
+   panel, dan panel-panel lain memang tinggal di sana. Itu bukan keputusan,
+   itu peniruan: MAXIT menaruhnya di sana, BOGGY meniru MAXIT, SOLITAIR meniru
+   BOGGY, dan empat halaman blackjack meniru SOLITAIR.
+
+   Yang menyingkap ongkosnya adalah lebar jendela. Di bawah ~980px semua
+   halaman ini menumpuk jadi satu kolom, dan "panel pertama kolom kanan"
+   berubah arti — ia jatuh di bawah papan, HUD, ruleset, dan tombol reset.
+   Pemain di jendela sempit tidak menemukannya, lalu melaporkan bahwa
+   permainannya tidak punya petunjuk. Panelnya ada; letaknya yang berpindah
+   tanpa ada yang memutuskan.
+
+   Pelajarannya: menyatakan letak sebagai KOLOM adalah janji yang batal saat
+   tata letaknya menumpuk. Urutan bertahan di semua lebar layar; kolom tidak.
+
+   Kenapa .ruleset di ATAS .howto, bukan HUD: keping pengingat dan langkah
+   bermain adalah satu pita penjelasan aturan. Menyelipkan statistik hidup di
+   antaranya memecah penjelasan jadi dua, dan pembaca yang mencari aturan
+   harus melewati angka yang tidak ia cari. Statistiknya turun satu blok —
+   harga yang murah, karena angka yang berubah menarik mata dengan sendirinya.
+
+   Dua hal yang membuatnya rapi, dan keduanya soal keselarasan:
+
+     1. Judulnya memakai gaya `.eyebrow` yang sama dengan judul panel lain.
+     2. Nomor langkahnya lingkaran berukuran TETAP dengan `place-items:center`,
+        bukan teks yang di-`text-align`. Teks dengan ukuran font berbeda tidak
+        pernah sejajar dengan baris pertama di sebelahnya; kotak berukuran
+        tetap selalu. */
+.howto > summary {
+  list-style: none; cursor: pointer;
+  display: flex; align-items: center; gap: var(--s2);
+  font-size: var(--fs-xs); letter-spacing: .1em; text-transform: uppercase;
+  color: var(--ink-dim); font-weight: 600;
+}
+.howto > summary::-webkit-details-marker { display: none; }
+/* Segitiga menghadap KANAN saat tertutup, KE BAWAH saat terbuka: arah
+   panahnya menunjuk ke tempat isinya akan muncul.
+
+   Digambar dari border, bukan glif "▸". Sebagai huruf, ukurannya tunduk
+   pada metrik fon -- 1.1em di atas judul --fs-xs cuma menghasilkan segitiga
+   setinggi ~8px, terlalu kecil untuk satu-satunya tanda bahwa panel ini bisa
+   dibuka. Sebagai border, 12x9px berarti benar-benar 12x9px.
+   Versi pertama aturan ini ditulis lewat string Python, yang membaca
+   `\25` sebagai escape oktal -- yang masuk ke halaman adalah satu
+   karakter kendali plus huruf "BE" literal, menempel di judul panel. */
+.howto > summary::after {
+  content: ""; margin-left: auto; flex: none;
+  width: 0; height: 0;
+  border-left: 9px solid currentColor;      /* menghadap kanan */
+  border-block: 6px solid transparent;
+  color: var(--ink-dim);
+  transition: transform var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+.howto > summary:hover::after { color: var(--acc-phosphor); }
+.howto[open] > summary::after { transform: rotate(90deg); }
+
+.howto__steps { counter-reset: howto; margin-top: var(--s4);
+                --howto-dot: 1.35rem;
+                display: grid; gap: var(--s3); }
+/* Lencananya DILUAR aliran teks, bukan kolom grid.
+   Versi pertama memberi `li` sendiri `display: grid` dengan dua kolom.
+   Grid menjadikan SETIAP anak sebuah item tersendiri -- termasuk tiap
+   <strong> dan tiap potongan teks di antaranya. Satu kalimat dengan tiga
+   <strong> pecah jadi tujuh item yang berebut sel, dan kata-katanya
+   bertumpuk. Langkah tanpa <strong> tampak baik-baik saja, jadi kerusakannya
+   hanya kelihatan di sebagian butir.
+
+   Di sini `li` tetap blok biasa, sehingga kalimatnya mengalir utuh; yang
+   dipesan tempatnya cuma lekukan di kiri. Sebuah kotak berukuran tetap tetap
+   sejajar di tempat teks berukuran berbeda tidak akan pernah bisa. */
+.howto__steps li {
+  counter-increment: howto;
+  position: relative;
+  padding-left: calc(var(--howto-dot) + var(--s3));
+  font-size: var(--fs-sm); line-height: var(--lh); color: var(--ink-dim);
+}
+.howto__steps li::before {
+  content: counter(howto);
+  position: absolute; left: 0;
+  /* dipusatkan pada baris PERTAMA; `em` tidak dipakai karena di dalam
+     ::before ia mengacu ke ukuran huruf lencananya sendiri, bukan teksnya */
+  top: calc((var(--lh) * var(--fs-sm) - var(--howto-dot)) / 2);
+  width: var(--howto-dot); height: var(--howto-dot); border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--acc-phosphor-dim); color: var(--acc-phosphor);
+  font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+  line-height: 1;
+}
+.howto__steps strong { color: var(--ink); font-weight: 620; }
+.howto__steps em { color: var(--ink); font-style: normal;
+                   font-family: var(--font-mono); font-size: var(--fs-xs); }
+.howto > p { font-size: var(--fs-sm); color: var(--ink-dim);
+             margin-top: var(--s4); padding-top: var(--s3);
+             border-top: 1px solid var(--line-soft); }
+
+/* Keping pengingat aturan, satu baris di bawah papan. Pasangan `.howto`:
+   yang itu untuk dibaca sekali, yang ini untuk dilihat terus-menerus.
+   Warnanya boleh ditimpa tiap permainan; ukurannya tidak, supaya kedua
+   halaman tidak pelan-pelan menjauh satu sama lain. */
+.ruleset { display: flex; flex-wrap: wrap; gap: var(--s2);
+           justify-content: center; margin-top: var(--s3); }
+.ruleset__k {
+  padding: 3px var(--s3); border-radius: var(--r-pill);
+  background: var(--panel-2); border: 1px solid var(--edge-soft);
+  font-size: var(--fs-xs); color: var(--ink-dim); font-weight: 600;
+}

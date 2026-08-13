@@ -1,0 +1,152 @@
+/* ===========================================================================
+   bowling.css — khusus Bowling Champ. Awalan `b-`.
+   =========================================================================== */
+
+.b-layout {
+  display: grid; gap: var(--s5);
+  grid-template-columns: minmax(340px, 1fr) minmax(300px, 440px);
+  align-items: start; padding-block: var(--s6) var(--s8);
+}
+@media (max-width: 1000px) { .b-layout { grid-template-columns: 1fr; } }
+
+.b-stage { display: grid; gap: var(--s4); justify-items: stretch; }
+
+/* --- lintasan ------------------------------------------------------------ */
+
+.b-lane { width: 100%; height: auto; display: block;
+          background: var(--bg-sunken); border-radius: var(--r);
+          border: 1px solid var(--edge-soft); }
+
+.b-floor { fill: #3a2a18; }
+:root[data-theme="light"] .b-floor { fill: #6b4f2e; }
+.b-gutter { fill: #1a222c; }
+.b-line { stroke: color-mix(in srgb, var(--ink) 22%, transparent); stroke-width: 1; }
+
+/* Pin. Aslinya karakter Ω (CHR$ 234); di sini bentuk pin sungguhan, tapi
+   tetap satu warna terang — kontrasnya terhadap lantai yang penting, bukan
+   detailnya. */
+.b-pin { fill: #f2efe6; stroke: #8d8676; stroke-width: 1; }
+.b-pin--down { opacity: .12; }
+.b-ball { fill: var(--acc-phosphor); stroke: #0b2a18; stroke-width: 1.5; }
+
+/* Pelempar yang berayun naik-turun, baris 510-530 — dulu segitiga kuning,
+   sekarang orang yang melangkah. Alasan bentuknya di komentar `bowler()`.
+
+   Versi pertama orang ini digambar SATU WARNA (amber), meneruskan warna
+   segitiga yang digantikannya. Alasannya waktu itu: amber di halaman ini
+   berarti "yang sedang Anda kendalikan". Tapi siluet satu warna setinggi
+   ~38px tidak terbaca sebagai orang — ia terbaca sebagai coretan. Yang
+   membuat mata mengenali orang bukan bentuk luarnya, melainkan BATAS ANTAR
+   BAGIAN: rambut lawan kulit, kulit lawan lengan baju, celana lawan sepatu.
+   Batas itu butuh warna yang berbeda; tanpa itu semuanya menyatu.
+
+   Jadi warnanya dipecah, dan yang menjaga arti "milik Anda" sekarang adalah
+   BAJUNYA — bidang paling besar, tetap amber. Bolanya tetap hijau fosfor,
+   karena bola di tangan dan bola yang menggelinding harus terbaca sebagai
+   benda yang sama.
+
+   Warnanya ditulis mutlak, bukan lewat token tema, karena orang ini selalu
+   berdiri di atas `.b-gutter` yang gelap di kedua tema. Kontrasnya sudah
+   pasti, dan token yang ikut berganti justru akan merusaknya. */
+
+.b-skin, .b-sleeve, .b-pants, .b-shoe {
+  fill: none; stroke-linecap: round; stroke-linejoin: round;
+}
+.b-skin      { stroke: #e3b083; stroke-width: 2.7; }
+.b-skin-fill { fill: #e3b083; }                    /* leher */
+.b-sleeve    { stroke: #d1892a; stroke-width: 5.2; }
+.b-pants     { stroke: #63758d; stroke-width: 4.2; }
+.b-shoe      { stroke: #e8eef5; stroke-width: 2.8; }
+
+.b-shirt   { fill: var(--acc-amber); }
+.b-collar  { fill: none; stroke: #8f5d12; stroke-width: 1.1;
+             stroke-linecap: round; stroke-linejoin: round; }
+.b-placket { fill: none; stroke: #8f5d12; stroke-width: .9; }
+.b-head    { fill: #e3b083; }
+.b-hair    { fill: #4a3526; }
+.b-shadow  { fill: #000; opacity: .3; }
+.b-ballhole { fill: #06351f; }
+
+/* Sisi tubuh yang jauh dari kita lebih redup dan sedikit lebih gelap — satu-
+   satunya petunjuk kedalaman yang dipunyai gambar sekecil ini. Kalau kedua
+   sisi sama terangnya, empat tungkai terbaca sebagai satu gumpalan yang
+   bergoyang. */
+.b-skin--far   { stroke: #b98b64; stroke-width: 2.5;
+                 fill: none; stroke-linecap: round; }
+.b-sleeve--far { stroke: #a86c1f; stroke-width: 4.8;
+                 fill: none; stroke-linecap: round; }
+.b-pants--far  { stroke: #4b5a70; stroke-width: 4;
+                 fill: none; stroke-linecap: round; }
+.b-shoe--far   { stroke: #b6bfc9; stroke-width: 2.6;
+                 fill: none; stroke-linecap: round; }
+
+.b-aimline { stroke: var(--acc-amber); stroke-width: 1;
+             stroke-dasharray: 4 5; opacity: .5; }
+
+.b-say {
+  font-family: var(--font-mono); font-size: var(--fs-sm);
+  color: var(--acc-phosphor); min-height: 1.6em; text-align: center;
+}
+.b-say--big { color: var(--acc-amber); font-size: var(--fs-md); }
+
+.b-opt { display: flex; gap: var(--s2); align-items: center;
+         font-size: var(--fs-xs); color: var(--ink-dim); }
+.b-opt input { width: 92px; }
+
+/* --- kartu skor ---------------------------------------------------------- */
+
+.b-card { display: grid; grid-template-columns: repeat(10, 1fr);
+          gap: 2px; margin-top: var(--s2); }
+.b-fr { border: 1px solid var(--edge-soft); border-radius: var(--r-sm);
+        overflow: hidden; background: var(--bg-sunken); }
+.b-fr.is-now { border-color: var(--acc-phosphor); }
+.b-fr__t { display: flex; justify-content: flex-end; gap: 1px;
+           font-family: var(--font-mono); font-size: var(--fs-xs);
+           color: var(--ink-dim); }
+.b-fr__t span { min-width: 1.3em; text-align: center;
+                border-left: 1px solid var(--line-soft);
+                border-bottom: 1px solid var(--line-soft); }
+.b-fr__s { text-align: center; font-family: var(--font-mono);
+           font-size: var(--fs-sm); color: var(--ink); padding: 2px 0; }
+
+/* --- panel kanan --------------------------------------------------------- */
+
+.b-code {
+  margin-top: var(--s3); padding: var(--s3);
+  border: var(--border); border-radius: var(--r);
+  background: var(--bg-sunken); color: var(--acc-amber);
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.7;
+  overflow-x: auto; white-space: pre-wrap;
+}
+
+.b-table { width: 100%; border-collapse: collapse; margin-top: var(--s3);
+           font-size: var(--fs-xs); }
+.b-table td { padding: 4px var(--s2); border-bottom: 1px solid var(--line-soft); }
+.b-table td:first-child { font-family: var(--font-mono); color: var(--acc-amber);
+                          width: 4rem; }
+.b-table td:nth-child(2) { width: 2rem; text-align: center; }
+
+/* Data pin sebagai kisi — lawan dari "layar sebagai struktur data". */
+.b-pins { display: grid; grid-template-columns: repeat(4, 30px);
+          grid-auto-rows: 30px; gap: 2px; margin-top: var(--s3);
+          justify-content: center; }
+.b-pc { border-radius: 3px; display: grid; place-items: center;
+        font-family: var(--font-mono); font-size: 10px;
+        background: var(--bg-sunken); border: 1px solid var(--edge-soft);
+        color: var(--ink-faint); }
+.b-pc--up { background: var(--acc-phosphor-dim); border-color: var(--acc-phosphor);
+            color: var(--acc-phosphor); }
+.b-pc--none { background: none; border: none; }
+
+.b-states { display: grid; gap: 2px; margin-top: var(--s3); }
+.b-st { display: grid; grid-template-columns: 2.2rem 1fr; gap: var(--s2);
+        padding: 4px var(--s2); border-radius: var(--r-sm);
+        font-size: var(--fs-xs); color: var(--ink-dim);
+        border: 1px solid transparent; }
+.b-st__n { font-family: var(--font-mono); color: var(--ink-faint);
+           text-align: right; }
+.b-st.is-on { background: var(--acc-phosphor-dim);
+              border-color: var(--acc-phosphor); color: var(--ink); }
+
+.b-note { font-size: var(--fs-sm); color: var(--ink-dim); margin-top: var(--s2); }
+.b-warn { border-left: 3px solid var(--acc-amber); }

@@ -1,0 +1,17 @@
+/* ===========================================================================
+   temple.css — hanya palet lokal TEMPLE.
+
+   Tata letak dan mesinnya bersama dengan WIZARD (`_shared/zot.css`,
+   `_shared/zot.js`), karena kedua program memang satu. Yang membedakan
+   halamannya cuma warna — dan itu persis jenis perbedaan yang dilakukan
+   Belew sendiri: ia mengganti kata dan warna, bukan struktur.
+   =========================================================================== */
+
+.zot-peta  { background: #0a0612; }
+.zot-judul { color: #f0d8ff; }
+.zot-log   { color: #d6cfe6; background: #0b0810; }
+.zot-punya { border-color: #b98cff; color: #d9c2ff;
+             background: color-mix(in srgb, #b98cff 14%, transparent); }
+.zot-skorNilai { color: var(--acc-amber); }
+.zot-baik  { color: var(--acc-phosphor); }
+.zot-sorot td { background: color-mix(in srgb, var(--acc-red) 16%, transparent); }

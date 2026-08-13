@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LU's 3D Game — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari 3DTTT.EXE (&quot;LU&quot;, 1984) — dibongkar balik dari berkas .EXE. Tic-tac-toe 4×4×4: 64 sel, 76 garis kemenangan yang dihitung dua cara, dan penilai posisi yang kekuatannya diukur. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="3dttt.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap t-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div id="layar"></div>
+    </div>
+
+    <div class="row">
+      <button class="btn" id="go">Ulang</button>
+      <button class="btn" id="tegak">Tegakkan</button>
+      <button class="btn" id="datar" aria-pressed="false">Tampilan: kubus</button>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">64 sel</span>
+      <span class="ruleset__k">76 garis</span>
+      <span class="ruleset__k">Anda X, komputer O</span>
+      <span class="ruleset__k">empat sebaris menang</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Giliran</span>
+        <span class="stat__value" id="s-giliran">—</span></div>
+      <div class="stat"><span class="stat__label">Langkah</span>
+        <span class="stat__value mono" id="s-langkah">0</span></div>
+      <div class="stat"><span class="stat__label">Garis hidup</span>
+        <span class="stat__value mono" id="s-hidup">76</span></div>
+      <div class="stat"><span class="stat__label">Langkah terakhir</span>
+        <span class="stat__value mono" id="s-akhir">—</span></div>
+      <div class="stat"><span class="stat__label">Oleh</span>
+        <span class="stat__value" id="s-oleh">—</span></div>
+      <div class="stat"><span class="stat__label">Menang / seri / kalah</span>
+        <span class="stat__value mono" id="s-catatan">0 / 0 / 0</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <p class="t-lead">
+        Tic-tac-toe di dalam <strong>kubus</strong>. Empat papan 4&times;4 di atas
+        adalah empat lapis kubus 4&times;4&times;4 — dan empat bidak sebaris menang,
+        termasuk yang menembus lapis secara diagonal.
+      </p>
+      <ol class="howto__steps">
+        <li>Klik sel mana pun untuk menaruh <strong>X</strong>. Komputer menjawab
+            dengan <strong>O</strong>.</li>
+        <li>Garis boleh lurus, diagonal di dalam satu lapis, atau
+            <em>diagonal ruang</em> yang menembus keempat lapis sekaligus.
+            Yang terakhir itu cuma ada <strong>empat</strong>, dan paling
+            sering terlewat.</li>
+        <li><strong>Seret kubusnya</strong> untuk memutar bebas — atau panah
+            <kbd>&larr;</kbd><kbd>&rarr;</kbd><kbd>&uarr;</kbd><kbd>&darr;</kbd>
+            setelah mengekliknya. Satu sudut pandang selalu menyembunyikan
+            sebagian sel di belakang yang lain; memutarnya itu bagian dari
+            membaca papan. Kalau sebuah sel sulit dikenai, tombol
+            <strong>Tampilan: datar</strong> mengembalikan susunan empat papan
+            1984 — di sana setiap sel selalu bisa diklik.</li>
+        <li>Angka <strong>garis hidup</strong> di bawah menghitung garis yang
+            masih bisa dimenangkan siapa pun. Ia turun cepat — dan itulah kenapa
+            permainan ini sering berakhir seri.</li>
+      </ol>
+      <p>
+        Lawan komputernya <strong>rekonstruksi, bukan pemulihan</strong>. Algoritma
+        aslinya belum terbaca — analisis dekompilasinya menyatakan pemetaan 31
+        target <code>GOSUB</code>-nya belum dikerjakan. Karena itu kekuatannya
+        <strong>diukur</strong>, bukan dijanjikan: tombol di panel kanan
+        menjalankan 200 permainan penuh dan melaporkan hasilnya.
+      </p>
+    </details>
+
+    <div class="row">
+      <span class="faint mono" id="s-status">berjalan</span>
+      <span class="faint mono" id="s-garis" hidden></span>
+    </div>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel">
+      <p class="eyebrow">Separuh programnya aritmetika — dan itu yang membuka isinya</p>
+      <table class="t-tabel">
+        <thead><tr><th>Kelompok operasi</th><th>Porsi</th></tr></thead>
+        <tbody>
+          <tr><td>Aritmetika <em>single-precision</em></td><td>50%</td></tr>
+          <tr><td>Tampilan</td><td>27%</td></tr>
+          <tr><td>Subrutin</td><td>5%</td></tr>
+          <tr><td>Cabang <code>IF</code> lawan gelung</td><td>679 : 10</td></tr>
+        </tbody>
+      </table>
+      <p class="t-note">
+        Untuk permainan yang papannya 4&times;4&times;4 dan bidaknya cuma X/O, lima
+        puluh persen aritmetika pecahan <strong>tidak wajar</strong> — kecuali kalau
+        programnya mengevaluasi posisi. Dan 679 cabang melawan 10 gelung menegaskan:
+        ini bukan program yang mengulang, melainkan program yang memutuskan.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">76 garis — dihitung dua cara, bukan dikutip</p>
+      <table class="t-tabel">
+        <tbody>
+          <tr><td>Pencacahan langsung di halaman ini</td><td id="g-cacah">—</td></tr>
+          <tr><td>Rumus <code>((n+2)³ &minus; n³) / 2</code>, n = 4</td><td id="g-rumus">—</td></tr>
+          <tr><td>Hasilnya</td><td id="g-cocok">—</td></tr>
+          <tr><td>Lurus (satu sumbu bergerak)</td><td id="g-lurus">—</td></tr>
+          <tr><td>Diagonal bidang (dua sumbu)</td><td id="g-bidang">—</td></tr>
+          <tr><td>Diagonal ruang (tiga sumbu)</td><td id="g-ruang">—</td></tr>
+        </tbody>
+      </table>
+      <p class="t-note">
+        Rumus keduanya punya alasan yang rapi: bungkus kubus dengan satu lapis
+        selubung, lalu setiap garis menembus <strong>tepat dua</strong> sel
+        selubung — jadi cacah selubung dibagi dua.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Papannya larik 5×5×5, bukan 4×4×4</p>
+      <p class="t-note">
+        Indeksnya terbaca utuh di banyak tempat di kode hasil rekompilasi:
+      </p>
+      <p class="t-note"><code>G3!( CINT(F11!) + (CINT(F6!) * 5 + CINT(F12!)) * 5 )</code></p>
+      <p class="t-note">
+        Langkahnya <strong>5</strong>, bukan 4. Papan 4&times;4&times;4 disimpan di
+        larik 5&times;5&times;5 dan indeks 0 dibiarkan kosong, supaya koordinat
+        1&ndash;4 bisa dipakai apa adanya tanpa dikurangi satu di setiap pemakaian.
+        Enam puluh satu sel dari 125 dihamburkan untuk menghemat satu pengurangan
+        di ratusan tempat — dan di BASIC yang ditafsirkan, pengurangan itu memang
+        mahal.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Kekuatan lawannya diukur, bukan dijanjikan</p>
+      <p class="t-note">
+        Penilai posisi di halaman ini <strong>rekonstruksi saya</strong>. Algoritma
+        aslinya belum terbaca — 31 target <code>GOSUB</code>-nya belum dipetakan ke
+        fungsi permainan. Jadi angkanya harus datang dari pengukuran:
+      </p>
+      <div class="row">
+        <button class="btn" id="ukur">Jalankan 200 permainan</button>
+      </div>
+      <p class="t-hasil" id="u-hasil">belum dijalankan</p>
+      <p class="t-note">
+        Lawannya pemain acak, benih tetap (20260809) supaya hasilnya bisa diulang,
+        dan giliran pertama bergantian tiap permainan supaya keunggulan langkah
+        pertama tidak terhitung sebagai kekuatan.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Tingkat kepastian di halaman ini</p>
+      <table class="t-tabel">
+        <thead><tr><th>Bagian</th><th>Tingkat</th></tr></thead>
+        <tbody>
+          <tr><td>Tata letak empat lapis, judul, baris LAST MOVE</td><td>pasti</td></tr>
+          <tr><td>Larik 5×5×5, porsi aritmetika, 679 : 10</td><td>pasti</td></tr>
+          <tr><td>76 garis</td><td>pasti (matematika, bukan pembacaan)</td></tr>
+          <tr><td>Bahwa programnya penilai posisi</td><td>turunan</td></tr>
+          <tr><td>Algoritma penilainya</td><td><strong>rekonstruksi</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/3dttt.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../decompile/3DTTT/ARCHITECTURE.md">Analisis dekompilasi</a> &middot;
+      <a href="../../../decompile/3DTTT/3dttt-run.bas">Basis port (1.150 baris)</a> &middot;
+      <a href="../../../run/3DTTT.EXE">Berkas EXE aslinya</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="3dttt.js"></script>
+</body>
+</html>

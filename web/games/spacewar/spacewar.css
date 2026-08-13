@@ -1,0 +1,156 @@
+/* ===========================================================================
+   spacewar.css — khusus Spacewar. Awalan `w-`.
+
+   Warna di sini literal dan TIDAK meniru palet aslinya, karena aslinya tidak
+   punya palet: mode 6 itu 1 bit per piksel — menyala atau tidak. Meniru "dua
+   warna" apa adanya akan menghasilkan halaman yang tak terbaca, dan mengaku
+   meniru sementara warnanya enam akan jadi klaim palsu. Jadi: layar gelap
+   bergaya CRT fosfor, dua kapal dibedakan BENTUK lebih dulu dan warna kemudian.
+   =========================================================================== */
+
+.w-layout {
+  display: grid; gap: var(--s5);
+  grid-template-columns: minmax(460px, 1.35fr) minmax(300px, 400px);
+  align-items: start; padding-block: var(--s6) var(--s8);
+}
+@media (max-width: 1120px) { .w-layout { grid-template-columns: 1fr; } }
+
+#layar { position: relative; }
+
+.w-svg {
+  width: 100%; height: auto; display: block;
+  background: radial-gradient(ellipse at 50% 50%, #0b1020 0%, #05070e 70%);
+  border-radius: var(--r); border: var(--border);
+}
+
+/* --- saklar menu, meniru pilihan yang ada di layar judul aslinya ---------- */
+.w-saklar { flex-wrap: wrap; gap: var(--s3) var(--s4); }
+.w-tog { display: inline-flex; align-items: center; gap: var(--s2);
+         font-size: var(--fs-sm); color: var(--ink-dim); cursor: pointer;
+         user-select: none; }
+.w-tog input { accent-color: var(--acc-phosphor); cursor: pointer; }
+.w-tog:hover { color: var(--ink); }
+
+/* --- panel skor dua sisi -------------------------------------------------- */
+.w-sisi { flex: 1 1 220px; display: grid; gap: var(--s2);
+          padding: var(--s3) var(--s4); border: var(--line-soft);
+          border-radius: var(--r); background: var(--bg-sunken); }
+.w-sisi--0 { box-shadow: inset 3px 0 0 #8ef0a4; }
+.w-sisi--1 { box-shadow: inset 3px 0 0 #9fd7ff; }
+
+.w-sisi__kepala { display: flex; justify-content: space-between;
+                  align-items: baseline; gap: var(--s3); }
+.w-sisi__nama { font-size: var(--fs-xs); letter-spacing: .09em;
+                text-transform: uppercase; font-weight: 700; color: var(--ink-dim); }
+.w-sisi__status { font-family: var(--font-mono); font-size: var(--fs-xs);
+                  color: var(--acc-amber); }
+
+/* Bilah shield: satu-satunya angka yang perlu dibaca dalam sepersekian detik
+   saat bermain, jadi ia juga digambar, bukan cuma ditulis. */
+.w-bar { height: 6px; border-radius: 3px; overflow: hidden;
+         background: rgba(255,255,255,.08); }
+.w-bar > i { display: block; height: 100%; width: 100%;
+             background: linear-gradient(90deg, #ff6b6b 0 18%, #e0a02c 18% 40%, #8ef0a4 40%);
+             transition: width .12s linear; }
+@media (prefers-reduced-motion: reduce) { .w-bar > i { transition: none; } }
+
+.w-angka { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s4);
+           font-size: var(--fs-xs); color: var(--ink-dim);
+           letter-spacing: .05em; }
+.w-angka b { font-family: var(--font-mono); font-size: var(--fs-md);
+             color: var(--ink); font-variant-numeric: tabular-nums;
+             margin-left: 4px; }
+
+/* --- legenda tombol ------------------------------------------------------- */
+.w-kunci { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s3) var(--s5);
+           margin-top: var(--s3); }
+@media (max-width: 560px) { .w-kunci { grid-template-columns: 1fr; } }
+.w-kunci__judul { font-family: var(--font-mono); font-size: var(--fs-xs);
+                  letter-spacing: .06em; color: var(--acc-phosphor);
+                  margin: 0 0 var(--s2); }
+.w-kunci__baris { display: flex; align-items: center; gap: var(--s3);
+                  margin: 0 0 3px; font-size: var(--fs-sm); color: var(--ink-dim); }
+.w-kunci__baris kbd { flex: none; min-width: 2em; text-align: center; }
+.w-kunci__baris span { font-family: var(--font-mono); font-size: var(--fs-xs);
+                       letter-spacing: .04em; }
+
+/* --- panel ---------------------------------------------------------------- */
+.w-lead { font-size: var(--fs-sm); }
+.w-note { font-size: var(--fs-sm); color: var(--ink-dim); margin-top: var(--s2); }
+
+.w-tabel { width: 100%; border-collapse: collapse; font-size: var(--fs-sm);
+           margin-top: var(--s3); }
+.w-tabel th, .w-tabel td { text-align: left; padding: var(--s2) var(--s3);
+                           border-bottom: var(--line-soft); }
+.w-tabel th { font-size: var(--fs-xs); text-transform: uppercase;
+              letter-spacing: .06em; color: var(--ink-faint); font-weight: 600; }
+.w-tabel td:not(:first-child) { font-family: var(--font-mono);
+                                color: var(--acc-phosphor); text-align: right; }
+.w-tabel th:not(:first-child) { text-align: right; }
+
+/* Teks yang dipanen ditampilkan monospace dan RATA seperti aslinya: perataan
+   kolomnya bagian dari berkas, bukan hiasan. Ia digulung sendiri kalau sempit
+   supaya halaman tidak ikut menggulung mendatar. */
+.w-instruksi {
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.5;
+  color: var(--acc-phosphor); background: var(--bg-sunken);
+  border: var(--line-soft); border-radius: var(--r);
+  padding: var(--s3); margin-top: var(--s3);
+  overflow-x: auto; white-space: pre;
+}
+.w-tolak { font-family: var(--font-mono); font-size: var(--fs-xs);
+           color: var(--acc-amber); background: var(--bg-sunken);
+           border: var(--line-soft); border-radius: var(--r);
+           padding: var(--s3); margin-top: var(--s3); }
+
+/* --- spanduk di atas layar ------------------------------------------------ */
+.w-pesan {
+  position: absolute; inset: 0; margin: 0;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: var(--s2);
+  text-align: center; padding: var(--s4);
+  background: radial-gradient(ellipse at center,
+              rgba(3,6,14,.88) 0 55%, rgba(3,6,14,.62) 100%);
+  border-radius: var(--r);
+  animation: w-pesan-masuk .18s ease-out;
+}
+@keyframes w-pesan-masuk { from { opacity: 0; transform: scale(.96); } }
+@media (prefers-reduced-motion: reduce) { .w-pesan { animation: none; } }
+
+.w-pesan__judul {
+  font-family: var(--font-mono); font-size: clamp(1.2rem, 3.8vw, 1.9rem);
+  letter-spacing: .12em; color: #8ef0a4; line-height: 1.15;
+  text-shadow: 0 0 14px rgba(90,230,130,.5), 0 2px 4px #000;
+}
+.w-pesan__baris { color: #eaf2ff; font-size: var(--fs-sm); }
+.w-pesan__kaki  { color: #9fd7ff; font-size: var(--fs-xs);
+                  font-family: var(--font-mono); }
+
+/* --- panel sprite: kapal 1985 yang sesungguhnya ---------------------------
+   Ditampilkan besar dan berkotak-kotak dengan sengaja. Menghaluskannya akan
+   menyembunyikan justru hal yang membuatnya bernilai: bahwa ia benar-benar
+   16 x 16 piksel, bukan gambar vektor. */
+.w-sprite {
+  display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px;
+  margin-top: var(--s3);
+}
+.w-sprite__sel {
+  width: 100%; height: auto; display: block;
+  background: #070b14; border-radius: 2px;
+  color: #9fd7ff;
+  shape-rendering: crispEdges;
+}
+#sprite-kiri .w-sprite__sel { color: #8ef0a4; }
+.w-sprite__cap { margin-top: var(--s2); font-size: var(--fs-xs);
+                 color: var(--ink-faint); }
+
+/* --- judul dengan font programnya sendiri --------------------------------
+   Langkah maju 10 piksel dari 16 lebar glif berarti huruf-hurufnya SALING
+   MENUMPUK enam piksel. Itu bukan kesalahan tata letak; itu memang cara
+   `sub_46DD` menata huruf (`add ax, 0xa`), dan kalau dirapikan jadi 16 piksel,
+   tulisannya berhenti memperlihatkan hal itu. */
+.w-font { display: flex; align-items: flex-end; margin-top: var(--s3);
+          padding: var(--s3); background: #070b14; border-radius: var(--r);
+          overflow-x: auto; }
+.w-font__glif { flex: none; width: 32px; height: 16px; margin-right: -12px;
+                color: var(--acc-phosphor); shape-rendering: crispEdges; }

@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trucker — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari TRUCKER.BAS (Hughes Glantzberg, 1982): Los Angeles ke New York lewat tiga rute Interstate sungguhan, 64 titik jalan, dan satu angka per titik yang memuat jenis kejadian sekaligus peluangnya. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="trucker.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap t-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="t-stage">
+        <div class="t-crt" id="crt">
+          <svg id="svg" class="t-svg" viewBox="0 0 800 460"
+               role="img" aria-label="Pemandangan jalan raya dan pita kemajuan perjalanan"></svg>
+        </div>
+
+        <div class="t-panel" id="panel"></div>
+
+        <div class="t-log" id="log" aria-live="polite"></div>
+
+        <div class="t-bar">
+          <span>Solar <b class="t-kecil">isi tangki sebenarnya</b></span>
+          <span class="t-jalur">
+            <i class="t-zona t-zona--cadangan"></i>
+            <i class="t-zona t-zona--waspada"></i>
+            <i id="bar-bbm" class="t-isi"></i>
+            <i class="t-tik" style="left:25%"></i>
+            <i class="t-tik" style="left:50%"></i>
+            <i class="t-tik" style="left:75%"></i>
+          </span>
+          <span class="mono t-bbmTeks" id="bbm-teks">190 gal &middot; 855 mi</span>
+        </div>
+        <p class="t-kecil t-bbmKunci">
+          Tangki <b>200 gal</b> &middot; garis di 50 / 100 / 150 &middot;
+          <span class="t-kunciWaspada">kuning di bawah 50 gal</span> &middot;
+          <span class="t-kunciCadangan">merah di bawah 20 gal</span>.
+          Angka di papan (<i>Approximate fuel</i>) sengaja meleset &plusmn;5 &mdash;
+          bilah ini yang benar.
+        </p>
+
+        <div class="t-row t-row--kecil">
+          <button class="btn btn--ghost btn--sm" id="mulai" type="button">Perjalanan baru</button>
+          <label>Benih
+            <input type="number" id="benih" min="0" max="999999" step="1" value="1982"
+                   class="t-angka"></label>
+          <label>Animasi
+            <select id="laju" class="t-pilihLaju">
+              <option value="lambat">0,5&times; santai</option>
+              <option value="biasa" selected>1&times;</option>
+              <option value="cepat">2&times;</option>
+              <option value="langsung">langsung (tanpa animasi)</option>
+            </select></label>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">385 baris BASIC</span>
+      <span class="ruleset__k">3 rute, 64 titik jalan</span>
+      <span class="ruleset__k">1 putaran = 1 jam</span>
+      <span class="ruleset__k ruleset__k--mangsa">55 MPH = puncak kurva irit</span>
+      <span class="ruleset__k ruleset__k--bahaya">pengukur bahan bakarnya berbohong</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Hari &amp; jam</span>
+        <span class="stat__value mono" id="s-hari">Monday · 8 AM</span></div>
+      <div class="stat"><span class="stat__label">Odometer</span>
+        <span class="stat__value mono" id="s-odo">0</span></div>
+      <div class="stat"><span class="stat__label">Sisa mil</span>
+        <span class="stat__value mono" id="s-sisa">—</span></div>
+      <div class="stat"><span class="stat__label">Approximate fuel</span>
+        <span class="stat__value mono" id="s-bbm">190</span></div>
+      <div class="stat"><span class="stat__label">Kecepatan</span>
+        <span class="stat__value mono" id="s-sp">55</span></div>
+      <div class="stat"><span class="stat__label">Batas</span>
+        <span class="stat__value mono" id="s-sl">55</span></div>
+      <div class="stat"><span class="stat__label">Pengemudi</span>
+        <span class="stat__value mono" id="s-cd">—</span></div>
+      <div class="stat"><span class="stat__label">Cuaca</span>
+        <span class="stat__value mono" id="s-cr">—</span></div>
+      <div class="stat"><span class="stat__label">Risiko celaka / jam</span>
+        <span class="stat__value mono" id="s-risiko">0,00 %</span></div>
+      <div class="stat"><span class="stat__label">Pengeluaran</span>
+        <span class="stat__value mono" id="s-xc">$190.00</span></div>
+      <div class="stat"><span class="stat__label">Tilang</span>
+        <span class="stat__value mono" id="s-tilang">0</span></div>
+      <div class="stat"><span class="stat__label">Benih</span>
+        <span class="stat__value mono" id="s-benih">1982</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <p class="t-lead">
+        Anda membawa trailer dari <strong>Los Angeles ke New York</strong>.
+        Berangkat <strong>Senin pukul 8 pagi</strong>; muatannya dijanjikan tiba
+        <strong>Kamis pukul 4 sore</strong>. Tiap putaran adalah
+        <strong>satu jam</strong>, dan satu-satunya keputusan tetapnya adalah
+        <strong>seberapa cepat</strong>.
+      </p>
+      <ol class="howto__steps">
+        <li><strong>55 MPH bukan sekadar batas — ia titik teririt.</strong>
+            Konsumsi solarnya <code>SP / (4,5 &minus; 0,2&times;|55&minus;SP|)</code>,
+            jadi 4,5 mpg di 55 dan hanya 2,0 mpg di 20 <em>maupun</em> di 100.
+            Melambat di bawah 55 <strong>memboroskan solar</strong>, bukan
+            menghemat. Itu batas kecepatan nasional AS 1974, ditanam sebagai
+            puncak kurva.</li>
+        <li><strong>Empat hal mengalikan risiko celaka</strong>, dan hasil
+            kalinyalah yang membunuh:
+            <code>kecepatan² &times; kondisi &times; cuaca / 10.000.000</code>.
+            Kondisi lelah bernilai 25, kehabisan tidur 100; badai salju 50.
+            Di 70 MPH dalam badai dengan pengemudi lelah, peluang celaka
+            <strong>per jam</strong> lewat 60 %. Angkanya terpampang di papan.</li>
+        <li><strong>Pengukur bahan bakarnya sengaja tidak akurat.</strong>
+            Yang ditampilkan bukan isi tangki melainkan
+            <code>INT(WF&minus;4+RND&times;10)</code> &mdash; digeser acak
+            &minus;4…+5, diundi ulang <em>tiap jam</em>. Karena itu
+            tulisannya <em>"Approximate fuel"</em>. Bilah hijau di bawah layar
+            menunjukkan nilai sebenarnya; itu tambahan port ini.</li>
+        <li><strong>Tidur siang butuh 7 jam, tidur malam cukup 4.</strong>
+            Urutannya yang menentukan: jam maju sebanyak yang Anda minta, lalu
+            baris 1970 memangkas tidur siang jadi <code>INT(T/2+0,6)</code>
+            &mdash; <em>"thanks to the daytime noise"</em> &mdash; lalu baris
+            1990 memakai angka yang <em>sudah</em> dipangkas untuk memutuskan
+            apakah jam terjaga disetel ulang (butuh &gt; 3). Jadi tidur lima jam
+            di siang hari menghabiskan lima jam, hanya membukukan tiga, dan
+            kelelahan Anda cuma <strong>dibagi dua</strong>. "Siang" di sini
+            pukul <strong>6 pagi sampai 7 malam</strong>.</li>
+        <li><strong>Tiga rute, tiga tawar-menawar.</strong> Utara paling pendek
+            (2.710 mil) tapi paling diawasi; selatan paling panjang (3.120)
+            tapi polisinya paling longgar dan cuacanya paling ramah. Tabel
+            lengkapnya muncul saat Anda memilih.</li>
+        <li><strong>Cuaca memburuk makin ke timur.</strong> Peluangnya
+            <code>(3000 + odometer) &times; RND</code> dibandingkan ambang tetap
+            &mdash; jadi di awal perjalanan badai salju <em>mustahil</em>, dan
+            di ujung timur ia menunggu.</li>
+        <li>Muatan <strong>jeruk</strong> paling mahal tapi bisa busuk;
+            <strong>surat</strong> paling murah tapi tidak pernah rusak dan
+            tidak dikejar tenggat. Lihat panel &mdash; tenggat untuk
+            <em>freight</em> ternyata tidak berbunyi sama sekali.</li>
+      </ol>
+    </details>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel t-good">
+      <p class="eyebrow">Satu angka, dua makna</p>
+      <p class="t-note">
+        Tiap titik jalan disimpan sebagai empat nilai: mil, nama tempat, nama
+        jalan, dan satu bilangan pecahan. Bilangan terakhir itu memuat
+        <strong>dua hal sekaligus</strong>.
+      </p>
+<pre class="t-code">9040 DATA 90,Barstow,I-15 in California,<b>7.80</b>
+
+3130 ON INT(ZH) GOSUB 3210,3310,3360,3410,3500,3710,3860
+3870 IF RND &lt; ZH-INT(ZH) THEN RETURN</pre>
+      <p class="t-note">
+        <code>INT(7,80) = 7</code> memilih kejadian ketujuh (unit pendingin
+        rusak); <code>0,80</code> adalah <strong>peluang kejadian itu tidak
+        jadi</strong>. Jadi Barstow punya 20 % peluang merusak pendingin Anda.
+      </p>
+      <p class="t-note">
+        Kecuali untuk jenis <strong>2</strong>. Di sana baris 3310 berbunyi
+        <code>T = 100 &times; (ZH &minus; INT(ZH))</code> &mdash; pecahannya
+        bukan peluang lagi melainkan <strong>besar tol dalam dolar</strong>.
+        Satu kolom data, dua tata bahasa, dan tidak ada yang menandainya.
+      </p>
+      <table class="t-tbl">
+        <tbody>
+          <tr><td>Titik jalan seluruhnya</td><td><strong id="b-titik">—</strong></td></tr>
+          <tr><td>Tanpa kejadian (<code>0</code>)</td><td><strong id="b-nol">—</strong></td></tr>
+          <tr><td>Jumlah seluruh tol di tiga rute</td><td><strong id="b-tol">—</strong></td></tr>
+        </tbody>
+      </table>
+      <p class="t-kecil" id="b-jenis">—</p>
+      <p class="t-note">
+        Titik-titiknya nyata: Barstow, Needles, Flagstaff, Tucumcari, Terre
+        Haute, Holland Tunnel. Nomor jalannya juga &mdash; I-40, I-70, I-80,
+        I-10, I-20, Pennsylvania Turnpike. Arahkan tetikus ke titik di pita
+        perjalanan untuk membacanya.
+      </p>
+    </div>
+
+    <div class="panel t-warn">
+      <p class="eyebrow">55 mil per jam, sebagai puncak kurva</p>
+<pre class="t-code">1480 T=ABS(55-SP):IF T&gt;12 THEN T=12.5
+1490 T1=SP/(4.5-0.2*T)
+1500 WF=WF-T1</pre>
+      <p class="t-note">
+        Halaman ini menyapu 20&ndash;100 MPH dan mencari titik teririt:
+        <strong id="b-irit">—</strong>. Tepat 55 &mdash; batas kecepatan
+        nasional yang diberlakukan Amerika pada 1974 untuk menghemat bahan
+        bakar, dan yang masih berlaku saat program ini ditulis.
+      </p>
+      <p class="t-note">
+        Kurvanya <strong>simetris</strong>, dan itu bagian yang menarik:
+        merangkak 20 MPH sama borosnya dengan menggeber 100 MPH. Jangkauan
+        maksimum satu tangki penuh: <strong id="b-jarak">—</strong> mil, jauh
+        di bawah rute terpendek 2.710 mil &mdash; jadi berhenti mengisi bukan
+        pilihan.
+      </p>
+    </div>
+
+    <div class="panel t-bad">
+      <p class="eyebrow">Lima cacat yang benar-benar ada</p>
+      <table class="t-tbl">
+        <thead><tr><th>Baris</th><th>Yang tertulis</th><th>Akibatnya</th></tr></thead>
+        <tbody>
+          <tr><td><code>1850</code></td>
+              <td><code>STOP</code></td>
+              <td>Menjawab <b>Y</b> pada "do you want to buy a tire?" di truck
+                  stop <b>menghentikan program</b>. Kode pembeliannya tidak
+                  pernah ditulis. Port menghapus tawarannya.</td></tr>
+          <tr><td><code>2660</code></td>
+              <td><code>HL=HR+T+1</code></td>
+              <td><code>HR</code>, bukan <code>HL</code>. Ban meletus membuat
+                  jam-terjaga melompat ke <i>total jam perjalanan</i> — jadi
+                  satu ban kempes langsung membuat Anda "tertidur di belakang
+                  kemudi". <b>Dipertahankan</b>, dan dicatat di layar.</td></tr>
+          <tr><td><code>3020</code>/<code>3030</code></td>
+              <td><code>COS(HR/HS)&lt;2.3</code></td>
+              <td><code>COS</code> tidak pernah melebihi 1, jadi syaratnya
+                  <b>selalu benar</b>. Dua dari enam tingkat kelelahan
+                  sebenarnya ditentukan <code>HL</code> saja. Hampir pasti
+                  <code>HR/HS</code> tanpa <code>COS</code>.</td></tr>
+          <tr><td><code>5340</code></td>
+              <td>"Subtract ten percent penalty"</td>
+              <td>Diumumkan lalu <b>tidak pernah dipotong</b> — baris 5340
+                  langsung meloncat ke 5400. Menu di baris 1050 menjanjikan
+                  <i>"penalty for late delivery"</i>; dendanya tidak ada.</td></tr>
+          <tr><td><code>5110</code></td>
+              <td><code>T=HR-INT(HR/24)</code></td>
+              <td>Bukan jam-dalam-hari (itu <code>HR-24*INT(HR/24)</code>,
+                  dipakai benar di baris 1950). Rumus ini hanya kebetulan
+                  benar selama 24 jam pertama — dan perjalanan tersingkat pun
+                  33 jam, jadi <b>gudang New York tidak pernah tutup</b>.</td></tr>
+        </tbody>
+      </table>
+      <p class="t-kecil">
+        Ditambah <code>TIMEPUT=2</code> di baris 2740 (salah ketik
+        <code>TIMEOUT</code>) dan <code>RUN "b:???0??"</code> di baris 4160 —
+        nama berkas berjoker yang tidak akan pernah dimuat.
+      </p>
+    </div>
+
+    <div class="panel t-warn">
+      <p class="eyebrow">Tenggat yang dijanjikan dan tenggat yang diuji</p>
+<pre class="t-code">1070 PRINT"The cargo is due in New York by 4 PM on Thursday."
+…
+5330 IF HR&lt;95 THEN 5400</pre>
+      <p class="t-note">
+        Berangkat Senin pukul 8 pagi (<code>DH=HR+8</code>), jadi Kamis pukul 4
+        sore adalah <code>HR = 80</code>. Yang diuji <code>HR = 95</code>
+        &mdash; Jumat pukul 7 pagi. <strong>Lima belas jam kelonggaran</strong>
+        yang tidak diberitahukan kepada siapa pun. Dan bahkan sesudah lewat,
+        dendanya tidak dipotong.
+      </p>
+    </div>
+
+    <div class="panel t-warn">
+      <p class="eyebrow">Batas resmi yang bukan batas</p>
+      <p class="t-note">
+        Baris 1100 bertanya <em>"How many pounds will you carry (40,000 is the
+        legal limit)"</em>. Tapi jembatan timbang di baris 3540 menimbang
+        <strong>kotor</strong>:
+      </p>
+<pre class="t-code">3540 T=19000+WL+7*WF+25*(INT(RND*10))
+3560 T=INT(T-60000)</pre>
+      <p class="t-note">
+        Traktor 19.000 lb + muatan + <strong>7 lb per galon solar</strong>.
+        Dengan muatan "batas resmi" 40.000 lb dan tangki penuh 190 galon,
+        beratnya <strong id="b-kotor">—</strong> lb &mdash; sudah melewati
+        60.000 sebelum bahkan berangkat. Muatan yang benar-benar aman kira-kira
+        <strong>39.600</strong> lb dengan tangki penuh, dan lebih besar kalau
+        tangki Anda tinggal separuh.
+      </p>
+      <p class="t-note">
+        Ada satu pengecualian yang tidak diumumkan: di <strong>perbatasan
+        Louisiana</strong> (satu-satunya titik dengan angka <b>tepat 5</b> di
+        seluruh koleksi data), kelebihan berat tidak didenda melainkan membuat
+        Anda <strong>diusir memutar 200 mil lewat Arkansas</strong> dengan
+        batas 45 MPH &mdash; dan program menyunting data rutenya sendiri untuk
+        itu.
+      </p>
+    </div>
+
+    <div class="panel t-good">
+      <p class="eyebrow">Batang huruf T yang digambar dengan kursor</p>
+<pre class="t-seni">╔════════╗ ╔════════╗ ╔╗      ╔╗ ╔════════╗ ╔╗   ╔═╗   ╔════════╗ ╔════════╗
+╚═══╗╔═══╝ ║╔══════╗║ ║║      ║║ ║╔══════╗║ ║║  ╔╝╔╝   ║╔═══════╝ ║╔══════╗║
+    ══     ║║      ║║ ║║      ║║ ║║      ╚╝ ║║ ╔╝╔╝    ║║         ║║      ║║
+    ══     ║║      ║║ ║║      ║║ ║║         ║║╔╝╔╝     ║║         ║║      ║║
+    ══     ║╚══════╝║ ║║      ║║ ║║         ║╚╝╔╝      ║╚═══╗     ║╚══════╝║
+    ══     ║╔══╗ ╔══╝ ║║      ║║ ║║         ║╔╗╚╗      ║╔═══╝     ║╔══╗ ╔══╝
+    ══     ║║  ╚╗╚╗   ║║      ║║ ║║         ║║╚╗╚╗     ║║         ║║  ╚╗╚╗
+    ══     ║║   ╚╗╚╗  ║║      ║║ ║║      ╔╗ ║║ ╚╗╚╗    ║║         ║║   ╚╗╚╗
+    ══     ║║    ╚╗╚╗ ║╚══════╝║ ║╚══════╝║ ║║  ╚╗╚╗   ║╚═══════╗ ║║    ╚╗╚╗
+    ╚╝     ╚╝     ╚═╝ ╚════════╝ ╚════════╝ ╚╝   ╚═╝   ╚════════╝ ╚╝     ╚═╝</pre>
+      <p class="t-note">
+        Enam huruf terakhir digambar dengan <code>LOCATE</code> baris demi
+        baris. Huruf <strong>T</strong> tidak:
+      </p>
+<pre class="t-code">20 …LOCATE 7,7:FOR X=1 TO 7:PRINT"══" CHR$(31) STRING$(2,29);:NEXT X</pre>
+      <p class="t-note">
+        <code>CHR$(31)</code> adalah <strong>kursor turun</strong> dan
+        <code>CHR$(29)</code> <strong>kursor kiri</strong> &mdash; keduanya
+        aksara kendali, bukan glif. Jadi baris itu berbunyi: <em>cetak dua
+        batang, turun satu baris, mundur dua kolom</em>, tujuh kali. Batang
+        tegaknya digambar dengan menggerakkan kursor, bukan dengan
+        memposisikannya. Satu-satunya huruf di layar ini yang ditulis sebagai
+        <em>gerakan</em>.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Ditulis di Carrollton, Texas</p>
+      <p class="t-note">
+        Layar judulnya menyebut <strong>Hughes Glantzberg</strong>,
+        Carrollton, Texas. Program ini bukan permainan aksi: ia
+        <strong>simulasi ekonomi</strong> dengan biaya bahan bakar sungguhan,
+        cicilan truk $85 per hari, denda kelebihan berat, dan tarif angkut per
+        pon &mdash; ditulis pada tahun ketika deregulasi angkutan truk Amerika
+        (Motor Carrier Act 1980) baru berjalan dua tahun.
+      </p>
+      <p class="t-kecil">
+        Baris 140&ndash;150 juga memuat alamat rumah penulisnya. Seperti pada
+        <a href="../batship/index.html">BATSHIP</a>, alamat itu
+        <strong>sengaja tidak disalin</strong> ke halaman ini; berkas aslinya
+        tetap utuh di <code>run/</code>.
+      </p>
+    </div>
+
+    <p class="faint t-links">
+      <a href="../../docs/trucker-bisnis.html"><b>Dokumen analisis bisnis</b></a> &middot;
+      <a href="../../docs/trucker.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/TRUCKER.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/TRUCKER.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="trucker-data.js"></script>
+<script src="trucker-scene.js"></script>
+<script src="trucker.js"></script>
+</body>
+</html>

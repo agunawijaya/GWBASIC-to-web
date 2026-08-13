@@ -1,0 +1,54 @@
+/* ===========================================================================
+   mortgage.css — khusus IBM Mortgage. Awalan `g-`.
+   =========================================================================== */
+
+.g-layout {
+  display: grid; gap: var(--s5);
+  grid-template-columns: minmax(360px, 1fr) minmax(300px, 400px);
+  align-items: start; padding-block: var(--s6) var(--s8);
+}
+@media (max-width: 1080px) { .g-layout { grid-template-columns: 1fr; } }
+
+.g-stage { display: grid; gap: var(--s4); }
+.g-judul { font-family: var(--font-mono); color: var(--acc-phosphor); }
+.g-note { font-size: var(--fs-sm); color: var(--ink-dim); margin-top: var(--s2); }
+.g-err { color: var(--acc-red); font-weight: 700; font-family: var(--font-mono); }
+
+.g-row { display: flex; gap: var(--s3); align-items: center; flex-wrap: wrap;
+         font-size: var(--fs-xs); color: var(--ink-dim); }
+.g-row input { width: 110px; font-family: var(--font-mono); padding: 4px var(--s2); }
+
+.g-tbl { width: 100%; border-collapse: collapse; margin-top: var(--s3);
+         font-size: var(--fs-xs); font-family: var(--font-mono); }
+.g-tbl th, .g-tbl td { padding: 3px var(--s2); border-bottom: 1px solid var(--line-soft);
+                       text-align: right; }
+.g-tbl th:first-child { text-align: left; color: var(--acc-amber); }
+.g-tbl tr:first-child th { color: var(--ink-dim); font-weight: 600;
+                           border-bottom: 2px solid var(--edge-strong); }
+/* Sel yang melewati 10.000: aslinya berhenti di situ karena PRINT USING
+   "####.##" cuma muat empat digit — batas LEBAR KOLOM, bukan batas keuangan. */
+.g-lebar { color: var(--acc-red); }
+.g-jml th, .g-jml td { border-top: 2px solid var(--acc-phosphor);
+                       color: var(--acc-phosphor); font-weight: 700; }
+
+.g-code {
+  margin-top: var(--s3); padding: var(--s3);
+  border: var(--border); border-radius: var(--r);
+  background: var(--bg-sunken); color: var(--acc-amber);
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.7;
+  overflow-x: auto;
+}
+.g-code em { color: var(--ink-faint); font-style: normal; }
+.g-good { border-left: 3px solid var(--acc-phosphor); }
+.g-warn { border-left: 3px solid var(--acc-amber); }
+
+.g-tbl2 { width: 100%; border-collapse: collapse; margin-top: var(--s3);
+          font-size: var(--fs-xs); }
+.g-tbl2 th, .g-tbl2 td { padding: 4px var(--s2); text-align: left;
+                         border-bottom: 1px solid var(--line-soft);
+                         vertical-align: top; }
+.g-tbl2 th { color: var(--ink-dim); font-weight: 600; }
+
+.howto > .g-lead {
+  border-top: none; padding-top: 0; margin-top: var(--s3); color: var(--ink);
+}

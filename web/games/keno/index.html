@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PC Keno — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari KENO.BAS (Steve Schlich, 1984): permainan yang mengaku punya peluang terburuk di kasino, dengan hanya 60 undian yang mungkin. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="keno.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap k-layout">
+
+  <section class="stack">
+    <div class="screen screen--scanlines">
+      <div class="k-stage">
+        <div id="board" style="width:100%"></div>
+        <p class="k-say" id="say">Pick 1 to 11 spots.</p>
+        <div class="m-transport">
+          <button class="btn btn--primary" id="draw" type="button">Draw</button>
+          <button class="btn hidden" id="same" type="button">Play same spots</button>
+          <button class="btn btn--ghost hidden" id="newp" type="button">Play new spots</button>
+          <label class="k-opt">Kecepatan
+            <input type="range" id="speed" min="1" max="10" value="5">
+            <span id="speedN">5</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <p class="k-legend">
+      <span><i class="k-i1"></i>your spot</span>
+      <span><i class="k-i2"></i>drawn spot</span>
+      <span><i class="k-i3"></i>a match</span>
+    </p>
+
+    <p class="ruleset">
+      <span class="ruleset__k">pilih 1&ndash;11 angka</span>
+      <span class="ruleset__k">rumah menarik 20 dari 80</span>
+      <span class="ruleset__k">tidak ada bayaran</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Spot dipilih</span>
+        <span class="stat__value" id="sSpots">0</span></div>
+      <div class="stat stat--good"><span class="stat__label">Cocok</span>
+        <span class="stat__value" id="sMatch">&mdash;</span></div>
+      <div class="stat"><span class="stat__label">Permainan</span>
+        <span class="stat__value" id="sGame">0</span></div>
+      <div class="stat"><span class="stat__label">Rekor cocok</span>
+        <span class="stat__value" id="sBest">0</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <p class="k-lead">
+        Petunjuk aslinya membuka dengan kalimat yang jarang ditulis pembuat
+        permainan tentang permainannya sendiri: <em>&ldquo;KENO has the worst
+        odds of any casino game.&rdquo;</em> Itu bukan kiasan &mdash; panel
+        peluang di sebelah menghitungnya.
+      </p>
+      <ol class="howto__steps">
+        <li><strong>Klik angka</strong> di papan untuk memilih spot Anda.
+            Paling sedikit satu, paling banyak <strong>sebelas</strong>
+            (batas aslinya, baris 530).</li>
+        <li>Tekan <strong>Draw</strong>. Rumah menarik <strong>20 angka</strong>
+            dari 80, satu per satu.</li>
+        <li>Angka yang Anda pilih <strong>dan</strong> ikut ditarik dihitung
+            sebagai <strong>cocok</strong>. Itulah seluruh skornya.</li>
+        <li>Sesudahnya: <strong>Play same spots</strong> mengulang dengan
+            pilihan yang sama, <strong>Play new spots</strong> mengosongkan
+            papan &mdash; dua pilihan yang sama dengan
+            <code>P</code> dan <code>N</code> aslinya (baris 900).</li>
+      </ol>
+      <p>
+        <strong>Tidak ada taruhan dan tidak ada bayaran</strong> &mdash; bukan
+        karena disederhanakan, tapi karena programnya memang tidak pernah
+        punya. Petunjuk 1984-nya menjanjikan bayaran; kodenya tidak pernah
+        menghitungnya. Panel <em>&ldquo;Bayaran yang dijanjikan&rdquo;</em>
+        di samping menunjukkan barisnya.
+      </p>
+    </details>
+    <div class="row">
+      <button class="btn btn--ghost btn--sm" id="resetBest" type="button">Reset rekor</button>
+    </div>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel k-bad">
+      <p class="eyebrow">Hanya ada enam puluh undian yang mungkin</p>
+<pre class="k-code">630 T$=RIGHT$(TIME$,2)   <em>' DETIK saja</em>
+640 T=VAL(T$)
+650 RANDOMIZE T
+...
+1090 GOTO 630            <em>' tiap permainan baru menyemai ULANG</em></pre>
+      <p class="k-note">
+        Benihnya detik pada jam &mdash; <strong>0 sampai 59</strong>. Dan
+        baris 1090 kembali ke 630 tiap permainan, jadi penyemaiannya diulang
+        setiap kali.
+      </p>
+      <p class="k-note">
+        Akibatnya: <strong>dua puluh angka yang ditarik rumah sepenuhnya
+        ditentukan oleh detik saat undian dimulai.</strong> Ada enam puluh
+        undian yang mungkin di seluruh riwayat program ini, dan ia akan
+        mengulanginya selamanya.
+      </p>
+      <p class="k-note">
+        Di permainan lain di koleksi ini, benih 60-nilai adalah cacat mutu.
+        Di sini ia <strong>seluruh permainannya</strong>: siapa pun yang
+        mencatat enam puluh undian itu sekali bisa menang setiap kali.
+      </p>
+      <p class="k-note">
+        Pola <code>RANDOMIZE VAL(RIGHT$(TIME$,2))</code> ini muncul di
+        <a href="../maxit1/index.html">MAXIT1</a>,
+        <a href="../master/index.html">MASTER</a>, dan di sini &mdash; tapi
+        hanya di sini ia menyentuh uang.
+        <a href="../crazy8/index.html">CRAZY8</a>, di disket yang sama,
+        menyambung menit <em>dan</em> detik dan mendapat 3.600.
+      </p>
+    </div>
+
+    <div class="panel k-warn">
+      <p class="eyebrow">Bayaran yang dijanjikan dan tidak pernah ditulis</p>
+<pre class="k-code">9050 PRINT"Your payoff (<em>if there is one</em>) depends on the ratio between"
+9060 PRINT"how many spots you picked and how many came up during the game."</pre>
+      <p class="k-note">
+        Tidak ada satu baris pun di seluruh 137 baris program ini yang
+        menghitung bayaran. Yang ditampilkan di akhir hanya:
+      </p>
+<pre class="k-code">890 PRINT"               Spots matched:";MATCHES;</pre>
+      <p class="k-note">
+        Kurung <em>&ldquo;if there is one&rdquo;</em> di baris 9050 ternyata
+        harfiah. Entah rencananya batal, entah kalimat itu disalin dari
+        selebaran kasino sungguhan &mdash; yang pasti, permainan judi ini
+        <strong>tidak punya uang di dalamnya sama sekali.</strong>
+      </p>
+      <p class="k-note">
+        Port ini tidak menambahkan tabel bayaran. Menambahkannya berarti
+        mengarang aturan yang tidak pernah ada, dan yang menarik dari program
+        ini justru bahwa aturan itu <em>tidak</em> ada.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Peluang yang sebenarnya</p>
+      <p class="k-note" id="oddsHead">Pilih spot dulu untuk melihat peluangnya.</p>
+      <table class="k-tbl">
+        <thead><tr><th>Hasil</th><th>Peluang</th><th>Sekali dalam</th></tr></thead>
+        <tbody id="oddsBody"></tbody>
+      </table>
+      <p class="k-note" id="oddsExp"></p>
+      <p class="k-note">
+        Dihitung dari rumus hipergeometrik, bukan disimulasikan:
+      </p>
+<pre class="k-code">P(m cocok | k spot) = C(k,m) &times; C(80&minus;k, 20&minus;m) / C(80,20)</pre>
+      <p class="k-note">
+        <code>C(80,20)</code> sekitar 3,5&nbsp;&times;&nbsp;10<sup>18</sup> &mdash;
+        di atas batas bilangan bulat aman JavaScript, jadi dihitung lewat
+        logaritma faktorial. Angka di tabel itu <strong>eksak</strong>, bukan
+        taksiran.
+      </p>
+      <p class="k-note">
+        Perhatikan harapan jumlah cocoknya: selalu <code>spot &divide; 4</code>,
+        apa pun angka yang Anda pilih. Memilih angka &ldquo;keberuntungan&rdquo;
+        tidak mengubah apa pun &mdash; hanya <em>berapa banyak</em> yang Anda
+        pilih yang berpengaruh, dan itu pun tidak mengubah peluang per spot.
+      </p>
+    </div>
+
+    <div class="panel k-warn">
+      <p class="eyebrow">Pencacah <code>FOR</code> yang diubah dari dalam</p>
+<pre class="k-code">660 FOR D1=1 TO 20
+670 CHOICE=INT(RND*80)+1
+680 IF CHOSEN(CHOICE)&lt;&gt;1 THEN 700
+690 D1=D1-1: GOTO 740   <em>' mundurkan pencacah, lalu lompat ke NEXT</em>
+...
+740 NEXT D1</pre>
+      <p class="k-note">
+        Angka yang sudah keluar ditolak, dan cara mengulangnya adalah
+        <strong>memundurkan pencacah <code>FOR</code>-nya sendiri</strong>
+        satu langkah, lalu melompat ke <code>NEXT</code> yang akan
+        menaikkannya kembali. Hasil bersihnya nol, jadi putaran itu diulang.
+      </p>
+      <p class="k-note">
+        Jalan di GW-BASIC, dan cerdik. Tapi ia bergantung pada satu hal yang
+        tidak dijamin bahasa mana pun: bahwa <code>NEXT</code> membaca
+        variabelnya <em>saat itu juga</em>, bukan memakai salinan yang
+        disimpan saat <code>FOR</code> dimulai. Di penyusun yang mengoptimalkan
+        pencacah ke dalam register, baris 690 tidak berpengaruh apa-apa dan
+        undiannya akan berisi angka kembar.
+      </p>
+      <div class="row">
+        <button class="btn btn--ghost btn--sm" id="drawsRun" type="button">Ukur 5000 undian</button>
+      </div>
+      <p class="k-note" id="drawsOut">
+        Berapa mahal sebenarnya cara tolak-dan-ulang di sini? Ukur, jangan
+        ditebak.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Dua larik yang tertukar namanya</p>
+<pre class="k-code">120 FOR C1=1 TO 71 STEP 10: ROW(C1)=16   <em>' 16 itu KOLOM layar</em>
+220 FOR C1=1 TO 10:         COL(C1)=2    <em>' 2 itu BARIS layar</em>
+...
+840 LOCATE COL(C1),ROW(C1)               <em>' LOCATE baris, kolom</em></pre>
+      <p class="k-note">
+        <code>ROW()</code> menyimpan kolom layar; <code>COL()</code> menyimpan
+        barisnya. Namanya tertukar, dan baris 840 menukarnya kembali saat
+        dipakai &mdash; jadi programnya <strong>benar</strong>.
+      </p>
+      <p class="k-note">
+        Ini jenis kesalahan yang paling awet: ia tidak pernah salah hasil,
+        jadi tidak ada yang memaksanya diperbaiki. Yang ia rusak cuma pembaca
+        berikutnya, yang harus membuktikan sendiri bahwa kekacauan itu
+        disengaja sebelum berani menyentuhnya.
+      </p>
+      <p class="k-note">
+        Delapan puluh angka dipetakan lewat enam belas perulangan
+        <code>FOR</code> tersendiri (baris 120&ndash;290) &mdash; delapan
+        untuk kolom, delapan untuk baris. Di port ini letaknya diurus
+        <code>grid-template-columns</code>, dan keenam belas perulangan itu
+        hilang seluruhnya.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/keno.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/KENO.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/KENO.BAS">Kode sumber 1984</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="keno.js"></script>
+</body>
+</html>

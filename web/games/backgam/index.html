@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Backgammon — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari BACKGAM.BAS (1986): backgammon dua pemain lengkap dalam 161 baris, dengan seluruh papan disimpan di satu larik bertanda. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="../../_shared/dice.css">
+<link rel="stylesheet" href="backgam.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap b-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="b-stage">
+
+        <div class="b-wrap">
+          <div class="b-bars">
+            <div>
+              <div class="b-bar" id="bar2"></div>
+              <div class="b-barlabel">BAR P2</div>
+            </div>
+            <div>
+              <div class="b-bar" id="bar1"></div>
+              <div class="b-barlabel">BAR P1</div>
+            </div>
+          </div>
+          <div class="b-papan">
+            <div class="b-baris" id="atas"></div>
+            <div class="b-baris" id="bawah"></div>
+          </div>
+        </div>
+
+        <div class="dice-row" id="dice"></div>
+        <p class="b-say" id="say"></p>
+
+        <div class="m-transport">
+          <button class="btn btn--primary" id="roll" type="button">Roll dice</button>
+          <button class="btn btn--ghost" id="off" type="button" disabled>Bear off</button>
+          <button class="btn hidden" id="again" type="button">New game</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">P1: 24 &rarr; 1</span>
+      <span class="ruleset__k">P2: 1 &rarr; 24</span>
+      <span class="ruleset__k">dobel = empat langkah</span>
+      <span class="ruleset__k">bar dulu</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Giliran</span>
+        <span class="stat__value" id="sTurn">&mdash;</span></div>
+      <div class="stat stat--good"><span class="stat__label">P1 keluar</span>
+        <span class="stat__value" id="sOff1">0</span></div>
+      <div class="stat"><span class="stat__label">P2 keluar</span>
+        <span class="stat__value" id="sOff2">0</span></div>
+      <div class="stat"><span class="stat__label">Menang P1</span>
+        <span class="stat__value" id="sW1">0</span></div>
+      <div class="stat"><span class="stat__label">Menang P2</span>
+        <span class="stat__value" id="sW2">0</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <p class="b-lead">
+        Backgammon dua pemain <strong>bergantian di satu layar</strong>.
+        Pemain 1 memakai bidak terang dan berjalan dari titik <strong>24 ke
+        1</strong>; pemain 2 memakai bidak gelap dan berjalan
+        <strong>sebaliknya</strong>. Yang lebih dulu mengeluarkan seluruh
+        lima belas bidaknya menang.
+      </p>
+      <ol class="howto__steps">
+        <li><strong>Roll dice</strong>, lalu klik bidak yang mau digerakkan,
+            lalu klik titik tujuannya. Tujuan yang sah menyala hijau.</li>
+        <li>Tiap dadu dipakai <strong>satu langkah</strong>. Kalau dadunya
+            <strong>kembar</strong>, Anda dapat <strong>empat</strong> langkah,
+            bukan dua.</li>
+        <li>Titik yang berisi <strong>dua bidak lawan atau lebih</strong>
+            tertutup. Titik dengan <strong>tepat satu</strong> bidak lawan
+            boleh ditempati &mdash; bidak itu <strong>dipukul</strong> dan
+            masuk ke bar.</li>
+        <li>Kalau ada bidak Anda di <strong>bar</strong> (kotak merah di kiri),
+            Anda <strong>wajib memasukkannya lebih dulu</strong>; tidak ada
+            langkah lain yang sah sampai bar kosong.</li>
+        <li>Setelah <strong>seluruh</strong> bidak Anda masuk rumah (titik
+            1&ndash;6 untuk P1, 19&ndash;24 untuk P2), Anda boleh mulai
+            <strong>mengeluarkannya</strong>: pilih bidaknya lalu tekan
+            <strong>Bear off</strong>.</li>
+        <li>Tidak ada langkah sah sama sekali? Giliran Anda
+            <strong>terlewat</strong> &mdash; itu aturan, bukan kesalahan.</li>
+      </ol>
+    </details>
+    <div class="row">
+      <button class="btn btn--ghost btn--sm" id="resetBest" type="button">Reset rekor</button>
+      <span class="faint">Dadu bersama dengan
+        <a href="../yahtzee/index.html">Yatzee</a> dan
+        <a href="../craps/index.html">Craps</a>.</span>
+    </div>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel b-good">
+      <p class="eyebrow">Satu larik untuk seluruh papan</p>
+<pre class="b-code">2450 DIM A(25)
+2482 A(24)=2:A(19)=-5:A(17)=-3:A(13)=5:
+     A(12)=-5:A(8)=3:A(6)=5:A(1)=-2</pre>
+      <p class="b-note">
+        Dua puluh empat titik, ditambah dua slot di ujung, dan
+        <strong>tanda</strong> yang menyimpan pemiliknya:
+      </p>
+      <table class="b-tbl">
+        <tbody>
+          <tr><td><code>A(n) &gt; 0</code></td><td>n bidak pemain 1</td></tr>
+          <tr><td><code>A(n) &lt; 0</code></td><td>|n| bidak pemain 2</td></tr>
+          <tr><td><code>A(n) = 0</code></td><td>kosong</td></tr>
+        </tbody>
+      </table>
+      <p class="b-note">
+        Satu angka menyimpan <strong>dua hal sekaligus</strong> &mdash; siapa
+        pemiliknya dan berapa banyak. Ini penyandian yang masih dipakai mesin
+        catur dan backgammon sampai sekarang, dan akibatnya besar: membalik
+        papan untuk giliran lawan cukup mengalikan <strong>&minus;1</strong>,
+        dan menghitung pip tidak butuh satu pun <code>IF</code>.
+      </p>
+      <p class="b-note">
+        Slot <strong>0 dan 25</strong> adalah pengecualiannya, dan sengaja:
+        keduanya menyimpan <em>jumlah</em> bidak di bar sebagai bilangan
+        positif. Menaruhnya di ujung larik menghapus kasus khusus &mdash;
+        pemain 1 masuk di <code>25 &minus; dadu</code>, pemain 2 di
+        <code>0 + dadu</code>, dan rumus yang sama melayani keduanya.
+      </p>
+      <p class="b-note">
+        Cocokkan sendiri baris 2482: 2+5+3+5 = <strong>15</strong> bidak
+        positif, dan 5+3+5+2 = <strong>15</strong> negatif. Susunan pembuka
+        backgammon yang benar, dalam satu baris.
+      </p>
+    </div>
+
+    <div class="panel b-good">
+      <p class="eyebrow">Memukul blot dalam tiga baris</p>
+<pre class="b-code">2950 A(F)=A(F)-1:IF A(T)=-1 THEN A(0)=A(0)+1:A(T)=0
+2960 A(T)=A(T)+1</pre>
+      <p class="b-note">
+        Ambil satu bidak dari titik asal; kalau titik tujuan berisi
+        <strong>tepat satu</strong> bidak lawan, pindahkan ke bar dan
+        kosongkan; lalu taruh bidak Anda.
+      </p>
+      <p class="b-note">
+        Seluruh aturan memukul muat di situ, dan tidak butuh satu pun
+        percabangan tambahan &mdash; karena <code>A(T)=-1</code> sudah berarti
+        "tepat satu bidak lawan", berkat penyandian tandanya.
+      </p>
+      <p class="b-note">
+        Pembanding: <code>IF A(T)&lt;-1</code> di baris 2910 berarti "dua atau
+        lebih" &mdash; titik tertutup. Dua aturan backgammon yang paling sering
+        salah dipahami, dinyatakan sebagai dua perbandingan bilangan.
+      </p>
+    </div>
+
+    <div class="panel b-warn">
+      <p class="eyebrow">Programnya mulai di baris 2430</p>
+      <p class="b-note">
+        Bukan 10. Entah program ini dulunya bagian dari sesuatu yang lebih
+        besar, entah 2.400 baris di depannya sengaja disisakan untuk sesuatu
+        yang <strong>tidak pernah ditulis</strong>.
+      </p>
+      <p class="b-note">
+        Rutin bantunya ada di <strong>59950</strong> (jeda) dan
+        <strong>59990</strong> (tunggu tombol) &mdash; jauh di belakang, dan
+        tanpa satu pun daftar isi yang menyebutkannya. Trik menaruh utilitas di
+        nomor tinggi memang umum; yang membuatnya mahal adalah tidak adanya
+        petunjuk bahwa mereka ada di sana.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Parameter lewat variabel global</p>
+<pre class="b-code">TIMEOUT=3:GOSUB 59950</pre>
+      <p class="b-note">
+        <code>GOSUB</code> tidak menerima parameter, jadi nilainya dititipkan
+        lewat variabel global sebelum memanggil. Pola ini muncul di seluruh
+        koleksi.
+      </p>
+      <p class="b-note">
+        Yang membuat versi ini termasuk yang paling baik: <strong>namanya
+        jelas</strong>. <code>TIMEOUT</code>, bukan <code>T</code>. Sebuah
+        variabel global yang dipakai sebagai parameter setidaknya harus
+        mengatakan ia parameter apa.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Dobel memberi empat langkah, dalam satu <code>IF</code></p>
+<pre class="b-code">2560 L=INT(RND*6+1):M=INT(RND*6+1):D=2:
+     IF L=M THEN D=4 ELSE IF L&lt;M THEN SWAP L,M</pre>
+      <p class="b-note">
+        <code>D</code> adalah jumlah langkah yang tersisa giliran ini. Dobel
+        mengubahnya jadi empat &mdash; aturan backgammon sungguhan, satu
+        <code>IF</code>.
+      </p>
+      <p class="b-note">
+        Dan <code>SWAP L,M</code> di ujungnya memastikan <code>L &ge; M</code>,
+        sehingga seluruh kode sesudahnya boleh menganggap dadu pertama yang
+        lebih besar. Satu penukaran menghapus setengah kasus.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/backgam.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/BACKGAM.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/BACKGAM.BAS">Kode sumber 1986</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/dice.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="backgam.js"></script>
+</body>
+</html>

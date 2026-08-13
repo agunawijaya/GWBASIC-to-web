@@ -1,0 +1,211 @@
+/* ===========================================================================
+   startrek.css — rupa lokal STARTREK. Awalan `st-`.
+
+   Satu keputusan yang perlu dijelaskan: petak sensornya digambar sebagai
+   KISI, bukan sebagai teks 80 kolom. Di aslinya baris 3830-3970 mencetak
+   delapan baris berisi delapan sel tiga aksara, DENGAN kolom status
+   menempel di kanan tiap baris — layout itu lahir dari kenyataan bahwa
+   PRINT hanya bisa maju ke kanan lalu turun.
+
+   Di sini keduanya dipisah: petak jadi kisi, status jadi daftar. Yang
+   dipertahankan adalah PASANGANNYA — delapan baris petak, delapan baris
+   status — karena korespondensi itu yang membuat layar aslinya terbaca.
+   =========================================================================== */
+
+.st-layout { display: grid; gap: var(--s5); align-items: start; }
+@media (min-width: 1040px) {
+  .st-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
+
+/* --- petak + status ------------------------------------------------------- */
+
+/* Petaknya mendapat SELURUH lebar kolom kiri, dan papan status pindah ke
+   bawahnya. Versi pertama menaruh keduanya berdampingan — setia pada layar
+   80x25 — tapi begitu selnya berisi kapal dan bukan tiga aksara, membelah
+   lebarnya membuat tiap sel tinggal ~31 px dan seluruh detailnya hilang.
+   Yang dipertahankan sekarang adalah URUTAN kedelapan pembacaannya, bukan
+   tempatnya. */
+.st-atas { display: grid; gap: var(--s4); min-width: 0; }
+
+.st-petakLuar { min-width: 0; }
+
+/* --- petak SVG ------------------------------------------------------------
+   Kuadrannya digambar sebagai SATU svg berkoordinat 800x800 (delapan sel
+   100x100), bukan 64 elemen terpisah. Alasannya bukan kerapian: sinar
+   phaser, jejak torpedo, dan ledakan semuanya melintasi batas sel, dan itu
+   cuma mungkin kalau semuanya hidup di sistem koordinat yang sama. */
+.st-petak {
+  background: #05080f; border: 1px solid var(--line); border-radius: var(--r);
+  padding: 4px; min-width: 0; overflow: hidden;
+  display: grid;
+}
+/* Kedua lapisan menempati sel grid yang SAMA, jadi mereka bertumpuk persis
+   tanpa satu pun angka posisi yang perlu dijaga tetap sinkron. */
+.st-petak > * { grid-area: 1 / 1; min-width: 0; }
+.st-svg { display: block; width: 100%; height: auto; }
+.st-fxLayer { display: block; width: 100%; height: auto; pointer-events: none; }
+.st-modeGlif .st-fxLayer { display: none; }
+
+/* Sprite: sedikit "bernapas" supaya kuadran yang diam tidak terasa mati.
+   Semua gerak di sini dimatikan kalau pengguna minta gerak dikurangi. */
+.st-spr { transform-box: fill-box; transform-origin: center; }
+.st-sprKapal   { animation: st-apung 6.5s ease-in-out infinite; }
+.st-sprKlingon { animation: st-apung 5.2s ease-in-out infinite; }
+/* Stasiunnya BERGOYANG, tidak berputar penuh. Putaran 360° cocok waktu
+   bentuknya masih cincin; begitu ia punya sayap panel surya, putaran penuh
+   membuatnya terbaca sebagai kipas. Bentuk menentukan geraknya. */
+.st-sprBasis   { animation: st-goyang 18s ease-in-out infinite; }
+.st-sprBintang { animation: st-kedip 4.4s ease-in-out infinite; }
+@keyframes st-apung { 0%,100% { transform: translateY(-1.2%); }
+                      50%     { transform: translateY(1.2%); } }
+@keyframes st-goyang { 0%,100% { transform: rotate(-2.5deg); }
+                       50%     { transform: rotate(2.5deg); } }
+@keyframes st-kedip { 0%,100% { opacity: .88; } 50% { opacity: 1; } }
+
+/* --- efek ---------------------------------------------------------------- */
+.st-fxPhaser { stroke-linecap: round; opacity: 0;
+               animation: st-sinar .9s ease-out forwards; }
+@keyframes st-sinar { 0% { opacity: 0; } 12% { opacity: .95; }
+                      55% { opacity: .8; } 100% { opacity: 0; } }
+.st-fxJejak  { opacity: 0; animation: st-jejak 1.1s ease-out forwards; }
+@keyframes st-jejak { 0% { opacity: 0; } 20% { opacity: .55; } 100% { opacity: 0; } }
+.st-fxKilat  { transform-box: fill-box; transform-origin: center;
+               animation: st-kilat .55s ease-out forwards; }
+@keyframes st-kilat { 0% { opacity: .95; transform: scale(.2); }
+                      100% { opacity: 0; transform: scale(1.35); } }
+.st-fxCincin, .st-fxCincin2 {
+  transform-box: fill-box; transform-origin: center;
+  animation: st-cincin 1s ease-out forwards;
+}
+.st-fxCincin2 { animation-delay: .12s; }
+@keyframes st-cincin { 0% { opacity: .9; transform: scale(.3); }
+                       100% { opacity: 0; transform: scale(3.4); } }
+.st-fxPerisai { transform-box: fill-box; transform-origin: center;
+                animation: st-perisai .85s ease-out forwards; }
+@keyframes st-perisai { 0% { opacity: 0; transform: scale(.55); }
+                        25% { opacity: .95; }
+                        100% { opacity: 0; transform: scale(1.15); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .st-spr, .st-fxPhaser, .st-fxJejak, .st-fxKilat,
+  .st-fxCincin, .st-fxCincin2, .st-fxPerisai { animation: none; }
+  .st-fxPhaser { opacity: .9; }
+}
+
+/* --- glif CP437 asli, sebagai pembanding --------------------------------- */
+/* Kisinya ada di lapisan PAPAN, bukan di wadahnya — wadahnya sekarang
+   menumpuk dua lapisan, dan kisi 8 kolom di sana akan menyebarkan
+   keduanya berdampingan alih-alih bertumpuk. */
+.st-modeGlif #papan {
+  display: grid; grid-template-columns: repeat(8, 1fr);
+  padding: 6px 4px; overflow-x: auto;
+}
+.st-sel {
+  font-family: var(--font-mono);
+  font-size: clamp(11px, 2vw, 15px);
+  line-height: 1.75; text-align: center; white-space: pre;
+  color: var(--acc-phosphor);
+}
+.st-hampa   { color: color-mix(in srgb, var(--acc-phosphor) 34%, transparent); }
+.st-kapal   { color: #eaf3ff; text-shadow: 0 0 6px #7fb2ff; }
+.st-klingon { color: var(--acc-red); }
+.st-basis   { color: var(--acc-amber); }
+.st-bintang { color: #ffe9a8; }
+.st-legenda { margin-top: var(--s2); line-height: 1.9;
+              display: flex; flex-wrap: wrap; gap: 2px 10px; align-items: center; }
+.st-legIkon { width: 26px; height: 26px; vertical-align: -8px; }
+
+/* `auto-fit` + `min(100%, …)` menyusun ulang menurut lebar KOTAKNYA, bukan
+   lebar jendela — penting karena kolom kiri halaman ini bisa sempit
+   sementara jendelanya lebar, dan media query tidak bisa melihat itu. */
+.st-status { margin: 0; display: grid; min-width: 0;
+             grid-template-columns: repeat(auto-fit, minmax(min(100%, 132px), 1fr));
+             gap: var(--s2) var(--s3); }
+.st-pasang { min-width: 0; display: grid; gap: 1px; align-content: start; }
+.st-pasang--lebar { grid-column: 1 / -1; }
+.st-status dt { font-size: var(--fs-xs); color: var(--ink-dim);
+                text-transform: uppercase; letter-spacing: .05em;
+                white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.st-status dd { margin: 0; min-width: 0; }
+.st-status dd .st-kecil { display: block; }
+.st-nilai { font-size: var(--fs-sm); font-weight: 620;
+            font-variant-numeric: tabular-nums; }
+.st-salah { color: var(--acc-red); }
+
+/* --- catatan misi --------------------------------------------------------- */
+
+.st-log {
+  margin-top: var(--s4);
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.5;
+  color: var(--acc-phosphor);
+  background: #05100a; border: 1px solid var(--line); border-radius: var(--r);
+  padding: var(--s3);
+  height: clamp(180px, 30vh, 300px);
+  overflow-y: auto; overflow-x: auto; white-space: pre; min-width: 0;
+}
+.st-baris { min-height: 1.5em; }
+.st-kamu  { color: var(--acc-amber); }
+.st-judul { color: #d8f5e4; }
+.st-merah { color: var(--acc-red); }
+.st-hijau { color: #9ff5c4; }
+
+/* --- masukan -------------------------------------------------------------- */
+
+.st-masuk { display: flex; gap: var(--s2); align-items: center;
+            margin-top: var(--s3); min-width: 0; }
+.st-prompt { font-family: var(--font-mono); font-size: var(--fs-xs);
+             color: var(--acc-phosphor); white-space: nowrap;
+             max-width: 22ch; overflow: hidden; text-overflow: ellipsis; }
+.st-ketik {
+  flex: 1 1 auto; min-width: 0;
+  font-family: var(--font-mono); font-size: var(--fs-sm);
+  padding: .45rem .6rem;
+  background: var(--bg-sunken); color: var(--ink);
+  border: 1px solid var(--edge); border-radius: var(--r-sm);
+}
+.st-ketik:focus-visible { outline: 2px solid var(--acc-phosphor); outline-offset: 1px; }
+.st-ketik:disabled { opacity: .5; }
+
+.st-kunci-baris { display: flex; flex-wrap: wrap; gap: var(--s2);
+                  margin-top: var(--s3); }
+.st-kunci b { color: var(--acc-amber); font-family: var(--font-mono); }
+.st-alat { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s3);
+           align-items: center; margin-top: var(--s3); }
+.st-kecil { font-size: var(--fs-xs); color: var(--ink-dim); }
+.st-skor { margin: 0; padding-left: 1.1em; font-size: var(--fs-sm); }
+
+/* --- panel ---------------------------------------------------------------- */
+
+.st-note { font-size: var(--fs-sm); line-height: 1.65; }
+.st-good { border-left: 3px solid #46c17f; }
+.st-warn { border-left: 3px solid #e0a020; }
+.st-bad  { border-left: 3px solid #c0503f; }
+
+.st-code {
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.55;
+  white-space: pre; overflow-x: auto; min-width: 0;
+  background: var(--bg-sunken); border-radius: var(--r-sm);
+  padding: var(--s3); margin: var(--s3) 0; color: var(--ink-dim);
+}
+
+.st-tbl {
+  width: 100%; border-collapse: collapse; font-size: var(--fs-xs);
+  margin: var(--s3) 0; display: block; overflow-x: auto; min-width: 0;
+}
+.st-tbl td, .st-tbl th {
+  padding: 3px 6px; border-bottom: 1px solid var(--line);
+  text-align: left; vertical-align: top;
+}
+.st-tbl th { color: var(--ink-dim); font-weight: 600; }
+
+/* Peta nama 8x8: rapat, karena tugasnya memperlihatkan POLA merahnya —
+   satu kolom penuh dan satu baris penuh — bukan tiap namanya. */
+.st-peta { font-size: 9.5px; }
+.st-peta td, .st-peta th { padding: 2px 3px; white-space: nowrap; }
+.st-peta th { text-align: center; color: var(--ink-faint); }
+.st-salah-sel {
+  background: color-mix(in srgb, var(--acc-red) 22%, transparent);
+  color: var(--ink);
+}
+
+.st-links { margin-top: var(--s4); font-size: var(--fs-sm); }

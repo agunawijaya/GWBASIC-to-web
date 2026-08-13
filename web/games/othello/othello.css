@@ -1,0 +1,121 @@
+/* ===========================================================================
+   othello.css — khusus Othello. Awalan `o-`.
+   =========================================================================== */
+
+.o-layout {
+  display: grid; gap: var(--s5);
+  grid-template-columns: minmax(340px, 1fr) minmax(300px, 440px);
+  align-items: start; padding-block: var(--s6) var(--s8);
+}
+@media (max-width: 1000px) { .o-layout { grid-template-columns: 1fr; } }
+
+.o-stage { display: grid; gap: var(--s4); justify-items: center; }
+
+/* --- skor --- */
+.o-scores { display: flex; gap: var(--s5); align-items: center; }
+.o-score { display: flex; gap: var(--s2); align-items: center;
+           font-size: var(--fs-sm); color: var(--ink-dim); }
+.o-score b { font-family: var(--font-mono); font-size: var(--fs-xl);
+             color: var(--ink); }
+.o-score::before {
+  content: ""; width: 18px; height: 18px; border-radius: 50%;
+  border: 1px solid var(--edge-strong);
+}
+.o-score--b::before { background: #d94a4a; }   /* COLOR "RED" di baris 1360 */
+.o-score--w::before { background: #4a86d9; }   /* COLOR "BLUE" di baris 1380 */
+.o-score.is-turn b { color: var(--acc-phosphor); }
+
+/* --- papan --------------------------------------------------------------
+   Delapan kali delapan, tapi keadaannya disimpan 10x10 — satu cincin pagar
+   di sekeliling, persis `DIM A(9,9)` di aslinya. Yang digambar hanya 1..8. */
+.o-board {
+  display: grid; grid-template-columns: repeat(8, 46px);
+  grid-auto-rows: 46px; gap: 2px; padding: 6px;
+  background: var(--line); border-radius: var(--r);
+}
+@media (max-width: 460px) {
+  .o-board { grid-template-columns: repeat(8, 34px); grid-auto-rows: 34px; }
+}
+
+.o-sq {
+  background: #1f5f3f; border-radius: 2px; position: relative;
+  display: grid; place-items: center; cursor: default;
+}
+:root[data-theme="light"] .o-sq { background: #2f7f57; }
+.o-sq--win { box-shadow: inset 0 0 0 1px color-mix(in srgb, #ffffff 22%, transparent); }
+.o-sq--ok { cursor: pointer; }
+.o-sq--ok::after {
+  content: ""; width: 16px; height: 16px; border-radius: 50%;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--acc-phosphor) 42%, transparent);
+  transition: background var(--t-fast) var(--ease);
+}
+/* Hover mengubah WARNA, bukan ukuran. Aturan yang sama dengan not balok dan
+   ubin 15PUZZLE: apa pun yang mengubah geometri sebuah sasaran klik bisa
+   membuat kursor keluar darinya, lalu masuk lagi, lalu keluar lagi. */
+.o-sq--ok:hover::after {
+  background: color-mix(in srgb, var(--acc-phosphor) 85%, transparent);
+}
+
+.o-p {
+  width: 78%; height: 78%; border-radius: 50%;
+  border: 1px solid rgba(0,0,0,.4);
+  transition: background var(--t) var(--ease), transform var(--t) var(--ease);
+}
+.o-p--b { background: #d94a4a; }
+.o-p--w { background: #4a86d9; }
+.o-p--new { animation: o-drop var(--t) var(--ease); }
+@keyframes o-drop { from { transform: scale(.2); } }
+.o-p--flip { animation: o-flip var(--t-slow) var(--ease); }
+@keyframes o-flip { 50% { transform: scaleX(.06); } }
+@media (prefers-reduced-motion: reduce) {
+  .o-p--new, .o-p--flip { animation: none; }
+}
+
+.o-say {
+  font-family: var(--font-mono); font-size: var(--fs-sm);
+  color: var(--acc-phosphor); min-height: 1.6em; text-align: center;
+}
+.o-say--bad { color: var(--acc-amber); }
+
+.o-opt { display: flex; gap: 6px; align-items: center;
+         font-size: var(--fs-xs); color: var(--ink-dim); }
+
+/* --- panel kanan --------------------------------------------------------- */
+
+.o-code {
+  margin-top: var(--s3); padding: var(--s3);
+  border: var(--border); border-radius: var(--r);
+  background: var(--bg-sunken); color: var(--acc-amber);
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.7;
+  overflow-x: auto; white-space: pre-wrap;
+}
+.o-code strong { color: var(--acc-phosphor); }
+
+.o-table { width: 100%; border-collapse: collapse; margin-top: var(--s3);
+           font-size: var(--fs-xs); }
+.o-table th, .o-table td { padding: 5px var(--s2); text-align: left;
+                           border-bottom: 1px solid var(--line-soft); }
+.o-table th { color: var(--ink-dim); font-weight: 600; }
+.o-table td:nth-child(2) { text-align: center; font-family: var(--font-mono); }
+.o-table td:last-child { text-align: right; font-family: var(--font-mono);
+                         color: var(--ink-faint); }
+.o-plus { color: var(--acc-phosphor); font-weight: 700; }
+.o-minus { color: var(--acc-red); font-weight: 700; }
+
+/* Peta bobot 8x8, dibangkitkan dari kode penilaian yang sama. */
+.o-weights { display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px;
+             margin-top: var(--s3); max-width: 280px; }
+.o-w {
+  aspect-ratio: 1; display: grid; place-items: center; border-radius: 2px;
+  font-family: var(--font-mono); font-size: 10px;
+  background: var(--bg-sunken); color: var(--ink-dim);
+  border: 1px solid var(--edge-soft);
+}
+.o-w--plus { background: var(--acc-phosphor-dim); color: var(--acc-phosphor);
+             border-color: var(--acc-phosphor); }
+.o-w--minus { background: var(--acc-red-dim); color: var(--acc-red);
+              border-color: var(--acc-red); }
+
+.o-note { font-size: var(--fs-sm); color: var(--ink-dim); margin-top: var(--s2); }
+.o-warn { border-left: 3px solid var(--acc-amber); }

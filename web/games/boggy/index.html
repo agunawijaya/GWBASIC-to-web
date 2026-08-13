@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Boggy Marsh — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari BOGGY.BAS (Friendlyware, 1982): buru tiga sasaran di kisi 10x10 dengan petunjuk arah mata angin. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="boggy.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap y-layout">
+
+  <section class="stack">
+
+    <div class="screen screen--scanlines">
+      <div class="y-stage">
+        <div id="grid"></div>
+        <p class="y-say" id="say">Klik satu sel.</p>
+        <div class="m-transport">
+          <button class="btn btn--ghost" id="restart" type="button">Papan baru</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">3 monster</span>
+      <span class="ruleset__k">10 tebakan</span>
+      <span class="ruleset__k">jawabannya arah, bukan jarak</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Tebakan</span>
+        <span class="stat__value" id="sGuess">0 / 10</span></div>
+      <div class="stat"><span class="stat__label">Monster tersisa</span>
+        <span class="stat__value" id="sLeft">3</span></div>
+      <div class="stat stat--good"><span class="stat__label">Rekor</span>
+        <span class="stat__value" id="sBest">&mdash;</span></div>
+      <div class="stat"><span class="stat__label">Undian diulang</span>
+        <span class="stat__value" id="sTries">1</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <ol class="howto__steps">
+        <li>Tiga <strong>monster</strong> bersembunyi di kisi 10&times;10.
+            Anda punya <strong>sepuluh tebakan</strong>.</li>
+        <li>Tiap tebakan dijawab <strong>arah</strong> untuk ketiga monster
+            sekaligus &mdash; <em>"GO Southeast For No 2"</em> berarti monster
+            ke-2 ada di bawah-kanan tebakan Anda.</li>
+        <li>Hanya arah, bukan jarak. Satu jawaban membuang tiga perempat
+            papan.</li>
+      </ol>
+      <p>
+        Monster yang sudah mati tetap dilaporkan tiap giliran &mdash; itu
+        perilaku aslinya. Kalau sepuluh tebakan habis, program memainkan
+        "Taps".
+      </p>
+    </details>
+    <p class="y-note">
+      Klik sel, atau ketik <strong>dua angka</strong> &mdash; baris lalu kolom
+      &mdash; seperti aslinya (baris 510&ndash;570).
+    </p>
+    <div class="row">
+      <button class="btn btn--ghost btn--sm" id="resetBest" type="button">Reset rekor</button>
+    </div>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel">
+      <p class="eyebrow">Riwayat tebakan</p>
+      <div class="y-log" id="log"></div>
+    </div>
+
+    <div class="panel y-warn">
+      <p class="eyebrow">Penolakan yang tidak menolak apa-apa</p>
+<pre class="y-code">310 RANDOMIZE(VAL(RIGHT$(TIME$,2)))
+320 FOR I=1 TO 3
+330     R(I)=FIX(RND(I)*10)
+350     C(I)=FIX(RND(J)*10)
+360 NEXT
+370 IF &lt;dua sasaran bertumpuk&gt; THEN 310</pre>
+      <p class="y-note">
+        Baris 370 menolak undian yang menaruh dua sasaran di sel yang sama,
+        lalu mengulang dari baris <strong>310</strong> &mdash; yang
+        <strong>menyemai ulang dari detik jam yang sama</strong>.
+      </p>
+      <p class="y-note">
+        Benih yang sama menghasilkan undian yang sama, yang ditolak lagi, yang
+        mengulang lagi. Program berputar sampai <strong>detik pada jam
+        berganti</strong>.
+      </p>
+      <p class="y-note">
+        Ia tidak menggantung selamanya &mdash; tapi bisa membakar prosesor
+        sampai satu detik penuh, dan yang lebih penting: penolakannya
+        <strong>tidak bekerja</strong>. Ia tidak mengambil undian baru; ia
+        mengambil undian yang sama berulang kali sampai waktunya berubah.
+      </p>
+      <p class="y-note">
+        Perbaikannya satu baris: pindahkan <code>RANDOMIZE</code> ke
+        <em>atas</em> baris 310, supaya pengulangan hanya mengulang
+        pengundiannya.
+      </p>
+      <p class="y-note">
+        Ini kemunculan <strong>kelima</strong>
+        <code>RANDOMIZE VAL(RIGHT$(TIME$,2))</code> di koleksi ini &mdash; dan
+        bentuk salahnya berbeda di tiap program:
+      </p>
+      <table class="y-table">
+        <tbody>
+          <tr><td>MASTER</td><td>di dalam perulangan angka rahasia</td></tr>
+          <tr><td>MAZE</td><td>dua kali dari keluarannya sendiri</td></tr>
+          <tr><td>MAXIT1</td><td>dua kali dari sumber yang sama</td></tr>
+          <tr><td>WILDCAT</td><td>dari keluarannya sendiri</td></tr>
+          <tr><td><strong>BOGGY</strong></td><td><strong>di dalam gelung penolakan</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Arah, bukan jarak</p>
+<pre class="y-code">660 IF ROW=R(I) AND COL&lt;C(I) THEN PRINT"East For No" I
+700 IF ROW&lt;R(I) AND COL&lt;C(I) THEN PRINT"Southeast For No" I</pre>
+      <p class="y-note">
+        Delapan baris <code>IF</code>, satu per arah mata angin. Tidak ada
+        jarak, tidak ada "panas atau dingin" &mdash; hanya arah.
+      </p>
+      <p class="y-note">
+        Itu rancangan yang bagus. Arah memotong ruang pencarian jauh lebih
+        cepat daripada kedekatan: satu jawaban "Southeast" langsung membuang
+        tiga perempat papan. Dan karena ada <strong>tiga</strong> sasaran, tiap
+        tebakan membawa tiga potong informasi sekaligus.
+      </p>
+      <p class="y-note">
+        Di port ini kedelapan <code>IF</code> itu jadi dua sumbu
+        (utara/selatan dan timur/barat) yang disambung. Hasilnya sama, tapi
+        tidak ada cabang yang bisa terlewat &mdash; dan menambah arah baru
+        tidak menuntut baris baru.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Petunjuk aslinya, baris 210&ndash;260</p>
+      <p class="y-note">
+        Program 1982 ini menawarkan layar petunjuk sebelum bermain. Teksnya
+        dipertahankan apa adanya &mdash; termasuk salah ketik
+        <strong>"beleive"</strong> di baris 250:
+      </p>
+<pre class="y-code">Welcome to  Boggy  Marsh.  In this simple adventure you
+will be trying to locate the  monsters of  Boggy  Marsh.
+For this task you will be given  10  guesses. To locate
+the monster simply key in the  row and column of square
+you beleive him to be in. After each guess, I will tell
+you in which  direction you need to go to find each one.</pre>
+      <p class="y-note">
+        Dari sinilah nama <em>monster</em> berasal. Tanpa layar ini, tiga
+        angka di kisi 10&times;10 tidak menjelaskan apa pun tentang rawa
+        maupun makhluk yang tinggal di dalamnya.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/boggy.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/BOGGY.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/BOGGY.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="boggy.js"></script>
+</body>
+</html>

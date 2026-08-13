@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Biorhythm — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari BIO.BAS (Friendlyware, 1982): grafik biorhythm tiga siklus, digambar dengan bedah string di layar teks 80 kolom. Dua cacat, dan yang satu menyembunyikan yang lain. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="../history/history.css">
+<link rel="stylesheet" href="bio.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap h-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="h-stage">
+
+        <div class="b-form">
+          <label>Tanggal lahir
+            <input type="date" id="lahir" value="1962-11-30"></label>
+          <label>Mulai grafik
+            <input type="date" id="mulai" value="1983-01-01"></label>
+          <button class="btn btn--primary" id="buat" type="button">Buat grafik</button>
+        </div>
+        <p class="b-galat" id="galat" role="alert"></p>
+
+        <div id="grafik"></div>
+        <div id="layar" hidden></div>
+
+        <div class="b-row">
+          <button class="btn btn--ghost" id="lanjut" type="button">Lanjut 21 hari →</button>
+          <button class="btn btn--ghost btn--sm" id="mode" type="button"
+                  aria-pressed="false">Tampilan 1982</button>
+          <span class="mono b-info" id="info"></span>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">169 baris</span>
+      <span class="ruleset__k">siklus 23 · 28 · 33</span>
+      <span class="ruleset__k">21 hari per layar</span>
+      <span class="ruleset__k">72 kolom grafik</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Usia (hari)</span>
+        <span class="stat__value mono" id="s-hari">—</span></div>
+      <div class="stat"><span class="stat__label">Fisik</span>
+        <span class="stat__value mono" id="s-p">—</span></div>
+      <div class="stat"><span class="stat__label">Emosi</span>
+        <span class="stat__value mono" id="s-e">—</span></div>
+      <div class="stat"><span class="stat__label">Intelektual</span>
+        <span class="stat__value mono" id="s-i">—</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara memakai</summary>
+      <p class="b-lead">
+        Kalkulator <strong>biorhythm</strong>: teori abad ke-19 yang menyatakan
+        manusia dikendalikan tiga siklus tetap sejak lahir &mdash; fisik 23
+        hari, emosi 28 hari, intelektual 33 hari.
+        <strong>Teorinya tidak punya dasar ilmiah.</strong> Yang menarik di
+        sini bukan teorinya, melainkan bagaimana grafiknya digambar tanpa satu
+        perintah grafis pun.
+      </p>
+      <ol class="howto__steps">
+        <li>Isi tanggal lahir dan tanggal mulai, lalu <strong>Buat
+            grafik</strong>. Tanggal mulai tidak boleh mendahului tanggal
+            lahir &mdash; aslinya juga menolak, dengan kata-kata yang sama.</li>
+        <li><strong>Lanjut 21 hari</strong> menambah satu layar penuh. Aslinya
+            tombol spasi; jumlah layarnya tidak terbatas.</li>
+        <li>Ketiga kurva: <span class="b-kunci b-kunci--p">Fisik 23 hari</span>
+            <span class="b-kunci b-kunci--e">Emosi 28</span>
+            <span class="b-kunci b-kunci--i">Intelektual 33</span>.
+            Garis nol di tengah adalah <strong>hari kritis</strong> &mdash;
+            saat sebuah siklus berpindah tanda.</li>
+        <li><strong>Tampilan 1982</strong> menukarnya dengan keluaran teks
+            aslinya: huruf <code>P</code> <code>E</code> <code>I</code> di layar
+            72 kolom, <code>&amp;</code> saat dua siklus berimpit di kolom yang
+            sama, dan <code>▐</code> sebagai garis kritis. Grafik di atas
+            adalah tambahan; yang itu yang benar-benar keluar tahun 1982.</li>
+      </ol>
+      <p>
+        Aslinya tahun diketik <strong>dua digit</strong> dan selalu ditambah
+        1900 (baris 470), jadi ia tidak pernah bisa menggambar tanggal di luar
+        1900&ndash;1999. Di sini tahun diketik penuh &mdash; dan panel di
+        sebelah menjelaskan kenapa perubahan kecil itu justru
+        <em>membangunkan</em> cacat lain.
+      </p>
+    </details>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel h-warn">
+      <p class="eyebrow">Dua cacat, dan yang satu menyembunyikan yang lain</p>
+      <p class="h-note">
+        <strong>Cacat pertama, baris 470.</strong> Tahun selalu ditambah 1900,
+        tanpa syarat:
+      </p>
+<pre class="h-code">460 GOSUB 1340          ' baca m-d-y
+470 <b>YEAR=YEAR+1900</b>
+480 RETURN</pre>
+      <p class="h-note">
+        Jadi tahun yang bisa dicapai persis <strong>1900&ndash;1999</strong>.
+        Ketik <code>26</code> dan Anda mendapat 1926, bukan 2026. Program ini
+        <strong>tidak bisa menggambar hari ini</strong>.
+      </p>
+      <p class="h-note">
+        <strong>Cacat kedua, baris 530.</strong> Rumus Julian Day-nya menukar
+        urutan kali dan bagi:
+      </p>
+<pre class="h-code">BASIC : INT( INT(<b>3*</b>(Y+4900+W) <b>/100</b>) / 4 )   ← kali 3 dulu
+baku  : ( 3 * ((Y+4900+L) <b>/100</b>) ) / 4        ← bagi 100 dulu</pre>
+      <p class="h-note">
+        Keduanya sama hasilnya untuk sebagian besar tahun, dan berbeda untuk
+        sebagian yang lain. Diukur:
+      </p>
+      <table class="h-tbl" id="tbl-jdn"></table>
+      <p class="h-note">
+        <strong>Dan di sinilah menariknya.</strong> Kegagalan pertama jatuh
+        pada <code>1 Maret 2034</code> &mdash; jauh di luar jangkauan yang
+        <em>bisa dicapai</em> karena baris 470. Di dalam 1900&ndash;1999
+        hasilnya <strong>nol kesalahan</strong>.
+      </p>
+      <p class="h-note">
+        Jadi cacat Y2K menjaga cacat kalender tetap tertidur selama lima puluh
+        dua tahun. Memperbaiki yang satu <em>membangunkan</em> yang lain.
+      </p>
+      <p class="h-note">
+        Port ini memperbaiki keduanya, dan menunjukkan angkanya. Tapi urutannya
+        penting: tanpa memeriksa yang kedua, "sekarang tahunnya empat digit"
+        akan jadi perbaikan yang diam-diam merusak tahun 2034 ke atas.
+      </p>
+    </div>
+
+    <div class="panel h-good">
+      <p class="eyebrow">Selisih hari tetap benar &mdash; dan itu yang dipakai</p>
+      <p class="h-note">
+        Rumus maju di baris 490&ndash;550 <strong>tidak sama</strong> dengan
+        Julian Day baku: selisihnya berkisar 0 sampai &minus;3 tergantung
+        tahunnya. Tapi program tidak pernah memakai nilai mutlaknya.
+      </p>
+<pre class="h-code">300 N=JC-JB      ' hanya SELISIH-nya yang dipakai</pre>
+      <p class="h-note">
+        Diperiksa untuk seluruh 1963&ndash;2000 terhadap kalender sungguhan:
+        <strong>nol selisih hari yang salah</strong>. Sebuah offset yang sama
+        di kedua sisi pengurangan lenyap begitu saja.
+      </p>
+      <p class="h-note">
+        Rumusnya sendiri adalah Fliegel &amp; Van Flandern, diterbitkan di
+        <em>Communications of the ACM</em> 1968 &mdash; algoritma yang cukup
+        terkenal untuk disalin, dan cukup padat untuk salah disalin.
+      </p>
+    </div>
+
+    <div class="panel h-good">
+      <p class="eyebrow">Grafik tanpa satu perintah grafis pun</p>
+      <p class="h-note">
+        Tiap baris grafik adalah <strong>satu string 72 aksara</strong> yang
+        dibedah dengan <code>LEFT$</code>, <code>MID$</code>, dan
+        <code>RIGHT$</code>:
+      </p>
+<pre class="h-code">680 E=SPACE$(72)
+690 E=LEFT$(E,T)+CHR$(222)+RIGHT$(E,T)      ' T=35 → 71 aksara
+740 W=T*SIN(W):W=W+T<b>+1.5</b>
+750 W=INT(W)
+790 E=LEFT$(E,W-1)+C+RIGHT$(E,T+T+1-W)</pre>
+      <p class="h-note">
+        Baris 740 menggabungkan <strong>tiga koreksi</strong> dalam satu
+        konstanta: <code>T</code> memusatkan gelombang, <code>+1</code> karena
+        indeks string BASIC mulai dari 1, dan <code>+0.5</code> karena
+        <code>INT</code> memotong ke bawah &mdash; jadi
+        <code>INT(x+0.5)</code> adalah pembulatan ke terdekat.
+      </p>
+      <p class="h-note">
+        Sepupunya di koleksi ini: <code>+0.005000001</code> di
+        <a href="../../docs/mortgage.md">MORTGAGE</a>, yang juga menggabungkan
+        pembulatan dan penjaga pecahan biner dalam satu angka tanpa komentar.
+      </p>
+      <table class="h-tbl">
+        <tbody>
+          <tr><td>Panjang setelah <code>SPACE$(72)</code></td><td>72</td></tr>
+          <tr><td>Setelah baris 690</td><td class="h-bad">71</td></tr>
+          <tr><td>Setelah <code>E=" "+E</code> (baris 350)</td><td>72</td></tr>
+          <tr><td>8 kolom tanggal + 72</td><td><b>80</b></td></tr>
+        </tbody>
+      </table>
+      <p class="h-note">
+        Baris 690 <strong>memendekkan</strong> penyangganya satu aksara
+        &mdash; 35 + 1 + 35 = 71, bukan 72. Baris 350 mengembalikannya dengan
+        menyisipkan satu spasi di depan. Dua baris yang berjauhan, saling
+        bergantung, tanpa satu pun menyebut yang lain.
+      </p>
+    </div>
+
+    <div class="panel h-warn">
+      <p class="eyebrow">Nol yang ternyata spasi</p>
+<pre class="h-code">940 Z=STR$(DAY):W=LEN(Z)-1
+950 IF DAY&lt;10 THEN Z=<b>"0"</b>+Z:W=W+1
+960 C=C+MID$(Z,2,W)+"/"</pre>
+      <p class="h-note">
+        Maksudnya jelas: beri nol di depan untuk tanggal satu digit.
+        Hasilnya bukan itu.
+      </p>
+      <p class="h-note">
+        <code>STR$</code> di BASIC selalu menyisipkan <strong>spasi
+        tanda</strong> di depan angka positif, jadi <code>STR$(5)</code>
+        adalah <code>" 5"</code>. Menambah <code>"0"</code> menghasilkan
+        <code>"0 5"</code>, lalu <code>MID$(Z,2,2)</code> mengambil aksara
+        kedua dan ketiga: <code>" 5"</code>. <strong>Spasi, bukan nol.</strong>
+      </p>
+      <p class="h-note">
+        Tapi kolomnya tetap rapi &mdash; karena yang sebenarnya dikerjakan
+        <code>"0"</code> itu adalah menaikkan <code>W</code> jadi 2, sehingga
+        lebar bidangnya tetap dua aksara. <strong>Efek sampingnya yang
+        bekerja; maksudnya tidak.</strong>
+      </p>
+      <p class="h-note">
+        Dipertahankan di port, termasuk spasinya. Lihat kolom tanggal di
+        layar: <code>&nbsp;3/&nbsp;5/85</code>, bukan <code>03/05/85</code>.
+      </p>
+    </div>
+
+    <div class="panel h-warn">
+      <p class="eyebrow">Urutan pemanggilan yang wajib, dan tidak tertulis</p>
+<pre class="h-code">310 V=23:GOSUB 660
+320 V=28:GOSUB 660
+330 V=33:GOSUB 660
+   …
+670 IF V&lt;&gt;23 THEN 710      ' lewati pembuatan E</pre>
+      <p class="h-note">
+        Penyangga baris <code>E</code> hanya dibuat ulang saat
+        <code>V=23</code>. Dua panggilan berikutnya menulis ke penyangga yang
+        <strong>sama</strong> &mdash; itulah cara tiga kurva muat di satu
+        baris.
+      </p>
+      <p class="h-note">
+        Akibatnya: <strong>23 wajib dipanggil lebih dulu</strong>. Menukar
+        urutan tiga baris di atas membuat baris pertama memakai sisa baris
+        sebelumnya, dan tidak ada apa pun di baris 660&ndash;800 yang
+        menyatakan syarat itu.
+      </p>
+      <p class="h-note">
+        Baris 760 melengkapinya: kalau kolom tujuan sudah berisi
+        <code>P</code>, <code>E</code>, atau <code>&amp;</code>, yang ditulis
+        jadi <code>&amp;</code>. Penanda tabrakan dalam satu baris
+        <code>IF</code>, tanpa struktur data apa pun.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Halaman 31 yang tidak ada</p>
+<pre class="h-code">1310 …PRINT"Theory, see page  31  in your manual.</pre>
+      <p class="h-note">
+        Sama seperti <a href="../anatomy/index.html">ANATOMY</a>, separuh
+        program ini menunjuk ke manual cetak yang tidak ada dalam koleksi.
+        Ini kali <strong>kedua</strong>.
+      </p>
+      <p class="h-note">
+        Dan seperti di sana, penggantinya ditulis sekarang, bukan 1982 &mdash;
+        panel-panel di halaman ini, dan
+        <a href="../../docs/bio.md">dokumennya</a>.
+      </p>
+      <p class="h-note">
+        Dua salah ketik pada nama programnya sendiri, keduanya di subrutin
+        petunjuk: baris 1130 dan 1180 menulis
+        <code class="h-bad">B I O R T H Y M</code>, sedangkan layar utama
+        (baris 180) menulis <code>B I O R H Y T H M</code> dengan benar.
+        Dipertahankan apa adanya.
+      </p>
+      <p class="h-note">
+        Baris 480 <code>RETURN</code> melayani dua peran: ekor rutin masukan
+        <em>dan</em> penangan kosong untuk <kbd>F2</kbd>&ndash;<kbd>F9</kbd>
+        &mdash; idiom yang sama persis dengan
+        <a href="../heareye/index.html">HEAREYE</a> baris 1180, dan alasannya
+        juga sama.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/bio.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/BIO.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/BIO.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="bio.js"></script>
+</body>
+</html>

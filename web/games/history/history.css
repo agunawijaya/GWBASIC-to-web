@@ -1,0 +1,98 @@
+/* ===========================================================================
+   history.css — rupa lokal HISTORY. Yang umum ada di reader.css.
+
+   Layarnya kisi 80x25 dengan warna PER SEL, bukan teks yang mengalir. Itu
+   syarat, bukan gaya: halaman 2, 3 dan 10 menimpa halaman sebelumnya, dan
+   satu-satunya cara menampilkan hasilnya dengan benar adalah memodelkan
+   selnya satu per satu — persis seperti memori layar CGA.
+   =========================================================================== */
+
+.h-layout { display: grid; gap: var(--s5); align-items: start; }
+/* Sama dengan ANATOMY, dan alasannya sama: 80 kolom pada 11px huruf monospace
+   butuh sekitar 530px, jadi kolom permainannya harus lebih lebar dari itu. */
+@media (min-width: 1000px) { .h-layout { grid-template-columns: minmax(0,1.5fr) minmax(0,1fr); } }
+
+.h-stage { display: grid; gap: var(--s4); }
+.h-lead { font-size: var(--fs-sm); }
+.h-lead strong { color: var(--ink); }
+
+/* --- layar 80x25 --------------------------------------------------------- */
+
+.h-crt {
+  container-type: inline-size;
+  background: #000; padding: var(--s3);
+  border: 1px solid var(--line); border-radius: var(--r);
+  overflow-x: auto;
+}
+
+.h-scr {
+  font-family: var(--font-mono);
+  font-size: clamp(11px, 1.92cqi, 15px);
+  line-height: 1.22;
+  width: 80ch;
+  white-space: pre;
+  color: #00aaaa;                  /* COLOR 3 — cyan CGA, warna bawaan program */
+}
+.h-scr__row { display: block; height: 1.22em; }
+
+/* Palet CGA 16 warna, apa adanya. Tidak diselaraskan dengan tema halaman:
+   sebuah layar CGA yang "disesuaikan" berhenti jadi bukti tentang layar CGA. */
+.c0  { color: #000000; } .c1  { color: #0000aa; } .c2  { color: #00aa00; }
+.c3  { color: #00aaaa; } .c4  { color: #aa0000; } .c5  { color: #aa00aa; }
+.c6  { color: #aa5500; } .c7  { color: #aaaaaa; } .c8  { color: #555555; }
+.c9  { color: #5555ff; } .c10 { color: #55ff55; } .c11 { color: #55ffff; }
+.c12 { color: #ff5555; } .c13 { color: #ff55ff; } .c14 { color: #ffff55; }
+.c15 { color: #ffffff; }
+.b0 { background: #000000; } .b1 { background: #0000aa; } .b2 { background: #00aa00; }
+.b3 { background: #00aaaa; } .b4 { background: #aa0000; } .b5 { background: #aa00aa; }
+.b6 { background: #aa5500; } .b7 { background: #aaaaaa; }
+
+/* --- kepala halaman ------------------------------------------------------ */
+
+.h-kepala { display: flex; align-items: baseline; gap: var(--s3); flex-wrap: wrap; }
+.h-kepala h2 { font-size: var(--fs-md); font-weight: 620; color: var(--ink); }
+.h-kepala .mono { font-size: var(--fs-xs); color: var(--ink-faint); }
+.h-bab {
+  padding: 1px 8px; border-radius: var(--r-pill);
+  font-size: 10px; letter-spacing: .06em; text-transform: uppercase;
+  background: var(--panel-2); color: var(--ink-dim); border: 1px solid var(--line);
+}
+
+/* Pasak rel diwarnai menurut BAB, jadi struktur enam belas halaman itu
+   terlihat sebelum dibaca. Aslinya struktur ini hanya ada sebagai komentar
+   `'****** CPU ******` yang tidak pernah sampai ke layar. */
+.rdr__pin--bab1 { border-color: color-mix(in srgb, var(--acc-blue) 55%, var(--line)); }
+.rdr__pin--bab2 { border-color: color-mix(in srgb, var(--acc-amber) 55%, var(--line)); }
+.rdr__pin--bab3 { border-color: color-mix(in srgb, var(--acc-violet) 55%, var(--line)); }
+.rdr__pin--timpa { border-style: dashed; }
+
+/* --- panel kanan --------------------------------------------------------- */
+
+.h-note { font-size: var(--fs-sm); color: var(--ink-dim); line-height: var(--lh); }
+.h-note + .h-note { margin-top: var(--s3); }
+.h-note strong { color: var(--ink); font-weight: 620; }
+.h-note code { font-family: var(--font-mono); font-size: .92em; color: var(--acc-blue); }
+
+.h-code {
+  font-family: var(--font-mono); font-size: var(--fs-xs);
+  background: var(--bg-sunken); border: 1px solid var(--line-soft);
+  border-radius: var(--r-sm); padding: var(--s3);
+  overflow-x: auto; color: var(--ink-dim); margin: var(--s3) 0; line-height: 1.6;
+}
+.h-code b { color: var(--acc-amber); font-weight: 700; }
+
+.h-tbl { width: 100%; border-collapse: collapse; margin: var(--s3) 0;
+         font-size: var(--fs-sm); }
+.h-tbl th { text-align: left; color: var(--ink-faint); font-weight: 600;
+            font-size: var(--fs-xs); text-transform: uppercase;
+            letter-spacing: .06em; padding: var(--s2) var(--s2) var(--s1); }
+.h-tbl td { padding: var(--s2); border-top: 1px solid var(--line-soft);
+            color: var(--ink-dim); vertical-align: top; }
+.h-tbl td:last-child { text-align: right; font-family: var(--font-mono); }
+.h-tbl--kiri td:last-child { text-align: left; font-family: inherit; }
+
+.h-good { border-left: 3px solid var(--acc-phosphor); }
+.h-warn { border-left: 3px solid var(--acc-amber); }
+.h-bad  { color: var(--acc-red); }
+
+.m-links { font-size: var(--fs-xs); }

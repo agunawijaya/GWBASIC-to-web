@@ -1,0 +1,68 @@
+/* ===========================================================================
+   stats.css — STATS.BAS
+   Warna di kolom daur MEMBAWA ARTI (nol = hari kritis), jadi latar tabelnya
+   tidak ikut tema halaman.
+   =========================================================================== */
+.s-layout { display: grid; gap: var(--s5); align-items: start; }
+@media (min-width: 1000px) {
+  .s-layout { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+}
+@media (min-width: 1400px) { .s-layout { max-width: 1380px; } }
+
+.s-stage { display: grid; gap: var(--s3); }
+.s-crt { background: #0a0f16; border: 1px solid var(--line); border-radius: 16px;
+         padding: var(--s3); overflow: hidden; }
+.s-svg { display: block; width: 100%; height: auto; }
+.s-latar { fill: #0a0f16; }
+.s-grid { stroke: rgba(255,255,255,.13); stroke-width: 1; }
+.s-sumbu { fill: #8fa0b3; font: 700 10px var(--font-mono); }
+.s-kurva { fill: none; stroke-width: 2.4; }
+.s-kurva--0 { stroke: #4fa3ff; fill: none; }
+.s-kurva--1 { stroke: #ff8a5c; fill: none; }
+.s-kurva--2 { stroke: #7dffb0; fill: none; }
+.s-titik { stroke: #ffffff; stroke-width: 1.6; }
+circle.s-kurva--0 { fill: #4fa3ff; }
+circle.s-kurva--1 { fill: #ff8a5c; }
+circle.s-kurva--2 { fill: #7dffb0; }
+.s-nilai { fill: #ffffff; font: 700 11px var(--font-mono); text-anchor: middle; }
+.s-legenda { font: 700 11px var(--font-mono); }
+text.s-kurva--0 { fill: #4fa3ff; stroke: none; }
+text.s-kurva--1 { fill: #ff8a5c; stroke: none; }
+text.s-kurva--2 { fill: #7dffb0; stroke: none; }
+
+.s-panel { padding: var(--s3); border: 1px solid var(--line);
+           border-radius: var(--r-sm); background: var(--bg-raised); }
+.s-wrap { max-height: 420px; overflow: auto; background: #0a0f16;
+          border: 1px solid #1d2836; border-radius: var(--r-sm); }
+.s-tbl2 { width: 100%; border-collapse: collapse; font-family: var(--font-mono);
+          font-size: var(--fs-xs); color: #c6d3e0; }
+.s-tbl2 th, .s-tbl2 td { padding: 3px 6px; border-bottom: 1px solid #1d2836;
+                         text-align: right; white-space: nowrap; }
+.s-tbl2 th { position: sticky; top: 0; background: #101a26; color: #93a3b5; }
+.s-tbl2 td:first-child, .s-tbl2 th:first-child { text-align: left; }
+.s-tbl2 tr.s-pisah td { border-top: 2px solid #3a4c60; }
+.s-krit { color: #ff6b5d; font-weight: 700; }
+.s-kecil { font-size: .85em; color: #7d8b9b; }
+.s-tgl { font-family: var(--font-mono); font-size: var(--fs-xs); padding: 1px 3px;
+         border: 1px solid #24344a; border-radius: 4px;
+         background: #0d1520; color: #dbe6f2; }
+.s-row--kecil { font-size: var(--fs-sm); color: var(--fg-dim);
+                display: flex; flex-wrap: wrap; gap: var(--s3); align-items: center; }
+.s-row--kecil label { display: flex; align-items: center; gap: var(--s2); }
+.s-angka { font-family: var(--font-mono); padding: 4px 6px; width: 9ch;
+           border: 1px solid var(--line); border-radius: var(--r-sm);
+           background: var(--bg-sunken); color: var(--fg); }
+select.s-angka, input[type=date].s-angka { width: auto; }
+.s-note { font-size: var(--fs-sm); line-height: 1.6; }
+.s-bad2 { border-left: 3px solid #c0503f; }
+.s-warn { border-left: 3px solid #e0a020; }
+.s-good { border-left: 3px solid #46c17f; }
+.s-code { font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.55;
+          background: var(--bg-sunken); border-radius: var(--r-sm);
+          padding: var(--s3); overflow-x: auto; white-space: pre; }
+.s-tbl { width: 100%; border-collapse: collapse; font-size: var(--fs-xs);
+         margin: var(--s3) 0; }
+.s-tbl td, .s-tbl th { padding: 4px 6px; border-bottom: 1px solid var(--line);
+                       text-align: right; }
+.s-tbl td:first-child, .s-tbl th:first-child { text-align: left; }
+.s-links { margin-top: var(--s4); }

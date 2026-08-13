@@ -1,0 +1,99 @@
+/* ===========================================================================
+   blackjack.css — meja blackjack, dipakai empat port sekaligus.
+   Pasangan `blackjack.js`. Awalan `bj-`.
+
+   Sama alasannya dengan mesinnya: keempat program memainkan permainan yang
+   sama, jadi mejanya sama. Yang berbeda hanya aturannya — dan aturan tidak
+   punya bentuk visual.
+   =========================================================================== */
+
+/* Sederet kartu di tangan. Ini pasangan `.fan` (yang menurun untuk
+   solitaire): `.hand` mendatar, dengan tumpang tindih tipis supaya sudut
+   indeks tiap kartu tetap terbaca. */
+.hand { display: flex; }
+.hand > .card + .card { margin-left: -22px; }
+.hand > .card { box-shadow: var(--shadow-2); }
+
+.bj-layout {
+  display: grid; gap: var(--s5);
+  grid-template-columns: minmax(460px, 1fr) minmax(300px, 400px);
+  align-items: start; padding-block: var(--s6) var(--s8);
+}
+@media (max-width: 1040px) { .bj-layout { grid-template-columns: 1fr; } }
+
+/* Meja hijau — permukaan yang berganti tema; kartunya tidak. Alasannya di
+   cards.css. */
+.bj-layout .screen {
+  background:
+    radial-gradient(120% 90% at 50% 0%,
+      color-mix(in srgb, var(--acc-phosphor) 13%, var(--bg-sunken)) 0%,
+      var(--bg-sunken) 72%);
+}
+
+.bj-meja { display: grid; gap: var(--s5); justify-items: center; }
+
+.bj-sisi { display: grid; gap: var(--s2); justify-items: center; }
+.bj-sisi__label {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--ink-faint);
+}
+.bj-sisi__nilai {
+  font-family: var(--font-mono); font-size: var(--fs-lg); color: var(--ink);
+  font-variant-numeric: tabular-nums; min-height: 1.3em;
+}
+
+/* Tiap tangan pemain punya kotaknya sendiri, karena split membuat mereka
+   berdiri berdampingan dan salah satunya harus terlihat sedang giliran. */
+.bj-seat {
+  display: grid; gap: var(--s2); justify-items: center;
+  padding: var(--s3); border-radius: var(--r);
+  border: 1px solid transparent;
+}
+.bj-seat.is-aktif {
+  border-color: var(--acc-phosphor);
+  background: color-mix(in srgb, var(--acc-phosphor) 8%, transparent);
+}
+.bj-seat__v {
+  font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--ink-dim);
+  font-variant-numeric: tabular-nums;
+}
+#bjPemain { display: flex; gap: var(--s4); flex-wrap: wrap; justify-content: center; }
+
+.bj-pesan {
+  font-family: var(--font-mono); font-size: var(--fs-sm);
+  color: var(--acc-phosphor); min-height: 2.6em; text-align: center;
+  max-width: 46ch; line-height: var(--lh);
+}
+.bj-pesan--bad   { color: var(--acc-red); }
+.bj-pesan--besar { color: var(--acc-amber); font-size: var(--fs-md); }
+
+.bj-aksi { display: flex; gap: var(--s3); flex-wrap: wrap; justify-content: center; }
+
+/* Taruhan: satu angka besar dengan dua tombol di sisinya. Angkanya monospasi
+   dan lebarnya tetap, supaya tombol tidak bergeser saat nilainya berubah. */
+.bj-taruh { display: flex; align-items: center; gap: var(--s3); }
+.bj-taruh__n {
+  font-family: var(--font-mono); font-size: var(--fs-xl); color: var(--acc-amber);
+  font-variant-numeric: tabular-nums; min-width: 5.5ch; text-align: center;
+}
+
+.bj-code {
+  margin-top: var(--s3); padding: var(--s3);
+  border: var(--border); border-radius: var(--r);
+  background: var(--bg-sunken); color: var(--acc-amber);
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.7;
+  overflow-x: auto; white-space: pre-wrap;
+}
+.bj-note { font-size: var(--fs-sm); color: var(--ink-dim); margin-top: var(--s2);
+           line-height: var(--lh); }
+.bj-warn { border-left: 3px solid var(--acc-amber); }
+
+.bj-table { width: 100%; border-collapse: collapse; margin-top: var(--s3);
+            font-size: var(--fs-xs); }
+.bj-table td, .bj-table th { padding: 4px var(--s2);
+            border-bottom: 1px solid var(--line-soft); color: var(--ink-dim);
+            text-align: left; }
+.bj-table th { color: var(--ink-faint); font-weight: 600;
+            text-transform: uppercase; letter-spacing: .06em; }
+.bj-table td:first-child { font-family: var(--font-mono); color: var(--acc-amber); }
+.bj-table .is-aneh { color: var(--acc-red); font-weight: 700; }

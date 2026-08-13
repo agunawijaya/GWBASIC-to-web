@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Peg Leap — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari PEGLEAP.BAS (1982): peg solitaire dengan kursor panah, dan kisi selebar sembilan yang diam-diam berfungsi sebagai pagar. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="pegleap.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap g-layout">
+
+  <section class="stack">
+    <div class="screen screen--scanlines">
+      <div class="g-stage">
+        <div id="board"></div>
+        <p class="g-say" id="say">Gerakkan kursor dengan panah, Enter untuk memilih.</p>
+        <div class="m-transport">
+          <button class="btn btn--ghost" id="undo" type="button" disabled>Mundur</button>
+          <button class="btn btn--ghost" id="restart" type="button">Mulai ulang</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">lompati satu pasak</span>
+      <span class="ruleset__k">mendarat di lubang kosong</span>
+      <span class="ruleset__k">yang dilompati diambil</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Pasak tersisa</span>
+        <span class="stat__value" id="sPegs">32</span></div>
+      <div class="stat"><span class="stat__label">Lompatan</span>
+        <span class="stat__value" id="sMoves">0</span></div>
+      <div class="stat stat--good"><span class="stat__label">Rekor tersisa</span>
+        <span class="stat__value" id="sBest">—</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <ol class="howto__steps">
+        <li>Papan dimulai <strong>penuh kecuali lubang tengah</strong>.
+            Sasarannya menyisakan <strong>sesedikit mungkin</strong> pasak.
+            Sisa satu pasak dijawab aslinya dengan <em>&ldquo;A Perfect
+            Score!&rdquo;</em> &mdash; dan kalau pasak terakhir itu berhenti
+            <strong>tepat di lubang tengah</strong>, ia menambahkan
+            <em>&ldquo;In The Center! You&rsquo;re A Genius!&rdquo;</em>
+            (baris 1360&ndash;1370).</li>
+        <li>Satu pasak <strong>melompati pasak di sebelahnya</strong>, mendatar
+            atau menegak, lalu mendarat di lubang kosong tepat di baliknya.
+            <strong>Tidak ada lompatan diagonal</strong>, dan tidak ada
+            lompatan sejauh dua pasak.</li>
+        <li>Pasak yang <strong>dilompati diangkat</strong> dari papan. Jadi
+            tiap lompatan mengurangi satu pasak &mdash; 32 lompatan berturut
+            adalah permainan sempurna.</li>
+        <li>Klik pasaknya, lalu klik lubang tujuan yang <strong>menyala
+            biru</strong>. Pasak tanpa lompatan akan menolak dipilih.</li>
+        <li>Permainan berhenti saat <strong>tidak ada lompatan tersisa</strong>
+            &mdash; bukan saat pasaknya habis. Sisa terkecil yang pernah Anda
+            capai disimpan sebagai rekor.</li>
+      </ol>
+      <p>
+        <kbd>&larr;</kbd> <kbd>&uarr;</kbd> <kbd>&rarr;</kbd> <kbd>&darr;</kbd>
+        menggerakkan kursor, <kbd>Enter</kbd> memilih pasak lalu tujuannya
+        &mdash; persis model masukan aslinya (<code>ON KEY(11..14)</code>).
+        <kbd>Z</kbd> membatalkan satu lompatan.
+      </p>
+    </details>
+    <div class="row">
+      <button class="btn btn--ghost btn--sm" id="resetBest" type="button">Reset rekor</button>
+    </div>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel">
+      <p class="eyebrow">Larik <code>B(70)</code>, apa adanya</p>
+      <p class="g-note">
+        Papan disimpan sebagai satu larik lurus selebar <strong>sembilan</strong>.
+        Kotak gelap adalah sel yang <strong>tidak pernah jadi lubang</strong> —
+        nilainya nol seumur hidup program.
+      </p>
+      <div id="grid"></div>
+      <p class="g-note">
+        Perhatikan <strong>kolom 0 dan 1</strong>: kosong di setiap baris.
+        Salibnya hanya butuh tujuh kolom, tapi lariknya sembilan. Papan main di
+        sebelah menggambar tujuh kolom itu saja &mdash; dua kolom sisanya hanya
+        terlihat di sini, karena hanya di sini nilai nolnya bisa ditunjukkan.
+      </p>
+    </div>
+
+    <div class="panel g-good">
+      <p class="eyebrow">Dua kolom yang tidak terpakai itu ternyata pagar</p>
+      <p class="g-note">
+        Aturan lompatnya aritmetika murni (baris 840&ndash;850):
+      </p>
+<pre class="g-code">840 IF ((Z+P)/2)=INT((Z+P)/2) THEN 850 ELSE <em>tolak</em>
+850 IF (ABS(Z-P)-2)*(ABS(Z-P)-18)&lt;&gt;0 THEN <em>tolak</em>
+820 IF B(P)=0 OR B(P)=-7 THEN <em>tolak</em></pre>
+      <p class="g-note">
+        Selisih 2 = mendatar, 18 = menegak (dua baris &times; sembilan kolom).
+        Aritmetika seperti ini biasanya membungkus tepi: dari kolom 8,
+        <code>+2</code> mendarat di kolom 1 baris berikutnya.
+      </p>
+      <p class="g-note">
+        Tapi kolom 1 <strong>tidak pernah jadi lubang</strong>, jadi
+        <code>B()</code>-nya nol, dan baris 820 menolaknya. Pagarnya
+        <strong>ada</strong> &mdash; hanya saja berupa "kolom yang kebetulan
+        tidak dipakai", bukan nilai penjaga yang sengaja ditulis.
+      </p>
+      <div class="g-count">
+        <div><b id="cOrig">76</b><span>diterima aturannya</span></div>
+        <div><b>76</b><span>mungkin secara geometris</span></div>
+        <div class="g-count--ok"><b id="cWild">0</b><span>lompatan liar</span></div>
+      </div>
+    </div>
+
+    <div class="panel g-warn">
+      <p class="eyebrow">Tiga program, satu masalah</p>
+      <p class="g-note">
+        Menyimpan kisi di larik lurus selalu memunculkan pertanyaan yang sama:
+        <em>apa yang terjadi di tepi?</em> Koleksi ini menjawabnya tiga kali
+        berbeda.
+      </p>
+      <table class="g-table">
+        <thead><tr><th>Program</th><th>Cara</th><th>Lompatan liar</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../tictac/index.html">TICTAC</a></td>
+              <td>pagar tersurat &mdash; papan 3&times;3 di larik 5&times;5, nilai 3</td>
+              <td class="g-ok">0</td></tr>
+          <tr><td><strong>PEGLEAP</strong></td>
+              <td>pagar tersirat &mdash; kisi 9 kolom, sel bukan-lubang = 0</td>
+              <td class="g-ok">0</td></tr>
+          <tr><td><a href="../hique2/index.html">HIQUE2</a></td>
+              <td>tidak ada &mdash; kisi maya 7 kolom, mepet</td>
+              <td class="g-bad">8</td></tr>
+        </tbody>
+      </table>
+      <p class="g-note">
+        HIQUE2 memainkan teka-teki yang <strong>persis sama</strong> dengan
+        halaman ini. Bedanya cuma lebar kisinya: tujuh yang mepet, lawan
+        sembilan yang longgar.
+      </p>
+      <p class="g-note">
+        Yang menarik: pagar PEGLEAP mungkin tidak disengaja. Lebar sembilan
+        bisa saja dipilih karena enak dihitung, bukan karena penulisnya
+        memikirkan tepi. Ia benar &mdash; tapi benar dengan cara yang sama
+        rapuhnya dengan bug cakram di
+        <a href="../towers/index.html">TOWERS</a>: <strong>aman karena
+        kebetulan, bukan karena dijaga.</strong>
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/pegleap.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/PEGLEAP.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/PEGLEAP.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="pegleap.js"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+/* ===========================================================================
+   dice.css — rupa dadu bersama. Pasangan dice.js.
+
+   Dipisah dari CSS permainan karena alasan yang sama dengan cards.css:
+   dua program memakainya, dan dua salinan akan berbeda pelan-pelan tanpa ada
+   yang memutuskannya.
+   =========================================================================== */
+
+.die { display: block; flex: none; }
+
+.die__body {
+  fill: var(--panel-2);
+  stroke: var(--edge-strong);
+  stroke-width: 3;
+}
+.die__pip { fill: var(--ink); }
+
+/* Dadu yang DITAHAN (tidak ikut dilempar lagi). Fosfor, bukan sekadar redup —
+   menahan dadu adalah keputusan aktif pemain, jadi ia harus terlihat sebagai
+   sesuatu yang dinyalakan, bukan sesuatu yang dimatikan. */
+.die--hold .die__body { fill: var(--acc-phosphor-dim); stroke: var(--acc-phosphor); }
+.die--hold .die__pip  { fill: var(--acc-phosphor); }
+
+/* Dadu yang sedang bergulir. Getarannya kecil dan cepat: cukup untuk
+   menandakan "belum selesai", tidak cukup untuk membuat mata sulit dibaca. */
+@keyframes die-shake {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25%      { transform: translate(-2px, 1px) rotate(-5deg); }
+  75%      { transform: translate(2px, -1px) rotate(5deg); }
+}
+.die--rolling { animation: die-shake .16s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .die--rolling { animation: none; opacity: .6; }
+}
+
+/* Sebaris dadu. Jaraknya tetap, tidak ikut mengecil, supaya lima dadu di
+   YAHTZEE dan dua dadu di CRAPS terbaca sebagai benda yang sama besarnya. */
+.dice-row { display: flex; gap: var(--s3); align-items: center;
+            justify-content: center; flex-wrap: wrap; }
+
+/* Dadu yang bisa diklik (ditahan/dilepas). Hover mengubah WARNA, bukan
+   geometri — aturan yang sama di seluruh proyek. */
+.die-btn {
+  padding: 0; border: none; background: none; cursor: pointer;
+  border-radius: var(--r); line-height: 0;
+}
+.die-btn:disabled { cursor: default; }
+.die-btn:not(:disabled):hover .die__body { stroke: var(--acc-phosphor); }
+.die-btn:focus-visible { outline: none; box-shadow: var(--glow); }

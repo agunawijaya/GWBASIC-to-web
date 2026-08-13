@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Blackjack (1&ndash;2 pemain) — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari BLACK.BAS (1982): blackjack satu dek tanpa split, blackjack dibayar dua kali lipat. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="../../_shared/cards.css">
+<link rel="stylesheet" href="../../_shared/blackjack.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap bj-layout">
+
+  <section class="stack">
+
+    <div class="screen">
+      <div class="bj-meja">
+
+        <div class="bj-sisi">
+          <div class="bj-sisi__label">Dealer</div>
+          <div id="bjBandar"></div>
+          <div class="bj-sisi__nilai" id="bjBandarNilai">&mdash;</div>
+        </div>
+
+        <p class="bj-pesan" id="bjPesan"></p>
+
+        <div class="bj-sisi">
+          <div id="bjPemain"></div>
+          <div class="bj-sisi__label">Anda</div>
+        </div>
+
+        <div class="bj-taruh">
+          <button class="btn btn--ghost btn--sm" id="bjTaruhTurun" type="button">&minus;</button>
+          <span class="bj-taruh__n" id="bjTaruh">$0</span>
+          <button class="btn btn--ghost btn--sm" id="bjTaruhNaik" type="button">+</button>
+        </div>
+
+        <div class="bj-aksi">
+          <button class="btn" id="bjBagi" type="button">Deal</button>
+          <button class="btn" id="bjHit" type="button">Hit</button>
+          <button class="btn" id="bjStand" type="button">Stand</button>
+          <button class="btn btn--ghost" id="bjGanda" type="button">Double Down</button>
+          <button class="btn btn--ghost" id="bjSplit" type="button">Split</button>
+          <button class="btn" id="bjLagi" type="button">Deal again</button>
+          <span id="bjAsuransi">
+            <button class="btn" id="bjAsuransiYa" type="button">Insurance: Yes</button>
+            <button class="btn btn--ghost" id="bjAsuransiTidak" type="button">No</button>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">1 dek</span>
+      <span class="ruleset__k">blackjack dibayar 2:1</span>
+      <span class="ruleset__k">berhenti di 17 lunak</span>
+      <span class="ruleset__k"><strong>tanpa split</strong></span>
+      <span class="ruleset__k">kocok: 156 tukar acak</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat stat--good"><span class="stat__label">Uang</span>
+        <span class="stat__value" id="bjKas">$0</span></div>
+      <div class="stat"><span class="stat__label">Menang</span>
+        <span class="stat__value" id="bjMenang">0</span></div>
+      <div class="stat"><span class="stat__label">Kalah</span>
+        <span class="stat__value" id="bjKalah">0</span></div>
+      <div class="stat"><span class="stat__label">Seri</span>
+        <span class="stat__value" id="bjSeri">0</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <ol class="howto__steps">
+        <li>Atur taruhan, lalu <strong>Deal</strong>.</li>
+        <li>Pilihannya hanya <strong>Hit</strong>, <strong>Stand</strong>, dan <strong>Double Down</strong> &mdash; program ini <strong>tidak punya split</strong>.</li>
+        <li>Bandar berhenti di 17, termasuk 17 <strong>lunak</strong> (As + 6).</li>
+      </ol>
+      <p>Dua hal membuat program ini paling ramah bagi pemain: blackjack dibayar <strong>dua kali lipat</strong>, dan bandarnya berhenti di 17 lunak.</p>
+    </details>
+
+    <div class="row">
+      <button class="btn btn--ghost btn--sm" id="bjUlang" type="button">Mulai dari awal</button>
+      <span class="faint">Bandingkan: <a href="../21/index.html">21</a> &middot; <a href="../bj/index.html">BJ</a> &middot; <a href="../blackjck/index.html">BLACKJCK</a></span>
+    </div>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel">
+      <p class="eyebrow">Mengocok dengan 156 tukar acak</p>
+<pre class="bj-code">1250 FOR L=1 TO 156 : X=INT(RND*52)+1 : Y=INT(RND*52)+1</pre>
+      <p class="bj-note">
+        Bukan Fisher&ndash;Yates. Ini <strong>menukar dua kartu acak,
+        156 kali</strong>. Cara ini menuju seragam, tapi hanya kalau tukarnya
+        cukup banyak &mdash; ambang teorinya
+        <code>&frac12;&thinsp;n&thinsp;ln&thinsp;n</code> &asymp; <strong>103</strong>
+        untuk 52 kartu. 156 di atas 103, jadi sepintas aman.
+      </p>
+      <p class="bj-note">
+        <strong>Ternyata belum.</strong> Ambang itu menjanjikan
+        &ldquo;mendekati seragam&rdquo;, bukan seragam &mdash; dan uji
+        khi-kuadrat atas 200.000 kocokan masih bisa membedakannya:
+      </p>
+      <table class="bj-table">
+        <thead><tr><th>tukar</th><th>&chi;&sup2;</th><th>simpangan rata</th></tr></thead>
+        <tbody>
+          <tr><td>103</td><td>167.454</td><td>3,69%</td></tr>
+          <tr><td class="is-aneh">156 (aslinya)</td><td class="is-aneh">5.117</td><td class="is-aneh">1,45%</td></tr>
+          <tr><td>300</td><td>2.698</td><td>1,28% &mdash; lolos</td></tr>
+        </tbody>
+      </table>
+      <p class="bj-note">
+        Ambang 99,9% = 2.830. Jejaknya bisa disebut dengan tepat:
+        <strong>11% lebih banyak kartu tetap di posisi awalnya</strong>
+        daripada yang seharusnya (1,111 kartu per kocokan, bukan 1,000).
+      </p>
+      <p class="bj-note">
+        Praktisnya kecil &mdash; jauh dari cukup untuk dimanfaatkan pemain.
+        Tapi 156 memang sekitar <strong>setengah</strong> dari yang dibutuhkan
+        agar ujinya berhenti melihat pola. Bandingkan
+        <a href="../solitair/index.html">SOLITAIR</a>, yang seragam persis
+        dengan 52 langkah saja: <a href="../../docs/blackjack.md">&sect;4</a>.
+      </p>
+    </div>
+
+    <div class="panel bj-warn">
+      <p class="eyebrow">Empat pilihan, dan split bukan salah satunya</p>
+<pre class="bj-code">2550 PRINT"'s turn - 1=HIT, 2=STAND, 3=DOUBLE, 4=REVIEW CARDS";</pre>
+      <p class="bj-note">
+        Satu baris <code>PRINT</code> yang sekaligus jadi spesifikasi lengkap
+        aturannya. Tidak ada split di program ini &mdash; dan karena
+        pilihannya dicetak dari satu tempat, tidak ada risiko layar dan kode
+        menyatakan hal yang berbeda.
+      </p>
+      <p class="bj-note">
+        Bandingkan dengan <a href="../21/index.html">21</a>, yang menyebar
+        daftar pilihannya di beberapa baris <code>PRINT</code> berbeda
+        (350, 470, 1550, 1720) &mdash; empat tempat yang harus sepakat.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Program paling rajin dikomentari di koleksi</p>
+<pre class="bj-code">100 REM==================================================
+110 REM=================== MAIN ROUTINE =================
+120 REM This routine contains the main logic for the
+130 REM program.  It makes extensive use of subroutines
+140 REM which are described later.</pre>
+      <p class="bj-note">
+        Tiap subrutin punya blok kepala sendiri. Di koleksi 83 program, ini
+        satu-satunya yang menulis dokumentasi antarmuka untuk kodenya
+        sendiri &mdash; pada 1982, di BASIC bernomor baris.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/blackjack.md">Dokumen arsitektur (keempatnya)</a> &middot;
+      <a href="../../../reviews/BLACK.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/BLACK.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/cards.js"></script>
+<script src="../../_shared/blackjack.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="black.js"></script>
+</body>
+</html>

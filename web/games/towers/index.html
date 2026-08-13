@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Towers of Atlantis — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari TOWERS.BAS (Friendlyware, 1982): Menara Hanoi delapan cakram, dimulai dari tiang tengah. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="towers.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap w-layout">
+
+  <section class="stack">
+    <div class="screen screen--scanlines">
+      <div class="w-stage">
+        <div id="board"></div>
+        <p class="w-say" id="say">Position Flashing Star Above Target Disk</p>
+        <div class="m-transport">
+          <button class="btn btn--primary" id="solve" type="button">Selesaikan sendiri</button>
+          <button class="btn btn--ghost" id="stopSolve" type="button" disabled>Berhenti</button>
+          <button class="btn btn--ghost" id="restart" type="button">Mulai ulang</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Langkah Anda</span>
+        <span class="stat__value" id="sMove">0</span></div>
+      <div class="stat"><span class="stat__label">Minimum</span>
+        <span class="stat__value">255</span></div>
+      <div class="stat stat--good"><span class="stat__label">Rekor</span>
+        <span class="stat__value" id="sBest">—</span></div>
+    </div>
+    <p class="w-note">
+      <strong>Seret</strong> cakram teratas ke tiang tujuan &mdash; atau klik
+      tiang asal lalu tiang tujuan, seperti aslinya.
+      <kbd>&larr;</kbd> <kbd>&rarr;</kbd> memindahkan penunjuk,
+      <kbd>Enter</kbd> mengambil dan meletakkan.
+      Saat diseret, tiang yang tidak sah ditandai merah.
+    </p>
+    <div class="row">
+      <button class="btn btn--ghost btn--sm" id="resetBest" type="button">Reset rekor</button>
+    </div>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel">
+      <p class="eyebrow">Seluruh penyelesaiannya, tiga baris</p>
+      <p class="w-note">
+        Permainan ini adalah contoh baku rekursi, dan aslinya <strong>tidak
+        memuat penyelesaiannya sama sekali</strong> &mdash; pemainlah yang
+        memecahkannya. Tombol "Selesaikan sendiri" menjalankan yang ini:
+      </p>
+<pre class="w-code">pindah(n, dari, ke, bantu):
+    kalau n = 0: selesai
+    pindah(n-1, dari, bantu, ke)
+    geser satu cakram: dari &rarr; ke
+    pindah(n-1, bantu, ke, dari)</pre>
+      <p class="w-note">
+        Kedalaman rekursi saat ini: <strong><span id="sDepth">0</span></strong>,
+        maksimum 8 &mdash; sedalam jumlah cakramnya, tidak lebih.
+      </p>
+      <div class="w-trace" id="trace"></div>
+    </div>
+
+    <div class="panel w-warn">
+      <p class="eyebrow">Petunjuk aslinya salah hitung</p>
+      <p class="w-note">
+        Baris 1150&ndash;1200 menulis: <em>"This may take all of two hundred
+        fifty-three moves."</em> Angka sebenarnya <strong>255</strong>.
+      </p>
+      <p class="w-note">
+        Bukan soal tafsir. Jumlah langkah terpendek untuk memindahkan
+        <em>n</em> cakram antar dua tiang adalah <code>2<sup>n</sup> &minus; 1</code>,
+        dan itu diperiksa ulang dengan penelusuran melebar untuk
+        <em>n</em> = 1 sampai 10 &mdash; termasuk aturan khas program ini,
+        bahwa tujuannya boleh tiang luar yang <strong>mana saja</strong>.
+        Kebebasan memilih tujuan tidak menghemat satu langkah pun.
+      </p>
+      <table class="w-table">
+        <thead><tr><th>Cakram</th><th>BFS</th><th>2<sup>n</sup>&minus;1</th></tr></thead>
+        <tbody>
+          <tr><td>6</td><td>63</td><td>63</td></tr>
+          <tr><td>7</td><td>127</td><td>127</td></tr>
+          <tr><td>8</td><td>255</td><td>255</td></tr>
+          <tr><td>9</td><td>511</td><td>511</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Mulai dari tengah</p>
+      <p class="w-note">
+        Hampir semua versi Menara Hanoi menumpuk cakram di tiang paling kiri.
+        Yang ini menumpuknya di <strong>tengah</strong>, dan menerima tiang
+        luar mana pun sebagai tujuan &mdash; <code>TW(2,A)=A</code> di baris
+        890, dan pemeriksaan menang di baris 1380&ndash;1430 menghitung tiang 1
+        <em>dan</em> tiang 3.
+      </p>
+      <p class="w-note">
+        Terlihat seperti kelonggaran. Sebenarnya tidak: jumlah langkah
+        minimumnya sama persis. Yang berubah cuma rasanya &mdash; pemain jadi
+        tidak perlu memutuskan arah sebelum mulai.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/towers.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/TOWERS.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/TOWERS.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="towers.js"></script>
+</body>
+</html>

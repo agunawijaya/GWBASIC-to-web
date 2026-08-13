@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IBM Piechart — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari PIECHART.BAS (IBM, 1981-82): diagram pai meledak, pesan galat terbaik di koleksi, dan bug warna yang membuat potongan keempat menghilang. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="piechart.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap p-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="p-stage">
+        <p class="p-judul">PIECHART &mdash; Version 1.10</p>
+
+        <div class="p-row">
+          <label>Title of chart <input type="text" id="title"></label>
+        </div>
+        <label class="p-note" for="data">Satu <code>nama,nilai</code> per baris:</label>
+        <textarea class="p-data" id="data" spellcheck="false"></textarea>
+
+        <div class="p-row">
+          <button class="btn btn--primary" id="go" type="button">Draw</button>
+          <button class="btn btn--ghost btn--sm" id="contoh" type="button">Data contoh</button>
+          <button class="btn btn--ghost btn--sm" id="bug" type="button"
+                  aria-pressed="false">Pakai warna CGA asli</button>
+        </div>
+
+        <p id="msg"></p>
+        <div id="chart"></div>
+        <div class="p-legend" id="legend"></div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">selalu meledak</span>
+      <span class="ruleset__k">pepat 5/6</span>
+      <span class="ruleset__k">maks 100 potongan</span>
+    </p>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara memakai</summary>
+      <p class="p-lead">
+        Ini <strong>bukan permainan</strong> &mdash; ia alat, dan salah satu
+        dari sedikit program <strong>IBM resmi</strong> di koleksi ini.
+      </p>
+      <ol class="howto__steps">
+        <li>Isi <strong>judul</strong>, lalu ketik data sebagai
+            <code>nama,nilai</code>, satu per baris. Grafiknya diperbarui
+            sambil Anda mengetik.</li>
+        <li>Nilainya <strong>tidak perlu berjumlah 100</strong> &mdash;
+            program membaginya dengan totalnya sendiri (baris 1520).</li>
+        <li>Potongannya <strong>selalu terpisah dari pusat</strong>. Itu bukan
+            pilihan: baris 1600&ndash;1610 menggeser tiap potongan keluar
+            sejauh <code>LR&minus;SR</code>, dan tidak ada satu baris pun yang
+            bisa mematikannya.</li>
+        <li>Tekan <strong>Pakai warna CGA asli</strong> untuk melihat
+            palet yang benar-benar tersedia pada 1982 &mdash; dan
+            <strong>bug yang menyertainya</strong>. Isi empat baris data atau
+            lebih dulu, kalau tidak bugnya tidak akan muncul.</li>
+      </ol>
+      <p>
+        Batas 100 potongan adalah batas aslinya (<code>DIM R(100)</code>,
+        baris 1300) dan dipertahankan &mdash; meski diagram pai dengan seratus
+        potongan bukan diagram pai lagi.
+      </p>
+    </details>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel p-bad">
+      <p class="eyebrow">Potongan keempat tidak punya warna</p>
+<pre class="p-code">1630 PAINT (CX+COS(AA)*0.8*SR, CY-SIN(AA)*0.8*SR), <b>C MOD 4</b>, 1</pre>
+      <p class="p-note">
+        <code>C</code> berjalan 1..N, jadi <code>C MOD 4</code> menghasilkan
+        <strong>1, 2, 3, 0, 1, 2, 3, 0, &hellip;</strong>
+      </p>
+      <p class="p-note">
+        Di <code>SCREEN 1</code>, warna <strong>0 adalah warna latar</strong>.
+        Jadi potongan keempat, kedelapan, kedua belas&hellip; dicat dengan warna
+        latar &mdash; tampak kosong, seolah tidak ada potongan di sana.
+      </p>
+      <table class="p-tbl">
+        <thead><tr><th>Potongan</th><th><code>C MOD 4</code></th><th>Warna CGA</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>1</td><td>sian</td></tr>
+          <tr><td>2</td><td>2</td><td>magenta</td></tr>
+          <tr><td>3</td><td>3</td><td>putih</td></tr>
+          <tr><td><b>4</b></td><td><b>0</b></td><td class="p-hilang"><b>latar — hilang</b></td></tr>
+        </tbody>
+      </table>
+      <p class="p-note">
+        Ini ada di <strong>produk IBM berlisensi</strong>, dan ia hanya muncul
+        kalau grafik Anda punya empat potongan atau lebih. Tiga potongan:
+        sempurna. Empat: satu hilang.
+      </p>
+      <p class="p-note">
+        Kenapa lolos? Karena penulisnya hampir pasti mengujinya dengan dua
+        atau tiga potongan &mdash; jumlah yang paling wajar saat mencoba.
+        Bug yang butuh <strong>tepat empat</strong> masukan untuk muncul ada di
+        titik buta antara "contoh cepat" dan "uji sungguhan".
+      </p>
+      <p class="p-note">
+        Port ini memakai empat warna yang keempatnya terlihat. Tombol
+        <strong>Pakai warna CGA asli</strong> memutar bugnya kembali.
+      </p>
+    </div>
+
+    <div class="panel p-good">
+      <p class="eyebrow">Pesan galat terbaik di koleksi ini</p>
+<pre class="p-code">1292 ON ERROR GOTO 1295
+1293 PLAY "p16"          <em>' jeda tak berbunyi — cuma untuk memicu galat</em>
+1294 GOTO 1300
+1296 PRINT "THIS PROGRAM REQUIRES ADVANCED BASIC -- USE COMMAND 'BASICA'"</pre>
+      <p class="p-note">
+        Perhatikan baris 1293. <code>PLAY "p16"</code> adalah jeda seperenam
+        belas nada &mdash; <strong>tidak berbunyi</strong>, tidak mengubah apa
+        pun. Ia ada semata-mata untuk <strong>memicu galat</strong> kalau
+        penafsirnya bukan Advanced BASIC, karena <code>PLAY</code> hanya ada di
+        sana.
+      </p>
+      <p class="p-note">
+        Sebuah uji kemampuan yang dilakukan dengan menjalankan hal
+        <strong>paling tidak berbahaya</strong> yang bisa ditemukan. Pola yang
+        sama masih dipakai sekarang: <em>feature detection</em> dengan mencoba,
+        bukan menebak dari versi.
+      </p>
+      <p class="p-note">
+        Dan pesannya menyebut <strong>perintah persis</strong> yang harus
+        diketik. Bandingkan empat cara menangani hal yang sama di koleksi ini:
+      </p>
+      <table class="p-tbl">
+        <tbody>
+          <tr><td><code>INTRO.BAS</code></td><td>semua galat &rarr; keluar diam-diam</td></tr>
+          <tr><td><a href="../15puzzle/index.html">15PUZZLE</a></td><td>mendeteksi, memberi tahu, tetap lanjut</td></tr>
+          <tr><td><strong>PIECHART</strong></td><td><strong>memberi tahu apa masalahnya dan perintah perbaikannya</strong></td></tr>
+        </tbody>
+      </table>
+      <p class="p-note">
+        <em>"USE COMMAND 'BASICA'"</em> &mdash; bukan "fitur tidak tersedia",
+        bukan "galat 73". Kalimat yang bisa langsung dijalankan pemakai. Itu
+        standar yang masih pantas dikejar sekarang.
+      </p>
+    </div>
+
+    <div class="panel p-warn">
+      <p class="eyebrow">Lingkaran yang sengaja dipepatkan</p>
+<pre class="p-code">1620 CIRCLE (CX,CY),SR,1,-A1-0.001,-A2,<b>5/6</b></pre>
+      <p class="p-note">
+        Parameter terakhir adalah <strong>rasio aspek</strong>. Layar CGA
+        320&times;200 pada monitor 4:3 punya piksel yang lebih tinggi daripada
+        lebar:
+      </p>
+<pre class="p-code">(4/3) &divide; (320/200) = 1,333 &divide; 1,6 = <b>5/6</b></pre>
+      <p class="p-note">
+        Jadi supaya lingkaran <strong>terlihat</strong> bulat, ia harus
+        digambar pepat 5/6. Angka yang tampak sembarang itu sebenarnya seluruh
+        geometri monitornya, dipadatkan jadi satu pecahan.
+      </p>
+      <p class="p-note">
+        Dan karena itu port ini <strong>tidak memakainya</strong>. Piksel layar
+        Anda persegi, jadi menerapkan 5/6 di sini justru akan
+        <em>memepatkan</em> lingkaran yang sudah bulat. Meniru angkanya berarti
+        mengkhianati maksudnya &mdash; yang diinginkan baris 1620 adalah
+        lingkaran yang terlihat bulat, dan di layar persegi itu berarti 1.
+      </p>
+      <p class="p-note">
+        Dua hal lain di baris yang sama. <strong>Sudut negatif</strong>
+        (<code>-A1</code>, <code>-A2</code>) punya arti khusus di GW-BASIC:
+        gambar juga garis dari pusat ke ujung busur. Itulah yang mengubah
+        sebuah busur jadi <strong>potongan pai</strong>, dalam satu perintah.
+      </p>
+      <p class="p-note">
+        Dan <code>-A1-<b>0.001</b></code> bukan salah ketik: sudut awal dan
+        akhir yang sama persis akan menggambar busur nol, jadi sedikit
+        dimundurkan supaya potongan pertama tidak lenyap. Sebuah
+        <em>epsilon</em> yang ditulis tangan, empat puluh tahun sebelum
+        kata itu jadi umum.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Pai yang selalu meledak</p>
+<pre class="p-code">1440 LR=50:SR=44
+1600 CX=160+COS(AA)*(LR-SR)
+1610 CY=100-SIN(AA)*(LR-SR)</pre>
+      <p class="p-note">
+        Pusat tiap potongan digeser <strong>keluar</strong> sejauh
+        <code>LR&minus;SR</code> = 6 piksel, sepanjang garis baginya sendiri.
+        Hasilnya diagram pai yang <em>exploded</em> &mdash; tiap potongan
+        terpisah dari pusat.
+      </p>
+      <p class="p-note">
+        Yang menarik: itu <strong>bukan pilihan</strong>. Tidak ada satu baris
+        pun yang bisa mematikannya, tidak ada pertanyaan ke pemakai. IBM
+        memutuskan bahwa diagram pai <em>selalu</em> begitu, dan menuliskannya
+        sebagai dua angka di baris 1440.
+      </p>
+      <p class="p-note">
+        Dipertahankan apa adanya. Sebuah keputusan rancangan yang tidak
+        ditawarkan sebagai pilihan tetap sebuah keputusan rancangan &mdash;
+        dan menawarkannya sekarang berarti menghapus jejaknya.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/piechart.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/PIECHART.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/PIECHART.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="piechart.js"></script>
+</body>
+</html>

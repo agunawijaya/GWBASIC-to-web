@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hi-Que — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari HIQUE2.BAS (Wes Meier, 1983): peg solitaire Inggris 33 lubang. Termasuk delapan lompatan liar yang diterima aturan aslinya. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="hique2.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap h-layout">
+
+  <section class="stack">
+    <div class="screen screen--scanlines">
+      <div class="h-stage">
+        <div id="board"></div>
+        <p class="h-say" id="say">Klik pasak, lalu klik lubang tujuannya.</p>
+        <div class="m-transport">
+          <button class="btn btn--ghost" id="undo" type="button" disabled>Mundur</button>
+          <button class="btn btn--ghost" id="restart" type="button">Mulai ulang</button>
+          <button class="btn btn--ghost" id="solve" type="button">Tunjukkan penyelesaian</button>
+          <button class="btn btn--ghost" id="stopSolve" type="button" disabled>Berhenti</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">lompati satu pasak</span>
+      <span class="ruleset__k">mendarat di lubang kosong</span>
+      <span class="ruleset__k">yang dilompati diambil</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Pasak tersisa</span>
+        <span class="stat__value" id="sPegs">32</span></div>
+      <div class="stat"><span class="stat__label">Lompatan</span>
+        <span class="stat__value" id="sMoves">0</span></div>
+      <div class="stat stat--good"><span class="stat__label">Rekor tersisa</span>
+        <span class="stat__value" id="sBest">—</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <ol class="howto__steps">
+        <li>Papan dimulai <strong>penuh kecuali lubang tengah</strong>.
+            Sasarannya menyisakan <strong>sesedikit mungkin</strong> pasak.
+            Aslinya menyebut sisa satu pasak <em>&ldquo;fantastic&rdquo;</em>
+            &mdash; dan sisa satu pasak <strong>tepat di lubang
+            tengah</strong> sebagai permainan yang <em>&ldquo;PERFECT&rdquo;</em>
+            (baris 38&ndash;39).</li>
+        <li>Satu pasak <strong>melompati pasak di sebelahnya</strong>, mendatar
+            atau menegak, lalu mendarat di lubang kosong tepat di baliknya.
+            <strong>Tidak ada lompatan diagonal.</strong></li>
+        <li>Pasak yang <strong>dilompati diangkat</strong>. Tiap lompatan
+            mengurangi satu pasak, jadi 32 lompatan berturut adalah permainan
+            sempurna.</li>
+        <li>Klik pasaknya, lalu klik lubang tujuannya. <kbd>Z</kbd> atau
+            <strong>Mundur</strong> membatalkan satu lompatan.</li>
+        <li>Permainan berhenti saat <strong>tidak ada lompatan tersisa</strong>
+            &mdash; bukan saat pasaknya habis.</li>
+      </ol>
+      <p>
+        Buntu? <strong>Tunjukkan penyelesaian</strong> memainkannya sampai
+        selesai dari posisi awal. Teka-teki ini <strong>persis sama</strong>
+        dengan <a href="../pegleap/index.html">Peg Leap</a>; yang berbeda cuma
+        cara kedua program menyimpan papannya &mdash; dan itulah yang dibahas
+        panel-panel di samping.
+      </p>
+    </details>
+
+    <div class="row">
+      <button class="btn btn--ghost btn--sm" id="legacy" type="button" aria-pressed="false">Pakai aturan lompat 1982</button>
+      <button class="btn btn--ghost btn--sm" id="resetBest" type="button">Reset rekor</button>
+    </div>
+    <p class="h-note" id="legacyNote">
+      Aturan 1982 menerima delapan lompatan yang tidak mungkin di papan
+      sungguhan. Nyalakan untuk melihatnya &mdash; lompatan liar ditandai kuning.
+    </p>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel h-warn">
+      <p class="eyebrow">Delapan lompatan yang mustahil</p>
+      <p class="h-note">
+        Papan salib ini punya 33 lubang, dan aslinya menyimpannya sebagai
+        <code>P(33)</code> &mdash; satu larik lurus. Untuk memeriksa apakah
+        sebuah lompatan sah, nomor lubang diterjemahkan dulu ke
+        <strong>kisi maya tujuh kolom</strong> lewat empat baris
+        <code>IF</code>:
+      </p>
+<pre class="h-code">109 IF MOVE.FROM&lt;4  THEN MF=MOVE.FROM-6
+110 IF MOVE.FROM&lt;7  THEN MF=MOVE.FROM-2
+111 IF MOVE.FROM&gt;30 THEN MF=MOVE.FROM+6
+112 IF MOVE.FROM&gt;27 THEN MF=MOVE.FROM+2
+119 IF ABS(MT-MF)&lt;&gt;2 AND ABS(MT-MF)&lt;&gt;14 THEN 106</pre>
+      <p class="h-note">
+        Pemetaannya <strong>benar</strong> &mdash; diperiksa untuk ketiga puluh
+        tiga lubang, selisihnya tetap. Selisih 2 berarti lompatan mendatar,
+        14 berarti menegak (dua baris &times; tujuh kolom).
+      </p>
+      <p class="h-note">
+        Tapi kisi tujuh kolom itu <strong>tidak punya pagar</strong>. Lubang di
+        kolom paling kanan sebuah baris berjarak tepat 2 dari kolom paling kiri
+        dua baris berikutnya &mdash; dan aturannya menerimanya.
+      </p>
+      <div class="h-count">
+        <div><b>84</b><span>diterima aturan 1982</span></div>
+        <div><b>76</b><span>mungkin secara geometris</span></div>
+        <div class="h-count--bad"><b>8</b><span>lompatan liar</span></div>
+      </div>
+      <div class="h-list" id="badList"></div>
+      <p class="h-note">
+        Bandingkan dengan <a href="../tictac/index.html">TICTAC</a> di koleksi
+        yang sama: ia menyimpan papan 3&times;3 di dalam larik 5&times;5 dengan
+        <strong>pagar</strong> di sekelilingnya, justru supaya hal ini tidak
+        bisa terjadi. Dua program, satu disket, satu masalah &mdash; satu
+        menyelesaikannya, satu tidak.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Di mana pasak terakhir bisa berhenti</p>
+      <p class="h-note">
+        Tidak di sembarang lubang. Warnai lubang <em>(baris, kolom)</em> dengan
+        <code>(baris + kolom) mod 3</code>. Setiap lompatan menyentuh tiga sel
+        berurutan, jadi ketiga warnanya berbeda &mdash; satu pasak hilang dari
+        dua kelas, satu muncul di kelas ketiga. Paritas ketiga cacahnya selalu
+        berbalik <strong>bersamaan</strong>, sehingga selisih paritasnya kekal.
+      </p>
+      <p class="h-note">
+        Dijalankan untuk kedua pewarnaan sekaligus, 33 kemungkinan menyusut
+        jadi <strong>lima</strong>: pusat salib dan keempat ujung lengannya.
+      </p>
+      <div id="ends"></div>
+      <p class="h-note">
+        Ini syarat <em>perlu</em>, bukan cukup &mdash; ia hanya membuang yang
+        mustahil. Tapi penyelesaian yang ditemukan penelusur berakhir di lubang
+        32, dan itu memang salah satunya.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/hique2.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/HIQUE2.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/HIQUE2.BAS">Kode sumber 1983</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="hique2.js"></script>
+</body>
+</html>

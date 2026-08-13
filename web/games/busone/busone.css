@@ -1,0 +1,52 @@
+/* ===========================================================================
+   busone.css — tambahan lokal. Layar 80x25 dan panelnya dari history.css.
+
+   Yang khas cuma pewarnaan rel: sepuluh berkas, dan tiap perpindahan berkas
+   dulunya berarti seluruh program diganti. Itu fakta struktural yang tidak
+   terlihat sama sekali dari isi layarnya, jadi ia harus dinyatakan di rel.
+   =========================================================================== */
+
+.b-lead { font-size: var(--fs-sm); }
+.b-lead strong { color: var(--ink); }
+.b-lead em { color: var(--ink); font-style: italic; }
+
+/* Sepuluh berkas diberi lima warna bergantian — bukan sepuluh warna berbeda.
+   Yang perlu terlihat adalah BATASNYA, bukan identitas tiap berkas; lima warna
+   yang berselang-seling melakukan itu tanpa membuat rel jadi pelangi. */
+.rdr__pin--f0 { border-color: color-mix(in srgb, var(--acc-blue)     55%, var(--line)); }
+.rdr__pin--f1 { border-color: color-mix(in srgb, var(--acc-amber)    55%, var(--line)); }
+.rdr__pin--f2 { border-color: color-mix(in srgb, var(--acc-violet)   55%, var(--line)); }
+.rdr__pin--f3 { border-color: color-mix(in srgb, var(--acc-phosphor) 55%, var(--line)); }
+.rdr__pin--f4 { border-color: color-mix(in srgb, var(--acc-red)      55%, var(--line)); }
+
+/* Layar pertama tiap berkas: batas kiri tebal — di sinilah dulu seluruh
+   program diganti dan semua variabel hilang. */
+.rdr__pin--awal { border-left-width: 3px; }
+
+.b-berkas {
+  padding: 1px 8px; border-radius: var(--r-pill);
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: .06em;
+  background: var(--panel-2); color: var(--ink-dim); border: 1px solid var(--line);
+}
+.b-langkah {
+  padding: 1px 8px; border-radius: var(--r-pill);
+  font-size: 10px; letter-spacing: .06em; text-transform: uppercase;
+  background: var(--acc-blue-dim, var(--panel-2)); color: var(--acc-blue);
+  border: 1px solid color-mix(in srgb, var(--acc-blue) 40%, transparent);
+}
+
+.b-note { font-size: var(--fs-sm); color: var(--ink-dim); line-height: var(--lh); }
+.b-note + .b-note { margin-top: var(--s3); }
+.b-note strong { color: var(--ink); font-weight: 620; }
+.b-note code { font-family: var(--font-mono); font-size: .92em; color: var(--acc-blue); }
+.b-note em { color: var(--ink); font-style: italic; }
+
+.b-code {
+  font-family: var(--font-mono); font-size: var(--fs-xs);
+  background: var(--bg-sunken); border: 1px solid var(--line-soft);
+  border-radius: var(--r-sm); padding: var(--s3);
+  overflow-x: auto; color: var(--ink-dim); margin: var(--s3) 0; line-height: 1.6;
+}
+
+.b-good { border-left: 3px solid var(--acc-phosphor); }
+.b-warn { border-left: 3px solid var(--acc-amber); }

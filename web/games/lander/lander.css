@@ -1,0 +1,200 @@
+/* ===========================================================================
+   lander.css — LANDER.BAS
+
+   Seluruh koordinat SVG-nya piksel CGA 320x200 apa adanya. Yang membuatnya
+   tidak gepeng cuma satu baris di lander.js: <g transform="scale(1 1.2)">.
+   Piksel CGA di monitor 4:3 memang setinggi 1,2 kali lebarnya.
+   =========================================================================== */
+
+.l-layout { display: grid; gap: var(--s5); align-items: start; }
+@media (min-width: 1000px) {
+  .l-layout { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); }
+}
+@media (min-width: 1400px) { .l-layout { max-width: 1340px; } }
+
+.l-stage { display: grid; gap: var(--s3); }
+
+/* --- tabung ---------------------------------------------------------------- */
+.l-crt {
+  position: relative; background: #05070f;
+  border: 1px solid var(--line); border-radius: 16px;
+  padding: var(--s3); overflow: hidden;
+  box-shadow: inset 0 0 70px rgba(0,0,0,.85);
+}
+.l-crt::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(120% 100% at 50% 38%, transparent 58%, rgba(0,0,0,.55) 100%),
+    repeating-linear-gradient(to bottom, rgba(150,190,255,.045) 0 1px, transparent 1px 3px);
+}
+@keyframes l-guncang {
+  0%,100% { transform: translate(0,0); }
+  20% { transform: translate(-5px, 3px); }
+  45% { transform: translate(5px, -3px); }
+  70% { transform: translate(-3px, -2px); }
+}
+.l-crt--guncang { animation: l-guncang .22s ease-in-out 3; }
+
+.l-svg { display: block; width: 100%; height: auto; }
+
+/* --- langit ---------------------------------------------------------------- */
+.l-latar { fill: url(#l-langit); }
+.l-bintang { fill: #dfe9ff; animation: l-kedip 4s ease-in-out infinite var(--d, 0s); }
+@keyframes l-kedip { 0%,100% { opacity: .25; } 50% { opacity: .95; } }
+.l-bumi { opacity: .92; }
+.l-bumiUdara { fill: url(#l-udara); }
+.l-bumiLaut { fill: url(#l-laut); }
+.l-bumiMalam { fill: url(#l-malam); }
+.l-bumiTepi { fill: none; stroke: rgba(150,215,255,.55); stroke-width: .45; }
+.l-bumiDarat { fill: #3f8f5a; opacity: .88; }
+.l-bumiDarat--tipis { fill: #57a86a; opacity: .7; }
+.l-bumiEs { fill: #f4fbff; opacity: .82; }
+.l-bumiAwan { fill: none; stroke: #ffffff; stroke-width: .8; opacity: .24;
+              stroke-linecap: round; }
+.l-bumiAwan--samar { opacity: .15; }
+
+/* --- tanah ----------------------------------------------------------------- */
+.l-tanah { fill: url(#l-tanah); }
+.l-garisTanah { fill: none; stroke: #c9c2ad; stroke-width: 1; opacity: .8; }
+.l-landasan { fill: #b8352a; }
+.l-landasanKilau { fill: #ff8a72; }
+.l-titik { fill: #ff5a4e; }
+
+/* Kota Advanced Lander (baris 2910..3000). */
+.l-menara, .l-hanggar { fill: #6d6858; }
+.l-menaraGaris { fill: #9a9382; }
+.l-gedung { fill: #7d7565; }
+.l-papan { fill: #12151d; }
+.l-jendela, .l-pintu { fill: #12151d; }
+.l-ibm { stroke: #4fa3ff; stroke-width: 1.4; }
+
+/* --- modul versi vektor ----------------------------------------------------
+   Warnanya foil emas Apollo, bukan palet CGA. Bentuknya mengikuti sprite M1:
+   badan kolom 6..14, kaki mendarat di baris 14. */
+.l-turun { fill: #d9a63c; stroke: #6b4a12; stroke-width: .35; }
+.l-foil  { stroke: #8c6a1f; stroke-width: .3; opacity: .8; }
+.l-naik  { fill: #cfd4dc; stroke: #6d747f; stroke-width: .35; }
+.l-kaca  { fill: #14293d; stroke: #6fa8cc; stroke-width: .22; }
+.l-palka { fill: #aab0ba; stroke: #6d747f; stroke-width: .25; }
+.l-kaki  { stroke: #b9bec7; stroke-width: .7; stroke-linecap: round; fill: none; }
+.l-bantalan { fill: #9aa0aa; }
+.l-nosel { fill: #6f7681; stroke: #454b54; stroke-width: .3; }
+.l-antena { stroke: #b9bec7; stroke-width: .5; }
+.l-antenaBola { fill: #e6ebf2; }
+.l-rcs { fill: #8c929c; }
+
+.l-apiLuar { fill: url(#l-api); opacity: calc(.55 * var(--nyala, 1)); }
+.l-apiInti { fill: #fff3c4; opacity: var(--nyala, 1); }
+.l-api { animation: l-kobar .09s steps(2) infinite; transform-origin: 0 4px; }
+@keyframes l-kobar { from { transform: scaleY(.9); } to { transform: scaleY(1.08); } }
+
+/* --- ledakan (baris 1230..1250) --------------------------------------------- */
+.l-ledak line {
+  stroke: #ff5a4e; stroke-width: 1.6; opacity: 0;
+  animation: l-ledakan .9s ease-out forwards;
+  animation-delay: calc(var(--i, 0) * 28ms);
+}
+@keyframes l-ledakan {
+  0% { opacity: 0; }
+  12% { opacity: 1; stroke: #fff3c4; }
+  55% { opacity: .9; stroke: #ff9a3c; }
+  100% { opacity: 0; stroke: #b8352a; }
+}
+
+/* --- alat ukur di dalam layar ----------------------------------------------- */
+.l-teks {
+  fill: #d8e4f2; font: 700 8px var(--font-mono);
+  paint-order: stroke; stroke: #05070f; stroke-width: 2.4;
+}
+.l-ukurLatar { fill: #1a2233; stroke: #3d4a63; stroke-width: .6; }
+.l-ukurIsi { opacity: .85; }
+.l-ukurIsi--0 { fill: #46c17f; }
+.l-ukurIsi--1 { fill: #7fb4ff; }
+.l-ukurIsi--2 { fill: #ffb347; }
+.l-ukurJarum { fill: #ffffff; }
+.l-ukurNama {
+  fill: #9fb2c8; font: 700 6px var(--font-mono); text-anchor: middle;
+  letter-spacing: .04em;
+}
+
+/* --- mode 1982 --------------------------------------------------------------
+   Di aslinya latarnya hitam pekat dan hanya ada empat warna. Kelas ini
+   memadamkan hiasan modern supaya perbandingannya jujur. */
+.l-crt--1982 .l-latar { fill: #000; }
+.l-crt--1982 .l-bintang, .l-crt--1982 .l-bumi { display: none; }
+.l-crt--1982 .l-tanah { fill: #55ff55; }
+.l-crt--1982 .l-garisTanah { stroke: #ffff55; }
+.l-crt--1982 .l-landasan, .l-crt--1982 .l-landasanKilau { fill: #ff5555; }
+.l-crt--1982 .l-menara, .l-crt--1982 .l-hanggar,
+.l-crt--1982 .l-gedung, .l-crt--1982 .l-menaraGaris { fill: #ffff55; }
+.l-crt--1982 .l-jendela, .l-crt--1982 .l-pintu, .l-crt--1982 .l-papan { fill: #000; }
+.l-crt--1982 .l-ibm { stroke: #55ff55; }
+.l-crt--1982::after { background:
+  repeating-linear-gradient(to bottom, rgba(150,190,255,.05) 0 1px, transparent 1px 3px); }
+
+/* --- pesan ------------------------------------------------------------------ */
+.l-pesan {
+  position: absolute; left: var(--s3); right: var(--s3); bottom: var(--s3);
+  margin: 0; font-size: var(--fs-xs); font-family: var(--font-mono);
+  color: #ffd166; background: rgba(0,0,0,.72);
+  padding: 3px 9px; border-radius: var(--r-sm);
+}
+.l-pesan:empty { display: none; }
+.l-pesan--awas { color: #ff8a72; }
+.l-pesan--baik { color: #7dffb0; }
+
+/* --- kendali ---------------------------------------------------------------- */
+.l-row { display: flex; flex-wrap: wrap; gap: var(--s3); align-items: center; }
+.l-row--kecil { font-size: var(--fs-sm); color: var(--fg-dim); }
+.l-row label { display: flex; align-items: center; gap: var(--s2);
+               font-size: var(--fs-sm); color: var(--fg-dim); }
+.l-row input[type="number"] {
+  font-family: var(--font-mono); padding: 4px 6px; width: 6ch;
+  border: 1px solid var(--line); border-radius: var(--r-sm);
+  background: var(--bg-sunken); color: var(--fg);
+}
+.l-cek { cursor: pointer; }
+
+.l-pad { gap: var(--s2); }
+.l-pad .btn { min-width: 7.5rem; }
+
+.l-bar {
+  display: grid; grid-template-columns: max-content 1fr max-content 1fr;
+  gap: var(--s2) var(--s3); align-items: center;
+  font-size: var(--fs-xs); color: var(--fg-dim);
+}
+.l-jalur { height: 8px; border-radius: 99px; background: var(--bg-sunken);
+           border: 1px solid var(--line); overflow: hidden; }
+.l-isi { display: block; height: 100%; transition: width .12s linear; }
+.l-isi--fuel { background: linear-gradient(90deg, #2f7a52, #46c17f); }
+.l-isi--fuel.l-habis { background: #b8352a; }
+.l-isi--thrust { background: linear-gradient(90deg, #a06a1a, #ffb347); }
+
+/* --- panel ------------------------------------------------------------------ */
+.l-lead { margin-top: 0; }
+.l-note { font-size: var(--fs-sm); line-height: 1.6; }
+.l-kecil { font-size: var(--fs-xs); color: var(--fg-dim); }
+.l-good { border-left: 3px solid #46c17f; }
+.l-warn { border-left: 3px solid #e0a020; }
+.l-bad  { border-left: 3px solid #c0503f; }
+
+.l-code {
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.55;
+  background: var(--bg-sunken); border-radius: var(--r-sm);
+  padding: var(--s3); overflow-x: auto; white-space: pre;
+}
+.l-tbl { width: 100%; border-collapse: collapse; font-size: var(--fs-sm);
+         margin: var(--s3) 0; }
+.l-tbl td, .l-tbl th { padding: 5px 8px; border-bottom: 1px solid var(--line);
+                       text-align: right; }
+.l-tbl--kiri td:first-child, .l-tbl--kiri th:first-child { text-align: left; }
+.l-links { margin-top: var(--s4); }
+
+.l-sudut { font-family: var(--font-mono); font-size: var(--fs-xs);
+           color: #ffd166; word-spacing: .15em; }
+
+@media (prefers-reduced-motion: reduce) {
+  .l-crt--guncang { animation: none; }
+  .l-bintang, .l-api { animation: none; }
+  .l-ledak line { animation-duration: .01s; }
+}

@@ -1,0 +1,175 @@
+{
+ "file": "HOPPER.EXE",
+ "draw": [
+  [
+   29750,
+   "C1RFL3BL3L0BL2R0BR11R0BR2DL2BL2L5BL2L2FBR3R5BR3GL0BL2L5BL2FR7GL5R5BFBRL0BL2L5BL2DR9DBL3L3BL3DL2BR11R2"
+  ],
+  [
+   29898,
+   "C2L45G2DGD2FDF2R46E2UEU2HUH2G2DGD2FDF28"
+  ],
+  [
+   30000,
+   "R5FL8GRBR5R0BR4DBL4L0BL5LGR2BR5R0BR5R2FRL17GR19FL21DR21BDBLL4BL10L4BFBR2L2BR14R2BR2BE10"
+  ],
+  [
+   30092,
+   "L5GR8FLBL5L0BL4DBR4R0BR5RFL2BL5L0BL5L2GLR17FL19GR21DL21BDBRR4BR10R4BGBL2R2BL14L2BR26BE10"
+  ],
+  [
+   30922,
+   "P2L8C.CL16CL8D.GL16FL8EL4C"
+  ]
+ ],
+ "play": [
+  [
+   21043,
+   "AC.BC.CC.DC.EC.FC.GC.N"
+  ]
+ ],
+ "text": [
+  [
+   9938,
+   "Licensed Material - Program Property of IBMUVWM"
+  ],
+  [
+   13921,
+   "RETURN without GOSUB"
+  ],
+  [
+   13954,
+   "Illegal function call"
+  ],
+  [
+   13999,
+   "Subscript out of range"
+  ],
+  [
+   14022,
+   "Division by zero"
+  ],
+  [
+   14053,
+   "Out of string space"
+  ],
+  [
+   14073,
+   "String formula too complex"
+  ],
+  [
+   14110,
+   "RESUME without error"
+  ],
+  [
+   14281,
+   ":File already exists"
+  ],
+  [
+   14311,
+   ">Input past end"
+  ],
+  [
+   14326,
+   "?Bad record number"
+  ],
+  [
+   14344,
+   "@Bad file name"
+  ],
+  [
+   14358,
+   "CToo many files"
+  ],
+  [
+   14392,
+   "ECommunication buffer overflow"
+  ],
+  [
+   14422,
+   "FDisk Write Protect"
+  ],
+  [
+   14441,
+   "GDisk not Ready"
+  ],
+  [
+   14456,
+   "HDisk Media Error"
+  ],
+  [
+   15272,
+   "b/Internal Error - No Line Number"
+  ],
+  [
+   21955,
+   "?Redo from start"
+  ],
+  [
+   25923,
+   "Internal Error - String Space Corrupt"
+  ],
+  [
+   29632,
+   "Color/graphics adaptor not available"
+  ],
+  [
+   29672,
+   "Press any key to return to DOS'"
+  ],
+  [
+   29706,
+   "Switching to Color/Graphics Adaptor ..."
+  ],
+  [
+   30200,
+   "JOYSTICK OR KEYBOARD (J/K)"
+  ],
+  [
+   30320,
+   "Use the cursor keys on the numeric"
+  ],
+  [
+   30358,
+   "keypad to move your frog."
+  ],
+  [
+   30388,
+   "Press Esc to pause, <F10> to abort"
+  ],
+  [
+   30464,
+   "Enter Skill Level (1-4) [#]: "
+  ],
+  [
+   30776,
+   "YOUR SCORE IS IN THE TOP TEN"
+  ],
+  [
+   30808,
+   "ENTER YOUR NAME PLEASE: "
+  ],
+  [
+   30854,
+   "WOULD YOU LIKE TO PLAY AGAIN (y/n)? "
+  ]
+ ],
+ "data": [
+  [
+   30963,
+   "235,18,144,0,0,1,255,2,255,2,0,1,255,2,254,255,0,0,0,0,30,6,184,85,184,142,216,142,192,46,199,6,3,0,10,0,46,139,54,3,0,46,138,132,5,0,60,0,117,3,233,159,0,46,162,17,0"
+  ],
+  [
+   31133,
+   "46,162,18,0,139,198,187,224,1,247,227,139,216,46,198,6,16,0,2,46,246,6,17,0,128,117,66,253,131,195,62,139,251,46,198,6,19,0,6,139,247,131,238,2,139,5,185,31,0,243,165,137,68,2,129,199,142"
+  ],
+  [
+   31324,
+   "0,46,254,14,19,0,117,230,46,254,14,17,0,117,215,46,254,14,16,0,116,76,46,160,18,0,46,162,17,0,129,195,0,32,235,194,252,139,251,46,198,6,19,0,6,139,247,131,198,2,139,5,185,31,0,243,165"
+  ],
+  [
+   31511,
+   "137,68,254,131,199,18,46,254,14,19,0,117,231,46,254,6,17,0,117,216,46,254,14,16,0,116,14,46,160,18,0,46,162,17,0,129,195,0,32,235,195,46,255,14,3,0,46,129,62,3,0,255,255,116,3,233,63"
+  ]
+ ]
+}

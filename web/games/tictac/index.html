@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tic Tac Toe — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari TICTAC.BAS (Friendlyware, 1982). AI-nya benar-benar tidak terkalahkan — dibuktikan dengan menelusuri seluruh pohon permainan. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="tictac.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap t-layout">
+
+  <section class="stack">
+    <div class="screen screen--scanlines">
+      <div class="t-stage">
+        <div id="board"></div>
+        <p class="t-say" id="say">Do You Wish To Go First? &lt;Y/N&gt;</p>
+        <div class="m-transport" id="controls">
+          <button class="btn btn--primary" id="yes" type="button">Y &mdash; saya duluan</button>
+          <button class="btn btn--ghost" id="no" type="button">N &mdash; komputer duluan</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Komputer menang</span>
+        <span class="stat__value" id="sLose">0</span></div>
+      <div class="stat"><span class="stat__label">Seri</span>
+        <span class="stat__value" id="sDraw">0</span></div>
+      <div class="stat stat--good"><span class="stat__label">Anda menang</span>
+        <span class="stat__value" id="sWin">0</span></div>
+      <div class="stat"><span class="stat__label">Langkah</span>
+        <span class="stat__value" id="sMove">0</span></div>
+    </div>
+    <div class="row">
+      <button class="btn btn--ghost btn--sm" id="reset" type="button">Reset skor</button>
+    </div>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel">
+      <p class="eyebrow">Papan yang sebenarnya: 5&times;5, bukan 3&times;3</p>
+      <p class="t-note">
+        Aslinya menyimpan papan sebagai <code>C(24)</code> &mdash; 25 sel dalam
+        satu larik lurus, disusun 5&times;5. Sembilan di tengah bisa dimainkan;
+        enam belas sisanya <strong>pagar</strong> berisi angka 3 yang tidak
+        pernah cocok dengan apa pun.
+      </p>
+      <div id="pad"></div>
+      <p class="t-note">
+        Karena ada pagar, pengecekan tepi <strong>hilang sama sekali</strong>.
+        Arah gerak cukup ditulis sebagai penambahan indeks:
+        <code>+1</code> kanan, <code>+5</code> bawah, <code>+6</code> bawah-kanan,
+        <code>+4</code> bawah-kiri, dan negatifnya.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Kenapa komputer memilih kotak itu</p>
+      <div class="t-rules" id="rules"></div>
+      <p class="t-note">
+        Aturan diperiksa berurutan dari atas. Yang pertama cocok, itulah yang
+        dipakai &mdash; tidak ada penilaian, tidak ada penelusuran ke depan.
+      </p>
+    </div>
+
+    <div class="panel t-proof">
+      <p class="eyebrow">"I can not be defeated"</p>
+      <p class="t-note">
+        Begitu bunyi layar petunjuk aslinya. Klaim itu diuji dengan menelusuri
+        <strong>seluruh pohon permainan</strong> &mdash; manusia mencoba setiap
+        langkah yang mungkin, di setiap giliran, dari kedua kemungkinan siapa
+        yang duluan.
+      </p>
+      <div class="hud">
+        <div class="stat"><span class="stat__label">Permainan diperiksa</span>
+          <span class="stat__value">549</span></div>
+        <div class="stat"><span class="stat__label">Komputer menang</span>
+          <span class="stat__value">412</span></div>
+        <div class="stat"><span class="stat__label">Seri</span>
+          <span class="stat__value">137</span></div>
+        <div class="stat stat--good"><span class="stat__label">Komputer kalah</span>
+          <span class="stat__value">0</span></div>
+      </div>
+      <p class="t-note">
+        Klaimnya benar. Dan itu tidak sepele: AI-nya bukan pencari langkah,
+        melainkan daftar aturan yang ditulis tangan &mdash; termasuk sebelas
+        baris <code>IF</code> yang menangani jebakan garpu satu per satu.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/tictac.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/TICTAC.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/TICTAC.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="tictac.js"></script>
+</body>
+</html>

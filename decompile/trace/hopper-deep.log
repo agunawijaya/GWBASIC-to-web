@@ -1,0 +1,8 @@
+poll patience: 3 (a flush loop sees an empty keyboard)
+format    : MZ, 3584-byte header, 786 relocations applied; entry CS:IP 0000:001A -> image offset 0x1A
+start-up: 400,000,000 instructions, stopped: budget exhausted at 1257:1EF7 (image 0x004367) [d1 e0 8b f8 2e 8b 9d f8]
+  last inside: 0x4357 -> 0x4358 -> 0x4359 -> 0x435c -> 0x435e -> 0x4360 -> 0x4362 -> 0x4366
+  interrupts requested: 10h, 16h, 21h
+  ports written: 0x40, 0x61
+  keyboard: 1 reads, 435 of 436 keys unused
+executed 2,800 distinct addresses -> C:/Users/aguna/Downloads/Personal/Games/old_games/decompile/trace/hopper-deep.map

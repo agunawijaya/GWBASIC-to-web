@@ -1,0 +1,127 @@
+/* ===========================================================================
+   backgam.css — khusus Backgammon. Awalan `b-`.
+   Dadunya dari _shared/dice.css (ditetapkan YAHTZEE).
+   =========================================================================== */
+
+.b-layout {
+  display: grid; gap: var(--s5);
+  grid-template-columns: minmax(380px, 1fr) minmax(300px, 400px);
+  align-items: start; padding-block: var(--s6) var(--s8);
+}
+@media (max-width: 1100px) { .b-layout { grid-template-columns: 1fr; } }
+
+.b-stage { display: grid; gap: var(--s4); justify-items: center; width: 100%; }
+
+/* --- papan ---------------------------------------------------------------
+   Tata letaknya mengikuti baris 2630 apa adanya: baris ATAS menampilkan titik
+   24 turun ke 13 dari kiri ke kanan, baris BAWAH 1 naik ke 12. Itu papan
+   backgammon yang benar dilihat dari sisi pemain 1 — rumahnya (1-6) ada di
+   kiri bawah, rumah lawan (19-24) di kiri atas. */
+/* Bar diletakkan di KIRI papan, bukan di tengahnya.
+
+   Itu bukan penyederhanaan: aslinya memang menaruhnya di sana —
+   `LOCATE 11,5:PRINT"ON BAR"` (baris 2640), sementara papannya sendiri mulai
+   di kolom 20. Papan backgammon sungguhan menaruh bar di tengah, tapi di
+   layar teks 80 kolom, membelah papan jadi dua akan memakan empat kolom yang
+   tidak ada. Penulisnya memindahkannya ke pinggir, dan itu dipertahankan. */
+.b-wrap { width: 100%; display: grid; grid-template-columns: 40px 1fr;
+          gap: var(--s2); align-items: stretch; }
+.b-bars { display: grid; grid-template-rows: 1fr 1fr; gap: 4px; }
+
+.b-papan {
+  width: 100%; display: grid; grid-template-rows: 1fr 1fr; gap: 10px;
+  background: #3f2d1c; border: 2px solid #241a10; border-radius: var(--r);
+  padding: 14px 6px;
+}
+:root[data-theme="light"] .b-papan { background: #6b4f2e; }
+
+.b-baris { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1px; }
+
+/* Sebuah titik: segitiga di belakang, tumpukan bidak di depan, nomor di
+   ujung luar. Segitiganya `clip-path`, bukan trik border — supaya lebarnya
+   ikut kolom dan tidak perlu diukur ulang. */
+.b-titik { position: relative; min-height: 118px; cursor: pointer;
+           display: grid; align-content: start; }
+.b-titik--bawah { align-content: end; }
+.b-segi {
+  position: absolute; inset: 0; z-index: 0;
+  background: #c9a978; clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+.b-titik--genap .b-segi { background: #7d5a3a; }
+.b-titik--bawah .b-segi { clip-path: polygon(50% 0, 0 100%, 100% 100%); }
+
+/* Tujuan yang sah untuk bidak yang sedang dipilih. Ditandai hanya SAAT ada
+   yang dipilih — penanda yang selalu menyala berhenti berarti. */
+.b-titik--tujuan .b-segi { background: var(--acc-phosphor); }
+.b-titik--pilih  .b-segi { background: var(--acc-amber); }
+
+.b-tumpuk { position: relative; z-index: 1; display: grid; gap: 1px;
+            justify-items: center; padding: 2px 0; }
+.b-titik--bawah .b-tumpuk { direction: ltr; }
+.b-bidak {
+  width: 17px; height: 17px; border-radius: 50%;
+  border: 1px solid rgb(0 0 0 / .45); display: block;
+}
+/* Baris 2462 membedakan kedua pemain dengan RUPA, bukan warna: "███" lawan
+   "█ █" — pipih penuh lawan pipih berlubang, karena layar teks tidak bisa
+   diandalkan berwarna. Di sini keduanya tetap dibedakan dua kali: warna
+   DAN isian, supaya tetap terbaca kalau warnanya tidak terlihat. */
+.b-bidak--1 { background: #f2efe6; }
+.b-bidak--2 { background: #241a10; border-color: #b9ad99;
+              box-shadow: inset 0 0 0 3px #6b6155; }
+.b-lebih { z-index: 1; font-family: var(--font-mono); font-size: 9px;
+           color: #f2efe6; }
+.b-nomor { position: absolute; z-index: 1; left: 0; right: 0; text-align: center;
+           font-family: var(--font-mono); font-size: 9px; color: #e8dcc4; }
+.b-titik--atas  .b-nomor { top: -13px; }
+.b-titik--bawah .b-nomor { bottom: -13px; }
+
+/* Bar. Dua kotak sempit di tengah papan — A(25) di atas untuk pemain 1,
+   A(0) di bawah untuk pemain 2, sesuai baris 2650. */
+.b-bar { background: #241a10; border: 1px solid #171009;
+         border-radius: var(--r-sm); display: grid; gap: 2px;
+         align-content: center; justify-items: center; padding: 4px 0;
+         min-height: 60px; }
+/* Bidak di bar WAJIB dimasukkan lebih dulu (baris 2850). Kotaknya jadi merah
+   supaya aturan itu terbaca dari papannya, bukan cuma dari pesan galat. */
+.b-bar--wajib { background: var(--acc-red); cursor: pointer; }
+.b-bar--pilih { background: var(--acc-amber); }
+.b-barlabel { font-size: 9px; color: var(--ink-dim); text-align: center;
+              letter-spacing: .04em; }
+
+.b-say {
+  font-family: var(--font-mono); font-size: var(--fs-sm);
+  color: var(--acc-phosphor); min-height: 1.6em; text-align: center;
+}
+.b-say--bad { color: var(--acc-red); }
+.b-sisa { font-family: var(--font-mono); font-size: var(--fs-xs);
+          color: var(--ink-dim); align-self: center; }
+
+/* --- panel kanan --------------------------------------------------------- */
+
+.b-code {
+  margin-top: var(--s3); padding: var(--s3);
+  border: var(--border); border-radius: var(--r);
+  background: var(--bg-sunken); color: var(--acc-amber);
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.7;
+  overflow-x: auto;
+}
+.b-code em { color: var(--ink-faint); font-style: normal; }
+
+.b-note { font-size: var(--fs-sm); color: var(--ink-dim); margin-top: var(--s2); }
+.b-good { border-left: 3px solid var(--acc-phosphor); }
+.b-warn { border-left: 3px solid var(--acc-amber); }
+
+.b-tbl { width: 100%; border-collapse: collapse; margin-top: var(--s3);
+         font-size: var(--fs-xs); }
+.b-tbl th, .b-tbl td { padding: 4px var(--s2); text-align: left;
+                       border-bottom: 1px solid var(--line-soft); }
+.b-tbl th { color: var(--ink-dim); font-weight: 600; }
+.b-tbl td:last-child, .b-tbl th:last-child {
+  text-align: right; font-family: var(--font-mono); }
+
+/* Paragraf pembuka di panel "Cara bermain" — sepola dengan LIFE2. */
+.howto > .b-lead {
+  border-top: none; padding-top: 0; margin-top: var(--s3);
+  color: var(--ink);
+}

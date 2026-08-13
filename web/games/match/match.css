@@ -1,0 +1,171 @@
+/* ===========================================================================
+   match.css — khusus Match. Awalan `m-`.
+   =========================================================================== */
+
+.m-layout {
+  display: grid; gap: var(--s5);
+  grid-template-columns: minmax(360px, 1fr) minmax(300px, 420px);
+  align-items: start; padding-block: var(--s6) var(--s8);
+}
+@media (max-width: 1080px) { .m-layout { grid-template-columns: 1fr; } }
+
+.m-stage { display: grid; gap: var(--s4); justify-items: center; }
+
+/* Papan 8 baris x 5 kolom, persis baris 640-650. Aslinya tiap kotak selebar
+   empat belas karakter — itu sebabnya nama hadiahnya semua dipas ke 14 kolom
+   (" SWISS  WATCH "), dengan spasi yang dihitung tangan. */
+.m-grid {
+  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 5px; width: 100%;
+}
+.m-kotak {
+  min-height: 54px; padding: 4px 5px;
+  display: grid; place-content: center; gap: 2px; text-align: center;
+  border-radius: var(--r-sm); border: 1px solid var(--edge-soft);
+  background: var(--bg-sunken); color: var(--ink-dim);
+  font: inherit; cursor: pointer;
+  transition: background var(--t-fast) var(--ease),
+              border-color var(--t-fast) var(--ease);
+}
+.m-kotak:hover:not(:disabled) { border-color: var(--acc-phosphor); color: var(--ink); }
+.m-kotak:disabled { cursor: default; }
+.m-label { font-family: var(--font-mono); font-size: var(--fs-md);
+           color: var(--acc-amber); }
+
+/* Kotak terbuka. Warnanya dibalik seperti aslinya (baris 670: COLOR 0,7 —
+   tinta gelap di atas latar terang), karena itulah satu-satunya cara layar
+   teks 1982 bisa membedakan "terbuka" dari "tertutup". */
+.m-kotak--buka { background: #ece6d8; border-color: #b3ab99; cursor: default; }
+.m-nama  { font-size: 10px; font-weight: 700; color: #2a251c;
+           letter-spacing: .02em; line-height: 1.15; }
+.m-nilai { font-family: var(--font-mono); font-size: 10px; color: #6b5f47; }
+.m-kotak--khusus { background: var(--acc-amber); border-color: var(--acc-amber); }
+.m-kotak--khusus .m-nama { color: #241703; }
+.m-kotak--hilang { background: none; border-color: transparent; }
+
+/* Kotak yang TERSANGKUT: terbuka, tapi tidak akan pernah bisa dicocokkan lagi
+   karena pasangannya sudah dimakan kartu wild. Ditandai merah dan dicoret,
+   supaya ia tidak terbaca sebagai kartu yang masih menunggu dibalik. */
+.m-kotak--yatim {
+  border-color: var(--acc-red); position: relative;
+  background: color-mix(in srgb, var(--acc-red) 12%, #ece6d8);
+}
+.m-kotak--yatim .m-nama { color: #7a1f1f; }
+.m-kotak--yatim::after {
+  content: ''; position: absolute; left: 6px; right: 6px; top: 50%;
+  height: 1px; background: var(--acc-red); opacity: .55;
+}
+
+.m-say {
+  font-family: var(--font-mono); font-size: var(--fs-sm);
+  color: var(--acc-phosphor); min-height: 1.6em; text-align: center;
+}
+.m-say--bad { color: var(--acc-red); }
+
+/* --- dua pemain, berdampingan -------------------------------------------
+   Aslinya menyimpan data pemain sebagai larik berindeks 0 dan 1 (baris 130),
+   sehingga logika gilirannya cukup ditulis sekali. Bentuk itu dipertahankan
+   di kode, dan tata letak ini adalah bayangannya di layar. */
+.m-players { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s3);
+             width: 100%; }
+.m-player {
+  border: var(--border); border-radius: var(--r); padding: var(--s3);
+  background: var(--panel-2); display: grid; gap: var(--s2);
+}
+.m-aktif { border-color: var(--acc-phosphor);
+           box-shadow: 0 0 0 1px var(--acc-phosphor); }
+.m-phead { display: flex; justify-content: space-between; align-items: baseline;
+           font-size: var(--fs-xs); color: var(--ink-dim); }
+.m-phead b { font-family: var(--font-mono); font-size: var(--fs-md);
+             color: var(--acc-phosphor); }
+.m-prizes { display: flex; flex-wrap: wrap; gap: 3px; }
+.m-hadiah {
+  font: inherit; font-size: 9px; padding: 2px 5px;
+  border-radius: var(--r-pill); border: 1px solid var(--edge-soft);
+  background: var(--bg-sunken); color: var(--ink-dim); cursor: default;
+}
+/* Hadiah yang bisa diambil/diserahkan saat kartu TAKE ONE atau LOSE ONE
+   keluar. Hanya menyala saat memang sedang diminta memilih. */
+.m-hadiah--bisa { border-color: var(--acc-amber); color: var(--acc-amber);
+                  background: var(--acc-amber-dim); cursor: pointer; }
+
+.m-guess { display: flex; gap: var(--s2); align-items: center;
+           font-size: var(--fs-xs); color: var(--ink-dim); }
+.m-guess input { width: 76px; }
+
+/* --- panel kanan --------------------------------------------------------- */
+
+.m-code {
+  margin-top: var(--s3); padding: var(--s3);
+  border: var(--border); border-radius: var(--r);
+  background: var(--bg-sunken); color: var(--acc-amber);
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.7;
+  overflow-x: auto;
+}
+.m-code em { color: var(--ink-faint); font-style: normal; }
+
+.m-note { font-size: var(--fs-sm); color: var(--ink-dim); margin-top: var(--s2); }
+.m-warn { border-left: 3px solid var(--acc-amber); }
+.m-bad  { border-left: 3px solid var(--acc-red); }
+.m-good { border-left: 3px solid var(--acc-phosphor); }
+
+.m-tbl { width: 100%; border-collapse: collapse; margin-top: var(--s3);
+         font-size: var(--fs-xs); }
+.m-tbl th, .m-tbl td { padding: 4px var(--s2); text-align: left;
+                       border-bottom: 1px solid var(--line-soft); }
+.m-tbl th { color: var(--ink-dim); font-weight: 600; }
+.m-tbl td:last-child, .m-tbl th:last-child {
+  text-align: right; font-family: var(--font-mono); }
+
+/* Paragraf pembuka di panel "Cara bermain" — alasan yang sama dengan
+   `.l-lead` di LIFE2. */
+.howto > .m-lead {
+  border-top: none; padding-top: 0; margin-top: var(--s3);
+  color: var(--ink);
+}
+
+/* --- mode gambar ---------------------------------------------------------
+   Tiga tema, satu set ikon. Geometrinya sama persis di ketiganya; yang
+   berbeda cuma perlakuan warnanya — dan itu dinyatakan terus terang di
+   prizepics.js, bukan disamarkan sebagai "tiga gaya gambar".
+
+   Ikon memakai `currentColor` untuk garis dan dua kelas isian (`p-f1`,
+   `p-f2`), sehingga satu tema cukup mengganti tiga nilai. */
+
+.m-ikon {
+  width: 22px; height: 22px; display: block; margin: 0 auto 1px;
+  fill: none; stroke: currentColor; stroke-width: 1.6;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.m-ikon .p-f1, .m-ikon .p-f2 { stroke: currentColor; }
+
+/* Kotak jadi lebih tinggi begitu ikon masuk — tanpa ini nama hadiah yang
+   dua baris akan terjepit dan terpotong. */
+.m-grid--poster .m-kotak, .m-grid--garis .m-kotak, .m-grid--fosfor .m-kotak {
+  min-height: 70px;
+}
+
+/* poster — bidang datar berwarna, gaya papan hadiah acara kuis */
+.m-grid--poster .m-ikon { color: #6b5f47; }
+.m-grid--poster .m-ikon .p-f1 { fill: #d9922e; }
+.m-grid--poster .m-ikon .p-f2 { fill: #ece6d8; }
+.m-grid--poster .m-kotak--khusus .m-ikon { color: #241703; }
+.m-grid--poster .m-kotak--khusus .m-ikon .p-f1 { fill: #ece6d8; }
+.m-grid--poster .m-kotak--khusus .m-ikon .p-f2 { fill: #d9922e; }
+
+/* garis — tanpa isian sama sekali; paling terbaca pada ukuran kecil, dan
+   itulah alasannya ada: pada 22px, bidang berwarna saling menutup. */
+.m-grid--garis .m-ikon { color: #2a251c; stroke-width: 1.7; }
+.m-grid--garis .m-ikon .p-f1, .m-grid--garis .m-ikon .p-f2 { fill: none; }
+.m-grid--garis .m-kotak--khusus .m-ikon { color: #241703; }
+
+/* fosfor — monokrom hijau, mengikuti aksen retro koleksi ini. Kotaknya ikut
+   gelap, karena fosfor di atas krem tidak pernah terbaca sebagai fosfor. */
+.m-grid--fosfor .m-kotak--buka { background: #0d1a12; border-color: #1f4a30; }
+.m-grid--fosfor .m-nama  { color: #6ee7a0; }
+.m-grid--fosfor .m-nilai { color: #3f9e69; }
+.m-grid--fosfor .m-ikon  { color: #6ee7a0; }
+.m-grid--fosfor .m-ikon .p-f1 { fill: rgb(110 231 160 / .22); }
+.m-grid--fosfor .m-ikon .p-f2 { fill: rgb(110 231 160 / .45); }
+.m-grid--fosfor .m-kotak--khusus { background: #123322; border-color: #6ee7a0; }
+.m-grid--fosfor .m-kotak--khusus .m-nama { color: #b8ffd6; }

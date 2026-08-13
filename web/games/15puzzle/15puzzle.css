@@ -1,0 +1,202 @@
+/* ===========================================================================
+   15puzzle.css — gaya khusus THE 15 PUZZLE.
+
+   PALET
+   -----
+   Aslinya berjalan di `SCREEN 1, COLOR 0,1` — mode grafis CGA 320×200 dengan
+   palet 1, yang isinya hanya empat warna:
+
+     0 = hitam (latar)     2 = magenta
+     1 = cyan              3 = putih
+
+   Ubin di-`PAINT` dengan warna 2 (magenta) dan dibatasi warna 3 (putih);
+   kotak kosong di-`PAINT` warna 0. Bingkai dan hiasan memakai warna 1.
+
+   Palet empat warna itu dipertahankan di sini sebagai jejak retro yang bisa
+   dilacak — hanya rona-nya disesuaikan agar kontras teks memenuhi WCAG AA.
+   =========================================================================== */
+
+:root {
+  --tile-hi:    #ff8bff;   /* magenta CGA #FF55FF, dicerahkan sedikit */
+  --tile-lo:    #b93cb9;
+  --tile-ink:   #ffffff;   /* putih CGA */
+  --frame-hi:   #2a6f77;
+  --frame-lo:   #123c42;
+  --frame-edge: #55d7d7;   /* cyan CGA #55FFFF */
+  --well:       #06090c;   /* hitam CGA */
+
+  /* Hijau "sudah di tempat" — lihat catatan di bawah, ini SATU-SATUNYA warna
+     di halaman ini yang tidak ada di palet CGA aslinya. */
+  --tile-home-hi:   #5cf09a;
+  --tile-home-lo:   #159b52;
+  --tile-home-edge: #9dffc8;
+}
+:root[data-theme="light"] {
+  --tile-hi:    #d45fd4;
+  --tile-lo:    #8f2a8f;
+  --tile-ink:   #ffffff;
+  --frame-hi:   #cfe6e9;
+  --frame-lo:   #a9ccd1;
+  --frame-edge: #0f6f78;
+  --well:       #e6eef0;
+  --tile-home-hi:   #2fb972;
+  --tile-home-lo:   #0c6b38;
+  --tile-home-edge: #0a5c30;
+}
+@media (prefers-color-scheme: light) {
+  html:not([data-theme]) {
+    --tile-hi:#d45fd4; --tile-lo:#8f2a8f; --tile-ink:#fff;
+    --frame-hi:#cfe6e9; --frame-lo:#a9ccd1; --frame-edge:#0f6f78;
+    --well:#e6eef0;
+    --tile-home-hi:#2fb972; --tile-home-lo:#0c6b38; --tile-home-edge:#0a5c30;
+  }
+}
+
+/* --- tata letak ---------------------------------------------------------- */
+
+.game {
+  display: grid;
+  gap: var(--s5);
+  grid-template-columns: minmax(280px, 440px) minmax(280px, 1fr);
+  align-items: start;
+  padding-block: var(--s6) var(--s8);
+}
+@media (max-width: 820px) { .game { grid-template-columns: 1fr; } }
+
+#stage { display: grid; justify-items: center; gap: var(--s3); }
+#board { width: 100%; max-width: 400px; height: auto; touch-action: manipulation; }
+
+.motif {
+  position: absolute; left: -14px; top: 50%; translate: 0 -50%;
+  width: 60px; height: 210px; color: var(--frame-edge);
+  opacity: .16; pointer-events: none;
+}
+@media (max-width: 520px) { .motif { display: none; } }
+
+.hint { color: var(--ink-dim); font-size: var(--fs-sm); margin: 0;
+        letter-spacing: .12em; }
+
+/* --- ubin ---------------------------------------------------------------- */
+
+/* Yang dianimasikan hanya `transform`, dan itu disengaja: peramban bisa
+   memindahkan elemen tanpa menghitung ulang tata letak, jadi geseran tetap
+   mulus bahkan di mesin lambat. */
+.tile { transition: transform 150ms var(--ease); cursor: pointer; }
+
+/* PENTING — jangan pernah mengubah GEOMETRI saat hover.
+   Versi pertama menaikkan `stroke-width` dari 1.5 ke 3 saat hover. Karena tiap
+   ubin juga memakai <filter>, kotak pembatasnya ikut berubah, wilayah filter
+   dihitung ulang, gambarnya bergeser sepersekian piksel — dan kalau kursor
+   kebetulan di tepi, hover berkedip menyala-mati terus. Ubinnya bergetar.
+
+   Aturannya: saat hover, ubah hanya properti yang TIDAK memengaruhi tata letak
+   atau kotak pembatas — warna, dan opacity lapisan yang sudah ada sejak awal.
+   `stroke-width` sekarang tetap 2 dalam segala keadaan. */
+.tile .face {
+  fill: url(#tileFace);
+  stroke: var(--frame-edge);
+  stroke-width: 2;
+  transition: stroke var(--t-fast) var(--ease);
+}
+/* Ubin yang sudah berada di tempat tujuannya.
+
+   Ini LAPISAN TERSENDIRI yang selalu ada, dinyalakan lewat `opacity` —
+   bukan mengganti `fill` pada `.face`. Alasannya teknis: `fill` yang berisi
+   `url(#gradien)` TIDAK bisa ditransisikan, karena peramban tidak bisa
+   menginterpolasi antara dua paint server. Dengan lapisan terpisah,
+   perubahannya halus dan geometrinya tetap tidak tersentuh. */
+.tile .home {
+  fill: url(#tileHome); opacity: 0; pointer-events: none;
+  transition: opacity var(--t) var(--ease);
+}
+.tile.is-home .home { opacity: 1; }
+.tile.is-home .face { stroke: var(--tile-home-edge); }
+
+.tile .shine { fill: #fff; opacity: .16; pointer-events: none; }
+.tile .hl {
+  fill: #fff; opacity: 0; pointer-events: none;
+  transition: opacity var(--t-fast) var(--ease);
+}
+.tile .num {
+  fill: var(--tile-ink); font-family: var(--font-mono);
+  font-size: 40px; font-weight: 700; text-anchor: middle;
+  dominant-baseline: central; pointer-events: none;
+  user-select: none;
+}
+
+/* --- mode gambar ---------------------------------------------------------
+   Di mode gambar, angka besar diganti lencana kecil di pojok. Lencananya
+   punya bayangan teks supaya tetap terbaca di atas gambar apa pun — termasuk
+   gambar terang yang dipilih pemakai sendiri. */
+.tile .slice { display: none; }
+.tile .badge-num { display: none; }
+
+#board.has-picture .tile .slice { display: block; }
+#board.has-picture .tile .num   { display: none; }
+#board.has-picture .tile .face  { fill: #0b0f14; }
+#board.has-picture.show-num .tile .badge-num {
+  display: block;
+  fill: #fff; font-family: var(--font-mono); font-size: 15px; font-weight: 700;
+  paint-order: stroke; stroke: #000; stroke-width: 3.5; stroke-opacity: .55;
+  pointer-events: none; user-select: none;
+}
+/* Ubin yang sudah di tempatnya tetap ditandai, tapi hanya di tepinya —
+   kalau seluruh mukanya dihijaukan, gambarnya jadi tidak kelihatan. */
+#board.has-picture .tile .home { opacity: 0 !important; }
+#board.has-picture .tile.is-home .face { stroke: var(--tile-home-edge);
+                                         stroke-width: 4; }
+
+.tile.is-locked { cursor: default; }
+.tile:not(.is-locked):hover .face { stroke: var(--tile-ink); }
+.tile:not(.is-locked):hover .hl   { opacity: .14; }
+
+/* Saat menang, semua ubin otomatis sudah `is-home` sehingga hijau dengan
+   sendirinya — tidak perlu aturan warna terpisah. Yang tersisa hanya
+   mematikan interaksi, dan membuat bingkai papan ikut menyala. */
+#tiles.is-won .tile { cursor: default; }
+#board.is-won .well { stroke: var(--tile-home-edge); stroke-width: 3; }
+
+@media (prefers-reduced-motion: reduce) { .tile { transition: none; } }
+
+/* --- panel --------------------------------------------------------------- */
+
+.status { min-height: 1.4em; margin-top: var(--s3); }
+.status.is-win { color: var(--acc-phosphor); font-weight: 620; }
+
+.blurb {
+  font-size: var(--fs-sm); line-height: 1.7; color: var(--ink);
+  margin-top: var(--s2);
+}
+.note { font-size: var(--fs-sm); margin-top: var(--s2); }
+
+.panel--note { border-left: 3px solid var(--acc-amber); }
+
+/* --- rekor & pemilih gambar ---------------------------------------------- */
+
+.records .stat { min-width: 130px; }
+.rec-sub { font-size: var(--fs-xs); font-family: var(--font-mono); }
+
+.modes { margin-top: var(--s3); gap: var(--s2); }
+.modes .chip {
+  padding: 5px var(--s3); border-radius: var(--r-pill); cursor: pointer;
+  border: var(--border); background: var(--panel-2);
+  font-size: var(--fs-xs); font-weight: 560; color: var(--ink-dim);
+  transition: color var(--t-fast) var(--ease),
+              background var(--t-fast) var(--ease),
+              border-color var(--t-fast) var(--ease);
+}
+.modes .chip:hover { color: var(--ink); }
+.modes .chip[aria-pressed="true"] {
+  background: var(--acc-phosphor-dim);
+  border-color: var(--acc-phosphor);
+  color: var(--acc-phosphor);
+}
+
+.upload, .shownum {
+  margin-top: var(--s3); gap: var(--s2);
+  font-size: var(--fs-sm); color: var(--ink-dim);
+}
+.upload span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.links { font-size: var(--fs-sm); margin-top: var(--s2); }
+.links a { color: var(--acc-blue); }

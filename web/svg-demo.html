@@ -1,0 +1,992 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Demo kemampuan SVG — untuk menilai sebelum porting dimulai</title>
+<style>
+  :root{
+    --bg:#0e1116; --panel:#161b23; --line:#252d38; --ink:#e6edf3;
+    --dim:#8b98a8; --accent:#f0b429; --accent2:#4aa3df; --red:#e5534b;
+    --radius:14px;
+    --font:ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,"Cascadia Mono",Consolas,"Courier New",monospace;
+  }
+  @media (prefers-color-scheme:light){
+    :root{ --bg:#f4f6f9; --panel:#fff; --line:#dfe5ec; --ink:#111820;
+           --dim:#5b6775; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:32px 20px 64px;background:var(--bg);color:var(--ink);
+       font-family:var(--font);line-height:1.55}
+  .wrap{max-width:1080px;margin:0 auto}
+  h1{font-size:clamp(22px,3.4vw,32px);margin:0 0 6px;letter-spacing:-.02em}
+  .sub{color:var(--dim);margin:0 0 28px;max-width:70ch}
+  h2{font-size:15px;letter-spacing:.08em;text-transform:uppercase;
+     color:var(--dim);margin:36px 0 14px;font-weight:600}
+  .grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+  .card{background:var(--panel);border:1px solid var(--line);
+        border-radius:var(--radius);padding:18px;display:flex;flex-direction:column;
+        align-items:center;gap:12px}
+  .card h3{margin:0;font-size:13px;font-weight:600;color:var(--ink);
+           text-align:center}
+  .card p{margin:0;font-size:12px;color:var(--dim);text-align:center;
+          font-family:var(--mono)}
+  svg{display:block;max-width:100%;height:auto}
+  .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  input[type=range]{width:100%;accent-color:var(--accent)}
+  .note{border-left:3px solid var(--accent);background:var(--panel);
+        padding:14px 16px;border-radius:0 10px 10px 0;margin:28px 0;
+        font-size:14px;color:var(--dim)}
+  .note b{color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Demo kemampuan SVG</h1>
+<p class="sub">Semuanya digambar tangan sebagai <code>&lt;path&gt;</code>, gradien,
+filter, mask, dan pola — tidak ada gambar eksternal, tidak ada pustaka. Ini
+untuk menjawab pertanyaan Anda: bukan hanya bentuk primitif.</p>
+
+<h2>1 · Kurva Bézier — simbol kartu &amp; kartu utuh</h2>
+<div class="grid">
+
+  <div class="card">
+    <h3>Empat simbol suit</h3>
+    <svg viewBox="0 0 420 110" width="360" role="img" aria-label="Sekop, hati, keriting, wajik">
+      <defs>
+        <linearGradient id="gDark" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#3a4757"/><stop offset="1" stop-color="#0d131b"/>
+        </linearGradient>
+        <linearGradient id="gRed" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#f2726a"/><stop offset="1" stop-color="#a3231c"/>
+        </linearGradient>
+      </defs>
+      <!-- sekop -->
+      <g transform="translate(10,8) scale(0.9)">
+        <path fill="url(#gDark)" d="M50 4C50 4 8 42 8 68c0 15 11 25 24 25 6 0 12-3 15-8 1 12-4 22-13 28h32c-9-6-14-16-13-28 3 5 9 8 15 8 13 0 24-10 24-25C92 42 50 4 50 4Z"/>
+      </g>
+      <!-- hati -->
+      <g transform="translate(115,8) scale(0.9)">
+        <path fill="url(#gRed)" d="M50 97C50 97 6 63 6 34 6 17 18 6 32 6c9 0 15 5 18 12 3-7 9-12 18-12 14 0 26 11 26 28 0 29-44 63-44 63Z"/>
+      </g>
+      <!-- keriting -->
+      <g transform="translate(220,8) scale(0.9)">
+        <path fill="url(#gDark)" d="M50 6c-11 0-20 9-20 20 0 4 1 7 3 10-3-2-7-3-11-3-11 0-20 9-20 20s9 20 20 20c7 0 13-4 17-9-1 12-6 20-14 26h50c-8-6-13-14-14-26 4 5 10 9 17 9 11 0 20-9 20-20s-9-20-20-20c-4 0-8 1-11 3 2-3 3-6 3-10 0-11-9-20-20-20Z"/>
+      </g>
+      <!-- wajik -->
+      <g transform="translate(325,8) scale(0.9)">
+        <path fill="url(#gRed)" d="M50 4 C64 30 78 44 96 51 78 58 64 72 50 98 36 72 22 58 4 51 22 44 36 30 50 4Z"/>
+      </g>
+    </svg>
+    <p>path + gradien linear</p>
+  </div>
+
+  <div class="card">
+    <h3>Kartu remi lengkap</h3>
+    <svg viewBox="0 0 150 210" width="150" role="img" aria-label="As sekop">
+      <defs>
+        <linearGradient id="face" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e8edf3"/>
+        </linearGradient>
+        <filter id="cardShadow" x="-25%" y="-25%" width="150%" height="150%">
+          <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#000" flood-opacity=".45"/>
+        </filter>
+        <pattern id="guilloche" width="14" height="14" patternUnits="userSpaceOnUse">
+          <path d="M0 7 Q3.5 0 7 7 T14 7" fill="none" stroke="#c8d3e0" stroke-width=".7"/>
+          <path d="M7 0 Q14 3.5 7 7 T7 14" fill="none" stroke="#c8d3e0" stroke-width=".7"/>
+        </pattern>
+        <path id="spadeSm" d="M9 0C9 0 0 8 0 13c0 3 2 5 5 5 1 0 2 0 3-1 0 3-1 4-3 5h8c-2-1-3-2-3-5 1 1 2 1 3 1 3 0 5-2 5-5 0-5-9-13-9-13Z"/>
+      </defs>
+      <rect x="4" y="4" width="142" height="202" rx="12" fill="url(#face)"
+            stroke="#b6c2d0" filter="url(#cardShadow)"/>
+      <rect x="14" y="14" width="122" height="182" rx="7" fill="url(#guilloche)"
+            opacity=".65"/>
+      <rect x="14" y="14" width="122" height="182" rx="7" fill="none"
+            stroke="#2b3542" stroke-width="1.2"/>
+      <text x="16" y="34" font-family="Georgia,serif" font-size="24"
+            font-weight="700" fill="#12181f">A</text>
+      <use href="#spadeSm" x="19" y="38" fill="#12181f"/>
+      <g transform="rotate(180 75 105)">
+        <text x="16" y="34" font-family="Georgia,serif" font-size="24"
+              font-weight="700" fill="#12181f">A</text>
+        <use href="#spadeSm" x="19" y="38" fill="#12181f" transform="scale(.85)"
+             style="transform-box:fill-box"/>
+      </g>
+      <g transform="translate(75,105) scale(2.6) translate(-9,-18)">
+        <path fill="#12181f" d="M9 0C9 0 0 8 0 13c0 3 2 5 5 5 1 0 2 0 3-1 0 3-1 4-3 5h8c-2-1-3-2-3-5 1 1 2 1 3 1 3 0 5-2 5-5 0-5-9-13-9-13Z"/>
+      </g>
+    </svg>
+    <p>pattern + filter + &lt;use&gt;</p>
+  </div>
+
+  <div class="card">
+    <h3>Dadu isometrik</h3>
+    <!--
+      Kubus sejati, bukan tiga bentuk yang ditata mirip kubus.
+
+      Proyeksi: titik 3D (x,y,z) -> 2D
+          X = (x - z) * cos30
+          Y = (x + z) * sin30 - y
+      Sisi 100, jadi kubus membentang X = -86.6..86.6 dan Y = -100..100.
+
+      Tiap muka digambar sebagai kotak datar 0..100 dengan pip di kisi 3x3
+      yang biasa, lalu ditempelkan ke bidangnya lewat satu matrix(). Karena
+      pip ikut ditransformasi, lingkarannya berubah jadi elips dengan sudut
+      yang benar dengan sendirinya - itulah yang membuatnya terbaca sebagai
+      kubus. Versi sebelumnya menggambar pip sebagai elips lurus, dan itu
+      sebabnya terlihat miring.
+
+        muka atas  : matrix( 0.866,  0.5, -0.866, 0.5,   0, -100)
+        muka kiri  : matrix( 0.866,  0.5,  0,     1,  -86.6, -50)
+        muka kanan : matrix( 0.866, -0.5,  0,     1,     0,    0)
+
+      Angka pada muka yang berhadapan selalu berjumlah 7, jadi 5-3-6 adalah
+      kombinasi sudut yang sah (yang berpasangan: 1-6, 2-5, 3-4).
+    -->
+    <svg viewBox="0 0 200 232" width="180" role="img" aria-label="Dadu tiga dimensi menunjukkan 5, 3, dan 6">
+      <defs>
+        <linearGradient id="dTop" x1="0" y1="0" x2=".7" y2="1">
+          <stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#dde5ee"/>
+        </linearGradient>
+        <linearGradient id="dLeft" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#aab7c6"/><stop offset="1" stop-color="#cbd5e0"/>
+        </linearGradient>
+        <linearGradient id="dRight" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#93a1b2"/><stop offset="1" stop-color="#7a8899"/>
+        </linearGradient>
+        <radialGradient id="dPip" cx="35%" cy="30%" r="70%">
+          <stop offset="0" stop-color="#4a5563"/><stop offset="1" stop-color="#0b1016"/>
+        </radialGradient>
+        <filter id="dShadow" x="-40%" y="-20%" width="180%" height="160%">
+          <feDropShadow dx="0" dy="6" stdDeviation="7" flood-opacity=".45"/>
+        </filter>
+      </defs>
+
+      <g transform="translate(100,112) scale(.74)" filter="url(#dShadow)">
+        <!-- bayangan di lantai -->
+        <ellipse cx="0" cy="112" rx="88" ry="17" fill="#000" opacity=".18"/>
+
+        <!-- tiga muka kubus -->
+        <path d="M0 -100 L86.6 -50 L0 0 L-86.6 -50 Z"  fill="url(#dTop)"/>
+        <path d="M-86.6 -50 L0 0 L0 100 L-86.6 50 Z"   fill="url(#dLeft)"/>
+        <path d="M0 0 L86.6 -50 L86.6 50 L0 100 Z"     fill="url(#dRight)"/>
+
+        <!-- MUKA ATAS: 5 -->
+        <g transform="matrix(0.866,0.5,-0.866,0.5,0,-100)" fill="url(#dPip)">
+          <circle cx="24" cy="24" r="9"/><circle cx="76" cy="24" r="9"/>
+          <circle cx="50" cy="50" r="9"/>
+          <circle cx="24" cy="76" r="9"/><circle cx="76" cy="76" r="9"/>
+        </g>
+
+        <!-- MUKA KIRI: 3 -->
+        <g transform="matrix(0.866,0.5,0,1,-86.6,-50)" fill="url(#dPip)" opacity=".92">
+          <circle cx="24" cy="24" r="9"/>
+          <circle cx="50" cy="50" r="9"/>
+          <circle cx="76" cy="76" r="9"/>
+        </g>
+
+        <!-- MUKA KANAN: 6 -->
+        <g transform="matrix(0.866,-0.5,0,1,0,0)" fill="url(#dPip)" opacity=".88">
+          <circle cx="26" cy="20" r="9"/><circle cx="74" cy="20" r="9"/>
+          <circle cx="26" cy="50" r="9"/><circle cx="74" cy="50" r="9"/>
+          <circle cx="26" cy="80" r="9"/><circle cx="74" cy="80" r="9"/>
+        </g>
+
+        <!-- rusuk: sorotan di tiga tepi atas, garis gelap di siluet -->
+        <g fill="none" stroke-linecap="round">
+          <path d="M0 -100 L86.6 -50 M0 -100 L-86.6 -50 M-86.6 -50 L0 0 L86.6 -50"
+                stroke="#ffffff" stroke-opacity=".55" stroke-width="2"/>
+          <path d="M0 0 L0 100" stroke="#000" stroke-opacity=".16" stroke-width="2"/>
+          <path d="M0 -100 L86.6 -50 L86.6 50 L0 100 L-86.6 50 L-86.6 -50 Z"
+                stroke="#4a5563" stroke-opacity=".55" stroke-width="2.4"/>
+        </g>
+      </g>
+    </svg>
+    <p>proyeksi isometrik sejati, pip ikut ditransformasi</p>
+  </div>
+</div>
+
+<h2>2 · Gradien radial, filter, dan cahaya — pesawat &amp; nyala roket</h2>
+<div class="grid">
+
+  <div class="card">
+    <h3>Lunar Lander (untuk LANDER.BAS)</h3>
+    <!--
+      Modul pendarat bergaya Apollo LM. Bagian yang bisa dikenali sengaja
+      dipertahankan karena itulah yang membuat sebuah gambar "bercerita":
+        - tingkat turun segi delapan berbalut foil emas berjahit
+        - empat kaki pendarat; dua depan menonjol, dua belakang lebih gelap
+        - sungkup mesin turun yang melebar di ujung
+        - tingkat naik bersegi dengan dua jendela segitiga miring ke bawah
+        - palka depan + beranda EVA + tangga di kaki depan-kiri
+        - dua kluster RCS di bahu, tempat semburan sikap keluar
+        - antena pengarah pita-S dan antena radar rendezvous
+        - terowongan dok di puncak
+
+      Seluruh wahana ada di dalam <g id="craft">, jadi memutarnya cukup satu
+      atribut transform - dan nyala roket ikut berputar karena ia anak dari
+      grup yang sama. Itulah gunanya menaruh api DI DALAM badan, bukan di luar.
+    -->
+    <svg viewBox="0 0 260 300" width="240" role="img"
+         aria-label="Modul pendarat bulan dengan roket dan pendorong sikap">
+      <defs>
+        <linearGradient id="foilG" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0"   stop-color="#6b5316"/>
+          <stop offset=".22" stop-color="#d9bf6c"/>
+          <stop offset=".45" stop-color="#f7e6a8"/>
+          <stop offset=".75" stop-color="#a98a2c"/>
+          <stop offset="1"   stop-color="#5c4713"/>
+        </linearGradient>
+        <linearGradient id="metal" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#5b6672"/><stop offset=".35" stop-color="#cdd6e0"/>
+          <stop offset=".7" stop-color="#93a0ae"/><stop offset="1" stop-color="#4c5661"/>
+        </linearGradient>
+        <linearGradient id="cabin" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#78848f"/><stop offset=".3" stop-color="#e2e8ee"/>
+          <stop offset=".68" stop-color="#aab5c0"/><stop offset="1" stop-color="#616c77"/>
+        </linearGradient>
+        <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#9fe4ff"/><stop offset="1" stop-color="#0e2b3b"/>
+        </linearGradient>
+        <!-- jahitan selimut termal -->
+        <pattern id="quilt" width="11" height="9" patternUnits="userSpaceOnUse">
+          <path d="M0 0 H11 M0 9 H11 M0 0 V9 M11 0 V9"
+                stroke="#6a5417" stroke-width=".6" opacity=".45" fill="none"/>
+          <path d="M1 1 H10 M1 8 H10" stroke="#fff3c4" stroke-width=".4"
+                opacity=".22" fill="none"/>
+        </pattern>
+        <radialGradient id="flame" cx="50%" cy="12%" r="86%">
+          <stop offset="0"   stop-color="#fffdf0"/>
+          <stop offset=".24" stop-color="#ffd35c"/>
+          <stop offset=".58" stop-color="#f57b20" stop-opacity=".92"/>
+          <stop offset="1"   stop-color="#c62f12" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="glow" x="-70%" y="-70%" width="240%" height="240%">
+          <feGaussianBlur stdDeviation="5" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="rough">
+          <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3" result="n"/>
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="2.6"/>
+        </filter>
+      </defs>
+
+      <!-- ============ SELURUH WAHANA, satu grup yang bisa diputar ============ -->
+      <g id="craft">
+
+        <!-- ---------- kaki belakang: digambar lebih dulu supaya di belakang ---------- -->
+        <g stroke="#5a636d" fill="none" stroke-linecap="round">
+          <path d="M102 152 L68 206" stroke-width="4"/>
+          <path d="M158 152 L192 206" stroke-width="4"/>
+          <path d="M110 178 L74 202" stroke-width="2.6"/>
+          <path d="M150 178 L186 202" stroke-width="2.6"/>
+        </g>
+        <g fill="#69737e">
+          <ellipse cx="68" cy="209" rx="13" ry="4.5"/>
+          <ellipse cx="192" cy="209" rx="13" ry="4.5"/>
+        </g>
+
+        <!-- ---------- antena ---------- -->
+        <!-- pengarah pita-S -->
+        <path d="M164 78 L192 58" stroke="url(#metal)" stroke-width="3.4"
+              stroke-linecap="round" fill="none"/>
+        <g transform="rotate(-32 204 50)">
+          <ellipse cx="204" cy="50" rx="16" ry="10.5" fill="url(#metal)"
+                   stroke="#4a545f" stroke-width="1"/>
+          <ellipse cx="204" cy="50" rx="11" ry="6.8" fill="#2f3944" opacity=".55"/>
+          <path d="M204 50 L204 38" stroke="#b9c4d0" stroke-width="1.8"/>
+          <circle cx="204" cy="37" r="2.6" fill="#8e99a5"/>
+        </g>
+        <!-- radar rendezvous -->
+        <path d="M98 78 L72 60" stroke="url(#metal)" stroke-width="2.8"
+              stroke-linecap="round" fill="none"/>
+        <g transform="rotate(28 64 55)">
+          <ellipse cx="64" cy="55" rx="11" ry="7.5" fill="url(#metal)"
+                   stroke="#4a545f" stroke-width=".9"/>
+          <ellipse cx="64" cy="55" rx="7" ry="4.6" fill="#2f3944" opacity=".5"/>
+        </g>
+
+        <!-- ---------- terowongan dok ---------- -->
+        <g>
+          <rect x="118" y="46" width="24" height="18" rx="3" fill="url(#metal)"
+                stroke="#4a545f" stroke-width="1"/>
+          <ellipse cx="130" cy="46" rx="14" ry="4.6" fill="#aab5c0"
+                   stroke="#4a545f" stroke-width="1"/>
+          <ellipse cx="130" cy="46" rx="8" ry="2.6" fill="#39424c"/>
+        </g>
+
+        <!-- ---------- tingkat naik (ascent stage) ---------- -->
+        <path d="M96 128 L96 88 L108 66 L152 66 L164 88 L164 128 Z"
+              fill="url(#cabin)" stroke="#525c68" stroke-width="1.3"/>
+        <!-- pipi samping -->
+        <path d="M88 96 L96 92 L96 122 L88 118 Z" fill="#7d8894" stroke="#525c68"/>
+        <path d="M172 96 L164 92 L164 122 L172 118 Z" fill="#66717d" stroke="#525c68"/>
+
+        <!-- dua jendela segitiga, miring ke bawah-luar -->
+        <path d="M105 88 L126 93 L114 111 Z" fill="#4b5560"/>
+        <path d="M155 88 L134 93 L146 111 Z" fill="#4b5560"/>
+        <path d="M107 90 L124 94.4 L114 108 Z" fill="url(#glass)"/>
+        <path d="M153 90 L136 94.4 L146 108 Z" fill="url(#glass)"/>
+        <path d="M108 91 L121 94.4 L114 100 Z" fill="#cdefff" opacity=".38"/>
+        <path d="M152 91 L139 94.4 L146 100 Z" fill="#cdefff" opacity=".28"/>
+
+        <!-- palka depan + beranda EVA -->
+        <rect x="119" y="102" width="22" height="20" rx="2.5" fill="#8b96a2"
+              stroke="#525c68" stroke-width="1"/>
+        <path d="M122 106 h16 M122 111 h16 M122 116 h16" stroke="#6d7883" stroke-width=".8"/>
+        <circle cx="137" cy="119" r="1.6" fill="#4b5560"/>
+        <rect x="113" y="124" width="34" height="4.5" rx="1.5" fill="#98a3af"
+              stroke="#5a636d" stroke-width=".8"/>
+
+        <!-- garis panel + greeble tingkat naik -->
+        <g stroke="#6d7883" stroke-width=".8" opacity=".65" fill="none">
+          <path d="M96 82 H164"/><path d="M100 74 H160"/>
+        </g>
+        <g fill="#7b8593" opacity=".8">
+          <rect x="99" y="97" width="5" height="3.4" rx="1"/>
+          <rect x="99" y="104" width="4" height="3" rx="1"/>
+          <rect x="157" y="97" width="5" height="3.4" rx="1"/>
+          <rect x="157" y="104" width="4" height="3" rx="1"/>
+        </g>
+
+        <!-- ---------- kluster RCS di bahu ---------- -->
+        <g fill="#7c8894" stroke="#4c5661" stroke-width=".9">
+          <rect x="82" y="84" width="15" height="15" rx="3"/>
+          <rect x="163" y="84" width="15" height="15" rx="3"/>
+        </g>
+        <g fill="#5f6a76">
+          <!-- nosel: kiri, kanan, atas, bawah pada tiap kluster -->
+          <path d="M82 89 L76 87 L76 96 L82 94 Z"/>
+          <path d="M89 84 L87 78 L94 78 L92 84 Z"/>
+          <path d="M89 99 L87 105 L94 105 L92 99 Z"/>
+          <path d="M178 89 L184 87 L184 96 L178 94 Z"/>
+          <path d="M167 84 L165 78 L172 78 L170 84 Z"/>
+          <path d="M167 99 L165 105 L172 105 L170 99 Z"/>
+        </g>
+
+        <!-- ---------- nyala roket utama ----------
+             Sengaja digambar DI SINI, sebelum tingkat turun dan sungkup mesin.
+             Di SVG, elemen yang ditulis belakangan menimpa yang di depannya —
+             jadi menaruh api di akhir membuatnya menutupi sungkup, seolah
+             menyembur dari depan cerobong. Dipindah ke belakang seperti ini,
+             pangkal apinya tersembunyi di dalam sungkup dan hanya bagian yang
+             keluar dari mulutnya yang terlihat. Itulah urutan yang benar.
+
+             Titik pangkal juga dinaikkan ke y=200, di DALAM sungkup, supaya
+             saat api mengecil ia menyusut ke dalam mulut cerobong dan tidak
+             pernah terlihat menggantung di udara. -->
+        <g id="flameGroup" style="opacity:0">
+          <g filter="url(#glow)">
+            <path id="flameOuter"
+                  d="M130 200 C154 242 143 272 130 296 C117 272 106 242 130 200 Z"
+                  fill="url(#flame)" filter="url(#rough)"/>
+            <path id="flameCore"
+                  d="M130 200 C141 230 137 250 130 268 C123 250 119 230 130 200 Z"
+                  fill="#fff6d0" opacity=".9"/>
+          </g>
+        </g>
+
+        <!-- ---------- tingkat turun (descent stage) ---------- -->
+        <path id="descent"
+              d="M94 130 L166 130 L182 146 L182 166 L166 182 L94 182 L78 166 L78 146 Z"
+              fill="url(#foilG)" stroke="#4f3f11" stroke-width="1.3"/>
+        <path d="M94 130 L166 130 L182 146 L182 166 L166 182 L94 182 L78 166 L78 146 Z"
+              fill="url(#quilt)"/>
+        <!-- sekat antar teluk muatan -->
+        <g stroke="#6a5417" stroke-width="1.1" opacity=".75" fill="none">
+          <path d="M112 130 V182"/><path d="M148 130 V182"/>
+        </g>
+        <!-- sorotan foil -->
+        <path d="M96 132 L110 132 L110 180 L96 180 Z" fill="#fff6d0" opacity=".14"/>
+        <!-- bayangan sisi kanan -->
+        <path d="M150 130 L166 130 L182 146 L182 166 L166 182 L150 182 Z"
+              fill="#2b2109" opacity=".22"/>
+
+        <!-- ---------- sungkup mesin turun ---------- -->
+        <g>
+          <rect x="120" y="180" width="20" height="6" rx="2" fill="#8b96a2"
+                stroke="#4c5661" stroke-width=".9"/>
+          <path d="M119 186 L141 186 L152 212 L108 212 Z"
+                fill="url(#metal)" stroke="#3f4952" stroke-width="1.2"/>
+          <path d="M108 212 Q130 219 152 212" fill="none" stroke="#39424c"
+                stroke-width="1.6"/>
+          <path d="M124 186 L116 212 M136 186 L144 212" stroke="#6d7883"
+                stroke-width=".8" opacity=".7"/>
+        </g>
+
+        <!-- ---------- kaki depan ---------- -->
+        <g stroke="url(#metal)" fill="none" stroke-linecap="round">
+          <path d="M80 148 L34 222" stroke-width="5.5"/>
+          <path d="M180 148 L226 222" stroke-width="5.5"/>
+          <path d="M94 180 L48 216" stroke-width="3.2"/>
+          <path d="M166 180 L212 216" stroke-width="3.2"/>
+        </g>
+        <!-- tangga di kaki depan-kiri -->
+        <g stroke="#aab5c0" stroke-width="1.6" fill="none">
+          <path d="M70 168 L40 214"/><path d="M79 174 L49 220"/>
+          <path d="M69 176 L76 180 M65 184 L72 188 M61 192 L68 196
+                   M57 200 L64 204 M53 208 L60 212"/>
+        </g>
+        <!-- telapak kaki -->
+        <g>
+          <path d="M20 220 L48 220 L44 228 L24 228 Z" fill="#8b96a2"
+                stroke="#4c5661" stroke-width="1"/>
+          <ellipse cx="34" cy="229" rx="17" ry="5.5" fill="#98a3af"
+                   stroke="#4c5661" stroke-width="1"/>
+
+          <path d="M212 220 L240 220 L236 228 L216 228 Z" fill="#79848f"
+                stroke="#4c5661" stroke-width="1"/>
+          <ellipse cx="226" cy="229" rx="17" ry="5.5" fill="#8b96a2"
+                   stroke="#4c5661" stroke-width="1"/>
+        </g>
+
+        <!-- ---------- semburan pendorong sikap ---------- -->
+        <!-- Hukum ketiga Newton: gas ke kiri, badan terdorong ke kanan.
+             Karena kluster ada di BAHU (jauh di atas titik berat), dorongan itu
+             menghasilkan torsi - wahana berputar, bukan bergeser. -->
+        <g filter="url(#glow)">
+          <path id="rcsLeft" style="opacity:0"
+                d="M76 85 C58 88 38 90 14 91.5 C38 93 58 95 76 98 Z"
+                fill="url(#flame)"/>
+          <path id="rcsRight" style="opacity:0"
+                d="M184 85 C202 88 222 90 246 91.5 C222 93 202 95 184 98 Z"
+                fill="url(#flame)"/>
+        </g>
+
+      </g>
+    </svg>
+
+    <div class="row" style="width:100%;justify-content:center">
+      <button class="btn btn--sm" id="turnLeft"  type="button">&#9664; putar kiri</button>
+      <button class="btn btn--primary btn--sm" id="thrustBtn" type="button">
+        Tahan: roket utama
+      </button>
+      <button class="btn btn--sm" id="turnRight" type="button">putar kanan &#9654;</button>
+    </div>
+    <p>dorong <span id="thrustN">0</span>% &middot; sudut <span id="angleN">0</span>&deg;<br>
+       <span id="rcsInfo">RCS diam</span></p>
+    <label class="row" style="font-size:var(--fs-xs);color:var(--dim);gap:6px">
+      <input type="checkbox" id="autoUp" checked>
+      kembali tegak sendiri saat RCS dilepas
+    </label>
+    <p style="font-size:var(--fs-xs)">tombol: spasi/&uarr; &middot; &larr; &middot; &rarr;</p>
+  </div>
+
+  <div class="card">
+    <h3>X-Wing (untuk XWING.BAS)</h3>
+    <!-- Versi kedua: ditambah garis panel, greeble, engsel s-foil, cincin
+         intake, soket droid astromekanik, larik sensor hidung, dan meriam
+         berlaras banyak. Semua tetap <path>/<rect> yang ditulis tangan. -->
+    <svg viewBox="0 0 240 208" width="240" role="img" aria-label="Pesawat tempur bersayap X">
+      <defs>
+        <linearGradient id="fus" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0"   stop-color="#7f8b99"/>
+          <stop offset=".28" stop-color="#e9eef4"/>
+          <stop offset=".62" stop-color="#cdd6e0"/>
+          <stop offset="1"   stop-color="#6f7b88"/>
+        </linearGradient>
+        <linearGradient id="wingUp" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#c3cdd9"/><stop offset="1" stop-color="#8d99a7"/>
+        </linearGradient>
+        <linearGradient id="wingDn" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#8a95a3"/><stop offset="1" stop-color="#aeb9c6"/>
+        </linearGradient>
+        <linearGradient id="nacelle" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#b6c1cf"/><stop offset=".5" stop-color="#8a95a3"/>
+          <stop offset="1" stop-color="#5f6a77"/>
+        </linearGradient>
+        <radialGradient id="engine" cx="50%" cy="50%" r="50%">
+          <stop offset="0"  stop-color="#e8fbff"/>
+          <stop offset=".35" stop-color="#7fd7ff"/>
+          <stop offset=".7"  stop-color="#3fa9d8" stop-opacity=".85"/>
+          <stop offset="1"   stop-color="#12507a" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="engGlow" x="-80%" y="-80%" width="260%" height="260%">
+          <feGaussianBlur stdDeviation="3.4" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- ================= SAYAP (s-foil terbuka) ================= -->
+      <g stroke="#4e5863" stroke-width="1.1">
+        <path d="M112 90 L20 36 L6 50 L104 102Z" fill="url(#wingUp)"/>
+        <path d="M128 90 L220 36 L234 50 L136 102Z" fill="url(#wingUp)"/>
+        <path d="M112 112 L20 168 L6 154 L104 100Z" fill="url(#wingDn)"/>
+        <path d="M128 112 L220 168 L234 154 L136 100Z" fill="url(#wingDn)"/>
+      </g>
+
+      <!-- garis panel di sayap -->
+      <g stroke="#5c6672" stroke-width=".8" opacity=".65" fill="none">
+        <path d="M96 92 L34 56"/><path d="M80 96 L44 74"/>
+        <path d="M144 92 L206 56"/><path d="M160 96 L196 74"/>
+        <path d="M96 110 L34 148"/><path d="M80 106 L44 130"/>
+        <path d="M144 110 L206 148"/><path d="M160 106 L196 130"/>
+      </g>
+
+      <!-- pita merah pengenal skuadron -->
+      <g fill="#cf4238">
+        <path d="M60 66 L74 74 L68 80 L54 72Z"/>
+        <path d="M180 66 L166 74 L172 80 L186 72Z"/>
+        <path d="M60 138 L74 130 L68 124 L54 132Z"/>
+        <path d="M180 138 L166 130 L172 124 L186 132Z"/>
+      </g>
+
+      <!-- engsel s-foil: tempat sayap berputar membuka/menutup -->
+      <g fill="#66727f" stroke="#464f59" stroke-width=".9">
+        <rect x="98" y="80" width="14" height="10" rx="3"/>
+        <rect x="128" y="80" width="14" height="10" rx="3"/>
+        <rect x="98" y="110" width="14" height="10" rx="3"/>
+        <rect x="128" y="110" width="14" height="10" rx="3"/>
+      </g>
+
+      <!-- ================= MERIAM UJUNG SAYAP ================= -->
+      <g>
+        <!-- setiap meriam: laras panjang + dua cincin + ujung merah -->
+        <g fill="#5b6672" stroke="#3f4852" stroke-width=".8">
+          <rect x="8"  y="42"  width="46" height="6" rx="3"/>
+          <rect x="8"  y="156" width="46" height="6" rx="3"/>
+          <rect x="186" y="42"  width="46" height="6" rx="3"/>
+          <rect x="186" y="156" width="46" height="6" rx="3"/>
+        </g>
+        <g fill="#7d8895">
+          <rect x="26" y="40" width="5" height="10" rx="1.5"/>
+          <rect x="38" y="40" width="5" height="10" rx="1.5"/>
+          <rect x="26" y="154" width="5" height="10" rx="1.5"/>
+          <rect x="38" y="154" width="5" height="10" rx="1.5"/>
+          <rect x="209" y="40" width="5" height="10" rx="1.5"/>
+          <rect x="197" y="40" width="5" height="10" rx="1.5"/>
+          <rect x="209" y="154" width="5" height="10" rx="1.5"/>
+          <rect x="197" y="154" width="5" height="10" rx="1.5"/>
+        </g>
+        <g fill="#d0453c">
+          <rect x="6"  y="43" width="5" height="4" rx="1"/>
+          <rect x="6"  y="157" width="5" height="4" rx="1"/>
+          <rect x="229" y="43" width="5" height="4" rx="1"/>
+          <rect x="229" y="157" width="5" height="4" rx="1"/>
+        </g>
+      </g>
+
+      <!-- ================= NASEL MESIN ================= -->
+      <g>
+        <g fill="url(#nacelle)" stroke="#4b545e" stroke-width="1">
+          <rect x="56" y="30"  width="42" height="20" rx="9"/>
+          <rect x="56" y="154" width="42" height="20" rx="9"/>
+          <rect x="142" y="30"  width="42" height="20" rx="9"/>
+          <rect x="142" y="154" width="42" height="20" rx="9"/>
+        </g>
+        <!-- cincin intake -->
+        <g fill="none" stroke="#5d6874" stroke-width="1.6">
+          <path d="M88 32 v16"/><path d="M78 32 v16"/>
+          <path d="M88 156 v16"/><path d="M78 156 v16"/>
+          <path d="M152 32 v16"/><path d="M162 32 v16"/>
+          <path d="M152 156 v16"/><path d="M162 156 v16"/>
+        </g>
+        <!-- semburan mesin -->
+        <g filter="url(#engGlow)">
+          <ellipse cx="57" cy="40"  rx="11" ry="9" fill="url(#engine)"/>
+          <ellipse cx="57" cy="164" rx="11" ry="9" fill="url(#engine)"/>
+          <ellipse cx="183" cy="40"  rx="11" ry="9" fill="url(#engine)"/>
+          <ellipse cx="183" cy="164" rx="11" ry="9" fill="url(#engine)"/>
+        </g>
+      </g>
+
+      <!-- ================= BADAN ================= -->
+      <path d="M120 6 C130 22 136 52 137 96 C138 142 132 176 120 196
+               C108 176 102 142 103 96 C104 52 110 22 120 6Z"
+            fill="url(#fus)" stroke="#525c68" stroke-width="1.3"/>
+
+      <!-- garis panel badan -->
+      <g stroke="#6d7783" stroke-width=".8" opacity=".7" fill="none">
+        <path d="M108 40 h24"/><path d="M106 62 h28"/>
+        <path d="M105 128 h30"/><path d="M106 150 h28"/>
+        <path d="M120 128 v62"/>
+      </g>
+
+      <!-- larik sensor di hidung -->
+      <g>
+        <path d="M120 6 L124 24 L116 24Z" fill="#98a4b1"/>
+        <rect x="117" y="24" width="6" height="9" rx="2" fill="#5b6672"/>
+        <circle cx="120" cy="20" r="2.2" fill="#d0453c"/>
+      </g>
+
+      <!-- kokpit -->
+      <path d="M120 44 C128 54 131 70 131 84 L109 84 C109 70 112 54 120 44Z"
+            fill="#5f6b78"/>
+      <path d="M120 47 C127 56 129 70 129 81 L111 81 C111 70 113 56 120 47Z"
+            fill="#16303f"/>
+      <path d="M120 50 C125 58 127 68 127 76 L118 76 C118 66 118 58 120 50Z"
+            fill="#8fdcff" opacity=".55"/>
+      <path d="M120 47 v34" stroke="#7d8895" stroke-width="1.2"/>
+      <path d="M112 64 h16" stroke="#7d8895" stroke-width="1"/>
+
+      <!-- soket droid astromekanik -->
+      <g>
+        <circle cx="120" cy="98" r="9.5" fill="#4d5764" stroke="#39424c"/>
+        <circle cx="120" cy="98" r="6" fill="#2b333d"/>
+        <path d="M116 95 h8 v2 h-8Z" fill="#8fdcff" opacity=".7"/>
+      </g>
+
+      <!-- greeble: panel kecil acak yang memberi kesan mesin -->
+      <g fill="#7b8593" opacity=".85">
+        <rect x="110" y="108" width="7" height="4" rx="1"/>
+        <rect x="123" y="108" width="5" height="4" rx="1"/>
+        <rect x="112" y="116" width="4" height="3" rx="1"/>
+        <rect x="119" y="116" width="9" height="3" rx="1"/>
+        <rect x="111" y="158" width="6" height="5" rx="1"/>
+        <rect x="123" y="158" width="6" height="5" rx="1"/>
+      </g>
+
+      <!-- pita merah di badan -->
+      <g fill="#cf4238">
+        <path d="M104 132 h11 v8 h-11Z"/><path d="M125 132 h11 v8 h-11Z"/>
+        <path d="M107 146 h8 v5 h-8Z"/><path d="M125 146 h8 v5 h-8Z"/>
+      </g>
+
+      <!-- nosel pendorong belakang -->
+      <g fill="#4f5a66" stroke="#3b444e" stroke-width=".9">
+        <rect x="110" y="188" width="8" height="12" rx="3"/>
+        <rect x="122" y="188" width="8" height="12" rx="3"/>
+      </g>
+    </svg>
+    <p>+ garis panel, greeble, engsel s-foil, soket droid</p>
+  </div>
+
+  <div class="card">
+    <h3>Chrome UI ala CRT</h3>
+    <svg viewBox="0 0 240 150" width="240" role="img" aria-label="Panel layar CRT">
+      <defs>
+        <linearGradient id="bezel" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#3b444f"/><stop offset="1" stop-color="#171d24"/>
+        </linearGradient>
+        <radialGradient id="phos" cx="50%" cy="45%" r="70%">
+          <stop offset="0" stop-color="#123c2a"/><stop offset="1" stop-color="#04120c"/>
+        </radialGradient>
+        <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+          <rect width="4" height="2" fill="#000" opacity=".28"/>
+        </pattern>
+        <filter id="softglow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="1.6" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <clipPath id="screenClip">
+          <rect x="18" y="14" width="204" height="112" rx="16"/>
+        </clipPath>
+      </defs>
+      <rect x="2" y="2" width="236" height="146" rx="22" fill="url(#bezel)"/>
+      <rect x="18" y="14" width="204" height="112" rx="16" fill="url(#phos)"/>
+      <g clip-path="url(#screenClip)" filter="url(#softglow)">
+        <g font-family="ui-monospace,Consolas,monospace" font-size="11" fill="#4ef08a">
+          <text x="30" y="38">Ok</text>
+          <text x="30" y="54">LOAD "TICTAC.BAS"</text>
+          <text x="30" y="70">RUN</text>
+          <text x="30" y="86">TIC TAC TOE</text>
+          <text x="30" y="102">_</text>
+        </g>
+        <rect x="18" y="14" width="204" height="112" fill="url(#scan)"/>
+      </g>
+      <rect x="18" y="14" width="204" height="112" rx="16" fill="none"
+            stroke="#0b0f14" stroke-width="2"/>
+      <circle cx="212" cy="138" r="4" fill="#4ef08a" opacity=".9"/>
+    </svg>
+    <p>clipPath + pattern scanline + glow</p>
+  </div>
+</div>
+
+<h2>3 · Interaktif — SVG yang berubah oleh JavaScript</h2>
+<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+
+  <div class="card">
+    <h3>Hangman progresif (untuk HANGMAN.BAS)</h3>
+    <svg viewBox="0 0 200 220" width="220" role="img" aria-label="Tiang gantungan hangman">
+      <defs>
+        <linearGradient id="wood" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#a9793f"/><stop offset=".5" stop-color="#d9a460"/>
+          <stop offset="1" stop-color="#8a5f2c"/>
+        </linearGradient>
+      </defs>
+      <g stroke-linecap="round">
+        <rect x="20" y="196" width="120" height="12" rx="5" fill="url(#wood)"/>
+        <rect x="46" y="24" width="12" height="176" rx="5" fill="url(#wood)"/>
+        <rect x="46" y="24" width="104" height="12" rx="5" fill="url(#wood)"/>
+        <path d="M110 36 L110 56" stroke="#c8a06a" stroke-width="3"/>
+      </g>
+      <g id="hm" stroke="#e6edf3" stroke-width="4.5" fill="none" stroke-linecap="round">
+        <circle id="p1" cx="110" cy="70" r="15" style="display:none"/>
+        <path   id="p2" d="M110 85 L110 132" style="display:none"/>
+        <path   id="p3" d="M110 96 L86 118"  style="display:none"/>
+        <path   id="p4" d="M110 96 L134 118" style="display:none"/>
+        <path   id="p5" d="M110 132 L88 168" style="display:none"/>
+        <path   id="p6" d="M110 132 L132 168" style="display:none"/>
+      </g>
+      <!-- Wajah hanya muncul pada kesalahan ke-6, jadi ekspresinya kalah:
+           mata silang dan mulut melengkung ke bawah. -->
+      <g id="face" style="display:none" stroke-linecap="round">
+        <path d="M101 63 L107 69 M107 63 L101 69" stroke="#e6edf3" stroke-width="2.2" fill="none"/>
+        <path d="M113 63 L119 69 M119 63 L113 69" stroke="#e6edf3" stroke-width="2.2" fill="none"/>
+        <path d="M103 79 Q110 73 117 79" stroke="#e6edf3" stroke-width="2.4" fill="none"
+              transform="rotate(180 110 76)"/>
+      </g>
+    </svg>
+    <input type="range" id="miss" min="0" max="6" value="0" aria-label="Jumlah tebakan salah">
+    <p>Tebakan salah: <span id="missN">0</span> / 6</p>
+  </div>
+
+  <div class="card">
+    <h3>Papan Othello (untuk OTHELLO.BAS)</h3>
+    <svg viewBox="0 0 200 200" width="220" role="img" aria-label="Papan Othello 8x8">
+      <defs>
+        <radialGradient id="felt" cx="50%" cy="35%" r="75%">
+          <stop offset="0" stop-color="#1f7a4d"/><stop offset="1" stop-color="#0d4029"/>
+        </radialGradient>
+        <radialGradient id="wStone" cx="35%" cy="30%" r="75%">
+          <stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#c3ccd6"/>
+        </radialGradient>
+        <radialGradient id="bStone" cx="35%" cy="30%" r="75%">
+          <stop offset="0" stop-color="#4a5563"/><stop offset="1" stop-color="#0c1117"/>
+        </radialGradient>
+      </defs>
+      <rect width="200" height="200" rx="10" fill="url(#felt)"/>
+      <g stroke="#0a3823" stroke-width="1" opacity=".8" id="gridlines"></g>
+      <g id="stones"></g>
+    </svg>
+    <p>digambar oleh JS dari array 8×8</p>
+  </div>
+
+  <div class="card">
+    <h3>Grafik data (untuk PIECHART/CURVE)</h3>
+    <svg viewBox="0 0 220 170" width="230" role="img" aria-label="Diagram lingkaran dan kurva">
+      <defs>
+        <filter id="pieShadow" x="-30%" y="-30%" width="160%" height="160%">
+          <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-opacity=".35"/>
+        </filter>
+      </defs>
+      <g id="pie" transform="translate(58,84)" filter="url(#pieShadow)"></g>
+      <g transform="translate(118,20)">
+        <path d="M0 100 L92 100" stroke="#5b6775" stroke-width="1"/>
+        <path d="M0 0 L0 100" stroke="#5b6775" stroke-width="1"/>
+        <path id="curve" fill="none" stroke="#4aa3df" stroke-width="2.4"
+              stroke-linecap="round"/>
+        <g id="pts"></g>
+      </g>
+    </svg>
+    <p>path dihitung dari data</p>
+  </div>
+</div>
+
+<div class="note">
+  <b>Ringkasnya:</b> yang kuat adalah bentuk geometris, ikonografis, dan
+  terstruktur — kartu, papan, pesawat, mesin, panel, grafik, karakter bergaya.
+  Yang tidak realistis untuk digambar tangan adalah ilustrasi organik
+  fotorealistis (wajah manusia mendetail, tekstur alam). Untuk 83 program di
+  koleksi ini, kebutuhannya seluruhnya masuk kategori pertama.
+</div>
+
+<script>
+// --- hangman ---------------------------------------------------------------
+const miss = document.getElementById('miss');
+const parts = ['p1','p2','p3','p4','p5','p6'].map(id => document.getElementById(id));
+const hmGroup = document.getElementById('hm');
+const hmFace  = document.getElementById('face');
+const hmCount = document.getElementById('missN');
+
+// Warna diambil dari token, bukan ditulis literal — supaya ikut berubah
+// waktu tema gelap/terang bertukar.
+const css = getComputedStyle(document.documentElement);
+const INK  = css.getPropertyValue('--ink').trim()  || '#e6edf3';
+const DEAD = css.getPropertyValue('--red').trim()  || '#e5534b';
+
+miss.addEventListener('input', () => {
+  const n = +miss.value;
+  const lost = n >= 6;
+  parts.forEach((el, i) => el.style.display = i < n ? '' : 'none');
+  hmFace.style.display = lost ? '' : 'none';
+
+  // Saat genap enam kesalahan, seluruh figur berubah merah.
+  // Di permainan sungguhan ini juga jadi sinyal "kalah" tanpa perlu teks.
+  hmGroup.setAttribute('stroke', lost ? DEAD : INK);
+  hmFace.querySelectorAll('circle').forEach(c => c.setAttribute('fill', lost ? DEAD : INK));
+  hmFace.querySelectorAll('path').forEach(p => p.setAttribute('stroke', lost ? DEAD : INK));
+
+  hmCount.textContent = n;
+  hmCount.style.color = lost ? DEAD : '';
+});
+
+// --- lander: nyala roket dikendalikan keadaan ------------------------------
+// Ini menjawab pertanyaan "apakah semburan api bisa on/off saat gameplay?".
+// Jawabannya ya. Pola yang dipakai sama persis dengan yang akan dipakai di
+// permainan sungguhan: satu variabel keadaan (thrust 0..1), satu fungsi
+// menggambar yang murni turunan dari keadaan itu, dijalankan tiap frame.
+(function () {
+  const group = document.getElementById('flameGroup');
+  const outer = document.getElementById('flameOuter');
+  const core  = document.getElementById('flameCore');
+  const rcsL  = document.getElementById('rcsLeft');
+  const rcsR  = document.getElementById('rcsRight');
+  const btn   = document.getElementById('thrustBtn');
+  const btnL  = document.getElementById('turnLeft');
+  const btnR  = document.getElementById('turnRight');
+  const craft = document.getElementById('craft');
+  const readout = document.getElementById('thrustN');
+  const angleOut = document.getElementById('angleN');
+  const rcsInfo = document.getElementById('rcsInfo');
+  const autoUp  = document.getElementById('autoUp');
+
+  let wanted = 0;        // 1 saat tombol ditahan
+  let thrust = 0;        // nilai halus yang mengejar `wanted`
+  let turn = 0;          // -1 putar kiri, +1 putar kanan, 0 diam
+  let angle = 0;         // sudut wahana, derajat; + searah jarum jam
+  let t = 0;
+
+  const MAX_ANGLE = 28;  // batas supaya wahana tidak keluar viewBox
+  const PIVOT = [130, 150];   // kira-kira titik berat: tengah tingkat turun
+
+  // Menggambar = fungsi murni dari keadaan. Tidak ada keadaan yang disimpan
+  // di dalam DOM — itu pelajaran yang gagal dipegang BOWLING.BAS, yang membaca
+  // SCREEN(r,c) untuk mengetahui posisi pin.
+  function draw() {
+    t += 0.016;
+    // kedip acak kecil supaya api tidak terlihat mati
+    const flicker = thrust > 0.02 ? 1 + Math.sin(t * 37) * 0.06
+                                      + Math.sin(t * 23.7) * 0.04 : 1;
+    const len = thrust * flicker;
+    group.style.opacity = thrust.toFixed(3);
+    // Titik jangkar HARUS sama dengan pangkal path api, yaitu (130,200) di
+    // dalam sungkup mesin. Kalau tidak sama, api tidak memanjang dari mulut
+    // cerobong melainkan bergeser sambil membesar.
+    const AX = 130, AY = 200;
+    outer.setAttribute('transform',
+      'translate(' + AX + ',' + AY + ') scale(' + (0.7 + len * 0.45).toFixed(3) +
+      ',' + len.toFixed(3) + ') translate(' + (-AX) + ',' + (-AY) + ')');
+    core.setAttribute('transform',
+      'translate(' + AX + ',' + AY + ') scale(' + (0.6 + len * 0.4).toFixed(3) +
+      ',' + (len * 0.85).toFixed(3) + ') translate(' + (-AX) + ',' + (-AY) + ')');
+
+    // INILAH pemetaan yang penting, dan sengaja ditulis terbalik:
+    //   ingin berputar KANAN (turn = +1)  ->  pendorong KIRI yang menyala
+    //   ingin berputar KIRI  (turn = -1)  ->  pendorong KANAN yang menyala
+    // Semburan ke satu arah, badan terdorong ke arah lawannya.
+    const jet = 0.6 + Math.sin(t * 41) * 0.14;
+    rcsL.style.opacity = turn > 0 ? jet.toFixed(3) : 0;
+    rcsR.style.opacity = turn < 0 ? jet.toFixed(3) : 0;
+
+    // Seluruh wahana - termasuk api roket dan semburan RCS - ada di dalam
+    // grup ini, jadi satu atribut transform memutar semuanya sekaligus.
+    craft.setAttribute('transform',
+      'rotate(' + angle.toFixed(2) + ' ' + PIVOT[0] + ' ' + PIVOT[1] + ')');
+
+    readout.textContent = Math.round(thrust * 100);
+    angleOut.textContent = angle.toFixed(1);
+    rcsInfo.textContent = turn === 0
+      ? (Math.abs(angle) < 0.2 ? 'RCS diam, wahana tegak'
+                               : 'RCS diam, wahana kembali tegak…')
+      : turn > 0 ? 'pendorong KIRI menyala → torsi ke KANAN'
+                 : 'pendorong KANAN menyala → torsi ke KIRI';
+    requestAnimationFrame(draw);
+  }
+
+  function press(on) { wanted = on ? 1 : 0; }
+  function setTurn(v) { turn = v; }
+
+  // Nilai dikejar perlahan, bukan dilompatkan — roket sungguhan punya waktu
+  // naik. Ini juga yang membuat animasinya terasa punya bobot.
+  setInterval(() => {
+    thrust += (wanted - thrust) * 0.22;
+
+    if (turn !== 0) {
+      // RCS menyala: sudut bertambah selama tombol ditahan.
+      angle += turn * 0.9;
+      if (angle > MAX_ANGLE) angle = MAX_ANGLE;
+      if (angle < -MAX_ANGLE) angle = -MAX_ANGLE;
+    } else if (autoUp.checked) {
+      // Dilepas: kembali tegak, melambat saat mendekat (gerak eksponensial).
+      angle += (0 - angle) * 0.07;
+      if (Math.abs(angle) < 0.05) angle = 0;
+    }
+    // Kalau kotak centang dimatikan, sudut dibiarkan - dan itulah yang
+    // sebenarnya terjadi di ruang hampa: tidak ada yang menghentikan putaran.
+    // LANDER.BAS memodelkannya begitu, dengan ON TILTOLD GOTO berisi 13 sudut
+    // tetap: pemain memutar wahana, sudutnya bertahan, lalu roket utama
+    // mendorong sepanjang sumbu badan.
+  }, 16);
+
+  ['pointerdown', 'touchstart'].forEach(e =>
+    btn.addEventListener(e, ev => { ev.preventDefault(); press(true); }));
+  ['pointerup', 'pointerleave', 'touchend'].forEach(e =>
+    btn.addEventListener(e, () => press(false)));
+
+  [[btnL, -1], [btnR, 1]].forEach(([b, dir]) => {
+    ['pointerdown', 'touchstart'].forEach(e =>
+      b.addEventListener(e, ev => { ev.preventDefault(); setTurn(dir); }));
+    ['pointerup', 'pointerleave', 'touchend'].forEach(e =>
+      b.addEventListener(e, () => setTurn(0)));
+  });
+
+  addEventListener('keydown', e => {
+    if (e.key === ' ' || e.key === 'ArrowUp') { e.preventDefault(); press(true); }
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); setTurn(-1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); setTurn(1); }
+  });
+  addEventListener('keyup', e => {
+    if (e.key === ' ' || e.key === 'ArrowUp') press(false);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') setTurn(0);
+  });
+
+  draw();
+})();
+
+// --- othello ---------------------------------------------------------------
+const gl = document.getElementById('gridlines');
+for (let i = 1; i < 8; i++) {
+  gl.insertAdjacentHTML('beforeend',
+    `<path d="M${i*25} 0 V200"/><path d="M0 ${i*25} H200"/>`);
+}
+const board = Array.from({length: 8}, () => Array(8).fill(0));
+board[3][3] = board[4][4] = 1;      // putih
+board[3][4] = board[4][3] = 2;      // hitam
+[[2,3],[2,4],[5,3],[5,4],[3,2]].forEach(([r,c]) => board[r][c] = (r+c)%2 ? 1 : 2);
+const st = document.getElementById('stones');
+board.forEach((row, r) => row.forEach((v, c) => {
+  if (!v) return;
+  st.insertAdjacentHTML('beforeend',
+    `<circle cx="${c*25+12.5}" cy="${r*25+12.5}" r="9.5"
+             fill="url(#${v === 1 ? 'wStone' : 'bStone'})"/>`);
+}));
+
+// --- pie + curve -----------------------------------------------------------
+const data = [34, 22, 18, 14, 12];
+const colors = ['#f0b429', '#4aa3df', '#e5534b', '#57c785', '#a97bd6'];
+const R = 52;
+let a0 = -Math.PI / 2;
+const pie = document.getElementById('pie');
+const total = data.reduce((s, v) => s + v, 0);
+data.forEach((v, i) => {
+  const a1 = a0 + (v / total) * Math.PI * 2;
+  const large = a1 - a0 > Math.PI ? 1 : 0;
+  const x0 = R * Math.cos(a0), y0 = R * Math.sin(a0);
+  const x1 = R * Math.cos(a1), y1 = R * Math.sin(a1);
+  const mid = (a0 + a1) / 2, off = 4;
+  pie.insertAdjacentHTML('beforeend',
+    `<path transform="translate(${off*Math.cos(mid)},${off*Math.sin(mid)})"
+           d="M0 0 L${x0.toFixed(2)} ${y0.toFixed(2)}
+              A${R} ${R} 0 ${large} 1 ${x1.toFixed(2)} ${y1.toFixed(2)} Z"
+           fill="${colors[i]}" stroke="#0e1116" stroke-width="1.2"/>`);
+  a0 = a1;
+});
+
+const pts = [[0,88],[15,62],[30,70],[46,40],[61,46],[76,18],[92,26]];
+let d = `M${pts[0][0]} ${pts[0][1]}`;
+for (let i = 1; i < pts.length; i++) {
+  const [px, py] = pts[i-1], [x, y] = pts[i];
+  const cx = (px + x) / 2;
+  d += ` C${cx} ${py} ${cx} ${y} ${x} ${y}`;   // kurva halus antar titik
+}
+document.getElementById('curve').setAttribute('d', d);
+const pg = document.getElementById('pts');
+pts.forEach(([x, y]) => pg.insertAdjacentHTML('beforeend',
+  `<circle cx="${x}" cy="${y}" r="2.8" fill="#0e1116" stroke="#4aa3df" stroke-width="2"/>`));
+</script>
+</div>
+</body>
+</html>

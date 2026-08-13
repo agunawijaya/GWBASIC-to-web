@@ -1,0 +1,192 @@
+/* ===========================================================================
+   meteor.css — METEOR.BAS (Ordman, November 1981)
+
+   Aturan yang dipegang halaman ini: SEMUA yang ada di sini hiasan, dan tidak
+   satu pun mengubah aturan main. Yang menentukan permainan adalah petak
+   25x80 di meteor.js; berkas ini hanya memutuskan seperti apa satu sel
+   digambar. Tombol "Tampilan glif" mematikan seluruh berkas ini dan
+   memperlihatkan petaknya sebagai aksara — kalau keduanya pernah berbeda,
+   yang salah berkas ini.
+   =========================================================================== */
+
+/* Papannya 80 kolom — dua kali lebar SERPENT — jadi kolom permainannya diberi
+   porsi lebih besar. Pada pembagian 1:1, satu baris aksara cuma sekitar 7px
+   tinggi dan wajahnya tidak bisa dibedakan dari jejak meteor. Pada 1,75:1 satu
+   sel jadi kira-kira 9x15px: sama dengan sel aksara VGA yang ditirunya. */
+.m-layout { display: grid; gap: var(--s5); align-items: start; }
+@media (min-width: 1000px) {
+  .m-layout { grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); }
+}
+/* Dan pada lebar wrap bersama (1100px) itu pun masih 7,4x11,8px. METEOR
+   satu-satunya papan 80 kolom di koleksi ini — dua kali lipat yang lain — jadi
+   khusus halaman ini wrap-nya dilonggarkan kalau layarnya memang muat. Ini
+   penyimpangan dari lebar bersama, dan disengaja: yang lain tidak butuh. */
+@media (min-width: 1400px) { .m-layout { max-width: 1320px; } }
+
+/* --- tabung ------------------------------------------------------------- */
+.m-crt {
+  position: relative;
+  container-type: inline-size;
+  background: radial-gradient(120% 100% at 50% 0%, #0d1526 0%, #060a12 65%, #03050a 100%);
+  border: 1px solid var(--line); border-radius: var(--r-lg);
+  padding: var(--s3);
+  overflow: hidden;
+  box-shadow: inset 0 0 60px rgba(0,0,0,.65);
+}
+
+/* Garis pindai: satu lapis di atas segalanya, tidak mengganggu klik. */
+.m-crt::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom, rgba(255,255,255,.035) 0 1px, transparent 1px 3px);
+  mix-blend-mode: overlay;
+}
+
+@keyframes m-guncang {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-3px, 2px); }
+  40% { transform: translate(3px, -2px); }
+  60% { transform: translate(-2px, -1px); }
+  80% { transform: translate(2px, 1px); }
+}
+.m-crt--kena { animation: m-guncang .45s ease-in-out 1; }
+.m-crt--kena::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(60% 50% at 50% 50%, rgba(255,70,60,.30), transparent 70%);
+}
+@media (prefers-reduced-motion: reduce) { .m-crt--kena { animation: none; } }
+
+.m-svg { display: block; width: 100%; height: auto; }
+.m-svg[hidden], .m-glif[hidden] { display: none; }
+
+/* --- petak 80x25 sebagai aksara ----------------------------------------- */
+/* 80 kolom pada 1,18cqi mengisi ~94% lebar wadah. Batas bawah 7px: di bawah
+   itu glifnya berhenti terbaca dan justru merusak hal yang ditunjukkan
+   tombol "Tampilan glif". */
+.m-glif {
+  font-family: var(--font-mono);
+  font-size: clamp(7px, 1.18cqi, 15px);
+  line-height: 1.15;
+  white-space: pre;
+  margin: 0;
+  color: #7fd4ff;
+  text-shadow: 0 0 6px rgba(80,180,255,.35);
+}
+
+/* --- balok --------------------------------------------------------------- */
+.m-balok__isi   { fill: url(#gbalok); }
+.m-balok__kilap { fill: rgba(255,255,255,.32); }
+
+/* --- jejak panah ---------------------------------------------------------
+   Sengaja redup. Ia sampah yang ditinggalkan meteor, bukan hadiah — dan
+   +2 lawan +10 memang mengatakan begitu. */
+.m-panah {
+  fill: none; stroke: #4d7fae; stroke-width: 1.5;
+  stroke-linecap: round; stroke-linejoin: round; opacity: .75;
+}
+
+/* --- wajah pemain -------------------------------------------------------- */
+.m-wajah__kepala { fill: url(#gwajah); }
+.m-wajah__mata   { fill: #4a2c06; }
+.m-wajah__mulut  { fill: none; stroke: #4a2c06; stroke-width: 1.1;
+                   stroke-linecap: round; }
+.m-wajah { filter: drop-shadow(0 0 5px rgba(255,214,120,.55)); }
+
+/* --- aksara lain (arsiran & huruf BANG) ---------------------------------- */
+.m-arsir { fill: #ff8a5c; font: 700 13px var(--font-mono); }
+.m-huruf { fill: #ffd0a0; font: 700 12px var(--font-mono); }
+
+/* --- kepala meteor & jejaknya -------------------------------------------
+   Ini satu-satunya hiasan yang mengumumkan sesuatu yang nyata: posisi sel
+   yang BARU SAJA ditulis meteor. Kalau ia melenceng dari panah terbawah,
+   ada yang salah di penggambar garisnya. */
+.m-kepala {
+  fill: #fff2c4;
+  filter: drop-shadow(0 0 6px #ffb347) drop-shadow(0 0 14px #ff6a1f);
+}
+.m-kepala[hidden] { display: none; }
+
+@keyframes m-jejak-pudar { from { opacity: .85; } to { opacity: 0; } }
+.m-jejak {
+  stroke: #ffa652; stroke-width: 2.4; stroke-linecap: round;
+  animation: m-jejak-pudar .5s linear forwards;
+}
+
+@keyframes m-pecah-mekar {
+  from { r: 3; opacity: .9; stroke-width: 2.4; }
+  to   { r: 13; opacity: 0; stroke-width: .4; }
+}
+.m-pecah {
+  fill: none; stroke: #7fe0ff;
+  animation: m-pecah-mekar .45s ease-out forwards;
+}
+
+@keyframes m-angka-naik {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-16px); }
+}
+.m-angka {
+  font: 700 11px var(--font-mono);
+  animation: m-angka-naik .8s ease-out forwards;
+}
+.m-plus  { fill: #7dffb0; }
+.m-minus { fill: #ff7d7d; }
+
+@media (prefers-reduced-motion: reduce) {
+  .m-jejak, .m-pecah, .m-angka { animation-duration: .01s; }
+}
+
+/* --- panel jeda ---------------------------------------------------------- */
+.m-jeda {
+  position: absolute; inset: 0;
+  display: grid; place-content: center; gap: var(--s2);
+  background: rgba(4,7,14,.86);
+  text-align: center; padding: var(--s4);
+}
+.m-jeda[hidden] { display: none; }
+.m-jeda__judul { font-size: var(--fs-lg); font-weight: 700; margin: 0; }
+.m-jeda__note  { font-size: var(--fs-xs); color: var(--fg-dim); margin: 0; }
+.m-jeda__note code { font-size: inherit; }
+
+.m-pesan {
+  position: absolute; left: var(--s3); bottom: var(--s3);
+  margin: 0; font-size: var(--fs-xs); color: #ffd166;
+  background: rgba(0,0,0,.55); padding: 2px 8px; border-radius: var(--r-sm);
+}
+.m-pesan:empty { display: none; }
+
+/* --- kendali ------------------------------------------------------------- */
+.m-stage { display: grid; gap: var(--s3); }
+.m-row { display: flex; flex-wrap: wrap; gap: var(--s2); align-items: center; }
+.m-row--kecil { font-size: var(--fs-sm); color: var(--fg-dim); gap: var(--s4); }
+.m-row--kecil label { display: flex; align-items: center; gap: var(--s2); }
+.m-cek { cursor: pointer; }
+
+/* --- panel penjelasan ---------------------------------------------------- */
+.m-lead { margin-top: 0; }
+.m-note { font-size: var(--fs-sm); line-height: 1.6; }
+.m-kecil { font-size: var(--fs-xs); color: var(--fg-dim); }
+.m-good { border-left: 3px solid #46c17f; }
+.m-warn { border-left: 3px solid #e0a020; }
+
+.m-code {
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.55;
+  background: var(--bg-sunken); border-radius: var(--r-sm);
+  padding: var(--s3); overflow-x: auto; white-space: pre;
+}
+.m-c { color: var(--fg-dim); }
+
+.m-tbl { width: 100%; border-collapse: collapse; font-size: var(--fs-sm);
+         margin: var(--s3) 0; }
+.m-tbl th, .m-tbl td { padding: 6px 8px; border-bottom: 1px solid var(--line);
+                       text-align: right; }
+.m-tbl th:first-child, .m-tbl td:first-child { text-align: left; }
+.m-tbl--kiri th, .m-tbl--kiri td { text-align: left; }
+.m-tbl th { color: var(--fg-dim); font-weight: 600;
+            text-transform: uppercase; font-size: var(--fs-xs);
+            letter-spacing: .04em; }
+.m-g { font-family: var(--font-mono); font-size: 1.15em; }
+
+.m-ikon-wajah { color: #ffd166; font-weight: 700; }
+.m-ikon-balok { color: #6fc4f5; font-weight: 700; }
+.m-links { margin-top: var(--s4); }

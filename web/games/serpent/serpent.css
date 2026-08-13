@@ -1,0 +1,251 @@
+/* ===========================================================================
+   serpent.css — rupa lokal Serpent. Awalan `n-`.
+
+   ------------------------------------------------------------------------
+   KENAPA GLIFNYA TIDAK DIGANTI ULAR YANG MULUS
+
+   BREAKOUT (sesi 17) menetapkan bahwa halaman arkade boleh dimodernkan,
+   karena yang harus setia di sana adalah FISIKANYA, bukan tampilannya.
+
+   Di sini aturan itu berhenti — dan bukan karena nostalgia. Tubuh ular ini
+   TIDAK disimpan di larik mana pun: glif `│ ─ ┌ ┐ └ ┘` di layar itulah
+   senarai berantainya, dan penghapus ekor MEMBACA glif itu untuk tahu ke mana
+   ular dulu berbelok.
+
+   Mengganti glifnya dengan ular yang mulus berarti menghapus satu-satunya hal
+   yang membuat program ini layak dibaca. Jadi di sini rupa retro bukan rupa —
+   ia implementasinya.
+
+   Yang tetap dimodernkan: warna, cahaya, jarak antar-sel, sorotan penghapus
+   ekor, dan partikel saat makan. Semuanya di sekeliling glif, tidak
+   menggantikannya.
+   =========================================================================== */
+
+.n-layout { display: grid; gap: var(--s5); align-items: start; }
+@media (min-width: 1000px) { .n-layout { grid-template-columns: minmax(0,1.1fr) minmax(0,1fr); } }
+
+.n-stage { display: grid; gap: var(--s4); }
+.n-lead { font-size: var(--fs-sm); }
+.n-lead strong { color: var(--ink); }
+.n-lead em { color: var(--ink); font-style: italic; }
+
+/* --- ular yang digambar -------------------------------------------------
+   Bentuknya TIDAK dikarang: `jalurTubuh()` di serpent.js menelusuri rantai
+   glif persis seperti penghapus ekor, lalu titik-titik itu dihaluskan jadi
+   kurva. Tiap lengkungan tubuh adalah satu glif sudut yang benar-benar
+   tersimpan di petak layar.
+
+   Gelombang merayapnya ditambahkan sebagai simpangan tegak lurus lintasan —
+   itu murni rupa, dan dinyatakan begitu di dokumennya. Yang TIDAK ditambahkan:
+   apa pun yang mengubah posisi sel, karena sel itulah simulasinya.
+   ------------------------------------------------------------------------ */
+
+.n-svg { width: 100%; height: auto; display: block; }
+
+/* `display: block` di atas datang dari gaya PENULIS, dan gaya penulis selalu
+   mengalahkan `[hidden] { display:none }` milik peramban. Jadi baris ini bukan
+   pengaman berlebih — tanpa itu, menyembunyikan `<svg>` tidak akan berpengaruh
+   sama sekali.
+
+   Sebab sesungguhnya bug "dua penampil sekaligus" ada di JS, bukan di sini:
+   `el.hidden = true` tidak terpantul jadi atribut pada elemen SVG. Lihat
+   `sembunyikan()` di serpent.js. */
+.n-svg[hidden], .n-scr[hidden] { display: none; }
+
+.n-tanah   { fill: none; stroke: #16233a; stroke-width: .6; }
+/* PAGAR KAYU & TANAH LADANG — atas permintaan pemilik koleksi.
+
+   Pembagian warnanya bukan sekadar rupa: pagar = kode 179/196, yang jatuh di
+   rentang mematikan 179-218 (§2); tanah = kode 28, yang di luar rentang dan
+   AMAN dilewati. Waktu keduanya sama-sama biru, aturan itu tidak kelihatan
+   sama sekali. Kayu dibuat lebih terang daripada tanah karena yang membunuh
+   memang harus lebih menonjol daripada yang aman. */
+.n-bilah   { fill: url(#gpagar); }
+.n-galar   { fill: url(#gtiang); }
+.n-ladang  { fill: url(#gtanah); }
+.n-alur    { fill: none; stroke: #2a1c11; stroke-width: .7; opacity: .55;
+             stroke-linecap: round; }
+
+.n-badan     { fill: url(#gbadan); }
+.n-badan-tepi { fill: none; stroke: #0d1830; stroke-width: 1.2;
+                stroke-linejoin: round; }
+.n-sisik     { fill: #0e1c33; opacity: .35; }
+.n-kepala    { fill: url(#gkepala); }
+.n-rahang    { fill: #7ec4ff; }
+.n-mulut     { fill: #2a0d18; }
+.n-lidah     { fill: none; stroke: #ff5c7a; stroke-width: 1.6;
+               stroke-linecap: round; }
+.n-mata      { fill: #ffffff; }
+.n-manik     { fill: #10203a; }
+
+.n-buah      { fill: url(#gbuah); }
+.n-daun      { fill: #4ade80; }
+/* KODOK BERACUN — dan rupanya harus mengumumkan itu.
+
+   Versi pertama memakai kuning-emas. Pemilik koleksi mengiranya mangsa, dan itu
+   masuk akal: kodok di sebelah ular membaca sebagai makanan, sementara aturan
+   baris 650 justru membunuh pemain yang menyentuhnya. Rupanya bertentangan
+   dengan aturannya, dan yang salah rupanya.
+
+   Sekarang memakai APOSEMATISME — pola peringatan yang dipakai kodok panah
+   beracun sungguhan: warna mencolok yang tidak ada di alam sekitarnya, ditambah
+   bercak gelap dengan kontras tinggi. Ungu dipilih karena ia satu-satunya rona
+   yang tidak dipakai apa pun lain di papan ini: ular hijau, apel merah muda,
+   pagar dan tanah cokelat. */
+.n-kodok       { fill: url(#gkodok); }
+.n-bercak      { fill: #1a0625; opacity: .85; }
+.n-kaki        { fill: none; stroke: #7e22ce; stroke-width: 1.6;
+                 stroke-linecap: round; }
+.n-kodok-mata  { fill: #d9f99d; }
+.n-kodok-manik { fill: #1a0625; }
+
+/* KODOK MANGSA — tambahan, dan rupanya harus mengatakan kebalikan dari yang
+   beracun. Cokelat-zaitun: warna kodok sungguhan, tenang, tanpa bercak dan
+   tanpa lingkar. Pelajaran §6c dipakai terbalik di sini — kalau rupa mencolok
+   berarti "jangan sentuh", maka rupa biasa berarti "boleh". */
+.n-kodok-m      { fill: url(#gkodokm); }
+.n-kaki-m       { fill: none; stroke: #4d7c0f; stroke-width: 1.6;
+                  stroke-linecap: round; }
+.n-kodok-m-mata { fill: #fefce8; }
+
+/* Lingkar racun: denyut lembut yang menandai sel berbahaya bahkan saat
+   kodoknya diam. */
+.n-racun { fill: none; stroke: #c084fc; stroke-width: .8; opacity: .5; }
+@keyframes n-racun-denyut {
+  0%,100% { opacity: .18; transform: scale(.82); }
+  50%     { opacity: .55; transform: scale(1.12); }
+}
+.n-racun { transform-box: fill-box; transform-origin: center;
+           animation: n-racun-denyut 1.6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .n-racun { animation: none; opacity: .4; }
+}
+
+.n-sorot { fill: none; stroke: #ffd166; stroke-width: 1.4; }
+@keyframes n-denyut2 { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+.n-sorot { animation: n-denyut2 .6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .n-sorot { animation: none; } }
+
+/* --- layar 40x25 --------------------------------------------------------- */
+
+.n-crt {
+  position: relative;
+  container-type: inline-size;
+  background: radial-gradient(130% 100% at 50% 0%, #101a2e 0%, #070b14 70%, #04060c 100%);
+  border: 1px solid var(--line); border-radius: var(--r-lg);
+  padding: var(--s3);
+  overflow: hidden;
+  box-shadow: inset 0 0 50px rgba(0,0,0,.6);
+}
+
+/* 40 kolom pada 3,9cqi mengisi ~94% lebar wadah. Batas bawah 12px: di bawah
+   itu glif gambar-garisnya berhenti menyambung mulus dan justru merusak hal
+   yang sedang ditunjukkan halaman ini. */
+.n-scr {
+  font-family: var(--font-mono);
+  font-size: clamp(12px, 3.9cqi, 22px);
+  line-height: 1.06;
+  white-space: pre;
+  width: 40ch;
+  margin-inline: auto;
+  color: #6ea8ff;
+}
+.n-scr__row { display: block; height: 1.06em; }
+
+/* Warna per jenis isi. Tubuh ular biru terang supaya sambungan glifnya
+   terbaca; kepala putih supaya selalu ketemu. */
+.n-tubuh { color: #6ea8ff; }
+.n-kepala { color: #ffffff; text-shadow: 0 0 6px #9fd8ff, 0 0 12px #4f8fe0; }
+.n-apel  { color: #ff6b8a; text-shadow: 0 0 8px rgba(255,107,138,.8); }
+.n-musuh { color: #ffd166; text-shadow: 0 0 8px rgba(255,209,102,.7); }
+.n-dinding { color: #a97240; }
+.n-labirin { color: #6b4a30; }
+
+/* Sorotan penghapus ekor: kotak berkedip pada sel yang sedang dibaca. Ini
+   satu-satunya efek yang BUKAN hiasan — ia memperlihatkan mekanik intinya. */
+.n-ekor {
+  background: rgba(255,209,102,.28);
+  outline: 1px solid rgba(255,209,102,.85);
+  border-radius: 2px;
+}
+@keyframes n-denyut { 0%,100% { opacity: 1; } 50% { opacity: .45; } }
+.n-scr--ekor .n-ekor { animation: n-denyut .5s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .n-scr--ekor .n-ekor { animation: none; } }
+
+.n-baca {
+  position: absolute; left: var(--s3); bottom: var(--s3);
+  font-family: var(--font-mono); font-size: var(--fs-xs);
+  color: #ffd166; background: rgba(0,0,0,.55);
+  padding: 3px 8px; border-radius: var(--r-sm);
+  border: 1px solid rgba(255,209,102,.35);
+}
+.n-baca:empty { display: none; }
+
+.n-pesan {
+  position: absolute; inset: auto 0 44% 0; text-align: center;
+  font-family: var(--font-mono); font-weight: 700;
+  font-size: clamp(11px, 2.6cqi, 18px);
+  color: #fff; letter-spacing: .04em;
+  text-shadow: 0 0 12px rgba(120,180,255,.9), 0 2px 4px #000;
+  pointer-events: none;
+}
+.n-pesan:empty { display: none; }
+
+@keyframes n-mati { 0%,100% { filter: none; } 50% { filter: hue-rotate(140deg) brightness(1.8); } }
+.n-crt--mati { animation: n-mati .12s steps(1) 6; }
+@media (prefers-reduced-motion: reduce) { .n-crt--mati { animation: none; } }
+
+/* --- kendali ------------------------------------------------------------- */
+
+.n-row { display: flex; gap: var(--s3); align-items: center; flex-wrap: wrap;
+         font-size: var(--fs-xs); color: var(--ink-dim); }
+.n-row--kecil input[type="range"] { width: 140px; vertical-align: middle; }
+.n-cek { display: inline-flex; gap: 6px; align-items: center; }
+
+/* --- panel kanan --------------------------------------------------------- */
+
+.n-note { font-size: var(--fs-sm); color: var(--ink-dim); line-height: var(--lh); }
+.n-note + .n-note { margin-top: var(--s3); }
+.n-note strong { color: var(--ink); font-weight: 620; }
+.n-note em { color: var(--ink); font-style: italic; }
+.n-note code { font-family: var(--font-mono); font-size: .92em; color: var(--acc-blue); }
+.n-kecil { font-size: var(--fs-xs); color: var(--ink-faint); }
+
+.n-code {
+  font-family: var(--font-mono); font-size: var(--fs-xs);
+  background: var(--bg-sunken); border: 1px solid var(--line-soft);
+  border-radius: var(--r-sm); padding: var(--s3);
+  overflow-x: auto; color: var(--ink-dim); margin: var(--s3) 0; line-height: 1.6;
+}
+
+.n-tbl { width: 100%; border-collapse: collapse; margin: var(--s3) 0;
+         font-size: var(--fs-sm); }
+.n-tbl th { text-align: left; color: var(--ink-faint); font-weight: 600;
+            font-size: var(--fs-xs); text-transform: uppercase;
+            letter-spacing: .06em; padding: var(--s2) var(--s2) var(--s1); }
+.n-tbl td { padding: var(--s2); border-top: 1px solid var(--line-soft);
+            color: var(--ink-dim); vertical-align: top; }
+.n-tbl td:last-child { text-align: right; font-family: var(--font-mono); }
+.n-tbl--kiri td:last-child { text-align: left; font-family: inherit; }
+.n-tbl .n-glif { font-family: var(--font-mono); font-size: 1.15em; color: #6ea8ff; }
+
+.n-good { border-left: 3px solid var(--acc-phosphor); }
+.n-warn { border-left: 3px solid var(--acc-amber); }
+
+.m-links { font-size: var(--fs-xs); }
+
+/* Penanda bahaya di teks: dipakai di panel Cara bermain dan keping aturan,
+   supaya peringatannya terbaca sebelum pemain menemukannya sendiri. */
+.n-bahaya { color: #d946ef; font-weight: 700; }
+.ruleset__k--bahaya {
+  background: color-mix(in srgb, #d946ef 18%, transparent);
+  color: #d946ef;
+  border-color: color-mix(in srgb, #d946ef 45%, transparent);
+}
+
+.n-mangsa { color: #a3b18a; font-weight: 700; }
+.ruleset__k--mangsa {
+  background: color-mix(in srgb, #a3b18a 18%, transparent);
+  color: #8ba06f;
+  border-color: color-mix(in srgb, #a3b18a 45%, transparent);
+}

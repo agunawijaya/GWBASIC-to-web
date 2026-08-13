@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crazy Eights — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari CRAZY8.BAS (Les Davids, 1986): 294 baris dengan hanya 8 GOTO, dan pengocokan tolak-ulang yang membuang delapan kali lipat undian. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="../../_shared/cards.css">
+<link rel="stylesheet" href="crazy8.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap c-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="c-stage">
+
+        <div class="c-side">
+          <span>Computer</span>
+          <b id="cpuN">8</b>
+          <div class="c-cpu" id="cpu"></div>
+        </div>
+
+        <div class="c-table">
+          <div class="c-stock">
+            <div class="card card--back" role="img" aria-label="tumpukan pengambilan"></div>
+            <b id="stock">35</b><span>stock</span>
+          </div>
+          <div id="pile"></div>
+          <div class="c-stock">
+            <div class="c-active" id="suit">&hearts;</div>
+            <span>suit</span>
+          </div>
+        </div>
+
+        <p class="c-say" id="say">Your play.</p>
+        <p class="c-why" id="why"></p>
+        <div class="c-suits" id="suitpick"></div>
+
+        <div class="c-hand" id="hand"></div>
+
+        <div class="m-transport">
+          <button class="btn btn--primary" id="draw" type="button">Draw / Pass</button>
+          <button class="btn hidden" id="next" type="button">Next round</button>
+          <button class="btn hidden" id="again" type="button">New game</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">cocok warna atau angka</span>
+      <span class="ruleset__k">8 boleh kapan saja</span>
+      <span class="ruleset__k">As = 15 poin</span>
+      <span class="ruleset__k">permainan usai di 100</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat stat--good"><span class="stat__label">Anda</span>
+        <span class="stat__value" id="sYou">0</span></div>
+      <div class="stat"><span class="stat__label">Komputer</span>
+        <span class="stat__value" id="sCpu">0</span></div>
+      <div class="stat"><span class="stat__label">Ronde</span>
+        <span class="stat__value" id="sRonde">1</span></div>
+      <div class="stat"><span class="stat__label">Rekor</span>
+        <span class="stat__value" id="sBest">—</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <ol class="howto__steps">
+        <li>Buang semua kartu Anda ke tumpukan tengah. Yang lebih dulu habis
+            memenangkan ronde itu.</li>
+        <li>Sebuah kartu boleh dibuang kalau <strong>warnanya sama</strong>
+            dengan warna yang sedang berlaku, atau <strong>angkanya
+            sama</strong> dengan kartu teratas &mdash; dan kalau yang cocok
+            angkanya, <strong>warna yang berlaku ikut berganti</strong>.</li>
+        <li><strong>Angka 8 boleh dibuang kapan saja</strong>, apa pun yang ada
+            di tumpukan. Setelah itu <strong>Anda yang memilih warna
+            berikutnya</strong> &mdash; itulah sebabnya 8 lebih baik disimpan
+            sampai terdesak.</li>
+        <li>Tidak ada yang bisa dibuang? Tekan <strong>Draw / Pass</strong>
+            (atau <kbd>Spasi</kbd>) untuk mengambil satu kartu. Kalau masih
+            buntu, tekan sekali lagi untuk melewatkan giliran &mdash;
+            <strong>satu kartu per giliran, tidak lebih</strong>.</li>
+        <li>Yang kalah menyumbang isi tangannya ke skor lawan:
+            <strong>As 15</strong>, gambar (J/Q/K) dan 10 masing-masing
+            <strong>10</strong>, sisanya sesuai angkanya. Permainan berhenti
+            saat ada yang mencapai <strong>100</strong>.</li>
+      </ol>
+      <p>
+        Kartu bertepi hijau adalah yang boleh dibuang sekarang; yang redup
+        tidak. Petak <em>suit</em> di sebelah tumpukan menunjukkan warna yang
+        sedang berlaku &mdash; sesudah sebuah 8, warna itu <strong>tidak
+        selalu sama</strong> dengan warna kartu teratas.
+      </p>
+    </details>
+    <div class="row">
+      <button class="btn btn--ghost btn--sm" id="resetBest" type="button">Reset rekor</button>
+      <span class="faint">Kartu bersama dengan
+        <a href="../solitair/index.html">Solitaire</a>.</span>
+    </div>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel c-good">
+      <p class="eyebrow">294 baris, delapan <code>GOTO</code></p>
+      <p class="c-note">
+        Rasio lompatan terendah di koleksi ini untuk program sebesar itu.
+        Sebabnya dua, dan keduanya keputusan sadar.
+      </p>
+      <p class="c-note">
+        Pertama, <code>WHILE</code>/<code>WEND</code>: perulangan dinyatakan
+        <strong>sebagai perulangan</strong>, bukan sebagai lompatan mundur.
+      </p>
+      <p class="c-note">
+        Kedua, subrutinnya dibagi menurut <strong>tanggung jawab</strong>,
+        bukan menurut urutan kejadian &mdash; dan penulisnya menamai
+        sendiri tiap bagian lewat komentar:
+      </p>
+      <table class="c-table-x">
+        <thead><tr><th>Baris</th><th>Nama dari penulisnya</th><th>Peran</th></tr></thead>
+        <tbody>
+          <tr><td>2500&ndash;2850</td><td><code>shuffle routine</code></td><td>data</td></tr>
+          <tr><td>2860&ndash;3150</td><td><code>computer section</code></td><td>kecerdasan</td></tr>
+          <tr><td>3460&ndash;3630</td><td><code>create figure</code></td><td>tampilan</td></tr>
+          <tr><td>3380&ndash;3450</td><td><code>print a card</code></td><td>tampilan</td></tr>
+        </tbody>
+      </table>
+      <p class="c-note">
+        Satu untuk data, satu untuk kecerdasan, dua untuk tampilan. Itu
+        pemisahan yang sama dengan <em>model&ndash;view&ndash;controller</em>,
+        ditemukan sendiri pada 1986 oleh orang yang hampir pasti belum pernah
+        mendengar istilahnya.
+      </p>
+    </div>
+
+    <div class="panel c-warn">
+      <p class="eyebrow">Mengocok dengan menolak dan mengulang</p>
+<pre class="c-code">2580 NUMBR=100*RND
+2590 IF NUMBR &gt; 52 THEN 2580   <em>' 48% langsung dibuang</em>
+2600 IF NUMBR = 0  THEN 2580
+2610 IF TEST(NUMBR)=1 THEN 2580 <em>' sudah terpakai, ulangi</em></pre>
+      <p class="c-note">
+        Ambil angka acak 0&ndash;99; kalau di luar 1&ndash;52 buang, kalau
+        sudah terpakai buang. Benar secara statistik &mdash; tiap urutan
+        sama peluangnya &mdash; tapi <strong>makin penuh deknya, makin
+        sering gagal</strong>. Untuk kartu terakhir, peluang berhasil tinggal
+        1 dari 100.
+      </p>
+      <div class="row">
+        <button class="btn btn--ghost btn--sm" id="shuffleRun" type="button">Ukur 1000 pengocokan</button>
+      </div>
+      <p class="c-note" id="shuffleOut">Tekan untuk mengukurnya, bukan mempercayainya.</p>
+      <p class="c-note">
+        Ini <strong>cara ketiga</strong> mengocok di koleksi ini, dan
+        ketiganya gagal dengan cara yang berbeda:
+      </p>
+      <table class="c-table-x">
+        <thead><tr><th>Program</th><th>Cara</th><th>Biaya</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../solitair/index.html">SOLITAIR</a></td>
+              <td>tukar ke ujung &mdash; Fisher&ndash;Yates</td>
+              <td class="g-ok">52</td></tr>
+          <tr><td><a href="../maxit1/index.html">MAXIT1</a></td>
+              <td>larik menyusut, geser sisanya</td>
+              <td>O(n&sup2;)</td></tr>
+          <tr><td><strong>CRAZY8</strong></td>
+              <td>tolak dan ulang</td>
+              <td>~454</td></tr>
+        </tbody>
+      </table>
+      <p class="c-note">
+        Yang menarik: <strong>ketiganya menghasilkan pengocokan yang sah.</strong>
+        Tidak ada yang berat sebelah. Yang berbeda cuma harganya &mdash; dan
+        di mesin 4,77&nbsp;MHz, harga itu terdengar sebagai jeda sebelum kartu
+        dibagikan.
+      </p>
+    </div>
+
+    <div class="panel c-good">
+      <p class="eyebrow">Menggambar ulang hanya yang berubah</p>
+<pre class="c-code">1710 IF PHAND$(I)=OLDHAND$(I) THEN 1770  <em>' lewati, tidak berubah</em>
+1720 OLDHAND$(I)=PHAND$(I)
+1730 THE$=PHAND$(I): GOSUB 3460          <em>' bangun gambarnya</em></pre>
+      <p class="c-note">
+        Satu kartu digambar sebagai kisi 5&times;5 karakter &mdash; dua puluh
+        lima pasang <code>LOCATE</code>+<code>PRINT</code>. Enam belas kartu
+        berarti <strong>empat ratus</strong>, tiap kali layar disegarkan, di
+        mesin yang mencetak karakter satu per satu.
+      </p>
+      <p class="c-note">
+        Jadi penulisnya menyimpan salinan tangan yang <em>sedang tergambar</em>
+        (<code>OLDHAND$</code>) dan melewati kartu yang tidak berubah. Dalam
+        satu giliran biasanya cuma satu kartu yang berubah.
+      </p>
+      <div class="c-bars">
+        <div class="c-bar"><span>Digambar ulang</span>
+          <div class="c-bar__t"><div class="c-bar__f" id="barDirty"></div></div>
+          <b id="nDirty">0</b></div>
+        <div class="c-bar"><span>Kalau semua</span>
+          <div class="c-bar__t"><div class="c-bar__f c-bar__f--full"></div></div>
+          <b id="nAll">0</b></div>
+      </div>
+      <p class="c-note">
+        Namanya sekarang <em>dirty checking</em>, dan itu gagasan yang sama
+        dengan yang dipakai <a href="../life2/index.html">LIFE2</a> untuk
+        menyentuh hanya sel yang berubah &mdash; dan sama dengan yang dilakukan
+        kerangka kerja antarmuka mana pun yang Anda pakai hari ini.
+      </p>
+    </div>
+
+    <div class="panel c-warn">
+      <p class="eyebrow">Huruf yang menunjuk kartu yang salah</p>
+<pre class="c-code">2150 IF IN$="e" THEN IN=14
+2160 IF IN$="e" THEN IN=15   <em>' baris yang sama, nilai berbeda</em></pre>
+      <p class="c-note">
+        Dua baris berurutan menguji huruf yang <strong>sama</strong>. Yang
+        kedua menimpa yang pertama, jadi <code>e</code> selalu bernilai 15.
+      </p>
+      <p class="c-note">
+        Akibatnya berantai. Kartu ke-7 sampai ke-16 diberi label
+        <code>7 8 9 A B C D E F G</code> di layar (baris 1870&ndash;1940), tapi
+        masukannya cuma memetakan <code>a</code>&ndash;<code>e</code>:
+      </p>
+      <table class="c-table-x">
+        <thead><tr><th>Label di layar</th><th>Tombol</th><th>Kartu yang terpilih</th></tr></thead>
+        <tbody>
+          <tr><td>A B C D</td><td><code>a b c d</code></td><td>10 11 12 13 &mdash; benar</td></tr>
+          <tr><td>E</td><td><code>e</code></td><td class="g-bad">15, bukan 14</td></tr>
+          <tr><td>F, G</td><td>&mdash;</td><td class="g-bad">tidak bisa dipilih</td></tr>
+        </tbody>
+      </table>
+      <p class="c-note">
+        Jadi kartu ke-14 <strong>tidak pernah bisa dimainkan</strong>, dan
+        menekan <code>e</code> membuang kartu yang tertulis <code>F</code>.
+        Baris 2170 menolak <code>f</code> dan <code>g</code> sebagai
+        <em>"WRONG CARD"</em>.
+      </p>
+      <p class="c-note">
+        Di sini kartu diklik langsung, jadi masalahnya lenyap tanpa aturan
+        yang berubah &mdash; tapi ia layak dicatat sebagai contoh
+        <strong>bug salin-tempel yang bertahan empat puluh tahun</strong>
+        karena tidak ada yang punya cara mengirimkan perbaikan.
+      </p>
+    </div>
+
+    <div class="panel c-warn">
+      <p class="eyebrow">Dek yang habis bisa merusak ronde berikutnya</p>
+<pre class="c-code">2660 IF PSCORE&lt;&gt;0 OR CSCORE&lt;&gt;0 THEN 2810
+2670 DATA "c","d","h","s"
+2680 FOR I=1 TO 4: READ SUIT$(I): NEXT I
+     <em>...</em>
+2790 RESTORE 2710   <em>' dijalankan juga sesudah putaran terakhir</em></pre>
+      <p class="c-note">
+        Nama dan rupa kartu hanya dibangun pada ronde <strong>pertama</strong>;
+        sesudahnya baris 2660 melompatinya. Penghematan yang masuk akal.
+      </p>
+      <p class="c-note">
+        Tapi ada satu jalan yang membuat skor tetap 0&ndash;0 di ronde kedua:
+        <strong>dek habis sebelum ada yang menang</strong> (baris 2030 dan
+        3220 melompat ke 3850, yang tidak menghitung skor sama sekali). Ronde
+        berikutnya masuk lagi ke 2670 &mdash; sementara penunjuk
+        <code>DATA</code> sudah berpindah ke 2710 oleh <code>RESTORE</code>
+        terakhir.
+      </p>
+      <p class="c-note">
+        Yang terbaca sebagai warna jadi <code>" A"</code>, <code>" 2"</code>,
+        <code>" 3"</code>, <code>" 4"</code>; sembilan angka tersisa dibaca
+        sebagai nama kartu, lalu datanya habis &mdash;
+        <strong><code>Out of DATA in 2760</code></strong>.
+      </p>
+      <p class="c-note">
+        Ini <strong>ditelusuri dari kodenya, bukan dari menjalankannya</strong>.
+        Syaratnya sempit: 35 kartu pengambilan harus habis sebelum salah satu
+        tangan kosong. Port ini menghentikan ronde dengan bersih dan
+        melanjutkan &mdash; deknya dibangun ulang tiap ronde, jadi tidak ada
+        penunjuk yang bisa tertinggal.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Benih yang justru lebih baik daripada tetangganya</p>
+<pre class="c-code">2520 TIM$=MID$(TIME$,4,2)      <em>' menit</em>
+2530 TIM$=TIM$+MID$(TIME$,7,2) <em>' + detik</em>
+2540 SEED=VAL(TIM$)</pre>
+      <p class="c-note">
+        Menit <em>dan</em> detik, disambung jadi satu bilangan
+        &mdash; <strong>3.600 benih</strong> yang mungkin.
+      </p>
+      <p class="c-note">
+        Bandingkan dengan <code>RANDOMIZE VAL(RIGHT$(TIME$,2))</code> yang
+        muncul di <a href="../maxit1/index.html">MAXIT1</a> dan
+        <a href="../master/index.html">MASTER</a>: detik saja,
+        <strong>60 benih</strong>. CRAZY8 enam puluh kali lebih baik daripada
+        tetangganya di disket yang sama, dan tidak ada satu komentar pun yang
+        menyebutkan bahwa itu disengaja.
+      </p>
+      <p class="c-note">
+        Tetap tidak cukup untuk permainan kartu &mdash; 3.600 kemungkinan
+        melawan 52! urutan dek. Port ini menyemai dari
+        <code>crypto.getRandomValues</code>.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/crazy8.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/CRAZY8.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/CRAZY8.BAS">Kode sumber 1986</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/cards.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="crazy8.js"></script>
+</body>
+</html>

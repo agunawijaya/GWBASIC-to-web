@@ -1,0 +1,71 @@
+/* ===========================================================================
+   simeqn.css — khusus Simultaneous Equations. Awalan `q-`.
+
+   Aslinya tidak punya tata letak sama sekali — hanya `PRINT` dan `TAB`,
+   karena baris 130 mengharuskannya jalan di CRT mana pun. Yang ditiru di sini
+   bukan tampilannya, melainkan KEPOLOSANNYA: tidak ada hiasan yang tidak
+   membawa informasi.
+   =========================================================================== */
+
+.q-layout {
+  display: grid; gap: var(--s5);
+  grid-template-columns: minmax(340px, 1fr) minmax(300px, 420px);
+  align-items: start; padding-block: var(--s6) var(--s8);
+}
+@media (max-width: 1040px) { .q-layout { grid-template-columns: 1fr; } }
+
+.q-stage { display: grid; gap: var(--s4); }
+
+/* Kisi koefisien. Kolomnya dibangun dari JavaScript karena jumlahnya
+   mengikuti N — satu-satunya tempat di halaman ini yang perlu tahu N. */
+.q-grid { display: grid; gap: 6px 4px; align-items: center; }
+.q-sel { display: flex; align-items: center; gap: 3px; }
+.q-sel input, .q-rhs {
+  width: 100%; min-width: 0; padding: 4px 6px;
+  font-family: var(--font-mono); font-size: var(--fs-sm);
+}
+.q-var { font-size: var(--fs-xs); color: var(--ink-dim); flex: none; }
+.q-eq { text-align: center; color: var(--ink-dim); }
+.q-rhs { border-color: var(--acc-amber); }
+
+.q-opt { display: flex; gap: var(--s2); align-items: center;
+         font-size: var(--fs-xs); color: var(--ink-dim); }
+.q-opt input[type="range"] { width: 110px; }
+
+.q-judul { font-family: var(--font-mono); color: var(--acc-phosphor);
+           margin-top: var(--s3); }
+.q-jawab { display: grid; gap: 2px; margin-top: var(--s2);
+           font-family: var(--font-mono); font-size: var(--fs-md); }
+.q-jawab b { color: var(--acc-amber); }
+.q-bad { color: var(--acc-red); font-weight: 700; }
+.q-note { font-size: var(--fs-sm); color: var(--ink-dim); margin-top: var(--s2); }
+
+.q-jejak { margin-top: var(--s3); }
+.q-jejak > summary { cursor: pointer; font-size: var(--fs-xs);
+                     color: var(--ink-dim); text-transform: uppercase;
+                     letter-spacing: .08em; }
+
+/* --- panel kanan --------------------------------------------------------- */
+
+.q-code {
+  margin-top: var(--s3); padding: var(--s3);
+  border: var(--border); border-radius: var(--r);
+  background: var(--bg-sunken); color: var(--acc-amber);
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.7;
+  overflow-x: auto;
+}
+.q-code em { color: var(--ink-faint); font-style: normal; }
+.q-warn { border-left: 3px solid var(--acc-amber); }
+.q-good { border-left: 3px solid var(--acc-phosphor); }
+.q-bad-panel { border-left: 3px solid var(--acc-red); }
+
+.q-tbl { width: 100%; border-collapse: collapse; margin-top: var(--s3);
+         font-size: var(--fs-xs); }
+.q-tbl th, .q-tbl td { padding: 4px var(--s2); text-align: left;
+                       border-bottom: 1px solid var(--line-soft);
+                       vertical-align: top; }
+.q-tbl th { color: var(--ink-dim); font-weight: 600; }
+
+.howto > .q-lead {
+  border-top: none; padding-top: 0; margin-top: var(--s3); color: var(--ink);
+}

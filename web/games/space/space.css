@@ -1,0 +1,56 @@
+/* ===========================================================================
+   space.css — khusus IBM Space. Awalan `s-`.
+   =========================================================================== */
+
+.s-layout {
+  display: grid; gap: var(--s5);
+  grid-template-columns: minmax(340px, 1fr) minmax(300px, 420px);
+  align-items: start; padding-block: var(--s6) var(--s8);
+}
+@media (max-width: 1040px) { .s-layout { grid-template-columns: 1fr; } }
+
+.s-stage { display: grid; gap: var(--s4); justify-items: stretch; }
+.s-judul { font-family: var(--font-mono); color: var(--acc-phosphor); }
+.s-note { font-size: var(--fs-sm); color: var(--ink-dim); margin-top: var(--s2); }
+
+.s-svg { width: 100%; height: auto; display: block; border-radius: var(--r);
+         border: var(--border); image-rendering: pixelated; }
+.s-contoh { width: 160px; height: auto; display: block;
+            border-radius: var(--r-sm); border: var(--border); }
+
+/* XOR sungguhan: `mix-blend-mode: difference` adalah padanan terdekat yang
+   dipunyai peramban. Untuk warna murni CGA hasilnya sama dengan XOR bit —
+   dan itulah kenapa sprite yang sama tampak berbeda di tiap pita warna,
+   persis seperti di layar 1982. */
+.s-sprite--xor { mix-blend-mode: difference; }
+
+.s-row { display: flex; gap: var(--s3); align-items: center; flex-wrap: wrap;
+         font-size: var(--fs-xs); color: var(--ink-dim); }
+
+.s-bits { font-family: var(--font-mono); font-size: var(--fs-sm);
+          line-height: 1.9; color: var(--ink-dim); margin-top: var(--s3);
+          padding: var(--s3); background: var(--bg-sunken);
+          border-radius: var(--r); border: var(--border); }
+.s-hi { color: var(--acc-phosphor); }
+
+.s-code {
+  margin-top: var(--s3); padding: var(--s3);
+  border: var(--border); border-radius: var(--r);
+  background: var(--bg-sunken); color: var(--acc-amber);
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.7;
+  overflow-x: auto;
+}
+.s-code em { color: var(--ink-faint); font-style: normal; }
+.s-good { border-left: 3px solid var(--acc-phosphor); }
+.s-warn { border-left: 3px solid var(--acc-amber); }
+
+.s-tbl { width: 100%; border-collapse: collapse; margin-top: var(--s3);
+         font-size: var(--fs-xs); }
+.s-tbl th, .s-tbl td { padding: 4px var(--s2); text-align: left;
+                       border-bottom: 1px solid var(--line-soft);
+                       vertical-align: top; }
+.s-tbl th { color: var(--ink-dim); font-weight: 600; }
+
+.howto > .s-lead {
+  border-top: none; padding-top: 0; margin-top: var(--s3); color: var(--ink);
+}

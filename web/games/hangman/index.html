@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hangman — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari HANGMAN.BAS (Friendlyware, 1983). Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="hangman.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap game">
+
+  <!-- ================= KIRI: tiang gantungan ================= -->
+  <section class="screen screen--scanlines" id="stage" aria-live="off">
+    <svg id="gallows" viewBox="0 0 260 320" role="img"
+         aria-labelledby="gallows-desc">
+      <title id="gallows-desc">Tiang gantungan dan sosok yang bertambah tiap tebakan salah</title>
+      <defs>
+        <linearGradient id="wood" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0"   stop-color="#7d6238"/>
+          <stop offset=".28" stop-color="#c9a366"/>
+          <stop offset=".62" stop-color="#9b7940"/>
+          <stop offset="1"   stop-color="#5f4a29"/>
+        </linearGradient>
+        <pattern id="grain" width="14" height="7" patternUnits="userSpaceOnUse">
+          <path d="M0 2 Q7 0 14 2 M0 5 Q7 7 14 5" fill="none"
+                stroke="#4b3a20" stroke-width=".6" opacity=".45"/>
+        </pattern>
+      </defs>
+
+      <!-- Tiang gantungan. Di aslinya ini baru muncul pada kesalahan ke-10;
+           lihat docs/hangman.md bagian "kejutan di baris 650". -->
+      <g id="p-gallows" class="part" data-part="gallows">
+        <rect x="16" y="298" width="162" height="15" rx="4" fill="url(#wood)"/>
+        <rect x="16" y="298" width="162" height="15" rx="4" fill="url(#grain)"/>
+        <rect x="44" y="44" width="19" height="256" rx="4" fill="url(#wood)"/>
+        <rect x="44" y="44" width="19" height="256" rx="4" fill="url(#grain)"/>
+        <rect x="44" y="44" width="134" height="17" rx="4" fill="url(#wood)"/>
+        <rect x="44" y="44" width="134" height="17" rx="4" fill="url(#grain)"/>
+        <path d="M63 96 L108 51" stroke="url(#wood)" stroke-width="11"
+              stroke-linecap="round"/>
+        <path d="M168 61 V88" stroke="#c8a878" stroke-width="3.5"
+              stroke-linecap="round"/>
+        <circle cx="168" cy="88" r="4.5" fill="none" stroke="#c8a878"
+                stroke-width="3"/>
+      </g>
+
+      <!-- Sosok. Warna tiap bagian mengikuti perintah COLOR di kode asli —
+           lihat tabel di hangman.css. -->
+      <g id="figure" stroke-linecap="round" fill="none">
+        <circle id="p-head"   class="part" data-part="head"   cx="168" cy="106" r="18" stroke-width="4.5"/>
+        <path   id="p-torso"  class="part" data-part="torso"  d="M168 124 V186" stroke-width="5"/>
+        <path   id="p-legL"   class="part" data-part="legL"   d="M168 186 L144 232" stroke-width="4.5"/>
+        <path   id="p-legR"   class="part" data-part="legR"   d="M168 186 L192 232" stroke-width="4.5"/>
+        <path   id="p-armL"   class="part" data-part="armL"   d="M168 136 L136 164" stroke-width="4.5"/>
+        <path   id="p-armR"   class="part" data-part="armR"   d="M168 136 L200 164" stroke-width="4.5"/>
+        <path   id="p-handL"  class="part" data-part="handL"  d="M136 164 L127 174" stroke-width="4"/>
+        <path   id="p-handR"  class="part" data-part="handR"  d="M200 164 L209 174" stroke-width="4"/>
+        <path   id="p-footR"  class="part" data-part="footR"  d="M192 232 L207 238" stroke-width="4.5"/>
+        <path   id="p-footL"  class="part" data-part="footL"  d="M144 232 L129 238" stroke-width="4.5"/>
+      </g>
+
+      <!-- Wajah hanya muncul saat kalah. -->
+      <g id="p-face" class="part" data-part="face" stroke-linecap="round" fill="none">
+        <path d="M159 100 L167 108 M167 100 L159 108" stroke-width="2.6"/>
+        <path d="M169 100 L177 108 M177 100 L169 108" stroke-width="2.6"/>
+        <path d="M160 118 Q168 111 176 118" stroke-width="3"/>
+      </g>
+    </svg>
+
+    <p class="stage__count mono">
+      Kesalahan <span id="chanceN">0</span> / 10
+    </p>
+  </section>
+
+  <!-- ================= KANAN: permainan ================= -->
+  <section class="stack">
+
+    <div class="panel">
+      <p class="eyebrow">This Is Your Word</p>
+      <p class="word mono" id="word" aria-live="polite" aria-atomic="true"></p>
+      <p class="dim" id="status" aria-live="polite"></p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">These Are The Letters You Have Used</p>
+      <div class="keys" id="keys" role="group" aria-label="Papan huruf"></div>
+    </div>
+
+    <!-- Muncul hanya setelah satu huruf ditebak benar — persis seperti
+         aslinya, yang menawarkan tebak-kata-utuh di baris 460. -->
+    <form class="panel hidden" id="guessBox">
+      <p class="eyebrow">What Do You Think The Word Is?</p>
+      <div class="row">
+        <input class="guess mono" id="guessInput" type="text" autocomplete="off"
+               spellcheck="false" maxlength="20" aria-label="Tebak seluruh kata">
+        <button class="btn btn--primary" type="submit">Tebak</button>
+        <button class="btn btn--ghost" type="button" id="skipGuess">Lewati</button>
+      </div>
+      <p class="faint" style="font-size:var(--fs-xs);margin-top:var(--s2)">
+        Menebak salah di sini tidak mengurangi kesempatan — sama seperti aslinya.
+      </p>
+    </form>
+
+    <div class="panel">
+      <div class="hud">
+        <div class="stat stat--good">
+          <span class="stat__label">Menang</span>
+          <span class="stat__value" id="wins">0</span>
+        </div>
+        <div class="stat stat--bad">
+          <span class="stat__label">Kalah</span>
+          <span class="stat__value" id="losses">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat__label">Kata terpakai</span>
+          <span class="stat__value" id="seen">0<span class="faint">/101</span></span>
+        </div>
+      </div>
+      <div class="row" style="margin-top:var(--s4)">
+        <button class="btn btn--primary" id="newWord" type="button">Kata baru</button>
+        <button class="btn btn--ghost" id="reveal" type="button">Menyerah</button>
+        <button class="btn btn--ghost btn--sm" id="resetScore" type="button"
+                style="margin-left:auto">Reset skor</button>
+      </div>
+    </div>
+
+    <p class="faint links">
+      <a href="../../docs/hangman.md">Dokumen arsitektur &amp; code review</a> ·
+      <a href="../../../reviews/HANGMAN.md">Analisis BASIC aslinya</a> ·
+      <a href="../../../run/HANGMAN.BAS">Kode sumber 1983</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/input.js"></script>
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="words.js"></script>
+<script src="hangman.js"></script>
+</body>
+</html>

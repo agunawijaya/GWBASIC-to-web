@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hopper — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari HOPPER.EXE (≤1991) — dibongkar balik dari berkas .EXE. Sebuah program BASIC yang menyuntikkan 232 bita assembly ke dirinya sendiri karena BASIC terlalu lambat untuk menggulung layar. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="hopper.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap h-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div id="layar">
+        <p class="h-pesan" id="pesan" role="status" hidden></p>
+      </div>
+    </div>
+
+    <div class="row">
+      <button class="btn" id="go">Mulai</button>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">11 jalur</span>
+      <span class="ruleset__k">median diam</span>
+      <span class="ruleset__k">5 rumah</span>
+      <span class="ruleset__k">panah / WASD</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Skor</span>
+        <span class="stat__value mono" id="s-skor">0</span></div>
+      <div class="stat"><span class="stat__label">Nyawa</span>
+        <span class="stat__value" id="s-nyawa">—</span></div>
+      <div class="stat"><span class="stat__label">Waktu</span>
+        <span class="stat__value mono" id="s-waktu">—</span></div>
+      <div class="stat"><span class="stat__label">Rumah terisi</span>
+        <span class="stat__value mono" id="s-rumah">0 / 5</span></div>
+      <div class="stat"><span class="stat__label">Level · laju</span>
+        <span class="stat__value mono" id="s-level">1 · ×1,00</span></div>
+      <div class="stat"><span class="stat__label">Kecepatan jalur</span>
+        <span class="stat__value mono" id="s-jalur">—</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <p class="h-lead">
+        Seberangi sebelas jalur dan isi kelima rumah di atas. Di bawah median
+        ada <strong>jalan</strong> — tertabrak berarti mati. Di atasnya
+        <strong>sungai</strong> — di sana Anda harus <em>berdiri di atas batang
+        kayu</em>, karena airnya mematikan.
+      </p>
+      <ol class="howto__steps">
+        <li>Lompat dengan
+            <kbd>&larr;</kbd> <kbd>&uarr;</kbd> <kbd>&darr;</kbd> <kbd>&rarr;</kbd>
+            atau <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> &mdash; tekan
+            saja, tombol panah pertama sekalian <strong>memulai</strong>.</li>
+        <li>Kecepatan tiap jalur bukan karangan saya — ia
+            <strong>terbaca dari dalam biner</strong>, di dalam 232 bita kode
+            mesin yang program itu suntikkan ke dirinya sendiri.</li>
+        <li>Jalur keenam berkecepatan <strong>nol</strong>. Itu median strip,
+            dan angkanya juga datang dari tabel yang sama.</li>
+        <li>Isi <strong>kelima rumah</strong> untuk menuntaskan satu level. Tiap
+            level berikutnya mempercepat jalur dan memperpendek waktu, sampai
+            <strong>×5,00</strong> &mdash; batas atas dial <code>Speed (1-500)</code>
+            yang ditanyakan program aslinya di awal.</li>
+      </ol>
+      <p>
+        Rupa di layar ini <strong>digambar sendiri</strong>, bukan diambil dari
+        aset aslinya. Makro <code>DRAW</code> 1980-an itu tetap ada di panel
+        kanan sebagai <em>bukti</em> — byte-identik dengan biner — tapi ia tidak
+        menggambar apa pun di sini: sprite 11 &times; 10 piksel tidak bisa jadi
+        gambar seukuran jalur.
+      </p>
+    </details>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel">
+      <p class="eyebrow">Program BASIC yang menyuntikkan assembly ke dirinya sendiri</p>
+      <p class="h-note">
+        Tiga belas pernyataan <code>DATA</code> berisi 232 angka. Program
+        membacanya dengan <code>READ</code>, mem-<code>POKE</code> satu per satu
+        ke memori bebas yang dihitungnya sendiri, lalu memanggilnya:
+      </p>
+      <p class="h-note"><code>8580 DEF SEG = CINT(F4!) : CALL I1%</code></p>
+      <table class="h-tabel">
+        <tbody>
+          <tr><td>Pernyataan <code>DATA</code> cocok dengan biner</td><td>13 / 13</td></tr>
+          <tr><td>Bita kode mesin</td><td>232</td></tr>
+          <tr><td>Geseran per panggilan, diukur</td><td>8 piksel</td></tr>
+          <tr><td>Kadensi panggilan</td><td>1 / bingkai</td></tr>
+        </tbody>
+      </table>
+      <p class="h-note">
+        Kenapa serumit itu? Karena BASIC <strong>tidak bisa menggulung sebagian
+        layar</strong>. Satu <code>PUT</code> per kendaraan sudah lambat;
+        menggulung sebelas jalur tiap bingkai mustahil. Jadi penulisnya menulis
+        assembly, mengubahnya jadi angka desimal, dan menempelkannya sebagai
+        <code>DATA</code>.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Tabel kecepatan sebelas jalur, terbaca dari dalam kode mesin</p>
+      <p class="h-note">
+        Di dalam 232 bita itu, offset 5&ndash;15 bukan kode melainkan parameter:
+      </p>
+      <p class="h-note"><code id="d-jalur">—</code></p>
+      <p class="h-note">
+        Sebelas jalur, arah berselang-seling, satuannya <strong>bita layar</strong>
+        (satu bita = empat piksel CGA). Yang ke-<span id="d-median">—</span>
+        bernilai nol — jalur diam. Itu median strip Frogger, dan ia terbaca dari
+        <em>data</em>, bukan dari melihat layarnya.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Makro <code>DRAW</code>-nya asli — tapi bukan aset yang dipakai</p>
+      <p class="h-note">
+        Enam string <code>DRAW</code> byte-identik dengan deskriptor di biner.
+        Yang menggambar katak:
+      </p>
+      <code class="h-makro" id="d-makro">—</code>
+      <table class="h-tabel">
+        <tbody>
+          <tr><td>Ruas garis hasil tafsir</td><td id="d-ruas">—</td></tr>
+          <tr><td>Kotak batas (piksel)</td><td id="d-kotak">—</td></tr>
+          <tr><td>Warna yang dimintanya (<code>C</code>)</td><td id="d-warna">—</td></tr>
+        </tbody>
+      </table>
+      <p class="h-note">
+        <code>DRAW</code> bahasa makro penggerak pena: <code>U D L R</code> empat
+        arah lurus, <code>E F G H</code> empat diagonal, awalan <code>B</code>
+        berarti pindah <em>tanpa</em> menggambar.
+      </p>
+      <p class="h-note">
+        Versi pertama halaman ini <strong>menggambar layarnya dari makro ini</strong>,
+        dan hasilnya buruk: sprite berukuran 11 &times; 10 piksel, ditumpangkan
+        sebagai garis tipis di atas kotak sebesar jalur, keluar sebagai coretan.
+        Jadi rupanya <strong>digambar ulang</strong>. Penafsirnya tetap jalan — angka
+        di tabel atas hasil penafsiran, bukan angka yang saya ketik — tapi makronya
+        kini <strong>bukti, bukan aset</strong>.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Bukti I/O — berkas skor 1991 yang bolak-balik utuh</p>
+      <p class="h-note">
+        <code>run/HOPPER.SCO</code> ditulis program aslinya pada
+        <strong>2 Agustus 1991</strong> (UTC). Disodorkan ke rekonstruksi,
+        dibaca, diurutkan, lalu ditulis kembali:
+      </p>
+      <table class="h-tabel">
+        <tbody>
+          <tr><td>Isi sampai penanda <code>0x1A</code></td><td>101 bita</td></tr>
+          <tr><td>Isi asli dan hasil tulis</td><td>identik</td></tr>
+          <tr><td>Berkas asli</td><td>128 bita</td></tr>
+          <tr><td>Selisihnya</td><td>27 bita padding nol</td></tr>
+        </tbody>
+      </table>
+      <p class="h-note">
+        Klaimnya <strong>isi-identik</strong>, bukan berkas-identik: aslinya 128
+        bita karena DOS memadatkan ke blok, dan padding nol itu <em>satu
+        sampel</em> — tidak cukup untuk menggeneralkan.
+      </p>
+      <p class="h-note">
+        Sepuluh pasang di bawah adalah isi berkas 1991 itu, dipakai sebagai papan
+        skor awal. Bukan hiasan — data yang selamat tiga puluh empat tahun.
+      </p>
+      <table class="h-papan"><tbody id="papan"></tbody></table>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Bukti gambar — dan kenapa ia lebih lemah</p>
+      <table class="h-tabel">
+        <tbody>
+          <tr><td>Warna terpakai, EXE lawan <code>.bas</code></td><td>sama</td></tr>
+          <tr><td>Peta baris berisi sepakat</td><td>193 / 200 (96%)</td></tr>
+          <tr><td>Korelasi profil tinta per baris</td><td>0,844</td></tr>
+        </tbody>
+      </table>
+      <p class="h-note">
+        Bandingkan: PAC-GAL <strong>24 / 24 baris</strong> dan 3DTTT
+        <strong>18 / 18</strong>, keduanya <em>eksak, sel demi sel</em>. Bukti
+        HOPPER <strong>statistik</strong>, dan itu harus dikatakan.
+      </p>
+      <p class="h-note">
+        Sebabnya bukan kemalasan: HOPPER satu-satunya yang layarnya
+        <strong>bergerak terus</strong>, jadi kedua sisi tidak pernah berada
+        pada saat yang sama. Selisih jumlah tinta (22.098 lawan 14.465) itu
+        <em>selisih waktu, bukan selisih gambar</em>. Perbandingan eksak hanya
+        mungkin untuk layar yang diam.
+      </p>
+      <p class="h-note">
+        Dua tabel di halaman ini sengaja berjudul berbeda: yang di atas menguji
+        <strong>I/O</strong>, yang ini menguji <strong>gambar</strong>. Menaruh
+        keduanya bersebelahan tanpa label akan membuat yang satu meminjam
+        kekuatan yang lain.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Tingkat kepastian di halaman ini</p>
+      <table class="h-tabel">
+        <thead><tr><th>Bagian</th><th>Tingkat</th></tr></thead>
+        <tbody>
+          <tr><td>232 bita kode mesin, 13/13 <code>DATA</code></td><td>pasti</td></tr>
+          <tr><td>Tabel kecepatan 11 jalur, median nol</td><td>pasti</td></tr>
+          <tr><td>Enam string <code>DRAW</code></td><td>pasti (byte-identik)</td></tr>
+          <tr><td>Geseran 8 piksel, kadensi per bingkai</td><td>pasti (diukur)</td></tr>
+          <tr><td>Logika tak membaca VRAM</td><td>pasti (diukur, 0 dari 21.873)</td></tr>
+          <tr><td>Tahun</td><td>&le;1991 — batas atas dari <code>.SCO</code></td></tr>
+          <tr><td>Kesulitan punya sumbu kecepatan 1&ndash;500</td><td>pasti (baris 1360)</td></tr>
+          <tr><td>Tata letak sungai/jalan, skor, waktu, aturan rumah</td><td><strong>rekonstruksi</strong></td></tr>
+          <tr><td>Naik level otomatis, animasi mati, rupa gambar</td><td><strong>rekonstruksi</strong></td></tr>
+        </tbody>
+      </table>
+      <p class="h-note">
+        Baris terakhir sengaja dipisah dari baris di atasnya. Keduanya sama-sama
+        rekonstruksi, tapi yang atas mengisi hal yang <em>pasti ada</em> di
+        permainannya; yang bawah menambah hal yang <strong>tidak ada buktinya
+        sama sekali</strong> di biner. Aslinya berhenti dengan GAME OVER, dan
+        angka 1&ndash;4 itu dipilih pemain, bukan dinaikkan program.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/hopper.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../decompile/HOPPER/ARCHITECTURE.md">Analisis dekompilasi</a> &middot;
+      <a href="../../../decompile/HOPPER/DATA-BLOCKS.md">Blok data &amp; penggulung</a> &middot;
+      <a href="../../../decompile/HOPPER/hopper-run.bas">Basis port (394 baris)</a> &middot;
+      <a href="../../../run/HOPPER.EXE">Berkas EXE aslinya</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="hopper-data.js"></script>
+<script src="hopper.js"></script>
+</body>
+</html>

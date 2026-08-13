@@ -1,0 +1,68 @@
+/* ===========================================================================
+   reader.css — rupa pembaca berhalaman. Pasangan reader.js.
+
+   Aturan yang sama dengan cards.css dan dice.css: berkas ini hanya tahu
+   BENTUK pembaca, tidak tahu isi halaman apa pun. Warna dan jarak seluruhnya
+   dari tokens.css, jadi tema terang/gelap ikut tanpa satu baris tambahan.
+   =========================================================================== */
+
+.rdr { display: grid; gap: var(--s3); }
+
+/* --- rel halaman ------------------------------------------------------- */
+/* Aslinya tidak ada: sembilan nomor baris GOSUB tidak bisa dijadikan daftar.
+   Begitu halaman jadi data, rel ini menjadi mungkin — dan sekaligus menjawab
+   pertanyaan yang tidak pernah bisa dijawab program 1982-nya: "saya di mana,
+   dan masih berapa lagi?" */
+.rdr__rail {
+  display: flex; flex-wrap: wrap; gap: var(--s1);
+  padding-bottom: var(--s1);
+}
+
+.rdr__pin {
+  min-width: 28px; height: 28px; padding: 0 var(--s1);
+  font: 600 var(--fs-xs)/1 var(--font-mono);
+  color: var(--ink-faint);
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: color var(--t-fast) var(--ease),
+              border-color var(--t-fast) var(--ease),
+              background var(--t-fast) var(--ease);
+}
+.rdr__pin:hover { color: var(--ink); border-color: var(--edge-strong); }
+.rdr__pin:focus-visible { outline: none; box-shadow: var(--glow); }
+
+.rdr__pin--lalu { color: var(--ink-dim); border-color: var(--line); }
+.rdr__pin--kini {
+  color: var(--bg);
+  background: var(--acc-phosphor);
+  border-color: var(--acc-phosphor);
+}
+
+/* --- badan halaman ----------------------------------------------------- */
+.rdr__page { outline: none; }
+.rdr__page:focus-visible { box-shadow: var(--glow); border-radius: var(--r); }
+
+/* --- bilah navigasi ---------------------------------------------------- */
+.rdr__bar {
+  display: flex; align-items: center; gap: var(--s3);
+  padding-top: var(--s2);
+  border-top: 1px solid var(--line-soft);
+}
+.rdr__nav { flex: 0 0 auto; }
+.rdr__nav[disabled] { opacity: .4; cursor: default; }
+
+/* Cacah halaman mengambil sisa lebar dan berada di TENGAH, jadi kedua tombol
+   tetap di tepi yang sama di halaman mana pun — posisinya tidak melompat
+   saat salah satu tombol mati. */
+.rdr__count {
+  flex: 1 1 auto; text-align: center;
+  font-size: var(--fs-sm); color: var(--ink-dim);
+}
+
+@media (max-width: 520px) {
+  .rdr__bar { gap: var(--s2); }
+  .rdr__nav { flex: 1 1 0; }
+  .rdr__count { flex: 0 0 auto; }
+}

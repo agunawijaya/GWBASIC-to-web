@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sub — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari SUB.BAS: perburuan kapal selam yang seluruh gambarnya ditulis langsung ke memori video — 374 POKE dalam 317 baris — dengan tabel balistik 24 entri di DATA. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="sub.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap s-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="s-stage">
+        <div class="s-crt" id="crt">
+          <svg id="svg" class="s-svg" viewBox="0 0 640 400"
+               role="img" aria-label="Peta sonar tiga tingkat, masing-masing 24 kuadran"></svg>
+          <p class="s-pesan" id="pesan"></p>
+        </div>
+
+        <div class="s-row">
+          <label>Nama kapten <input type="text" id="kapten" maxlength="12" value="ANDA"></label>
+          <button class="btn btn--primary" id="mulai" type="button">Mulai</button>
+          <label class="s-cek"><input type="checkbox" id="bunyi" checked> Bunyi</label>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">317 baris BASIC</span>
+      <span class="ruleset__k ruleset__k--bahaya">374 POKE</span>
+      <span class="ruleset__k">3 tingkat × 24 kuadran</span>
+      <span class="ruleset__k ruleset__k--mangsa">kapal selam 3 sel</span>
+      <span class="ruleset__k ruleset__k--bahaya">3 torpedo = kalah</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">Kapal selam kena</span>
+        <span class="stat__value mono" id="s-kena">0 / 3</span></div>
+      <div class="stat"><span class="stat__label">Kapal Anda kena</span>
+        <span class="stat__value mono" id="s-hit">0 / 3</span></div>
+      <div class="stat"><span class="stat__label">Bom giliran ini</span>
+        <span class="stat__value mono" id="s-tembakan">0 / 3</span></div>
+      <div class="stat"><span class="stat__label">Giliran</span>
+        <span class="stat__value mono" id="s-giliran">0</span></div>
+      <div class="stat"><span class="stat__label">Kuadran dibom</span>
+        <span class="stat__value mono" id="s-dibom">0</span></div>
+      <div class="stat"><span class="stat__label">Rekor (giliran tersedikit)</span>
+        <span class="stat__value mono" id="s-rekor">—</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <p class="s-lead">
+        Sebuah kapal selam bersembunyi di salah satu dari <strong>tiga
+        tingkat</strong> kedalaman, masing-masing 24 kuadran <code>A</code>–<code>X</code>.
+        Ia menempati <strong>tiga sel yang bersambungan</strong>. Jatuhkan bom
+        laut sampai ketiganya hancur.
+      </p>
+      <ol class="howto__steps">
+        <li><strong>Klik kuadran mana pun</strong> untuk menjatuhkan bom &mdash;
+            atau Tab lalu <kbd>Enter</kbd>. Aslinya diketik: satu tuts untuk
+            tingkat, satu tuts untuk huruf kuadran (baris 300&ndash;380).</li>
+        <li><strong>Tiga bom per giliran.</strong> Sesudah itu kapal selam
+            membalas dengan torpedo &mdash; peluangnya <strong>50/50</strong>
+            (<code>MISS=FIX(RND*2)</code>). Tiga torpedo mengenai Anda, kalah.</li>
+        <li>Kapal selamnya <strong>tidak berpindah</strong>. Setiap bom yang
+            meleset tetap berharga: ia mempersempit tempat persembunyiannya.</li>
+        <li>Sudut jatuh bomnya <strong>berbeda tiap kuadran</strong> &mdash;
+            itu tabel balistik 24 entri di panel sebelah, bukan hiasan.</li>
+        <li><strong>Kalau kalah, letak kapal selamnya diungkap</strong> &mdash;
+            badannya digambar melintasi ketiga sel, selnya diberi garis putus,
+            dan kuadrannya disebut dengan kata. Aslinya tidak melakukan ini;
+            ditambahkan supaya Anda bisa memeriksa sendiri bahwa bom yang
+            meleset memang meleset.</li>
+      </ol>
+    </details>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel s-warn">
+      <p class="eyebrow">Lebih banyak POKE daripada baris</p>
+      <p class="s-note">
+        <strong>374 pernyataan <code>POKE</code> dalam 317 baris.</strong> Peta
+        laut dan potongan melintang kapal selamnya tidak digambar dengan
+        <code>PRINT</code> &mdash; keduanya ditulis langsung ke memori video,
+        satu bita aksara per sel:
+      </p>
+<pre class="s-code"> 960 POKE 76,215:A=88:POKE A,176:POKE A+2,176:POKE A+4,176
+1120 FOR A=840 TO 932 STEP 4:POKE A,177:POKE A+2,177:NEXT</pre>
+      <p class="s-note">
+        Alamatnya alamat layar: <code>(baris&minus;1)×160 + kolom×2 &minus; 2</code>
+        untuk bita aksara, <code>+1</code> untuk atributnya. Menulis ke sana
+        <strong>melewati seluruh penafsir</strong> &mdash; tidak ada gulir,
+        tidak ada kursor, tidak ada penyaringan aksara kendali.
+      </p>
+      <p class="s-note">
+        Itulah satu-satunya cara menggambar aksara CP437 <em>mana pun</em> di
+        posisi <em>mana pun</em> tanpa efek samping. Bandingkan dengan
+        <a href="../meteor/index.html">METEOR</a> yang harus menambal tiga kali
+        supaya <code>PRINT</code> tidak memicu gulir di sel pojok.
+      </p>
+    </div>
+
+    <div class="panel s-good">
+      <p class="eyebrow">Ia memilih segmen videonya dengan benar — dan satu program lain salah</p>
+<pre class="s-code">590 IF (PEEK(1040) AND 48)=48 THEN DEF SEG=45056 ELSE DEF SEG=47104</pre>
+      <p class="s-note">
+        Alamat 1040 = <code>0040:0010</code>, kata perlengkapan BIOS; bit 4&ndash;5
+        menyimpan jenis adaptor. Nilai <strong>48</strong> (0x30) berarti
+        <strong>monokrom</strong>, dan <strong>45056</strong> = 0xB000 memang
+        segmen MDA; sisanya <strong>47104</strong> = 0xB800, segmen CGA.
+        <strong>Benar.</strong>
+      </p>
+      <p class="s-note">
+        <code>WHATMONF.BAS</code> di koleksi yang sama memetakannya
+        <strong>terbalik</strong> &mdash; monokrom ke 0xB800, CGA ke 0xB000.
+        <code>SUB.BAS</code>, bersama <code>MAZE.BAS</code>, adalah buktinya.
+        Ketiganya ada di disket yang sama, dan yang dua benar.
+      </p>
+      <p class="s-note s-kecil">
+        Ini pemeriksaan yang tidak bisa dilakukan dari satu berkas saja: yang
+        menentukan bukan penalaran, melainkan <strong>dua program lain yang
+        sepakat</strong>.
+      </p>
+    </div>
+
+    <div class="panel s-good">
+      <p class="eyebrow">SCREEN() dipakai sebagai penyangga simpan-pulihkan</p>
+<pre class="s-code">800 V=SCREEN(X,Y):W=SCREEN(X,Y,1)
+810 PRINT CHR$(15);:FOR D=1 TO 20*B:NEXT
+820 POKE (X-1)*160+Y*2-1,W:POKE (X-1)*160+Y*2-2,V</pre>
+      <p class="s-note">
+        Sebelum menggambar bom di suatu sel, program <strong>membaca aksara dan
+        atributnya</strong> dari layar; sesudah jeda, ia menulisnya kembali.
+        Jadi bom yang melintas tidak merusak peta di bawahnya.
+      </p>
+      <p class="s-note">
+        Ini kemunculan <strong>keenam</strong> "layar sebagai struktur data" di
+        koleksi ini &mdash; dan keperluannya baru lagi:
+      </p>
+      <table class="s-tbl s-tbl--kiri">
+        <tbody>
+          <tr><td><a href="../space/index.html">SPACE</a></td><td>latar, supaya <code>PUT…XOR</code> bisa menghapus dirinya</td></tr>
+          <tr><td><a href="../meteor/index.html">METEOR</a></td><td>seluruh dunianya</td></tr>
+          <tr><td><a href="../serpent/index.html">SERPENT</a></td><td>bentuk tubuhnya sendiri</td></tr>
+          <tr><td><a href="../attack/index.html">ATTACK</a></td><td>nilai skor</td></tr>
+          <tr><td>PAC-GAL <span class="s-kecil">(dari EXE)</span></td><td>tabrakan labirin</td></tr>
+          <tr><td><strong>SUB</strong></td><td><strong>penyangga cadangan</strong> — apa yang harus dikembalikan</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel s-good">
+      <p class="eyebrow">Tabel balistik 24 entri di DATA</p>
+<pre class="s-code">2020 DATA -1.85,-1.1,-.3,.45,1.2,2,-2.00,-1.2,-.5,.3,1.1,1.85
+2030 DATA -2.15,-1.4,-.6,.15,.9,1.7,-2.3,-1.55,-.8,0,.8,1.55
+ 740 B=B(ABS(A-DROP))</pre>
+      <p class="s-note">
+        Dua puluh empat bilangan, satu per kuadran, tersusun
+        <strong>6 kolom × 4 baris</strong> persis seperti petanya:
+      </p>
+      <table class="s-tbl s-balistik"><tbody id="tabel-balistik"></tbody></table>
+      <p class="s-note">
+        Nilainya <strong>simpangan mendatar bom per langkah</strong>:
+        <span class="s-kiri">negatif ke kiri</span>,
+        <span class="s-kanan">positif ke kanan</span>, dan makin ke bawah makin
+        condong ke kiri. Dihitung tangan, ditulis sebagai <code>DATA</code>, dan
+        dipakai supaya bom terlihat jatuh <em>menuju</em> kuadran yang dipilih.
+      </p>
+      <p class="s-note">
+        Tidak ada trigonometri untuk itu &mdash; cuma tabel. Lintasannya sendiri
+        memakai kosinus (baris 780), tapi <em>ke mana</em> ia jatuh ditentukan
+        dua puluh empat angka yang diketik satu per satu.
+      </p>
+    </div>
+
+    <div class="panel s-warn">
+      <p class="eyebrow">Kapal selamnya tidak pernah ada di baris tepi</p>
+<pre class="s-code">440 A=FIX(RND*24):IF (A&gt;6 AND A&lt;11) OR (A&gt;12 AND A&lt;17) THEN 450 ELSE 430
+470 ON FIX(RND*8) GOTO …   ' delapan arah: ±1, ±5, ±6, ±7</pre>
+      <p class="s-note">
+        Kepala kapal selam hanya boleh di kuadran
+        <strong id="b-sah">—</strong> &mdash; empat kolom tengah dari dua baris
+        tengah.
+      </p>
+      <p class="s-note">
+        Alasannya praktis: baris 470&ndash;550 menaruh dua sel sisanya di salah
+        satu dari <strong>delapan arah</strong> (&plusmn;1, &plusmn;5,
+        &plusmn;6, &plusmn;7 pada kisi enam kolom), dan tanpa batasan itu
+        tetangganya bisa jatuh di luar kisi.
+      </p>
+      <p class="s-note">
+        Jadi baris paling atas dan paling bawah <strong>tidak pernah memuat
+        kepala</strong> kapal selam &mdash; tapi bisa memuat ekornya. Itu
+        pengetahuan yang berguna saat berburu, dan tidak pernah disebutkan di
+        petunjuk mana pun.
+      </p>
+      <p class="s-note s-kecil">
+        Cara menghindari indeks di luar batas tanpa memeriksa batas: batasi
+        titik awalnya. Lebih murah daripada delapan pemeriksaan, dan itu terlihat
+        sebagai aturan main.
+      </p>
+    </div>
+
+    <div class="panel s-warn">
+      <p class="eyebrow">Bermain buta hampir mustahil menang</p>
+      <p class="s-note">
+        Torpedo musuh 50/50 dan Anda kalah pada torpedo ketiga, jadi harapan
+        umur satu permainan adalah <strong>6 giliran = 18 bom</strong> &mdash;
+        melawan <strong>72 sel</strong>.
+      </p>
+      <table class="s-tbl">
+        <thead><tr><th>Bom acak</th><th>Peluang ketiga sel terkena</th></tr></thead>
+        <tbody>
+          <tr><td>9</td><td>0,14%</td></tr>
+          <tr><td><strong>18</strong> — harapan satu permainan</td><td><strong>1,37%</strong></td></tr>
+          <tr><td>27</td><td>4,90%</td></tr>
+          <tr><td>36 — separuh peta</td><td>11,97%</td></tr>
+        </tbody>
+      </table>
+      <p class="s-note">
+        Itulah kenapa batasan kuadran di panel atas bukan sekadar trivia.
+        Kalau Anda tahu kepalanya hanya bisa di <strong>8 dari 24</strong>
+        kuadran, kandidatnya turun dari 72 sel jadi <strong>24</strong>. Dan
+        karena ketiganya bersambungan, begitu satu sel kena, sisanya paling
+        banyak delapan tebakan.
+      </p>
+      <p class="s-note s-kecil">
+        Diukur di port ini: dua belas permainan dengan pengebom otomatis yang
+        memprioritaskan zona kepala menghasilkan satu kemenangan, dan sel yang
+        ditemukannya <strong>J&ndash;K&ndash;L tingkat 1</strong> &mdash; tiga
+        sel segaris berjarak satu, kepala di K, di dalam zona sah. Aturan
+        penempatannya benar.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Tiga lagu, tiga keadaan</p>
+      <table class="s-tbl s-tbl--kiri">
+        <tbody>
+          <tr><td>Mulai (2050)</td><td><em>Anchors Aweigh</em></td></tr>
+          <tr><td>Menang (2710)</td><td><em>Battle Hymn of the Republic</em></td></tr>
+          <tr><td>Kalah (2640)</td><td><em>Taps</em></td></tr>
+        </tbody>
+      </table>
+      <p class="s-note">
+        Ketiganya makro <code>PLAY</code> yang diketik penuh, dan dimainkan apa
+        adanya di port ini lewat penafsir di
+        <code>_shared/audio.js</code>. <em>Taps</em> untuk kalah bukan lelucon
+        &mdash; itu lagu pemakaman militer, dan ia dipilih dengan sengaja.
+      </p>
+    </div>
+
+    <p class="faint s-links">
+      <a href="../../docs/sub.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/SUB.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/SUB.BAS">Kode sumber</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/input.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="sub.js"></script>
+</body>
+</html>

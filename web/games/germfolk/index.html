@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A German Folk Tune — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari GERMFOLK.BAS (What Micro?, 1990). Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="../../_shared/music.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap m-layout">
+
+  <section class="stack">
+    <div class="screen screen--scanlines" id="stage">
+      <div class="m-stage">
+        <div id="staff"></div>
+        <div id="piano"></div>
+        <div class="m-transport">
+          <button class="btn btn--primary" id="play" type="button">Mainkan</button>
+          <button class="btn btn--ghost" id="reset" type="button" disabled>Ulang</button>
+          <span class="m-now m-now--idle" id="now">—</span>
+        </div>
+        <div class="picker" id="instruments"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Kode asli, sepuluh baris</p>
+      <p class="m-note">
+        Baris <strong>20</strong> menyetel keadaan sekali — oktaf, tempo,
+        panjang not. Sisanya hanya not. Baris yang sedang berbunyi disorot.
+      </p>
+      <div class="m-score" id="score"></div>
+    </div>
+  </section>
+
+  <section class="stack">
+    <div class="panel">
+      <p class="eyebrow">Yang sedang berlaku</p>
+      <div class="hud">
+        <div class="stat"><span class="stat__label">Oktaf</span>
+          <span class="stat__value" id="sOct">2</span></div>
+        <div class="stat"><span class="stat__label">Tempo</span>
+          <span class="stat__value" id="sTempo">200</span></div>
+        <div class="stat"><span class="stat__label">Panjang</span>
+          <span class="stat__value" id="sLen">1/8</span></div>
+      </div>
+      <p class="m-note">
+        Ketiganya ditetapkan di baris 20 dan berlaku sampai diubah. Perintah
+        <code>&gt;</code> dan <code>&lt;</code> menaikkan dan menurunkan oktaf
+        satu tingkat; <code>ml</code> dan <code>mn</code> mengubah panjang bunyi
+        tanpa mengubah ketukannya.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Kamus makro PLAY</p>
+      <table class="m-table" style="font-size:var(--fs-xs)">
+        <tbody>
+          <tr><td style="text-align:left"><code>o2</code></td><td>oktaf 2</td></tr>
+          <tr><td style="text-align:left"><code>t200</code></td><td>tempo 200 ketuk/menit</td></tr>
+          <tr><td style="text-align:left"><code>l8</code></td><td>panjang bawaan 1/8</td></tr>
+          <tr><td style="text-align:left"><code>d4</code></td><td>not D sepanjang 1/4</td></tr>
+          <tr><td style="text-align:left"><code>d8.</code></td><td>1/8 bertitik = 1,5×</td></tr>
+          <tr><td style="text-align:left"><code>p8</code></td><td>istirahat 1/8</td></tr>
+          <tr><td style="text-align:left"><code>&gt;c</code></td><td>naik satu oktaf, lalu C</td></tr>
+          <tr><td style="text-align:left"><code>ml</code> / <code>mn</code></td><td>legato / normal</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/germfolk.md">Dokumen arsitektur</a> ·
+      <a href="../../../reviews/GERMFOLK.md">Analisis BASIC aslinya</a> ·
+      <a href="../../../run/GERMFOLK.BAS">Kode sumber 1990</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/piano.js"></script>
+<script src="../../_shared/staff.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="germfolk.js"></script>
+</body>
+</html>

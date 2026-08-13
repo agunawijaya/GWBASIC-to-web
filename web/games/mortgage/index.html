@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IBM Mortgage — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari MORTGAGE.BAS (IBM, 1981-86): pembanding angsuran dan amortisasi, dan satu-satunya program di koleksi yang punya riwayat perubahan tercatat. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="mortgage.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap g-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="g-stage">
+        <p class="g-judul">MORTGAGE &mdash; Version 1.00</p>
+
+        <div class="row">
+          <button class="btn btn--ghost btn--sm" data-mode="1" aria-pressed="true"
+                  type="button">1 &mdash; Payment comparisons</button>
+          <button class="btn btn--ghost btn--sm" data-mode="2" aria-pressed="false"
+                  type="button">2 &mdash; Amortization</button>
+        </div>
+
+        <div id="mode1">
+          <div class="g-row">
+            <label>Base amount <input type="number" id="cA" value="100000" step="1000"></label>
+            <label>Base rate % <input type="number" id="cR" value="6" step="0.25"></label>
+            <label>Years <input type="number" id="cY" value="30" step="1"></label>
+            <label>Kolom <input type="number" id="cK" value="4" min="1" max="8"></label>
+          </div>
+          <p id="cMsg"></p>
+          <table class="g-tbl" id="cTbl"></table>
+          <p class="g-note" id="cNote"></p>
+        </div>
+
+        <div id="mode2" class="hidden">
+          <div class="g-row">
+            <label>Amount <input type="number" id="aA" value="100000" step="1000"></label>
+            <label>Rate % <input type="number" id="aR" value="6" step="0.25"></label>
+            <label>Years <input type="number" id="aY" value="30" step="1"></label>
+            <label>Mulai bulan <input type="number" id="aP" value="1" min="1">
+              <span class="g-note">/ <span id="aMax">360</span></span></label>
+          </div>
+          <p id="aMsg"></p>
+          <p class="g-judul" id="aPay"></p>
+          <table class="g-tbl" id="aTbl"></table>
+          <p class="g-note" id="aTotal"></p>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">rumus anuitas</span>
+      <span class="ruleset__k">1&ndash;35% &middot; 1&ndash;35 tahun</span>
+      <span class="ruleset__k">periode 12 bulan</span>
+    </p>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara memakai</summary>
+      <p class="g-lead">
+        Ini <strong>bukan permainan</strong> &mdash; ia alat, dan salah satu
+        dari sedikit program <strong>IBM resmi</strong> di koleksi ini. Dua
+        mode, persis seperti aslinya.
+      </p>
+      <ol class="howto__steps">
+        <li><strong>Payment comparisons</strong> menampilkan tabel angsuran
+            bulanan: <strong>bunga naik 0,25%</strong> tiap baris, <strong>pokok
+            naik 2.000</strong> tiap kolom. Kenaikan itu tertulis tetap di
+            baris 1650 dan 1700 &mdash; tidak bisa diubah pemakai, dan
+            dipertahankan.</li>
+        <li><strong>Amortization</strong> memecah satu angsuran jadi
+            <strong>bunga</strong> dan <strong>pokok</strong>, untuk periode
+            dua belas bulan mana pun. Ubah "Mulai bulan" untuk menggeser
+            jendelanya.</li>
+        <li>Batas <strong>1&ndash;35%</strong> dan <strong>1&ndash;35
+            tahun</strong> adalah batas aslinya (baris 1690, 2390), dan
+            pesan galatnya memakai kata-kata aslinya.</li>
+        <li>Perhatikan baris pertama amortisasi: hampir seluruh angsuran
+            adalah <strong>bunga</strong>. Itu bukan kekhususan program ini
+            &mdash; itu sifat pinjaman anuitas, dan tabel inilah cara 1982
+            memperlihatkannya.</li>
+      </ol>
+      <p>
+        <strong>Total bunga seumur pinjaman</strong> di bawah tabel adalah
+        tambahan. Aslinya tidak pernah menampilkannya &mdash; padahal itu
+        satu-satunya angka yang membuat "bandingkan bunga" punya arti.
+      </p>
+    </details>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel g-good">
+      <p class="eyebrow">Satu-satunya program dengan riwayat perubahan</p>
+<pre class="g-code">940 REM The IBM Personal Computer Mortgage
+950 REM Version 1.00 (C)Copyright IBM Corp 1981, 1982
+960 REM Licensed Material - Program Property of IBM
+965 REM Author - Glenn Stuart Dardick
+<b>970 REM Modified by Ayodele Isaac Anise; September, 1986.</b></pre>
+      <p class="g-note">
+        Penulis asli, dan pengubah berikutnya <strong>dengan tanggalnya</strong>.
+        Ini <em>changelog</em> dalam lima baris, di berkas yang tidak punya
+        kendali versi &mdash; karena kendali versi belum ada di komputer
+        pribadi.
+      </p>
+      <p class="g-note">
+        Delapan puluh tiga program lain di koleksi ini <strong>tidak punya
+        baris seperti itu</strong>. Yang kita tahu tentang mereka cuma nama
+        satu orang, kalau beruntung.
+      </p>
+      <p class="g-note">
+        Kebiasaan yang layak dihidupkan lagi di berkas yang tidak terlacak
+        git: satu baris, nama, tanggal. Empat tahun setelah penulis pertama,
+        seseorang menyentuh berkas ini dan meninggalkan jejaknya &mdash; dan
+        empat puluh tahun kemudian kita tahu.
+      </p>
+    </div>
+
+    <div class="panel g-warn">
+      <p class="eyebrow">Pembulatan yang digeser sepersejuta</p>
+<pre class="g-code">1930 P = INT((P+<b>0.005000001</b>)*100)/100</pre>
+      <p class="g-note">
+        Bukan <code>0.005</code>, melainkan <code>0.005000001</code>. Itu
+        penjaga terhadap <strong>pecahan biner</strong>: sebuah nilai yang
+        secara desimal tepat di 0,005 tidak selalu tersimpan tepat di 0,005,
+        dan <code>INT</code> akan memotongnya ke bawah di separuh kasus.
+      </p>
+      <p class="g-note">
+        Menggeser sepersejuta membuat "tepat setengah sen" <strong>selalu
+        naik</strong> &mdash; pembulatan setengah-ke-atas yang benar, dipaksa
+        keluar dari aritmetika yang tidak bisa mewakili setengah sen.
+      </p>
+      <p class="g-note">
+        Angka itu muncul <strong>tiga kali</strong> di program ini (baris 1930,
+        2420, 2490), selalu sama. Seseorang menemukan masalahnya sekali, lalu
+        memakai obat yang sama di mana pun ia muncul &mdash; dan
+        <strong>tidak menuliskan alasannya sama sekali</strong>.
+      </p>
+      <p class="g-note">
+        Dipertahankan persis di port ini, termasuk digit terakhirnya. Mengubah
+        0.005000001 jadi 0.005 akan membuat sebagian sen bergeser satu, dan
+        tidak ada yang akan tahu kenapa.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Satu rumus, dipanggil dari dua dunia</p>
+<pre class="g-code">1480 PF = AF*(RF/(1-(1/((1+RF)^NF)))):RETURN</pre>
+      <p class="g-note">
+        Rumus anuitas baku, tanpa satu variabel perantara pun. Yang menarik
+        adalah <strong>cara ia dipakai</strong>.
+      </p>
+      <p class="g-note">
+        Dari mode amortisasi, ia dipanggil dengan <code>AF</code> = pokok
+        sungguhan. Dari mode pembanding (baris 1910), ia dipanggil dengan
+        <code>AF = 1</code> &mdash; sehingga yang kembali adalah angsuran per
+        <strong>satu rupiah</strong> pokok.
+      </p>
+      <p class="g-note">
+        Lalu baris 1930 mengalikannya dengan tiap pokok di kolomnya.
+        <strong>Satu pemanggilan rumus, satu baris tabel penuh</strong> &mdash;
+        karena angsuran berbanding lurus dengan pokoknya, dan penulisnya tahu
+        itu.
+      </p>
+    </div>
+
+    <div class="panel g-warn">
+      <p class="eyebrow">Batas 10.000 yang bukan batas keuangan</p>
+<pre class="g-code">1935 IF P&gt;10000 THEN PRINT "PAYMENTS TOO LARGE TO DISPLAY"
+1940 PRINT USING "<b>####.##</b>";P;</pre>
+      <p class="g-note">
+        <code>"####.##"</code> muat empat digit dan dua desimal &mdash;
+        maksimum <strong>9999,99</strong>. Jadi batas 10.000 di baris 1935
+        bukan aturan keuangan, melainkan <strong>lebar kolom</strong>.
+      </p>
+      <p class="g-note">
+        Dua baris berdampingan, dan yang satu ada semata-mata karena yang lain.
+        Kalau formatnya diubah jadi <code>"#####.##"</code>, baris 1935 jadi
+        salah &mdash; tapi tidak ada yang menghubungkan keduanya secara
+        tertulis.
+      </p>
+      <p class="g-note">
+        Di port ini sel yang melewati 10.000 <strong>tetap ditampilkan</strong>
+        dan ditandai merah, bukan menghentikan tabelnya. Batas lebar kolom
+        tidak berlaku lagi; jejaknya iya.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/mortgage.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/MORTGAGE.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/MORTGAGE.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="mortgage.js"></script>
+</body>
+</html>

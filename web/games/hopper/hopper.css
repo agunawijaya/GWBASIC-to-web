@@ -1,0 +1,79 @@
+/* ===========================================================================
+   hopper.css — khusus Hopper. Awalan `h-`.
+
+   CATATAN: berbeda dari `pacgal.css`, warna di halaman ini TIDAK meniru palet
+   CGA. Rupa Hopper digambar ulang (lihat `hopper.js`, bagian "Gambar"), jadi
+   palet CGA empat warna tidak lagi punya alasan untuk dipertahankan — dan
+   mengaku menirunya sementara warnanya tidak sama akan jadi klaim palsu.
+   Warna kendaraan hidup di `WARNA` dalam `hopper.js`, satu tempat saja, karena
+   jumlahnya terikat pada jumlah kendaraan per jalur — itu urusan logika, bukan
+   gaya, dan menyalinnya ke sini akan bikin dua daftar yang bisa berselisih.
+   =========================================================================== */
+
+.h-layout {
+  display: grid; gap: var(--s5);
+  grid-template-columns: minmax(420px, 1.3fr) minmax(300px, 400px);
+  align-items: start; padding-block: var(--s6) var(--s8);
+}
+@media (max-width: 1080px) { .h-layout { grid-template-columns: 1fr; } }
+
+.h-svg {
+  width: 100%; height: auto; display: block;
+  background: #000; border-radius: var(--r); border: var(--border);
+}
+
+/* --- kendaraan: satu bentuk, banyak warna ---------------------------------
+   Badan mobil, lis bak truk, dan kabinnya berisi `currentColor`, jadi SATU
+   definisi <use> cukup untuk seluruh warna: yang berubah cuma `color` yang
+   diwariskan dari <g> pembungkus, dipasang `hopper.js` per kendaraan. */
+.h-kendaraan { color: #d9483f; }   /* cadangan kalau warnanya belum dipasang */
+
+.h-katak { filter: drop-shadow(0 1px 2px rgba(0,0,0,.55)); }
+
+/* --- spanduk di atas layar ------------------------------------------------
+   Ditaruh di atas SVG, bukan digambar DI DALAM-nya: teks SVG tidak ikut ukuran
+   font tema dan harus diskalakan tangan mengikuti viewBox 320x200. `position`
+   sudah cukup membuatnya menimpa SVG yang statis, tanpa perlu `z-index`. */
+#layar { position: relative; }
+
+.h-pesan {
+  position: absolute; inset: 0; margin: 0;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: var(--s2);
+  text-align: center; padding: var(--s4);
+  background: radial-gradient(ellipse at center,
+              rgba(4,10,18,.86) 0 55%, rgba(4,10,18,.62) 100%);
+  border-radius: var(--r);
+  animation: h-pesan-masuk .18s ease-out;
+}
+@keyframes h-pesan-masuk { from { opacity: 0; transform: scale(.96); } }
+@media (prefers-reduced-motion: reduce) { .h-pesan { animation: none; } }
+
+.h-pesan__judul {
+  font-family: var(--font-mono); font-size: clamp(1.3rem, 4.4vw, 2rem);
+  letter-spacing: .12em; color: #8ef0a4; line-height: 1.1;
+  text-shadow: 0 0 14px rgba(90,230,130,.55), 0 2px 4px #000;
+}
+.h-pesan__baris { color: #eaf2ff; font-size: var(--fs-sm); }
+.h-pesan__kaki  { color: #9fd7ff; font-size: var(--fs-xs);
+                  font-family: var(--font-mono); }
+
+/* --- panel --------------------------------------------------------------- */
+.h-note  { font-size: var(--fs-sm); color: var(--ink-dim); margin-top: var(--s2); }
+.h-tabel { width: 100%; border-collapse: collapse; font-size: var(--fs-sm);
+           margin-top: var(--s3); }
+.h-tabel th, .h-tabel td { text-align: left; padding: var(--s2) var(--s3);
+                           border-bottom: var(--line-soft); }
+.h-tabel td:last-child { font-family: var(--font-mono); color: var(--acc-phosphor);
+                         text-align: right; white-space: nowrap; }
+.h-makro { font-family: var(--font-mono); font-size: var(--fs-xs);
+           color: var(--acc-amber); word-break: break-all; display: block;
+           margin-top: var(--s2); }
+
+/* Papan skor 1991: kolomnya rata seperti berkas aslinya. */
+.h-papan { width: 100%; border-collapse: collapse; font-size: var(--fs-sm);
+           font-family: var(--font-mono); margin-top: var(--s3); }
+.h-papan td { padding: 2px var(--s3); border-bottom: var(--line-soft); }
+.h-papan td:nth-child(1) { color: var(--ink-faint); width: 2em; }
+.h-papan td:nth-child(2) { text-align: right; color: var(--acc-phosphor); }
+.h-papan tr.is-anda td { color: var(--acc-amber); }

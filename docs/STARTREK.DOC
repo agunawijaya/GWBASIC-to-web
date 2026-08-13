@@ -1,0 +1,62 @@
+Startrek instructions (just to get you started)
+
+The enterprise looks like «ê∂
+A starbase looks like Æ Ø
+A Klingon looks like a Happy face prefixed and suffixed by +
+(I can't figure out how to get a Happy face within the editor)
+The function keys give the possible actions:
+
+F1 - NAV - navigate: move somewhere.  Course and speed must be given.
+F2 - SRS - Short range scan
+F3 - LRS - Long Range Scan: adjacent quadrants.  Of the nine shown,
+           you are always in the middle.
+F4 - PHA - Fire phasers.  Will be prompted for energy units to fire.
+F5 - TOR - Fire Photon Torpedos.  Prompt for direction.
+F6 - SHI - Transfer energy to shields.  Prompt for energy amount
+F7 - DAM - Damage control report.  Status of all systems.
+F8 - COM - Library computer functions.  Will give you a new function
+           key line (discussed below)
+F9 - RES - Resign
+
+Computer functions
+
+F1 - GAL - Cumulative record for whole galaxy.  8 x 8 quadrants.
+           Gives information only if you've visited or scanned
+           that quadrant.
+F2 - STA - Status report, number of klingons left, damage state.
+F3 - TOR - Torpedo data.  Calculates direction and distance of Klingon.
+           Reliable only if direction is a whole number (needs work)
+F4 - BAS - Starbase navigation data:  Direction & distance to starbase.
+           Has same problems as TOR.
+F5 - DIR/DIS - Direction and distance calculator.  Again not to
+F6 - REGION NAME MAP - Gives you names of quadrants, just in case you care.
+
+Directional coordinate system:  I may not draw this well, but draw
+an intersecting horizontal and vertical line.  Directions are as follows
+1 - Straight right
+2 - Halfway between vertical and right
+3 - Straight up
+4 - Halfway between vertical and left
+5 - Straight left
+6 - Halfway between left and down
+7 - Straight down
+8 - Halfway between down and right
+9 - Supposed to be synonymous with 1, but I'm not sure it works.
+
+Speed may be fractional.  Decimal speed of 0.1 moves one sector.
+Speed of 1 moves 1 quadrant.
+
+Within the LRS and SRS displays, a three digit number is displayed.
+Interpret it as:
+
+      KBS    
+
+Where K=number of Klingons left in that quadrant
+      B=number of Starbases in that quadrant
+      S=number of stars in that quadrant
+
+
+This program is distributed "AS IS".  It certainly needs work, but
+at least we're started off.
+
+

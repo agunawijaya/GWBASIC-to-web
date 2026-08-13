@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mastermind — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari MASTER.BAS (Friendlyware, 1982): tebak deret 3–6 lambang, dengan mode angka seperti aslinya atau mode warna dengan pasak hitam-putih seperti papan klasik. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="master.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap k-layout">
+
+  <section class="stack">
+    <div class="screen screen--scanlines">
+      <div class="k-stage">
+
+        <div class="k-secret">
+          <span class="eyebrow">Secret numbers</span>
+          <div class="k-row k-row--secret" id="secret"></div>
+        </div>
+
+        <div class="k-head" id="heads"></div>
+        <div class="k-sheet" id="sheet"></div>
+
+        <p class="k-say" id="say">Pilih tingkat kesulitan untuk mulai.</p>
+
+        <div class="k-pad" id="pad"></div>
+
+        <div class="m-transport">
+          <button class="btn btn--ghost btn--sm" id="undo" type="button" disabled>Hapus satu</button>
+          <button class="btn btn--ghost btn--sm" id="giveup" type="button" disabled>Menyerah</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="k-picks">
+      <div class="row" id="modes"></div>
+      <div class="row" id="levels"></div>
+      <p class="k-note" id="space"></p>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <ol class="howto__steps">
+        <li>Komputer menyembunyikan sebuah <strong>deret rahasia</strong>.
+            Panjangnya 3 sampai 6 tergantung tingkat yang Anda pilih, dan
+            <strong>lambangnya boleh berulang</strong> &mdash; <code>4 4 1 4</code>
+            sah.</li>
+        <li>Susun tebakan dari papan tombol, lalu <strong>Enter</strong>.
+            <kbd>Backspace</kbd> atau <strong>Hapus satu</strong> menghapus
+            lambang terakhir.</li>
+        <li>Tiap tebakan dijawab <strong>dua bilangan</strong>, dan di sinilah
+            orang paling sering salah baca:
+            <br><em>In right position</em> = berapa lambang yang benar
+            <strong>dan</strong> tempatnya juga benar.
+            <br><em>Correct</em> = berapa lambang yang benar,
+            <strong>termasuk yang tempatnya salah</strong> &mdash; jadi angka
+            ini <strong>sudah mencakup</strong> yang di sebelahnya.</li>
+        <li>Pakai jawabannya untuk menyempitkan kemungkinan. Anda tidak diberi
+            tahu lambang mana yang benar, hanya <strong>berapa banyak</strong>.</li>
+        <li>Tebak habis sebelum barisnya habis (9 sampai 15 tebakan tergantung
+            tingkat). <strong>Menyerah</strong> membuka rahasianya.</li>
+      </ol>
+      <p>
+        Contoh &mdash; rahasia <code>1 4 4 7</code>, tebakan <code>4 4 2 1</code>:
+        jawabannya <strong>Correct 3</strong>, <strong>In right position 1</strong>.
+        Satu angka 4 tepat di tempatnya; angka 4 yang lain dan angka 1 benar
+        tapi salah tempat; angka 2 tidak ada sama sekali.
+      </p>
+      <p>
+        Tombol <strong>Warna (papan klasik)</strong> menampilkan jawaban yang
+        <em>persis sama</em> dalam bentuk pasak: hitam = benar dan tepat,
+        putih = benar tapi salah tempat. Enam warna, bukan sepuluh angka, jadi
+        rahasianya lebih sedikit &mdash; angka di bawah pemilih tingkat
+        menunjukkan selisihnya.
+      </p>
+    </details>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel k-warn">
+      <p class="eyebrow">Rahasianya nyaris tidak acak</p>
+<pre class="k-code">710 FOR SUB=1 TO DIGITS
+720   RANDOMIZE(VAL(RIGHT$(TIME$,2))):ANSWER(SUB)=FIX(RND(SUB)*10)
+730 NEXT SUB</pre>
+      <p class="k-note">
+        <code>RANDOMIZE</code> ada <strong>di dalam</strong> perulangan. Tiap
+        angka rahasia menyetel ulang pengacaknya lebih dulu &mdash; dan
+        benihnya <code>VAL(RIGHT$(TIME$,2))</code>, yaitu <strong>detik</strong>,
+        yang tidak berubah selama perulangan tiga sampai enam putaran itu
+        berjalan.
+      </p>
+      <p class="k-note">
+        Jadi tiap angka diambil dari pengacak yang baru saja dikembalikan ke
+        keadaan yang sama. Alih-alih satu deret acak sepanjang enam, yang
+        didapat adalah <strong>satu nilai yang sama diambil enam kali</strong>
+        &mdash; kecuali detiknya kebetulan berganti di tengah.
+      </p>
+      <p class="k-note">
+        Benihnya sendiri juga cuma punya <strong>60 kemungkinan</strong>. Dua
+        permainan yang dimulai pada detik yang sama mendapat rahasia yang sama.
+      </p>
+      <p class="k-note">
+        Port ini menyemai <strong>sekali</strong>, dari
+        <code>crypto.getRandomValues</code>. Anda bisa membandingkan keduanya:
+      </p>
+      <div class="row">
+        <button class="btn btn--ghost btn--sm" id="simFix" type="button">Sebar 1000 rahasia (versi diperbaiki)</button>
+        <button class="btn btn--ghost btn--sm" id="simBug" type="button">Sebar 1000 rahasia (versi 1982)</button>
+      </div>
+      <div class="k-hist" id="hist"></div>
+      <p class="k-note" id="histNote">Tekan salah satu tombol untuk melihat sebarannya.</p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Dua penyandian, satu permainan</p>
+      <p class="k-note">
+        Papan Mastermind yang dijual toko memakai <strong>warna</strong> dan
+        pasak hitam-putih. Yang 1982 memakai <strong>angka</strong> dan dua
+        bilangan. Keduanya ada di sini, dan menggantinya
+        <strong>tidak menyentuh satu baris pun kode penilaian</strong>.
+      </p>
+      <p class="k-note">
+        Yang lebih penting: keduanya membawa <strong>informasi yang persis
+        sama</strong>. Pasak putih = <code>benar &minus; tepat</code>, jadi
+        salah satu selalu bisa dihitung dari yang lain. Mengganti tampilan
+        di sini tidak mempermudah maupun mempersulit &mdash; ia benar-benar
+        cuma penyandian.
+      </p>
+      <p class="k-note">
+        Yang <em>memang</em> berubah adalah jumlah lambangnya: sepuluh angka
+        lawan enam warna. Untuk empat posisi itu 10.000 lawan 1.296
+        kemungkinan &mdash; hampir delapan kali lipat. Angkanya ditampilkan di
+        bawah pemilih tingkat supaya perbedaannya terlihat, bukan tersembunyi.
+      </p>
+      <p class="k-note">
+        Tiap pasak warna diberi <strong>huruf</strong>. Mastermind sungguhan
+        mengandalkan warna semata, dan itu menutup pintu bagi sekitar 8%
+        laki-laki yang buta warna merah-hijau &mdash; persis pasangan yang
+        paling sering dipakai di papannya.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Dua subrutin yang terkirim dalam keadaan kosong</p>
+<pre class="k-code">1420 REM LOSE SONG
+1430 RETURN
+1440 REM WIN SONG
+1450 RETURN</pre>
+      <p class="k-note">
+        Keduanya dipanggil sungguhan &mdash; baris 1220 dan 1250 &mdash; dan
+        keduanya langsung <code>RETURN</code> tanpa melakukan apa pun. Lagu
+        menang dan lagu kalah direncanakan, diberi tempat, lalu tidak pernah
+        ditulis.
+      </p>
+      <p class="k-note">
+        Di port ini keduanya diisi. Ini satu-satunya tempat di seluruh koleksi
+        di mana menambahkan sesuatu terasa seperti <em>menyelesaikan</em>
+        maksud penulisnya, bukan menyimpang darinya.
+      </p>
+    </div>
+
+    <p class="faint m-links">
+      <a href="../../docs/master.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/MASTER.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/MASTER.BAS">Kode sumber 1982</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="master.js"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{
+ "3DTTT.EXE": {
+  "coverage": 43.9,
+  "branches": 735,
+  "loops": 10,
+  "gotos": 46,
+  "fwd": 679
+ },
+ "PAC-GAL.EXE": {
+  "coverage": 26.9,
+  "branches": 79,
+  "loops": 3,
+  "gotos": 4,
+  "fwd": 72
+ },
+ "HOPPER.EXE": {
+  "coverage": 47.0,
+  "branches": 239,
+  "loops": 22,
+  "gotos": 16,
+  "fwd": 201
+ }
+}

@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zap'em — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari ZAP'EM.BAS (3 Februari 1982): pemainnya mengetik sendiri benih acaknya, 'Ghost ship' di cerita latarnya ternyata cacat indeks, dan papan skornya bernama METEOR.DAT padahal METEOR tidak pernah menyentuhnya. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="zapem.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap z-layout">
+
+  <section class="stack">
+    <div class="screen">
+      <div class="z-stage">
+        <div class="z-crt" id="crt">
+          <svg id="svg" class="z-svg" viewBox="0 0 640 500"
+               role="img" aria-label="Layar permainan Zap'em, 40 kolom kali 25 baris"></svg>
+          <pre class="z-glif" id="glif" hidden></pre>
+          <p class="z-pesan" id="pesan"></p>
+        </div>
+
+        <div class="z-row z-row--kecil">
+          <label>Nama <input type="text" id="nama" maxlength="12" size="10" value="ANDA"></label>
+          <label title="Baris 460 menanyakan skor terakhir Anda, dan baris 550 memakainya sebagai RANDOMIZE R">
+            Skor terakhir <input type="number" id="benih" size="6" value="2550"></label>
+          <button class="btn btn--primary" id="mulai" type="button">Mulai</button>
+          <button class="btn btn--ghost btn--sm" id="mode" type="button"
+                  aria-pressed="false">Mode 1982</button>
+        </div>
+
+        <div class="z-row z-pad">
+          <button class="btn btn--ghost btn--sm" id="b-naik" type="button">
+            <kbd>&uarr;</kbd> naik</button>
+          <button class="btn btn--ghost btn--sm" id="b-turun" type="button">
+            <kbd>&darr;</kbd> turun</button>
+          <button class="btn btn--ghost btn--sm z-ttembak" id="b-tembak" type="button">
+            <kbd>F1</kbd>/<kbd>Spasi</kbd> tembak</button>
+        </div>
+
+        <div class="z-amunisi">
+          <span class="z-amunisi__label">Bahan bakar</span>
+          <span class="z-amunisi__jalur"><i id="bar-fuel" class="z-amunisi__isi"></i></span>
+        </div>
+
+        <div class="z-row z-row--kecil">
+          <label>Bingkai per detik
+            <input type="range" id="hz" min="4" max="24" step="1" value="10">
+            <span class="mono" id="hzv"></span></label>
+          <label class="z-cek"><input type="checkbox" id="bunyi" checked> Bunyi</label>
+        </div>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">137 baris BASIC</span>
+      <span class="ruleset__k">3 Feb 1982 — tertua di trio</span>
+      <span class="ruleset__k ruleset__k--mangsa">zap +100</span>
+      <span class="ruleset__k ruleset__k--bahaya">lolos &minus;150</span>
+      <span class="ruleset__k ruleset__k--bahaya">Ghost ship = cacat indeks</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat"><span class="stat__label">SCORE</span>
+        <span class="stat__value mono" id="s-skor">0</span></div>
+      <div class="stat"><span class="stat__label">FUEL</span>
+        <span class="stat__value mono" id="s-fuel">150</span></div>
+      <div class="stat"><span class="stat__label">SHIPS</span>
+        <span class="stat__value mono" id="s-kapal">3</span></div>
+      <div class="stat"><span class="stat__label">Horde di layar</span>
+        <span class="stat__value mono" id="s-horde">0</span></div>
+      <div class="stat"><span class="stat__label">Benih</span>
+        <span class="stat__value mono" id="s-benih">—</span></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara bermain</summary>
+      <p class="z-lead">
+        Anda pesawat tempur di sisi kiri. Kapal Horde datang dari kanan, satu
+        kolom per bingkai. Tembak sebelum mereka lolos &mdash;
+        <strong>+100</strong> kalau kena, <strong>&minus;150</strong> kalau
+        lolos, jadi meleset lebih mahal daripada kena itu menguntungkan.
+      </p>
+      <ol class="howto__steps">
+        <li><kbd>&uarr;</kbd> <kbd>&darr;</kbd> (atau <kbd>8</kbd>
+            <kbd>2</kbd>) naik-turun, <kbd>F1</kbd> atau <kbd>Spasi</kbd>
+            menembak. Aslinya lewat <code>ON KEY(11)</code>,
+            <code>ON KEY(14)</code>, dan <code>ON KEY(1)</code>.</li>
+        <li><strong>Laser hanya mengenai barisnya sendiri.</strong> Kalau tidak
+            ada Horde sebaris, sinarnya lewat sampai kolom 24 dan habis.</li>
+        <li><strong>Bahan bakar 150, berkurang 1,2 tiap bingkai</strong> &mdash;
+            kira-kira 125 bingkai. Di bawah 50 pesawatnya berkedip; itu
+            <code>V=31</code> di baris 860, warna berkedip CGA.</li>
+        <li>Tiga nyawa. Horde yang menabrak Anda di kolom 2 mengambil satu.</li>
+        <li><strong>Kolom <em>Skor terakhir</em> itu benih acaknya.</strong>
+            Ketik angka yang sama, dapat permainan yang sama persis &mdash;
+            lihat panel di sebelah.</li>
+      </ol>
+      <p>
+        Tombol <strong>Mode 1982</strong> memperlihatkan petak 40&times;25-nya
+        sebagai aksara. Keduanya membaca keadaan yang sama.
+      </p>
+    </details>
+
+    <div class="panel z-papan">
+      <p class="eyebrow">Papan skor &mdash; isi awalnya dari 1980-an</p>
+      <p class="z-note">
+        Sepuluh baris berikut <strong>bukan karangan</strong>: itu isi
+        <code>run/METEOR.DAT</code> apa adanya, ditulis program ini pada mesin
+        sungguhan oleh orang sungguhan.
+      </p>
+      <table class="z-tbl z-tbl--kiri">
+        <thead><tr><th>#</th><th>Nama</th><th>Skor</th></tr></thead>
+        <tbody id="papan-skor"></tbody>
+      </table>
+      <button class="btn btn--ghost btn--sm" id="reset-papan" type="button">
+        Kembalikan ke isi 1980-an</button>
+    </div>
+  </section>
+
+  <section class="stack">
+
+    <div class="panel z-good">
+      <p class="eyebrow">Pemainnya mengetik sendiri benih acaknya</p>
+<pre class="z-code">460 INPUT "AH....YOUR NAME PLEASE ";NME$
+    :LOCATE 15,1:INPUT "YOUR LAST SCORE ";R
+550 RANDOMIZE R</pre>
+      <p class="z-note">
+        Pertanyaan <em>"berapa skor terakhir Anda"</em> tidak diverifikasi ke
+        mana pun dan tidak dipakai untuk apa pun selain satu hal: angkanya
+        langsung jadi <strong>benih pengacak</strong>. Ketik angka yang sama,
+        dapat permainan yang sama persis.
+      </p>
+      <p class="z-note">
+        Empat program di koleksi ini, empat jawaban untuk soal yang sama:
+      </p>
+      <table class="z-tbl">
+        <thead><tr><th>Program</th><th>Cara</th><th>Benih mungkin</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../meteor/index.html">METEOR</a></td>
+              <td>diaduk selama pemain berpikir</td><td>32.003</td></tr>
+          <tr><td><a href="../flys/index.html">FLYS</a></td>
+              <td><code>MID$(TIME$,4,2)+RIGHT$(TIME$,2)</code></td><td>3.600</td></tr>
+          <tr><td><a href="../attack/index.html">ATTACK</a></td>
+              <td><code>MID$(TIME$,3,2)</code> — mengambil titik dua</td>
+              <td>1.440 <em>(cacat)</em></td></tr>
+          <tr><td><strong>ZAP'EM</strong></td>
+              <td><strong>ditanyakan ke pemain</strong></td>
+              <td>sebanyak yang mau diketik</td></tr>
+        </tbody>
+      </table>
+      <p class="z-note">
+        Yang terakhir satu-satunya yang <strong>bisa diulang dengan
+        sengaja</strong>. Ia juga satu-satunya yang menaruh keacakan di tangan
+        pemain, tiga puluh tahun sebelum istilah <em>seeded run</em> ada.
+      </p>
+    </div>
+
+    <div class="panel z-warn">
+      <p class="eyebrow">"Ghost ships" itu cacat indeks &mdash; dan ceritanya membenarkannya</p>
+<pre class="z-code">1140 IF LL=B(Z) THEN …:A(Z)=0:<strong>B(LL)=0</strong>:SCORE=SCORE+100:GOTO 680</pre>
+      <p class="z-note">
+        <code>Z</code> adalah <strong>nomor kapal</strong>, <code>LL</code>
+        adalah <strong>kolom</strong>. Keduanya tidak sama, dan yang dimaksud
+        jelas <code>B(Z)=0</code>.
+      </p>
+      <p class="z-note">
+        Kolomnya berjalan 3&ndash;24 dan kapal aktifnya berindeks 1&ndash;6.
+        Jadi tembakan yang mengenai sasaran di <strong>kolom 3, 4, 5, atau
+        6</strong> akan menghapus posisi <em>kapal lain</em> &mdash; yang lalu
+        lenyap begitu saja, tanpa memberi skor.
+      </p>
+      <p class="z-note">Dan baris 1280 menjelaskannya sebagai fitur:</p>
+<pre class="z-code">1280 "The Horde ships are unpredictable. Some are Ghost ships.
+      These will take more than one hit or will vanish upon being
+      hit <strong>without a score increment</strong>."</pre>
+      <p class="z-note">
+        Cerita latarnya <strong>membenarkan cacatnya sendiri</strong>. Entah
+        penulisnya tahu dan memilih menjelaskannya, atau ia melihat gejalanya
+        lalu mengarang alasannya &mdash; dua-duanya sama menariknya.
+      </p>
+      <p class="z-note">
+        Dipertahankan apa adanya. Kalau terjadi, layarnya menyebutnya
+        <strong>GHOST</strong> supaya Anda tahu itu bukan salah bidik.
+      </p>
+
+      <p class="z-note z-sub">Dan ada sebab kedua, yang jauh lebih sering</p>
+<pre class="z-code">1070 FOR Z=1 TO T1
+1080 IF X=A(Z) THEN 1120        <span class="z-c">' berhenti di yang PERTAMA</span>
+1090 NEXT Z
+1120 FOR LL=3 TO 24             <span class="z-c">' sinarnya cuma sampai kolom 24</span>
+1140 IF LL=B(Z) THEN …kena…</pre>
+      <p class="z-note">
+        Baris 1070&ndash;1090 berhenti di kapal <strong>berindeks
+        terkecil</strong> yang sebaris, lalu 1120 menyapu kolom 3&ndash;24.
+        Kalau kapal itu masih di luar jangkauan &mdash; Horde lahir di kolom
+        <strong>30&ndash;36</strong> &mdash; tembakannya meleset
+        <em>sepenuhnya</em>, walaupun ada kapal lain di baris yang sama yang
+        sudah masuk jangkauan.
+      </p>
+      <p class="z-note">
+        Jadi kapal yang jelas-jelas dilewati sinar Anda bisa tetap terbang.
+        Itu <em>persis</em> bunyi baris 1280: <strong>"will take more than one
+        hit"</strong>.
+      </p>
+      <table class="z-tbl">
+        <thead><tr><th>Diukur dari 749 tembakan</th><th></th></tr></thead>
+        <tbody>
+          <tr><td>Kena</td><td>38</td></tr>
+          <tr><td>Meleset biasa</td><td>631</td></tr>
+          <tr><td><strong>Terhalang kapal berindeks lebih kecil</strong></td><td><strong>80</strong></td></tr>
+          <tr><td>Pelanggaran aturan</td><td><strong>0</strong></td></tr>
+        </tbody>
+      </table>
+      <p class="z-note">
+        Aturan yang diuji: <em>kena kalau dan hanya kalau kapal berindeks
+        terkecil di baris Anda berada di kolom 3&ndash;24.</em> Nol pelanggaran
+        &mdash; jadi kedua sebab "Ghost ship" itu benar-benar ada di kodenya,
+        dan port ini menirunya persis.
+      </p>
+    </div>
+
+    <div class="panel z-good">
+      <p class="eyebrow">Jangkauan sinar, dan jendela menembak</p>
+      <table class="z-tbl">
+        <tbody>
+          <tr><td>Horde lahir di kolom</td><td>30&ndash;36 <span class="z-kecil">(<code>INT(RND*7)+30</code>)</span></td></tr>
+          <tr><td>Jangkauan sinar</td><td>3&ndash;24 <span class="z-kecil">(<code>FOR LL=3 TO 24</code>)</span></td></tr>
+          <tr><td>Bingkai menunggu sampai masuk jangkauan</td><td>6&ndash;12</td></tr>
+          <tr><td><strong>Jendela menembak per kapal</strong></td><td><strong>22 bingkai</strong></td></tr>
+          <tr><td>Lolos di kolom &lt;3</td><td>&minus;150</td></tr>
+          <tr><td>Bahan bakar habis</td><td>bingkai ke <strong>125</strong></td></tr>
+          <tr><td>Mulai berkedip (<code>V=31</code>)</td><td>bingkai ke <strong>84</strong></td></tr>
+        </tbody>
+      </table>
+      <p class="z-note">
+        Sinarnya selalu digambar sampai kolom 24 walaupun meleset &mdash; itu
+        yang mengajarkan jangkauannya tanpa satu kata pun petunjuk.
+      </p>
+    </div>
+
+    <div class="panel z-warn">
+      <p class="eyebrow">Papan skornya bernama METEOR.DAT, dan METEOR tidak pernah menyentuhnya</p>
+<pre class="z-code">1390 OPEN "METEOR.DAT" FOR INPUT AS #1
+1500 OPEN "METEOR.DAT" FOR OUTPUT AS #1</pre>
+      <p class="z-note">
+        <code>METEOR.BAS</code> punya <strong>nol</strong> pernyataan
+        <code>OPEN</code> &mdash; sudah diperiksa seluruh 80 barisnya. Berkas
+        itu sepenuhnya milik ZAP'EM.
+      </p>
+      <p class="z-note">
+        Review lama berkas ini menyebut papan skornya <code>BS.SCO</code>. Itu
+        <strong>keliru</strong>: <code>BS.SCO</code> memang ada di
+        <code>run/</code>, tapi <strong>tidak ada satu pun program di koleksi
+        yang membukanya</strong>, dan isinya lima entri kosong bernilai 0.
+        Sudah dikoreksi di reviewnya.
+      </p>
+      <p class="z-note">
+        Cap waktu keduanya ikut bercerita: <code>METEOR.DAT</code> bertanggal
+        <strong>1 Januari 1980</strong> &mdash; tanggal bawaan PC tanpa baterai
+        jam &mdash; sementara <code>BS.SCO</code> 3 Januari 1986.
+      </p>
+    </div>
+
+    <div class="panel z-good">
+      <p class="eyebrow">Gelungnya memasang ulang jebakan tombol tiap bingkai</p>
+<pre class="z-code">620 KEY(14) ON : 630 ON KEY(14) GOSUB 970
+640 KEY(11) ON : 650 ON KEY(11) GOSUB 980
+660 KEY(1)  ON : 670 ON KEY(1)  GOSUB 990
+…
+960 GOTO 620</pre>
+      <p class="z-note">
+        Kenapa pemasangannya ada <strong>di dalam</strong> gelung? Karena
+        penangannya <strong>tidak pernah <code>RETURN</code></strong>: baris
+        970 dan 980 berakhir dengan <code>GOTO 680</code>, dan 990 berujung di
+        <code>GOTO 620</code>.
+      </p>
+      <p class="z-note">
+        Di GW-BASIC, jebakan tombol <strong>ditangguhkan</strong> selama
+        penangan berjalan dan baru pulih saat <code>RETURN</code>. Karena
+        <code>RETURN</code>-nya tidak pernah datang, satu-satunya cara
+        menghidupkannya lagi adalah memasangnya ulang &mdash; tiap bingkai,
+        selamanya.
+      </p>
+      <p class="z-note">
+        Enam baris yang terlihat seperti penyiapan ternyata bagian dari gelung
+        utamanya. Kalau dipindah ke luar seperti "seharusnya", permainannya
+        berhenti menerima tombol sesudah satu penekanan.
+      </p>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Dua variabel yang tidak melakukan apa-apa</p>
+<pre class="z-code">520 X=10 : Y=20
+820 Y=Y+M</pre>
+      <p class="z-note">
+        <code>M</code> tidak pernah diberi nilai di seluruh 137 baris &mdash;
+        sudah dicari. Jadi ia nol, <code>Y</code> tidak pernah berubah, dan
+        <code>Y</code> sendiri tidak pernah dibaca sesudahnya.
+      </p>
+      <p class="z-note">
+        Sepasang variabel yang bertahan sejak Februari 1982 tanpa pernah
+        berpengaruh pada apa pun. Tidak diport &mdash; tapi dicatat, karena
+        itu jejak rancangan yang berubah di tengah jalan.
+      </p>
+    </div>
+
+    <p class="faint z-links">
+      <a href="../../docs/zapem.md">Dokumen arsitektur</a> &middot;
+      <a href="../../../reviews/ZAP'EM.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../run/ZAP'EM.BAS">Kode sumber 1982</a> &middot;
+      <a href="../../../run/METEOR.DAT">METEOR.DAT</a>
+    </p>
+  </section>
+</main>
+
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/loop.js"></script>
+<script src="../../_shared/input.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="zapem-data.js"></script>
+<script src="zapem.js"></script>
+</body>
+</html>

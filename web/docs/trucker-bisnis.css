@@ -1,0 +1,82 @@
+/* trucker-bisnis.css — halaman dokumen analisis bisnis TRUCKER */
+.k-wrap { max-width: 60rem; padding-bottom: var(--s6); }
+.k-isi { font-size: var(--fs-md); line-height: 1.75; }
+.k-isi h1 { margin: var(--s5) 0 var(--s3); line-height: 1.25; }
+.k-isi h2 { margin: var(--s6) 0 var(--s3); padding-top: var(--s3);
+            border-top: 1px solid var(--line); line-height: 1.3; }
+.k-isi h3 { margin: var(--s5) 0 var(--s2); }
+.k-isi p { margin: 0 0 var(--s3); }
+.k-isi ul, .k-isi ol { margin: 0 0 var(--s3); padding-left: 1.4rem; }
+.k-isi li { margin: 0 0 var(--s2); }
+.k-isi code { font-family: var(--font-mono); font-size: .92em;
+              background: var(--bg-sunken); border-radius: 4px; padding: 1px 5px; }
+.k-isi blockquote { margin: 0 0 var(--s4); padding: var(--s3) var(--s4);
+                    border-left: 3px solid #c98a1a; background: var(--bg-raised);
+                    border-radius: 0 var(--r-sm) var(--r-sm) 0; }
+.k-isi blockquote p:last-child { margin-bottom: 0; }
+.k-isi hr { border: none; border-top: 1px solid var(--line); margin: var(--s5) 0; }
+.k-kode { font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.6;
+          background: var(--bg-sunken); border: 1px solid var(--line);
+          border-radius: var(--r-sm); padding: var(--s3);
+          overflow-x: auto; white-space: pre; margin: 0 0 var(--s4); }
+.k-tabel { width: 100%; border-collapse: collapse; font-size: var(--fs-sm);
+           margin: 0 0 var(--s4); display: block; overflow-x: auto; }
+.k-tabel th, .k-tabel td { padding: 6px 10px; border-bottom: 1px solid var(--line);
+                           text-align: left; vertical-align: top; }
+.k-tabel th { background: var(--bg-raised); color: var(--fg-dim);
+              font-size: var(--fs-xs); white-space: nowrap; }
+.k-kaki { margin-top: var(--s5); padding-top: var(--s3);
+          border-top: 1px solid var(--line); font-size: var(--fs-xs); color: var(--fg-dim); }
+
+/* --- grafik ---------------------------------------------------------------- */
+.g-gbr, .n-gbr { margin: 0 0 var(--s5); padding: var(--s3);
+                 background: var(--bg-raised); border: 1px solid var(--line);
+                 border-radius: var(--r-sm); overflow-x: auto; }
+.g-svg, .n-svg { display: block; width: 100%; height: auto; min-width: 520px; }
+.g-judul { fill: var(--fg); font: 700 13px var(--font-sans, sans-serif); }
+.g-sub { fill: var(--fg-dim); font: 400 11px var(--font-sans, sans-serif); }
+.g-sumbu { fill: var(--fg-dim); font: 400 11px var(--font-mono); }
+.g-legenda { fill: var(--fg); font: 400 11px var(--font-sans, sans-serif); }
+.g-tengah { text-anchor: middle; }
+.g-kanan { text-anchor: end; }
+.g-kisi { stroke: var(--line); stroke-width: 1; }
+.g-kisiT { stroke: var(--line); stroke-width: 1; opacity: .45; }
+/* Warna hanya menyetel GARIS. Kalau `fill` ikut disetel di kelas warna, ia
+   menimpa `fill: none` milik .g-garis (kekhususan sama, urutan menang) dan
+   kurvanya keluar sebagai bidang terisi, bukan garis. Isian diberikan
+   terpisah, khusus untuk titik dan kotak legenda. */
+.g-garis { fill: none; stroke-width: 2.4; stroke-linejoin: round;
+           stroke-linecap: round; }
+.g-a { stroke: #2f7a52; }
+.g-b { stroke: #2f6fc4; }
+.g-c { stroke: #c0503f; }
+.g-d { stroke: #7a4fc4; stroke-width: 3.2; }
+circle.g-a, rect.g-a, .g-batang.g-a { fill: #2f7a52; }
+circle.g-b, rect.g-b, .g-batang.g-b { fill: #2f6fc4; }
+circle.g-c, rect.g-c, .g-batang.g-c { fill: #c0503f; }
+circle.g-d, rect.g-d { fill: #7a4fc4; }
+.g-titik { stroke: none; }
+.g-kunci { stroke: none; }
+.g-batang { opacity: .85; }
+.g-risiko { fill: #c0503f; opacity: .8; }
+
+/* --- diagram alir ---------------------------------------------------------- */
+.n-kotak { fill: var(--bg-sunken); stroke: var(--line); stroke-width: 1.4; }
+.n-belah { fill: var(--bg-sunken); stroke: #c98a1a; stroke-width: 1.6; }
+.n-baik { fill: rgba(47,122,82,.16); stroke: #2f7a52; }
+.n-aman { fill: rgba(47,111,196,.14); stroke: #2f6fc4; }
+.n-hati { fill: rgba(201,138,26,.16); stroke: #c98a1a; }
+.n-buruk { fill: rgba(192,80,63,.16); stroke: #c0503f; }
+.n-catatan { fill: none; stroke: var(--line); stroke-dasharray: 4 3; }
+.n-teks { fill: var(--fg); font: 600 11px var(--font-sans, sans-serif);
+          text-anchor: middle; }
+/* Panah TIDAK boleh memakai var(--fg-dim): di tema terang ia nyaris sewarna
+   latar panelnya, dan seluruh alurnya hilang. Warna tetap yang kontras di
+   kedua tema, dan lebih tebal. */
+.n-panah { fill: none; stroke: #6b7a8c; stroke-width: 2.2; }
+.n-mata { fill: #6b7a8c; }
+.n-label { fill: #55637a; font: 600 10px var(--font-mono); text-anchor: middle; }
+@media (prefers-color-scheme: dark) {
+  .n-panah { stroke: #9fb3c8; } .n-mata { fill: #9fb3c8; }
+  .n-label { fill: #b9c6d4; }
+}

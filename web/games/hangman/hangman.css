@@ -1,0 +1,133 @@
+/* ===========================================================================
+   hangman.css — gaya khusus HANGMAN saja.
+   Apa pun yang dipakai lebih dari satu permainan harus pindah ke
+   ../../_shared/base.css.
+
+   WARNA BAGIAN TUBUH
+   ------------------
+   Aslinya tiap bagian digambar dengan perintah COLOR yang berbeda, dan itu
+   dipertahankan di sini sebagai jejak retro yang bisa dilacak:
+
+     bagian         baris asli   COLOR   arti di CGA
+     kepala         810          15      putih terang
+     badan          880           2      hijau
+     kaki (paha)    950, 960      5      magenta
+     telapak kaki   970, 980      4      merah
+     lengan        1000, 1040    14      kuning
+     tangan        1080, 1090     7      abu-abu terang
+     tiang gantungan 1230        15      putih terang
+     tali           1100          3      cyan
+
+   Warna CGA aslinya dipakai apa adanya untuk tema gelap. Untuk tema terang,
+   beberapa digelapkan supaya kontrasnya tetap memenuhi WCAG AA — kuning CGA
+   (#FFFF55) di atas latar putih praktis tidak terbaca.
+   =========================================================================== */
+
+:root {
+  --cga-white:   #ffffff;
+  --cga-green:   #35d95f;
+  --cga-magenta: #d764d7;
+  --cga-red:     #ff6b63;
+  --cga-yellow:  #ffe45c;
+  --cga-grey:    #c3ccd6;
+  --cga-cyan:    #55d7d7;
+}
+:root[data-theme="light"] {
+  --cga-white:   #2c3540;
+  --cga-green:   #0f7a37;
+  --cga-magenta: #8f2a8f;
+  --cga-red:     #b3271f;
+  --cga-yellow:  #8a6b00;
+  --cga-grey:    #5b6673;
+  --cga-cyan:    #0f6f78;
+}
+@media (prefers-color-scheme: light) {
+  html:not([data-theme]) {
+    --cga-white:   #2c3540;
+    --cga-green:   #0f7a37;
+    --cga-magenta: #8f2a8f;
+    --cga-red:     #b3271f;
+    --cga-yellow:  #8a6b00;
+    --cga-grey:    #5b6673;
+    --cga-cyan:    #0f6f78;
+  }
+}
+
+/* --- tata letak ---------------------------------------------------------- */
+
+.game {
+  display: grid;
+  gap: var(--s5);
+  grid-template-columns: minmax(260px, 400px) minmax(300px, 1fr);
+  align-items: start;
+  padding-block: var(--s6) var(--s8);
+}
+@media (max-width: 780px) {
+  .game { grid-template-columns: 1fr; }
+}
+
+#stage { display: grid; justify-items: center; gap: var(--s3); }
+#gallows { width: 100%; max-width: 320px; height: auto; }
+.stage__count { color: var(--ink-dim); font-size: var(--fs-sm); margin: 0; }
+.stage__count.is-danger { color: var(--acc-red); font-weight: 600; }
+
+/* --- bagian tubuh -------------------------------------------------------- */
+
+.part { opacity: 0; transition: opacity var(--t-slow) var(--ease); }
+.part.is-on { opacity: 1; }
+
+/* Warna dasar tiap bagian, mengikuti tabel di atas. */
+#p-head  { stroke: var(--cga-white); }
+#p-torso { stroke: var(--cga-green); }
+#p-legL, #p-legR   { stroke: var(--cga-magenta); }
+#p-footL, #p-footR { stroke: var(--cga-red); }
+#p-armL, #p-armR   { stroke: var(--cga-yellow); }
+#p-handL, #p-handR { stroke: var(--cga-grey); }
+#p-face  { stroke: var(--cga-white); }
+
+/* Saat kalah (10/10), seluruh sosok jadi merah. Ini TAMBAHAN dari versi
+   aslinya — di sana warna tiap bagian tetap seperti semula. Diminta karena
+   memberi sinyal "kalah" tanpa perlu membaca teks. */
+#figure.is-dead .part,
+#p-face.is-dead { stroke: var(--acc-red); }
+#figure.is-dead .part { transition: stroke var(--t-slow) var(--ease); }
+
+/* --- kata rahasia -------------------------------------------------------- */
+
+.word {
+  font-size: clamp(1.4rem, 4.5vw, 2.2rem);
+  letter-spacing: .22em;
+  font-weight: 650;
+  margin: var(--s2) 0 0;
+  word-break: break-word;
+  min-height: 1.4em;
+}
+.word .miss { color: var(--ink-faint); }
+.word .hit  { color: var(--acc-phosphor); }
+
+/* --- papan huruf --------------------------------------------------------- */
+
+.keys {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(38px, 1fr));
+  gap: var(--s2);
+  margin-top: var(--s3);
+}
+@media (max-width: 420px) {
+  .keys { grid-template-columns: repeat(7, 1fr); }
+}
+
+/* --- tebak kata utuh ----------------------------------------------------- */
+
+.guess {
+  flex: 1 1 160px; min-width: 120px;
+  padding: 9px var(--s3);
+  background: var(--bg-sunken);
+  border: var(--border); border-radius: var(--r);
+  text-transform: uppercase; letter-spacing: .12em;
+}
+
+/* --- lain-lain ----------------------------------------------------------- */
+
+.links { font-size: var(--fs-sm); margin-top: var(--s2); }
+.links a { color: var(--acc-blue); }

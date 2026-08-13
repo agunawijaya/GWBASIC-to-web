@@ -1,0 +1,85 @@
+/* ===========================================================================
+   bio.css — tambahan lokal BIO. Layar 80x25 dan panelnya dari history.css.
+
+   Yang khas di sini cuma borang tanggal dan bilah lanjut. Grafiknya sendiri
+   TEKS — 72 kolom aksara di dalam layar yang sama dengan HISTORY, HEAREYE,
+   dan INTRO. Itu bukan penghematan; itu bentuk aslinya.
+   =========================================================================== */
+
+.b-form { display: flex; gap: var(--s3); align-items: flex-end; flex-wrap: wrap; }
+.b-form label { display: grid; gap: 4px; font-size: var(--fs-xs);
+                color: var(--ink-dim); }
+.b-form input[type="date"] {
+  font: inherit; font-size: var(--fs-sm); font-family: var(--font-mono);
+  padding: 6px var(--s2);
+  background: var(--panel-2); color: var(--ink);
+  border: 1px solid var(--line); border-radius: var(--r-sm);
+}
+.b-form input:focus-visible { outline: none; box-shadow: var(--glow); }
+
+.b-galat { font-size: var(--fs-sm); color: var(--acc-red); min-height: 1.2em; }
+.b-galat:empty { min-height: 0; }
+
+.b-row { display: flex; gap: var(--s3); align-items: center; flex-wrap: wrap; }
+.b-info { font-size: var(--fs-xs); color: var(--ink-faint); }
+
+.b-lead { font-size: var(--fs-sm); }
+.b-lead strong { color: var(--ink); }
+
+/* Grafik biorhythm memakai lebih banyak baris daripada 25 — tiap "layar"
+   aslinya 21 baris data, dan port menumpuknya. Jadi tinggi minimumnya
+   dilepas, tapi lebar 80 kolomnya tetap dikunci: itu yang membuat kolom
+   tanggal dan kolom grafik tetap sejajar. */
+.b-crt .h-scr { white-space: pre; }
+
+/* --- grafik modern --------------------------------------------------------
+   Keluaran 1982 memplot tiga kurva sebagai HURUF di kisi 72 kolom: satu
+   aksara per hari, dan dua siklus yang berimpit jadi `&`. Itu bentuk yang
+   dipaksa layar teks, bukan bentuk yang diinginkan.
+
+   Grafik ini menggambar yang sebenarnya dimaksud — tiga gelombang sinus utuh
+   dengan sumbu dan garis kritis. Keluaran aslinya tidak dibuang: ia ada di
+   balik tombol "Tampilan 1982", karena §3 dokumennya membahas bedah string
+   yang menghasilkannya.
+   ------------------------------------------------------------------------ */
+
+.b-svg { width: 100%; height: auto; display: block;
+         background: var(--bg-sunken);
+         border: 1px solid var(--line); border-radius: var(--r); }
+
+.b-grid    { stroke: var(--line); stroke-width: 1; }
+.b-grid--0 { stroke: var(--ink-faint); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.b-sumbu   { fill: var(--ink-faint); font-size: 9px; font-family: var(--font-mono); }
+.b-tgl     { fill: var(--ink-dim); font-size: 9px; font-family: var(--font-mono); }
+
+/* Isi di bawah kurva dibuat sangat tipis (12%) supaya tiga kurva yang saling
+   memotong tetap bisa dibedakan. Di atas itu, tumpukan tiga isian jadi warna
+   lumpur dan justru menyembunyikan yang mau ditunjukkan. */
+.b-isi  { opacity: .12; }
+.b-garis { fill: none; stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; }
+
+.b-p .b-garis, .b-p .b-titik { stroke: var(--acc-phosphor); }
+.b-e .b-garis, .b-e .b-titik { stroke: var(--acc-amber); }
+.b-i .b-garis, .b-i .b-titik { stroke: var(--acc-blue); }
+.b-p .b-isi { fill: var(--acc-phosphor); }
+.b-e .b-isi { fill: var(--acc-amber); }
+.b-i .b-isi { fill: var(--acc-blue); }
+.b-titik { fill: var(--bg-sunken); stroke-width: 2; }
+
+/* Hari kritis: saat sebuah siklus melintasi nol. Ditandai di sumbu, bukan di
+   kurvanya — di kurva ia akan tenggelam di antara tiga garis. */
+.b-kritis { stroke-width: 1; stroke-dasharray: 2 3; }
+.b-kritis--p { stroke: var(--acc-phosphor); }
+.b-kritis--e { stroke: var(--acc-amber); }
+.b-kritis--i { stroke: var(--acc-blue); }
+
+.b-kunci { padding: 1px 8px; border-radius: var(--r-pill);
+           font-size: var(--fs-xs); font-weight: 600; white-space: nowrap; }
+.b-kunci--p { background: color-mix(in srgb, var(--acc-phosphor) 20%, transparent);
+              color: var(--acc-phosphor); }
+.b-kunci--e { background: color-mix(in srgb, var(--acc-amber) 20%, transparent);
+              color: var(--acc-amber); }
+.b-kunci--i { background: color-mix(in srgb, var(--acc-blue) 20%, transparent);
+              color: var(--acc-blue); }
+
+.b-legenda { display: flex; gap: var(--s3); flex-wrap: wrap; margin-top: var(--s2); }

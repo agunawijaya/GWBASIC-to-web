@@ -1,0 +1,206 @@
+/* ===========================================================================
+   music.css — tata letak bersama untuk lima halaman musik:
+   GERMFOLK, OCTAVE, DREAM, NOTETABL, dan FREEPLAY.
+
+   Empat yang pertama adalah port program yang sangat kecil (6–26 baris) yang
+   menunjukkan sisi berbeda dari satu hal yang sama: cara IBM PC membunyikan
+   nada. Karena itu mereka berbagi satu bentuk halaman — not balok dan papan
+   tuts di atas, kode asli di bawah.
+
+   Yang kelima, FREEPLAY, bukan port sama sekali. Ia bisa memakai berkas ini
+   tanpa satu pun perubahan pada gaya yang sudah ada — hanya menambah beberapa
+   kelas baru di bagian paling bawah. Itu ukuran yang layak dipakai untuk menilai
+   sebuah fondasi.
+
+   Berkas ini di `_shared/` dan bukan di folder tiap permainan supaya perbaikan
+   cukup dilakukan sekali. Itu tepat kebalikan dari cara Friendlyware menyalin
+   rutin bingkainya ke sepuluh berkas.
+
+   Semua nama kelas di sini diawali `m-` agar tidak pernah bertabrakan dengan
+   komponen bersama di base.css — pelajaran dari bug `.tile` di 15PUZZLE.
+   =========================================================================== */
+
+.m-layout {
+  display: grid; gap: var(--s5);
+  grid-template-columns: minmax(300px, 1fr) minmax(260px, 380px);
+  align-items: start; padding-block: var(--s6) var(--s8);
+}
+@media (max-width: 900px) { .m-layout { grid-template-columns: 1fr; } }
+
+/* --- not balok bergulir --------------------------------------------------- */
+
+.staff {
+  width: 100%; height: 150px; display: block;
+  background: var(--bg-sunken); border-radius: var(--r);
+  border: 1px solid var(--line-soft);
+}
+@media (max-width: 620px) { .staff { height: 120px; } }
+
+.staff__line  { stroke: var(--ink-faint); stroke-width: 1; opacity: .55; }
+.staff__brace { stroke: var(--ink-dim); stroke-width: 3; }
+.staff__head  { stroke: var(--acc-amber); fill: var(--acc-amber); stroke-width: 2; }
+
+/* Warna berubah, GEOMETRI TIDAK. Pelajaran dari bug getar di 15PUZZLE:
+   apa pun yang mengubah posisi/ukuran sambil elemen bergerak akan berkelahi
+   dengan transform yang dipakai untuk menggulung. */
+.note { transition: opacity var(--t-fast) var(--ease); }
+.note--rest .note__head { fill: none; }
+
+.note__head   { fill: var(--ink-dim); }
+.note__stem   { stroke: var(--ink-dim); stroke-width: 1.8; }
+.note__ledger { stroke: var(--ink-faint); stroke-width: 1; }
+.note__len    { fill: var(--ink-faint); opacity: .28; }
+.note__acc    { fill: var(--ink-dim); font-size: 15px; font-family: serif; }
+
+/* Not yang sedang menyentuh garis penanda. */
+.note.is-now .note__head { fill: var(--acc-phosphor); }
+.note.is-now .note__stem { stroke: var(--acc-phosphor); }
+.note.is-now .note__len  { fill: var(--acc-phosphor); opacity: .45; }
+.note.is-now .note__acc  { fill: var(--acc-phosphor); }
+
+/* Not yang sudah lewat, diredupkan. */
+.note.is-past .note__head { fill: var(--ink-faint); opacity: .5; }
+.note.is-past .note__stem { stroke: var(--ink-faint); opacity: .5; }
+.note.is-past .note__len  { opacity: .12; }
+
+/* --- papan tuts ---------------------------------------------------------- */
+
+.m-stage { display: grid; gap: var(--s4); justify-items: stretch; }
+
+.piano { width: 100%; height: auto; }
+.pkey {
+  transition: fill var(--t-fast) var(--ease);
+  stroke: #0c1014; stroke-width: 1;
+}
+.pkey--w { fill: #eef2f6; }
+.pkey--b { fill: #1a2029; }
+.pkey.is-on { fill: var(--acc-phosphor); }
+.pkey--b.is-on { fill: var(--acc-amber); }
+.plabel {
+  font-family: var(--font-mono); font-size: 9px; fill: #6d7883;
+  text-anchor: middle; pointer-events: none; user-select: none;
+}
+
+/* Huruf papan ketik yang membunyikan tuts ini. Warnanya sengaja lemah:
+   ia petunjuk, bukan isi. */
+.pmark {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  fill: #8b96a2; text-anchor: middle; user-select: none;
+}
+.pmark--b { fill: #7d8794; }
+
+/* --- transport ----------------------------------------------------------- */
+
+.m-transport { display: flex; gap: var(--s3); align-items: center;
+               flex-wrap: wrap; }
+.m-now {
+  font-family: var(--font-mono); font-size: var(--fs-xl); font-weight: 620;
+  color: var(--acc-phosphor); min-width: 4ch;
+}
+.m-now--idle { color: var(--ink-faint); }
+
+/* --- kode asli ----------------------------------------------------------- */
+
+/* Baris kode program aslinya. Yang sedang dimainkan disorot — itulah cara
+   tercepat memahami bahasa makro PLAY: lihat dan dengar bersamaan. */
+.m-score { display: grid; gap: 2px; }
+.m-line {
+  display: grid; grid-template-columns: 3.5ch 1fr; gap: var(--s3);
+  padding: 5px var(--s3); border-radius: var(--r-sm);
+  font-family: var(--font-mono); font-size: var(--fs-sm);
+  color: var(--ink-dim); border: 1px solid transparent;
+  transition: background var(--t-fast) var(--ease),
+              color var(--t-fast) var(--ease),
+              border-color var(--t-fast) var(--ease);
+  word-break: break-all;
+}
+.m-line__no { color: var(--ink-faint); text-align: right; }
+.m-line.is-on {
+  background: var(--acc-phosphor-dim);
+  border-color: var(--acc-phosphor);
+  color: var(--ink);
+}
+.m-line.is-setup { color: var(--acc-amber); }
+
+/* Baris yang TIDAK ada di kode 1990 — tambalan, ditandai terang supaya
+   pembaca tahu persis di mana port ini menyimpang dari aslinya. */
+.m-line.is-fix { color: var(--acc-blue); }
+.m-line.is-fix .m-line__no::after { content: ' +'; }
+
+/* --- blok frasa (DREAM) -------------------------------------------------- */
+
+.m-phrases { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.m-chip {
+  min-width: 34px; padding: 5px 9px; border-radius: var(--r-sm);
+  border: var(--border); background: var(--panel-2);
+  font-family: var(--font-mono); font-weight: 700; font-size: var(--fs-sm);
+  color: var(--ink-dim); text-align: center;
+  transition: all var(--t-fast) var(--ease);
+}
+.m-chip.is-on { background: var(--acc-phosphor-dim);
+                border-color: var(--acc-phosphor); color: var(--acc-phosphor); }
+
+/* --- tabel nada (NOTETABL) ----------------------------------------------- */
+
+.m-tablewrap { max-height: 460px; overflow: auto; border: var(--border);
+               border-radius: var(--r); }
+.m-table { width: 100%; border-collapse: collapse; font-family: var(--font-mono);
+           font-size: var(--fs-sm); }
+.m-table th, .m-table td { padding: 5px var(--s3); text-align: right;
+                           white-space: nowrap; }
+.m-table th {
+  position: sticky; top: 0; background: var(--panel-2); color: var(--ink-dim);
+  font-size: var(--fs-xs); letter-spacing: .05em; text-transform: uppercase;
+  border-bottom: var(--border); z-index: 1;
+}
+.m-table td:nth-child(2) { text-align: left; color: var(--ink); }
+.m-table tbody tr { cursor: pointer; border-bottom: 1px solid var(--line-soft); }
+.m-table tbody tr:hover { background: var(--panel-2); }
+.m-table tbody tr.is-on { background: var(--acc-phosphor-dim);
+                          color: var(--acc-phosphor); }
+.m-oct { background: var(--bg-sunken); color: var(--acc-amber);
+         font-weight: 700; text-align: left !important; }
+
+/* --- lain-lain ----------------------------------------------------------- */
+
+.m-note { font-size: var(--fs-sm); color: var(--ink-dim); margin-top: var(--s2); }
+.m-warn { border-left: 3px solid var(--acc-amber); }
+.m-links { font-size: var(--fs-sm); margin-top: var(--s2); }
+.m-links a { color: var(--acc-blue); }
+
+/* --- papan tuts bebas (FREEPLAY) ----------------------------------------- */
+
+/* Jangkauannya lima oktaf, jauh lebih lebar dari halaman musik lain, jadi
+   paranadanya butuh ruang tegak lebih banyak agar tidak gepeng. */
+.m-tall .staff { height: 220px; }
+@media (max-width: 620px) { .m-tall .staff { height: 170px; } }
+
+.m-keymap { display: grid; gap: var(--s2); margin-top: var(--s3); }
+.m-keyrow { display: flex; gap: 3px; align-items: center; flex-wrap: wrap; }
+.m-keyrow__label {
+  font-size: var(--fs-xs); color: var(--ink-faint);
+  width: 44px; flex: none; text-transform: uppercase; letter-spacing: .05em;
+}
+.m-key {
+  min-width: 22px; padding: 3px 5px; border-radius: var(--r-sm);
+  border: var(--border); background: var(--panel-2);
+  font-family: var(--font-mono); font-size: var(--fs-xs); font-weight: 700;
+  color: var(--ink-dim); text-align: center;
+}
+.m-key--b { background: var(--bg-sunken); color: var(--ink-faint); }
+
+/* Hasil terjemahan ke makro PLAY. Boleh melebar sesukanya — yang tidak boleh
+   adalah membuat SELURUH halaman ikut bergeser mendatar. */
+.m-macro {
+  margin-top: var(--s3); padding: var(--s3);
+  border: var(--border); border-radius: var(--r);
+  background: var(--bg-sunken); color: var(--acc-phosphor);
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.7;
+  max-height: 190px; overflow: auto; white-space: pre-wrap; word-break: break-word;
+}
+
+kbd {
+  display: inline-block; padding: 1px 6px; border-radius: var(--r-sm);
+  border: var(--border); border-bottom-width: 2px; background: var(--panel-2);
+  font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--ink-dim);
+}

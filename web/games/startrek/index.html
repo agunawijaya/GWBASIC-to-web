@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Star Trek — Classic DOS BASIC Games</title>
+<meta name="description" content="Port web dari STARTREK.BAS (Bob &amp; Sharon Fritz, 1981): Super Star Trek di IBM PC, dengan manual yang menyebut tiga keraguan penulisnya sendiri — dan ketiganya diuji di sini. Jalan offline.">
+<link rel="stylesheet" href="../../_shared/tokens.css">
+<link rel="stylesheet" href="../../_shared/base.css">
+<link rel="stylesheet" href="startrek.css?v=5">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="wrap st-layout">
+
+  <section class="stack">
+    <div class="screen screen--scanlines">
+      <div class="st-atas">
+        <div class="st-petakLuar">
+          <div class="st-petak" id="petak" role="img"
+               aria-label="Sensor jarak dekat: petak 8 kali 8 sektor"></div>
+          <p class="st-kecil st-legenda">
+            <span><svg class="st-legIkon" viewBox="0 0 100 100" aria-hidden="true"
+              ><use href="#tr-enterprise" width="100" height="100"/></svg> Enterprise</span>
+            <span><svg class="st-legIkon" viewBox="0 0 100 100" aria-hidden="true"
+              ><use href="#tr-kapal-klingon" width="100" height="100"/></svg> Klingon</span>
+            <span><svg class="st-legIkon" viewBox="0 0 100 100" aria-hidden="true"
+              ><use href="#tr-starbase" width="100" height="100"/></svg> starbase</span>
+            <span><svg class="st-legIkon" viewBox="0 0 100 100" aria-hidden="true"
+              ><use href="#tr-bintang-k" width="100" height="100"/></svg> bintang</span>
+          </p>
+        </div>
+        <!-- Delapan pembacaan, urutannya sama persis dengan baris 3880-3960:
+             Stardate, Condition, Quadrant, Sector, Photon torpedoes, Total
+             energy, Shields, Klingons remaining. Di layar 80x25 kedelapan
+             baris itu menempel di kanan tiap baris petak karena PRINT hanya
+             bisa maju ke kanan lalu turun; di sini urutannya yang
+             dipertahankan, bukan tempatnya. -->
+        <dl class="st-status">
+          <div class="st-pasang"><dt>Stardate</dt>
+            <dd id="s-stardate" class="st-nilai mono">—</dd></div>
+          <div class="st-pasang"><dt>Condition</dt>
+            <dd id="s-kondisi" class="st-nilai mono">—</dd></div>
+          <div class="st-pasang"><dt>Quadrant</dt>
+            <dd id="s-kuadran" class="st-nilai mono">—</dd></div>
+          <div class="st-pasang"><dt>Sector</dt>
+            <dd id="s-sektor" class="st-nilai mono">—</dd></div>
+          <div class="st-pasang"><dt>Photon torpedoes</dt>
+            <dd id="s-torpedo" class="st-nilai mono">—</dd></div>
+          <div class="st-pasang"><dt>Total energy</dt>
+            <dd id="s-energi" class="st-nilai mono">—</dd></div>
+          <div class="st-pasang"><dt>Shields</dt>
+            <dd id="s-perisai" class="st-nilai mono">—</dd></div>
+          <div class="st-pasang"><dt>Klingons remaining</dt>
+            <dd id="s-klingon" class="st-nilai mono">—</dd></div>
+          <div class="st-pasang st-pasang--lebar"><dt>Nama kuadran</dt>
+            <dd><span id="s-nama" class="st-nilai mono">—</span>
+                <span id="s-nama-catatan" class="st-kecil st-salah"></span></dd></div>
+        </dl>
+      </div>
+
+      <div class="st-log" id="log" role="log" aria-live="polite"
+           aria-label="Catatan misi"></div>
+
+      <div class="st-masuk">
+        <span class="st-prompt" id="prompt">command</span>
+        <input id="ketik" class="st-ketik" type="text" autocomplete="off"
+               spellcheck="false" aria-label="Perintah">
+        <button class="btn btn--primary btn--sm" id="kirim" type="button">Kirim</button>
+      </div>
+      <div class="st-kunci-baris" id="kunci"></div>
+      <div class="st-alat">
+        <button class="btn btn--ghost btn--sm" id="baru" type="button">Misi baru</button>
+        <button class="btn btn--ghost btn--sm" id="ulangi" type="button">Ulangi benih…</button>
+        <label class="st-kecil"><input type="checkbox" id="senyap"> Senyapkan bunyi</label>
+        <label class="st-kecil"><input type="checkbox" id="glif"> Glif CP437 asli</label>
+        <span class="st-kecil">Benih: <b id="s-benih" class="mono">—</b></span>
+      </div>
+    </div>
+
+    <p class="ruleset">
+      <span class="ruleset__k">508 baris BASIC</span>
+      <span class="ruleset__k">galaksi 8 &times; 8 kuadran</span>
+      <span class="ruleset__k ruleset__k--mangsa">satu bilangan = Klingon, basis, bintang</span>
+      <span class="ruleset__k ruleset__k--bahaya">Klingon tak pernah menembak duluan</span>
+    </p>
+
+    <div class="hud">
+      <div class="stat" id="s-energi-box"><span class="stat__label">Total energy</span>
+        <span class="stat__value mono" id="s-energi2">—</span></div>
+      <div class="stat" id="s-perisai-box"><span class="stat__label">Shields</span>
+        <span class="stat__value mono" id="s-perisai2">—</span></div>
+      <div class="stat"><span class="stat__label">Peringkat tertinggi</span>
+        <ol class="st-skor mono" id="skor"></ol></div>
+    </div>
+
+    <details class="panel howto" id="help" open>
+      <summary>Cara memainkannya</summary>
+      <p class="st-note">
+        Sembilan perintah, sama persis dengan aslinya. Tombol
+        <b>F1</b>&ndash;<b>F9</b> bekerja &mdash; di aslinya program benar-benar
+        <em>memprogram</em> tombol fungsi GW-BASIC (baris 850&ndash;940) dengan
+        teks perintah plus Enter.
+      </p>
+      <ol class="howto__steps">
+        <li><strong>NAV</strong> &mdash; arah 1&ndash;9 lalu faktor warp.
+            Arah 1 ke kanan, 3 ke atas, 5 ke kiri, 7 ke bawah; boleh pecahan.
+            Warp <code>0.1</code> = satu sektor, <code>1</code> = satu kuadran.</li>
+        <li><strong>SRS / LRS</strong> &mdash; sensor dekat (petak di atas) dan
+            jauh (tiga kali tiga kuadran, tiga angka = Klingon&nbsp;/&nbsp;basis&nbsp;/&nbsp;bintang).</li>
+        <li><strong>PHA / TOR</strong> &mdash; phaser memakai energi dan mengenai
+            semua Klingon sekaligus; torpedo satu arah, sepuluh butir.
+            <b>Keduanya membuat Klingon membalas</b> &mdash; dan hanya itu yang
+            membuat mereka menembak; lihat panel kanan.</li>
+        <li><strong>SHI</strong> &mdash; pindahkan energi ke perisai.
+            Cobalah meminta lebih banyak daripada yang Anda punya.</li>
+        <li><strong>COM</strong> &mdash; komputer: <code>GAL</code>,
+            <code>STA</code>, <code>TOR</code>, <code>BAS</code>,
+            <code>DIR</code>, <code>REG</code>.</li>
+        <li><strong>Berlabuh</strong> dengan berhenti tepat di sebelah starbase:
+            energi dan torpedo terisi penuh, perisai turun ke nol.</li>
+      </ol>
+    </details>
+  </section>
+
+  <aside class="stack">
+
+    <section class="panel st-bad">
+      <h2 class="panel__title">Satu nomor baris yang meleset, dan seluruh permainan berubah</h2>
+      <div class="st-code">1930 NEXT I:GOSUB 4810:D1=0:D6=W1:IF W1&gt;=1 THEN D6=1
+…
+4800 R1=FNR(1):R2=FNR(1):A$="   ":Z1=R1:Z2=R2:GOSUB 4990:IF Z3=0 THEN 4800
+4810 RETURN                      ' &lt;- seluruh isi baris 4810
+…
+3350 IF K3&lt;=0 THEN RETURN        ' "klingons shooting"</div>
+      <p class="st-note">
+        Baris 4810 isinya <b>hanya <code>RETURN</code></b> &mdash; ia cuma pintu
+        keluar gelung pencari-tempat-kosong di 4800. Jadi
+        <code>GOSUB 4810</code> di baris 1930 tidak melakukan apa pun.
+      </p>
+      <p class="st-note">
+        Yang seharusnya dipanggil hampir pasti <b>3350</b>, rutin
+        <i>"klingons shooting"</i>. Buktinya bisa dihitung: 3350 dipanggil dari
+        <b>empat</b> tempat di seluruh program &mdash; 2730, 2950, 3060, 3070
+        &mdash; dan <b>keempatnya sesudah pemain menembak</b>. Tidak satu pun
+        sesudah bergerak.
+      </p>
+      <p class="st-note">
+        Akibatnya menentukan seluruh rasa mainnya: <b>Klingon tidak pernah
+        menembak lebih dulu.</b> Anda bisa masuk kuadran Condition RED,
+        melintasinya, berlabuh, memperbaiki kapal, dan pergi &mdash; tanpa
+        sekali pun kena, asal Anda tidak menembak duluan. Permainan
+        bertahan-hidup berubah jadi permainan pilihan, karena satu nomor baris
+        meleset dari 3350 ke 4810.
+      </p>
+    </section>
+
+    <section class="panel st-bad">
+      <h2 class="panel__title">Dua string yang tidak pernah ditutup &mdash; dan yang kedua menelan sebuah perintah</h2>
+      <div class="st-code">2580 PRINT"Phasers locked on target;  :;
+…
+3120 IF X&lt;E+S THEN 3150
+3130 PRINT"Shield Control reports  'This is not the federation treasury.'"
+3140 PRINT"&lt;shields unchanged&gt;:goto 1990
+3150 E=E+S-X:S=X:PRINT"Deflector Control Room report:"</div>
+      <p class="st-note">
+        Keduanya punya jumlah tanda kutip <b>ganjil</b>. GW-BASIC memaafkan itu:
+        string yang tidak ditutup berlaku sampai akhir baris. Baris 2580 karena
+        itu mencetak ekornya sendiri, <code>;&nbsp;&nbsp;:;</code>, di tengah
+        permainan &mdash; dipertahankan di port ini, coba tembakkan phaser.
+      </p>
+      <p class="st-note">
+        Baris 3140 lebih dalam: yang tertelan string bukan hiasan melainkan
+        <b>sebuah perintah</b>. <code>:goto 1990</code> ada di
+        <em>dalam</em> teks, jadi tidak pernah dijalankan &mdash; dan alurnya
+        jatuh ke 3150, yang justru <b>menerapkan</b> perubahan yang baru saja
+        ditolaknya. Minta perisai lebih besar daripada seluruh energi kapal:
+        Anda akan diberi tahu bahwa ini bukan bendahara Federasi, lalu
+        <b>diberi</b>.
+      </p>
+      <p class="st-note">
+        Tapi ia bukan celah &mdash; ia <b>jebakan</b>. <code>E=E+S-X</code>
+        membuat energi manuver <b>negatif</b>, dan baris 1820 menolak tiap
+        gerakan sesudah itu. Diuji di port ini: perisai 99.999, lalu NAV warp 1
+        menjawab <i>&ldquo;Insufficient energy available&rdquo;</i> dan kapal
+        tidak bergerak satu sektor pun. Anda jadi kebal <b>dan</b> terpaku,
+        lalu kalah karena kehabisan hari. (Bisa dibatalkan dengan
+        <code>SHI</code> lalu <code>0</code>.)
+      </p>
+      <p class="st-note">
+        Dan seandainya kutipnya tertutup, <code>GOTO 1990</code> mendarat di
+        <code>1990&nbsp;NEXT&nbsp;I</code> &mdash; tanpa <code>FOR</code> yang
+        aktif. Jadi kekeliruan ketik itu menukar sebuah <b>kemacetan</b>
+        dengan sebuah <b>jebakan yang tenang</b>: keduanya merugikan pemain,
+        tapi hanya yang pertama yang akan pernah dilaporkan.
+      </p>
+    </section>
+
+    <section class="panel st-bad">
+      <h2 class="panel__title">Satu titik dua yang hilang, dan &ldquo;Klingon8 left&rdquo;</h2>
+      <div class="st-code">1750 X$="8":IF D(1)&lt;0 THEN X$="0.2"
+1760 PRINT"Warp factor(0-";X$;")";:INPUT W1
+…
+4400 GOSUB 840:PRINT"   Status Report:"X$="":IF K9&gt;1 THEN X$="s"
+4410 PRINT"Klingon";X$;" left: ";K9</div>
+      <p class="st-note">
+        <code>X$</code> dipakai untuk dua hal yang tidak berhubungan: akhiran
+        jamak (<i>Klingon<b>s</b></i>, <i>starbase<b>s</b></i>) dan
+        <b>batas warp</b> yang dicetak di prompt NAV.
+      </p>
+      <p class="st-note">
+        Baris 4400 bermaksud mengosongkannya lebih dulu &mdash; tapi titik dua
+        sebelum <code>X$</code> hilang. Yang tertulis jadi
+        <code>PRINT "…" X$=""</code>, dan di dalam <code>PRINT</code> sebuah
+        <code>=</code> bukan penetapan melainkan <b>perbandingan</b>: hasilnya
+        ikut tercetak sebagai <code>0</code> atau <code>-1</code>, dan
+        <code>X$</code> <b>tidak pernah dikosongkan</b>.
+      </p>
+      <p class="st-note">
+        Jadi begitu Anda pernah menekan NAV, <code>X$</code> berisi
+        <code>"8"</code>. Kalau tinggal satu Klingon, baris 4410 mencetak:
+      </p>
+      <div class="st-code">   Status Report:
+ 0
+Klingon8 left: 1</div>
+      <p class="st-note">
+        Diverifikasi di port ini dengan menyusun keadaannya langsung. Angka
+        <code>0</code> yang berdiri sendiri di baris kedua adalah hasil
+        perbandingan itu &mdash; sisa sebuah titik dua.
+      </p>
+    </section>
+
+    <section class="panel st-warn">
+      <h2 class="panel__title">Peta nama galaksi, bocor di dua tempat</h2>
+      <div class="st-code">5040 IF Z5&lt;+4 THEN ON Z4 GOTO 5060,5070,5080,5090,5100,5110,5120,5130
+5140 ON Z4 GOTO 5150,5160,5170,5180,5180,5200,5210,5220
+5180 G2$="Betelgeuse":GOTO 5230
+5190 G2$="Aldebaran":GOTO 5230          ' &lt;- tak pernah jadi sasaran
+5230 IF G5&lt;&gt;1 THEN ON Z5 GOTO 5250,5260,5270,5280,5250,5260,5270,5280</div>
+      <p class="st-note">
+        <b>(a)</b> Baris 5040 menguji <code>Z5&lt;+4</code>, bukan
+        <code>Z5&lt;5</code>. Tanda tambah uner itu kekeliruan ketik yang sama
+        jenisnya dengan <code>WHILE+ A$=""</code> di
+        <code>BOWLING.BAS</code>, dan GW-BASIC memaafkan keduanya. Akibatnya
+        <b>kolom 4 memakai keluarga nama yang kedua</b>.
+      </p>
+      <p class="st-note">
+        <b>(b)</b> Baris 5140 menyebut <code>5180</code> dua kali dan
+        <code>5190</code> nol kali. Jadi baris 5 ikut bernama Betelgeuse, dan
+        <b>Aldebaran</b> &mdash; yang tertulis lengkap di 5190 &mdash;
+        <b id="b-aldebaran">—</b>.
+      </p>
+      <table class="st-tbl st-peta"><tbody id="b-peta"></tbody></table>
+      <p class="st-note">
+        Sel merah = namanya bukan yang seharusnya
+        (<b id="b-nama-salah">—</b> dari 64). Pemetaan ini seharusnya
+        satu-satu: 8 nama &times; 4 akhiran &times; 2 keluarga = 64. Yang
+        dihasilkan cuma <b id="b-nama-beda">—</b> nama berbeda, dan
+        <b id="b-nama-berbagi">—</b> kuadran berbagi nama dengan kuadran lain.
+        Betelgeuse sendiri menutupi <b id="b-betelgeuse">—</b>.
+      </p>
+      <p class="st-note">
+        Papan angka di kiri menandai merah kalau kuadran tempat Anda berada
+        kebetulan salah satu yang salah nama, dan menyebutkan nama
+        seharusnya.
+      </p>
+    </section>
+
+    <section class="panel st-good">
+      <h2 class="panel__title">Manualnya meragukan rutin yang justru sempurna</h2>
+      <p class="st-note">
+        <code>docs/STARTREK.DOC</code> ditutup kalimat yang jarang ditemui di
+        koleksi ini: <i>&ldquo;This program is distributed AS IS. It certainly
+        needs work, but at least we're started off.&rdquo;</i> Manual itu
+        menyebut <b>tiga keraguan</b>, dan dua di antaranya bisa diuji.
+      </p>
+      <p class="st-note">
+        <b>Keraguan 1:</b> <i>&ldquo;9 &mdash; supposed to be synonymous with 1,
+        but I'm not sure it works.&rdquo;</i> Bekerja. <code>C(9)</code> memang
+        disetel identik dengan <code>C(1)</code> di baris 1050, jadi interpolasi
+        8&rarr;9 melingkar dengan benar. Dan <code>IF C1=9 THEN C1=1</code>
+        bukan kenyamanan melainkan <b>penjaga</b>: rumus 2080 membaca
+        <code>C(C1+1)</code>, dan untuk <code>C1=9</code> itu
+        <code>C(10)</code> &mdash; satu di luar <code>DIM C(9,2)</code>.
+        Penjaganya persis selebar yang dibutuhkan.
+      </p>
+      <div class="st-code">4590 X=X-A: A=C1-W1:IF X&lt;0 THEN 4670
+4660 PRINT"Direction =";C1+(ABS(A)/ABS(X)):GOTO 4730
+2080 X1=C(C1,1)+(C(C1+1,1)-C(C1,1))*(C1-INT(C1))</div>
+      <p class="st-note">
+        <b>Keraguan 2:</b> <i>&ldquo;TOR DATA &hellip; Reliable only if
+        direction is a whole number (needs work).&rdquo;</i> Justru
+        <b>tepat sempurna</b>. Disapu di halaman ini saat dimuat, seluruh
+        <b id="b-arah-total">—</b> pasangan posisi di kuadran 8&times;8: arah
+        yang dihitung 4590&ndash;4730, diumpankan ke penggerak torpedo 2840,
+        <b id="b-arah-luput">—</b> yang luput.
+      </p>
+      <p class="st-note">
+        Sebabnya bisa dinyatakan tepat: <b>&ldquo;arah&rdquo; di sini bukan
+        sudut.</b> Ia parameter dari pemetaan linear sepotong-sepotong yang
+        sama dengan yang dipakai penggeraknya, dan rumus
+        <code>C1+|A|/|X|</code> adalah <b>fungsi kebalikan</b> dari interpolasi
+        di 2080. Diperiksa lewat perkalian silang:
+        <b id="b-arah-sejajar">—</b> dari <b>4.032</b> vektor langkah sejajar
+        sempurna dengan vektor ke sasaran.
+      </p>
+    </section>
+
+    <section class="panel st-warn">
+      <h2 class="panel__title">Yang tidak mereka ragukan, dan justru keliru: jaraknya</h2>
+      <div class="st-code">4730 PRINT"Distance =";SQR(X^2+A^2)     ' garis lurus (Euclid)
+2100 FOR I=1 TO N …                    ' satu petak per putaran (Chebyshev)
+1820 N=INT(W1*8+0.5)</div>
+      <p class="st-note">
+        Jaraknya diukur menurut <b>garis lurus</b>, tapi kapalnya bergerak
+        <b>satu petak per putaran pada sumbu dominan</b> &mdash; dan manualnya
+        sendiri berkata <i>&ldquo;decimal speed of 0.1 moves one sector.&rdquo;</i>
+        Jadi angka yang tercetak dan jumlah langkah yang dibutuhkan adalah dua
+        besaran berbeda.
+      </p>
+      <table class="st-tbl">
+        <thead><tr><th>selisih langkah</th><th>pasangan</th><th></th></tr></thead>
+        <tbody id="b-jarak"></tbody>
+      </table>
+      <p class="st-note">
+        Memakai angka <i>Distance</i> apa adanya membuat Anda <b>melewati</b>
+        sasaran pada <b id="b-jarak-meleset">—</b> pasangan. Yang terburuk
+        diagonal murni: tiga petak diagonal tercetak <b>4,2426</b> &mdash; 41%
+        terlalu jauh. Ketidaknyamanan yang dirasakan penulisnya nyata; ia cuma
+        ada di angka yang lain.
+      </p>
+    </section>
+
+    <section class="panel st-warn">
+      <h2 class="panel__title">Bunyinya adalah jam permainannya</h2>
+      <div class="st-code"> 510 PLAY "mb"                    ' music background
+5300 FOR J= 1 TO 4
+5310   FOR K=1000 TO 2000 STEP 20
+5320     SOUND K,0.01*18.2
+5330   NEXT K
+5340 NEXT J</div>
+      <p class="st-note">
+        Baris 510 menyalakan <b>music background</b>, yang membuat
+        <code>SOUND</code> mengantre alih-alih memblokir. Tapi antrean
+        GW-BASIC dalamnya <b>32 nada</b>, dan tiap rutin di bawah ini
+        mengantre jauh lebih banyak &mdash; jadi programnya berhenti menunggu.
+      </p>
+      <table class="st-tbl">
+        <thead><tr><th>rutin</th><th>nada</th><th>lama</th></tr></thead>
+        <tbody id="b-bunyi"></tbody>
+      </table>
+      <p class="st-note">
+        Empat rutin itu satu-satunya yang menahan mesin 1981; tanpa mereka
+        permainannya seketika. Ini temuan yang sama dengan
+        <a href="../../docs/lander.md">LANDER</a>, tempat lagu
+        <i>Blue Danube</i> ternyata jam permainannya &mdash; dan di sana
+        menekan tombol senyap <b>mempercepat</b> permainan berlipat.
+        Di port ini bunyinya <b>tidak menahan apa pun</b>: itu penyimpangan
+        yang dinyatakan, karena peramban punya penjadwal dan tidak perlu
+        menunggu speaker.
+      </p>
+    </section>
+
+    <section class="panel st-bad">
+      <h2 class="panel__title">Empat hal yang programnya bisa katakan, dan tidak pernah bisa</h2>
+      <table class="st-tbl">
+        <thead><tr><th>baris</th><th>yang tertulis</th><th>kenapa tak terjangkau</th></tr></thead>
+        <tbody>
+          <tr><td>5190</td><td><code>"Aldebaran"</code></td>
+              <td>5140 menyebut 5180 dua kali dan 5190 nol kali</td></tr>
+          <tr><td>4770&ndash;4780</td><td>Spock: <i>no starbases in this quadrant</i></td>
+              <td>4760 <code>GOTO 4540</code> tanpa syarat melompatinya</td></tr>
+          <tr><td>3000&ndash;3020</td><td>hukuman <i>CYGNUS 12</i></td>
+              <td>2990 menguji <code>K9&gt;T-T0-T9</code>; karena 2180 menjamin
+                  <code>T&le;T0+T9</code>, ruas kanan tak pernah positif dan
+                  syaratnya selalu benar. Tandanya terbalik &mdash; yang
+                  dimaksud <b>sisa</b> hari</td></tr>
+          <tr><td>3770</td><td><code>CC$="docked"</code></td>
+              <td><code>CC$</code> muncul <b>tepat sekali</b> di seluruh
+                  program dan tidak pernah dibaca; baris 3900 mencetak
+                  <code>C$</code>, yang di jalur berlabuh tidak pernah
+                  diperbarui &mdash; jadi indikator Condition membeku pada
+                  nilai kuadran sebelumnya</td></tr>
+        </tbody>
+      </table>
+      <p class="st-note">
+        Yang keempat terlihat langsung di papan status: saat berlabuh,
+        port ini menampilkan <code>⟨CC$="docked"⟩</code> di sebelah nilai
+        <code>C$</code> yang basi, supaya kedua hal itu bisa dilihat
+        bersamaan.
+      </p>
+      <p class="st-note">
+        Dan satu lagi yang tak terjangkau tapi jenisnya berbeda:
+        <code>BAS NAV</code> tanpa starbase di kuadran tidak berhenti, ia
+        menghitung arah ke <code>(W1, X)</code> yang <b>tidak pernah diisi</b>
+        &mdash; dua variabel yang terakhir dipakai sebagai <b>faktor warp</b>
+        (1760) dan <b>jumlah unit phaser</b> (2600). Coba sendiri: NAV dengan
+        warp 3, lalu COM &rarr; BAS di kuadran tanpa basis.
+      </p>
+    </section>
+
+    <section class="panel st-warn">
+      <h2 class="panel__title">Benih: 3.600 yang runtuh jadi 119</h2>
+      <div class="st-code"> 810 RANDOMIZE 120*(VAL(RIGHT$(TIME$,2)) + VAL(MID$(TIME$,4,2)) )
+1250 PRINT:PRINT ' "hit any key except return when ready to accept command"
+1260 I=RND(1):IF INP(1)=13 THEN 1260</div>
+      <p class="st-note">
+        Detik dan menit <b>dijumlahkan</b>. Tiga ribu enam ratus kombinasi jam
+        runtuh jadi <b id="b-benih">—</b> jumlah berbeda, dan mengalikannya
+        dengan 120 tidak menambah apa pun &mdash; perkalian dengan tetapan
+        tidak pernah menambah entropi.
+      </p>
+      <p class="st-note">
+        Bandingkan dengan <a href="../../docs/droids.md">DROIDS</a>, yang
+        <b>menyambung</b> detik dengan menit sebagai teks sebelum
+        <code>VAL</code> dan karena itu mendapat 3.600 penuh &mdash;
+        satu-satunya di koleksi yang benar-benar melebarkan ruang benihnya.
+        Di sini operatornya <code>+</code>, bukan penyambungan, dan itulah
+        seluruh bedanya.
+      </p>
+      <p class="st-note">
+        Baris 1250&ndash;1260 seharusnya menambal itu dengan trik
+        <a href="../../docs/meteor.md">METEOR</a>: mengaduk <code>RND</code>
+        selama pemain membaca. Dua-duanya gagal. Teks
+        <i>&ldquo;hit any key&hellip;&rdquo;</i> ada di belakang tanda kutip
+        tunggal, jadi ia <b>komentar</b> dan tidak pernah tercetak; dan
+        <code>INP(1)</code> membaca <b>port I/O nomor 1</b>, bukan papan ketik
+        &mdash; port data papan ketik IBM PC ada di <code>&amp;H60</code>.
+        Gelungnya keluar seketika, dan pengaduknya berputar <b>tepat sekali</b>.
+      </p>
+      <p class="st-note">
+        Port ini memakai <code>crypto.getRandomValues</code> lalu mulberry32,
+        sesuai <a href="../../docs/_fondasi.md">fondasi &sect;2.6</a> &mdash;
+        dan menampilkan nomor benihnya, supaya sebuah galaksi bisa diulang
+        dengan sengaja. Itu kemampuan yang <b>tidak mungkin</b> dimiliki
+        versi 1981.
+      </p>
+    </section>
+
+    <p class="st-links">
+      <a href="../../docs/startrek.md">Catatan lengkap port ini</a> &middot;
+      <a href="../../../reviews/STARTREK.md">Analisis BASIC aslinya</a> &middot;
+      <a href="../../../docs/STARTREK.DOC">Manual asli 1981</a> &middot;
+      <a href="../../index.html">Semua program</a>
+    </p>
+  </aside>
+</main>
+
+<script src="../../_shared/store.js"></script>
+<script src="../../_shared/rng.js"></script>
+<script src="../../_shared/audio.js"></script>
+<script src="../../_shared/ui.js"></script>
+<script src="armada.js?v=2"></script>
+<script src="startrek.js?v=3"></script>
+</body>
+</html>
