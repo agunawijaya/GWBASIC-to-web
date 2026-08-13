@@ -1,0 +1,14 @@
+# Proyek ini ARSIP. Keutuhan bita berkas 1978-2000 adalah inti seluruh
+# klaimnya: analisis di reviews/ dan web/docs/ merujuk ke isi berkas apa
+# adanya, dan peluncur DOSBox menjalankan berkas itu sendiri.
+#
+# Git for Windows menyetel core.autocrlf=true di config SISTEM
+# (C:/Program Files/Git/etc/gitconfig), bukan global — jadi ia aktif tanpa
+# terlihat di `git config --global`. Akibatnya CRLF di run/*.BAS
+# dinormalkan jadi LF saat commit: run/21.BAS menyusut 13.811 -> 13.475
+# bita, ke-336 CRLF-nya hilang.
+#
+# Baris di bawah ini mematikan seluruh penanganan teks untuk SEMUA berkas,
+# di semua mesin, siapa pun yang clone. Berkas disimpan dan dikeluarkan apa
+# adanya, bita demi bita, di Windows maupun Linux maupun macOS.
+* -text
