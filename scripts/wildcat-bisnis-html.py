@@ -21,6 +21,9 @@ _ns = {'__file__': _T}
 exec(io.open(_T, encoding='utf-8').read().split(chr(10) + 'if __name__')[0], _ns)
 
 keHtml = _ns['keHtml']
+# Halaman ini tinggal di web/docs/ dan menaut ke tetangganya sendiri,
+# jadi tautan relatifnya TIDAK boleh diberi awalan '../'.
+_ns['AWALAN'] = ''
 kotak, belah, bagan = _ns['kotak'], _ns['belah'], _ns['bagan']
 turun, kanan, kiri, kiriAtas, kananAtas = (_ns['turun'], _ns['kanan'],
     _ns['kiri'], _ns['kiriAtas'], _ns['kananAtas'])

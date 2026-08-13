@@ -21,6 +21,9 @@ SUMBER = os.path.join(AKAR, 'KATALOG.md')
 TUJUAN = os.path.join(AKAR, 'web', 'katalog.html')
 
 
+AWALAN = '../'          # disetel ulang oleh generator yang memakainya
+
+
 def sisip(t):
     """Penanda sebaris: kode, tebal, miring, tautan."""
     t = html.escape(t)
@@ -30,10 +33,16 @@ def sisip(t):
 
     def tautan(m):
         teks, url = m.group(1), m.group(2)
-        # Halamannya tinggal di web/, jadi tautan relatif ke akar repo
-        # perlu naik satu tingkat -- kecuali yang mutlak atau jangkar.
+        # AWALAN tergantung DI MANA halaman hasilnya tinggal, bukan tetap.
+        #
+        # katalog.html tinggal di web/ dan menaut ke berkas di akar repo,
+        # jadi ia perlu naik satu tingkat. Tapi dokumen analisis bisnis
+        # tinggal di web/docs/ dan menaut ke tetangganya sendiri -- di sana
+        # '../' justru membuat tautannya rusak. Awalan '../' yang ditulis
+        # tetap sempat menghasilkan dua tautan mati; generator masing-masing
+        # sekarang menyetel AWALAN sendiri.
         if not url.startswith(('http', '#', 'mailto:', '../')):
-            url = '../' + url
+            url = AWALAN + url
         return '<a href="%s">%s</a>' % (url, teks)
 
     return re.sub(r'\[([^\]]+)\]\(([^)]+)\)', tautan, t)

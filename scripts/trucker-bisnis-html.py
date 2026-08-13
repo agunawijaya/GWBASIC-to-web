@@ -26,6 +26,9 @@ sys.path.insert(0, os.path.join(AKAR, 'scripts'))
 _ns = {'__file__': os.path.join(AKAR, 'scripts', 'katalog-html.py')}
 exec(io.open(_ns['__file__'], encoding='utf-8').read().split("if __name__")[0], _ns)
 keHtml, sisip = _ns['keHtml'], _ns['sisip']
+# Halaman ini tinggal di web/docs/ dan menaut ke tetangganya sendiri,
+# jadi tautan relatifnya TIDAK boleh diberi awalan '../'.
+_ns['AWALAN'] = ''
 
 SUMBER = os.path.join(AKAR, 'web', 'docs', 'trucker-bisnis.md')
 TUJUAN = os.path.join(AKAR, 'web', 'docs', 'trucker-bisnis.html')
