@@ -29,7 +29,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Dale Dewey, Victor NY. Memeriksa keberadaan BASICA dan kartu Color/Graphics sebelum mulai.",
   "ringkas": "Dale Dewey, Victor NY. Memeriksa keberadaan BASICA dan kartu Color/Graphics sebelum mulai.",
-  "ringkas_en": "Dale Dewey, Victor NY. Checks for BASICA and a Color/Graphics card before it will start."
+  "ringkas_en": "Dale Dewey, Victor NY. Checks for BASICA and a Color/Graphics card before it will start.",
+  "dok": "15puzzle.md"
  },
  {
   "id": "21",
@@ -46,7 +47,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Menu #1 pilihan D. Mendukung split dan double down.",
   "ringkas": "Menu #1 pilihan D. Mendukung split dan double down.",
-  "ringkas_en": "Menu #1 option D. Supports split and double down."
+  "ringkas_en": "Menu #1 option D. Supports split and double down.",
+  "dok": "blackjack.md"
  },
  {
   "id": "abm2a",
@@ -63,7 +65,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Ed Davis, versi 18 Jul 1982. Missile Command yang membela ENAM PABRIK IBM sungguhan di pantai timur AS - BTV Burlington, FSH East Fishkill, HPN White Plains, MAN Manassas, RAL Raleigh, BOC Boca Raton (tempat IBM PC dirancang) - berurutan utara ke selatan, rata 48 piksel. Satu angka WH% mengendalikan ukuran kotak bunuh SEKALIGUS nilai per kena; dan karena bidikannya bergerak per 10 piksel sementara kotak bunuh WH%=3 cuma 7x5, 53,4% posisi layar MUSTAHIL dikenai dengan hulu ledak 'EXPERT'. Handicap RS% melewati bingkai, bukan mengubah kecepatan, dan berkurang satu tiap kali menang.",
   "ringkas": "Missile Command yang membela enam pabrik IBM sungguhan. Bidikannya bergerak per 10 piksel sementara kotak bunuhnya 7x5, jadi 53% posisi layar mustahil dikenai. Pelajaran: satuan yang tidak saling cocok.",
-  "ringkas_en": "Missile Command defending six real IBM plants. The cursor moves in 10-pixel steps while the kill box is 7x5, so 53% of screen positions can never be hit. Lesson: units that do not line up."
+  "ringkas_en": "Missile Command defending six real IBM plants. The cursor moves in 10-pixel steps while the kill box is 7x5, so 53% of screen positions can never be hit. Lesson: units that do not line up.",
+  "dok": "abm2a.md"
  },
  {
   "id": "anatomy",
@@ -80,7 +83,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "BUKAN pelajaran anatomi tubuh: sembilan layar yang mencetak listing MASTER MIND, dirujuk ke halaman 11-15 sebuah manual cetak yang tidak ada dalam koleksi. Judul lama di katalog ini adalah tebakan dari nama berkas, diperbaiki sesi 14.",
   "ringkas": "BUKAN pelajaran anatomi tubuh: sembilan layar yang mencetak listing MASTER MIND, dirujuk ke halaman 11-15 sebuah manual cetak yang tidak ada dalam koleksi. Judul lama di katalog ini adalah tebakan dari nama berkas, diperbaiki sesi 14.",
-  "ringkas_en": "NOT an anatomy lesson: nine screens that print a MASTER MIND listing, cross-referenced to pages 11-15 of a printed manual missing from the collection. The old catalogue title was a guess from the filename."
+  "ringkas_en": "NOT an anatomy lesson: nine screens that print a MASTER MIND listing, cross-referenced to pages 11-15 of a printed manual missing from the collection. The old catalogue title was a guess from the filename.",
+  "dok": "anatomy.md"
  },
  {
   "id": "attack",
@@ -97,7 +101,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Bertanggal 7 Okt 1982, kode build MOD-5-5-M, sehari sesudah SERPENT — kerangka layar pembukanya sama persis. Disket utilitas IBM yang permainannya mengebom pabrik Apple. Seluruh lanskapnya SATU string 190 aksara yang digulir MID$; bomnya selalu jatuh di kolom 3 sehingga yang dibidik waktu, bukan tempat; dan skornya ditentukan dengan MEMBACA LAYAR, SCREEN(23,3). Benihnya kehilangan faktor 60 karena MID$(TIME$,3,2) mengambil titik dua.",
   "ringkas": "Penembak yang seluruh lanskapnya satu string 190 aksara digulir dengan MID$, dan skornya dihitung dengan membaca kembali layar. Pelajaran: string sebagai peta.",
-  "ringkas_en": "A shooter whose entire landscape is one 190-character string scrolled with MID$, and whose score is counted by reading the screen back. Lesson: a string as a map."
+  "ringkas_en": "A shooter whose entire landscape is one 190-character string scrolled with MID$, and whose score is counted by reading the screen back. Lesson: a string as a map.",
+  "dok": "attack.md"
  },
  {
   "id": "backgam",
@@ -114,7 +119,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Backgammon dua pemain lengkap dengan penghitungan pip.",
   "ringkas": "Backgammon dua pemain lengkap dengan penghitungan pip.",
-  "ringkas_en": "Full two-player backgammon, pip counting included."
+  "ringkas_en": "Full two-player backgammon, pip counting included.",
+  "dok": "backgam.md"
  },
  {
   "id": "batship",
@@ -131,7 +137,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "G.S. Alberts, IBM Vermont, revisi terakhir 27 Jul 1982. Kapal induknya berbentuk salib tujuh petak, dan papannya tidak pernah menandai kena — yang melaporkan hanya kartu skor, itu pun tanpa alamat.",
   "ringkas": "G.S. Alberts, IBM Vermont, revisi terakhir 27 Jul 1982. Kapal induknya berbentuk salib tujuh petak, dan papannya tidak pernah menandai kena — yang melaporkan hanya kartu skor, itu pun tanpa alamat.",
-  "ringkas_en": "G.S. Alberts, IBM Vermont, last revised 27 Jul 1982. The carrier is a seven-square cross, and the board never marks a hit - only the scorecard reports, and even that without coordinates."
+  "ringkas_en": "G.S. Alberts, IBM Vermont, last revised 27 Jul 1982. The carrier is a seven-square cross, and the board never marks a hit - only the scorecard reports, and even that without coordinates.",
+  "dok": "batship.md"
  },
  {
   "id": "bio",
@@ -148,7 +155,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Grafik biorhythm tiga siklus, digambar dengan bedah string di layar teks 72 kolom. Dua cacat yang saling menutupi: YEAR=YEAR+1900 (baris 470) mengunci jangkauan di 1900-1999, dan itu justru menyembunyikan salah urutan kali/bagi di rumus Julian Day (baris 530) yang baru merusak mulai 1 Maret 2034.",
   "ringkas": "Grafik biorhythm tiga siklus, digambar dengan bedah string di layar teks. Pelajaran: dua cacat yang saling menutupi - jangkauan tahun yang terkunci di 1900-an menyembunyikan rumus Julian Day yang keliru.",
-  "ringkas_en": "Three-cycle biorhythm charts drawn by string surgery on a text screen. Lesson: two defects that hide each other - a year range locked to the 1900s conceals a wrong Julian Day formula."
+  "ringkas_en": "Three-cycle biorhythm charts drawn by string surgery on a text screen. Lesson: two defects that hide each other - a year range locked to the 1900s conceals a wrong Julian Day formula.",
+  "dok": "bio.md"
  },
  {
   "id": "bj",
@@ -165,7 +173,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Nilai kartu dihitung aritmatika dari satu indeks dek, bukan disimpan per kartu.",
   "ringkas": "Nilai kartu dihitung aritmatika dari satu indeks dek, bukan disimpan per kartu.",
-  "ringkas_en": "Card values computed arithmetically from a single deck index instead of stored per card."
+  "ringkas_en": "Card values computed arithmetically from a single deck index instead of stored per card.",
+  "dok": "blackjack.md"
  },
  {
   "id": "black",
@@ -182,7 +191,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Program paling rajin dikomentari di koleksi ini; tiap subrutin punya blok header.",
   "ringkas": "Program paling rajin dikomentari di koleksi ini; tiap subrutin punya blok header.",
-  "ringkas_en": "The most thoroughly commented program in the collection; every subroutine has a header block."
+  "ringkas_en": "The most thoroughly commented program in the collection; every subroutine has a header block.",
+  "dok": "blackjack.md"
  },
  {
   "id": "blackjck",
@@ -199,7 +209,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Ditulis 3 Jan 1978 oleh Jessen untuk CCII; diadaptasi ke PC oleh Patrick Leabo, Tucson.",
   "ringkas": "Ditulis 3 Jan 1978 oleh Jessen untuk CCII; diadaptasi ke PC oleh Patrick Leabo, Tucson.",
-  "ringkas_en": "Written 3 Jan 1978 by Jessen for CCII; adapted to the PC by Patrick Leabo, Tucson."
+  "ringkas_en": "Written 3 Jan 1978 by Jessen for CCII; adapted to the PC by Patrick Leabo, Tucson.",
+  "dok": "blackjack.md"
  },
  {
   "id": "boggy",
@@ -216,7 +227,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Menu #1 pilihan T. Menyeberangi rawa tanpa tenggelam.",
   "ringkas": "Menu #1 pilihan T. Menyeberangi rawa tanpa tenggelam.",
-  "ringkas_en": "Menu #1 option T. Cross the marsh without sinking."
+  "ringkas_en": "Menu #1 option T. Cross the marsh without sinking.",
+  "dok": "boggy.md"
  },
  {
   "id": "bowling",
@@ -233,7 +245,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "1-4 pemain, kesulitan 0-60. Skor sepuluh frame penuh termasuk strike dan spare.",
   "ringkas": "1-4 pemain, kesulitan 0-60. Skor sepuluh frame penuh termasuk strike dan spare.",
-  "ringkas_en": "1-4 players, difficulty 0-60. Scores all ten frames including strikes and spares."
+  "ringkas_en": "1-4 players, difficulty 0-60. Scores all ten frames including strikes and spares.",
+  "dok": "bowling.md"
  },
  {
   "id": "breakout",
@@ -250,7 +263,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "K.R. Sloan Jr., 1 Jan 1982. Di layarnya sendiri ia menyebut diri SPINOUT, dan itu tepat: bolanya punya spin yang membelokkan lintasannya tiap langkah lewat matriks rotasi sudut kecil - yang determinannya 1+t^2, jadi bolanya ikut makin cepat. Satu angka kemampuan 1-10 mengendalikan enam hal, termasuk peluang bata yang sudah pecah DIPASANG KEMBALI (SKILL/2). Syarat menang 6800 adalah persis jumlah seluruh bata.",
   "ringkas": "Breakout dengan bola ber-spin: lintasannya dibelokkan matriks rotasi yang determinannya lebih dari satu, jadi bolanya ikut makin cepat. Pelajaran: satu angka kesulitan yang mengendalikan enam hal sekaligus.",
-  "ringkas_en": "Breakout with a spinning ball: its path is bent each step by a rotation matrix whose determinant exceeds one, so the ball keeps speeding up. Lesson: one difficulty number driving six things at once."
+  "ringkas_en": "Breakout with a spinning ball: its path is bent each step by a rotation matrix whose determinant exceeds one, so the ball keeps speeding up. Lesson: one difficulty number driving six things at once.",
+  "dok": "breakout.md"
  },
  {
   "id": "busone",
@@ -267,7 +281,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Tutorial akuntansi 12 langkah, 41 layar, dijalankan dari sepuluh berkas BUSONE..BUSTEN yang saling memanggil lewat RUN. Alasannya bisa dihitung: 50.111 bita teks program tidak muat di PC 64 KB bersama penafsir BASIC-nya. RUN membuang semua variabel, jadi tiap berkas menggambar ulang bingkainya dan mengetik ulang angka ABC Hardware. Enam baris - semuanya soal membaca tombol - adalah SELURUH kode yang dipakai bersama.",
   "ringkas": "Tutorial akuntansi 12 langkah yang terpaksa dipecah jadi sepuluh berkas saling-RUN, karena 50 KB teks program tidak muat di PC 64 KB. Pelajaran: kendala memori yang membentuk arsitektur.",
-  "ringkas_en": "A 12-step accounting tutorial forced into ten files that RUN each other, because 50 KB of program text would not fit in a 64 KB PC. Lesson: a memory limit shaping an architecture."
+  "ringkas_en": "A 12-step accounting tutorial forced into ten files that RUN each other, because 50 KB of program text would not fit in a 64 KB PC. Lesson: a memory limit shaping an architecture.",
+  "dok": "busone.md"
  },
  {
   "id": "bustwo",
@@ -419,7 +434,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "BUKAN program buku cek: 65 baris peluncur yang menyambung ke info.sys (baris 720) - dan berkas itu tidak ada dalam koleksi. Yang tersisa dua layar syarat disket dan satu tanya-jawab kesiapan. Memakai ERROR 200 buatan sendiri untuk bertanya disket mana yang masuk.",
   "ringkas": "Bukan program buku cek melainkan 65 baris peluncur yang menyambung ke berkas yang hilang dari koleksi. Pelajaran: memakai ERROR buatan sendiri untuk menanyakan disket mana yang masuk.",
-  "ringkas_en": "Not a chequebook program but 65 lines of launcher chaining to a file missing from the collection. Lesson: using a home-made ERROR to ask which diskette is in the drive."
+  "ringkas_en": "Not a chequebook program but 65 lines of launcher chaining to a file missing from the collection. Lesson: using a home-made ERROR to ask which diskette is in the drive.",
+  "dok": "check.md"
  },
  {
   "id": "craps",
@@ -436,7 +452,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Menu #1 pilihan L. Taruhan pass / don't-pass.",
   "ringkas": "Menu #1 pilihan L. Taruhan pass / don't-pass.",
-  "ringkas_en": "Menu #1 option L. Pass / don't-pass betting."
+  "ringkas_en": "Menu #1 option L. Pass / don't-pass betting.",
+  "dok": "craps.md"
  },
  {
   "id": "crazy8",
@@ -453,7 +470,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Les Davids. Rutin kocok, bagi, dan urutkan kartu dipisah rapi.",
   "ringkas": "Les Davids. Rutin kocok, bagi, dan urutkan kartu dipisah rapi.",
-  "ringkas_en": "Les Davids. Shuffle, deal, and sort routines kept cleanly apart."
+  "ringkas_en": "Les Davids. Shuffle, deal, and sort routines kept cleanly apart.",
+  "dok": "crazy8.md"
  },
  {
   "id": "curve",
@@ -470,7 +488,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Phil Feldman & Tom Rugg. Ditulis untuk 'any BASIC, any CRT' - nol panggilan khas PC.",
   "ringkas": "Phil Feldman & Tom Rugg. Ditulis untuk 'any BASIC, any CRT' - nol panggilan khas PC.",
-  "ringkas_en": "Phil Feldman & Tom Rugg. Written for 'any BASIC, any CRT' - zero PC-specific calls."
+  "ringkas_en": "Phil Feldman & Tom Rugg. Written for 'any BASIC, any CRT' - zero PC-specific calls.",
+  "dok": "curve.md"
  },
  {
   "id": "dominoes",
@@ -487,7 +506,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Menu #1 pilihan H. Tiga ukuran papan.",
   "ringkas": "Menu #1 pilihan H. Tiga ukuran papan.",
-  "ringkas_en": "Menu #1 option H. Three board sizes."
+  "ringkas_en": "Menu #1 option H. Three board sizes.",
+  "dok": "dominoes.md"
  },
  {
   "id": "draw",
@@ -504,7 +524,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Friendlyware, 30 Agu 1982 11:00. Bukan permainan: penyunting gambar karakter CP437, kanvas 80x19. DATA 2310 dan 2320 masing-masing 25 kode, dan kode ke-n di kedua baris SELALU sepasang - A memberi sudut kiri-atas ganda, a memberi sudut kiri-bawah; I mendatar, i tegak; L blok penuh, l blok setengah. Jadi papan ketiknya bukan 50 benda melainkan 25 tombol dengan dua sisi, dan Shift memilih pelengkapnya - tidak ada satu baris pun yang menjelaskan itu. Sebuah .pic adalah salinan MENTAH memori layar: offset 480 = 80x3x2 (tiga baris menu yang dilewati), panjang 3040 = 80x19x2, dan warnanya ikut tersimpan gratis karena layar teks PC menyimpan karakter dan atribut berdampingan. Baris 310 mendeteksi kartu grafis sendiri lewat PEEK(&H410). Dan DRAW.EXE - 200 bita kode mesin dengan DUA titik masuk - HILANG dari koleksi; perilakunya (simpan-layar / pulihkan-layar) dibaca dari tempat ia dipanggil lalu dibangun ulang, dan itu satu-satunya bagian port ini yang tidak diturunkan dari kode yang ada.",
   "ringkas": "Penyunting gambar karakter CP437 di kanvas 80x19. Papan ketiknya bukan 50 benda melainkan 25 tombol bersisi dua, dan tak satu baris pun menjelaskannya. Pelajaran: berkas gambarnya salinan mentah memori layar.",
-  "ringkas_en": "A CP437 character-graphics editor on an 80x19 canvas. The keyboard is not 50 shapes but 25 two-sided keys, and not one line of the program says so. Lesson: its picture file is a raw copy of screen memory."
+  "ringkas_en": "A CP437 character-graphics editor on an 80x19 canvas. The keyboard is not 50 shapes but 25 two-sided keys, and not one line of the program says so. Lesson: its picture file is a raw copy of screen memory.",
+  "dok": "draw.md"
  },
  {
   "id": "dream",
@@ -521,7 +542,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Satu lagu yang seluruhnya ditulis sebagai string makro PLAY.",
   "ringkas": "Satu lagu yang seluruhnya ditulis sebagai string makro PLAY.",
-  "ringkas_en": "One tune written entirely as a PLAY macro string."
+  "ringkas_en": "One tune written entirely as a PLAY macro string.",
+  "dok": "dream.md"
  },
  {
   "id": "droids",
@@ -538,7 +560,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "IPCO disk 2043-A, koreksi John Beck (Melbourne PC-Group). Contoh paling murni sekaligus paling harfiah dari layar-sebagai-struktur-data: TIDAK ADA larik papan sama sekali - DIM hanya menyebut PL$(4) dan CH(4) - dan permainan membaca kembali buffer video dengan SCREEN(y,x) untuk tahu di mana bijihnya. Sel yang dimakan ditulisi CHR$(0), bukan spasi, sehingga baris 2229 harus memeriksa 0 DAN 32. Papannya 15x10=150 sel tapi keempat droid mendarat di atas bijih dan mengosongkannya tanpa menambah angka, jadi maksimum yang bisa dikumpulkan 146. Berhentinya bukan saat bijih habis melainkan saat tak ada droid yang bersebelahan dengan bijih: disimulasikan 200 papan, SEMUANYA berhenti dengan rata-rata 44,5 bijih masih tergeletak. Dan baris 1890 menyambung detik dengan menit sebagai teks sebelum VAL - 3.600 benih, satu-satunya di koleksi ini yang benar-benar melebarkan ruang benihnya, di berkas yang paling pendek.",
   "ringkas": "Mengumpulkan bijih di papan 15x10 yang TIDAK punya larik papan sama sekali - keadaannya dibaca ulang dari buffer video dengan SCREEN(). Pelajaran: layar sebagai struktur data, beserta akibatnya.",
-  "ringkas_en": "Collect ore on a 15x10 board that has NO board array at all - the state is read back out of the video buffer with SCREEN(). Lesson: the screen as a data structure, and what that costs."
+  "ringkas_en": "Collect ore on a 15x10 board that has NO board array at all - the state is read back out of the video buffer with SCREEN(). Lesson: the screen as a data structure, and what that costs.",
+  "dok": "droids.md"
  },
  {
   "id": "eliza",
@@ -555,7 +578,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Hak cipta 1981 Steve Grumette. Seluruh basis aturannya dibaca dari STRINGS.FIL, dan pasangan ini satu-satunya di koleksi yang PEMBANGKIT dan HASILNYA sama-sama selamat - WRTSTR.BAS disimulasikan ulang dan cocok BITA DEMI BITA dengan berkas yang ada (1.275 bita, termasuk penanda Ctrl-Z). Temuan utamanya: ada DUA penjaga untuk satu masalah tabrakan kaidah sulih ('I'->'YOU' dan 'YOU'->'I' saling meniadakan), dan bedanya bukan gaya melainkan UMUR. Tanda '*' dari DATA WRTSTR dibersihkan di baris 470-480, SEBELUM penyapuan kata kunci; CHR$(0) yang disuntikkan baris 180 bertahan sampai saat mencetak (4600-4605). Karena itu NUL bukan sekadar penjaga melainkan SATU BIT INFORMASI TAMBAHAN yang ikut dicocokkan: K$(43)=' YO<NUL>U ' hanya cocok dengan YOU yang lahir dari 'I' yang Anda ketik, K$(36)=' I ' hanya dengan I yang lahir dari 'YOU', dan K$(21)/K$(22) adalah kata ' ARE ' yang SAMA PERSIS di layar tapi dikirim ke dua penangan berbeda. Kata kuncinya bukan kata, melainkan siapa yang mengatakannya - diverifikasi dengan melepas tiap penjaga dan mengukur akibatnya. Baris 570 menjalankan DUA aturan prioritas dalam satu gelung FOR: kata kunci 1-20 menang menurut URUTAN DAFTAR, 21-44 menurut POSISI TERKECIL di kalimat, dan angka pembatas 21 hanya ada di kode - STRINGS.FIL tidak menyimpannya. Sembilan dari 46 keluarga jawaban menyisakan SATU SLOT KOSONG yang pemanggilnya pakai untuk melempar giliran itu ke penjawab pertanyaan (1100), jadi pencacah putarannya sekaligus mesin keadaan yang mengganti topik dengan sengaja; dua slot lain (2050, 2120) menyetel A=0 sehingga kata kuncinya MENYERAHKAN gilirannya dan penyapuan diteruskan. Ingatan M$ adalah ANTREAN (baris 4460 mengambil M$(1)), bukan tumpukan seperti Eliza aslinya Weizenbaum - yang dipanggil kembali keluhan PERTAMA, bukan terakhir. Baris 900 menambah S tanpa memeriksa DIM M$(20): jebol di 'MY' ke-21 berturut-turut, ke-26 kalau diselingi giliran kosong. Dua kata umpatan disimpan sebagai kode aksara di DATA 1510 sehingga LIST tidak pernah memperlihatkannya. Baris 830 tak terjangkau, T di 140/380 saklar mati, 4650-4680 salinan kata demi kata dari 4610-4640. Review lamanya punya DUA kekeliruan yang sesebab, keduanya 'menghitung tanpa melihat': ia mencantumkan WHILE/WEND padahal ELIZA punya NOL (satu-satunya 'WHILE' ada di dalam KALIMAT INGGRIS di baris 2020; sembilan program lain memang memakainya), dan ia menyebut 121 GOTO-nya 'tertinggi di koleksi' padahal TEMPLE 255 dan WIZARD 224. Yang benar-benar tertinggi adalah 47 tabel ON... - lebih dari dua kali lipat program mana pun - dan itu membalik kesimpulannya: percabangannya TERSTRUKTUR, bukan kusut. Kebalikan persis dari ANATOMY, tempat kode terbaca sebagai data. misc/ELIZA.SRC 24.320 bita = 190x128 persis, Ctrl-Z di bita 24.255, dan 64 bita sesudahnya adalah ekor SIMPANAN SEBELUMNYA dari posisi tepat 128 bita lebih awal. Mesinnya ditulis dua kali dari listing yang sama (Python sebagai acuan, JS untuk halaman) lalu diadu pada 10.000 giliran acak: sidik jari identik, 802.065 aksara.",
   "ringkas": "Psikoterapis tiruan yang seluruh basis aturannya dibaca dari berkas data, bukan ditulis di kode. Kata kuncinya bukan kata melainkan siapa yang mengucapkannya. Pelajaran: memisahkan aturan dari program.",
-  "ringkas_en": "A mock psychotherapist whose entire rule base is read from a data file rather than written in code. Its keywords are not words but who said them. Lesson: separating rules from program."
+  "ringkas_en": "A mock psychotherapist whose entire rule base is read from a data file rather than written in code. Its keywords are not words but who said them. Lesson: separating rules from program.",
+  "dok": "eliza.md"
  },
  {
   "id": "flys",
@@ -572,7 +596,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Bukan memukul lalat melainkan MENGINGAT letaknya: lalatnya dihapus sebelum pemukulnya turun. Sprite dibangun dengan bahasa makro DRAW lalu di-GET; dari tiga larik, FLY0 ternyata persegi KOSONG — penghapus, bukan fase kepakan. Ukuran DIM 21 dan 714 keduanya minimum yang muat. Kurva kesulitannya rata di lalat ke-12 padahal menang butuh 31.",
   "ringkas": "Bukan memukul lalat melainkan mengingat letaknya: lalatnya dihapus sebelum pemukulnya turun. Pelajaran: sprite dibangun dengan makro DRAW lalu di-GET, dan salah satu larik ternyata penghapus, bukan gambar.",
-  "ringkas_en": "Not swatting flies but remembering where they were: the fly is erased before the swatter comes down. Lesson: sprites built with DRAW macros then GET, and one array turns out to be an eraser, not a picture."
+  "ringkas_en": "Not swatting flies but remembering where they were: the fly is erased before the swatter comes down. Lesson: sprites built with DRAW macros then GET, and one array turns out to be an eraser, not a picture.",
+  "dok": "flys.md"
  },
  {
   "id": "football",
@@ -589,7 +614,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Friendlyware, 29 Jul 1982 21:00. Satu larik 10x5 dipakai DUA ARAH: nomor formasi bertahan yang Anda tekan adalah kolom yang sama yang dibaca waktu Anda menyerang, jadi pertahanan Anda ikut memilih hasil serangan komputer - dan kode 98/99 bertukar arti menurut siapa yang pegang bola. Indeksnya meleset di kedua ujung: RW=FIX(RND*10) memberi 0..9 sementara baris 590 mengisi 1..10, jadi baris 0 selalu nol (10% permainan gagal total apa pun pilihannya) dan baris 10 tak pernah dipakai. Kode 100 diperiksa dua kali padahal tidak ada di DATA. Seluruh baris DATA 3030 - yang bedanya cuma satu angka dari 3020 - tidak pernah dibaca. Dua bug tanda di field goal (2540, 2710) adalah akibat langsung dari blok yang disalin tanpa parameter. Dan RANDOMIZE dari detik jam dijalankan sebelum SETIAP permainan, jadi dua permainan di detik yang sama memberi hasil identik.",
   "ringkas": "Simulasi pelatih football. Satu larik 10x5 dipakai dua arah, jadi pertahanan yang Anda pilih ikut menentukan hasil serangan lawan. Pelajaran: indeks acak yang meleset satu membuat 10% permainan gagal total.",
-  "ringkas_en": "A football coaching sim. One 10x5 array is read both ways, so the defence you pick also decides the outcome of the opponent's play. Lesson: a random index off by one makes 10% of games unwinnable."
+  "ringkas_en": "A football coaching sim. One 10x5 array is read both ways, so the defence you pick also decides the outcome of the opponent's play. Lesson: a random index off by one makes 10% of games unwinnable.",
+  "dok": "football.md"
  },
  {
   "id": "germfolk",
@@ -606,7 +632,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Disebut di README.CAR sebagai demonstrasi perintah PLAY/SOUND.",
   "ringkas": "Disebut di README.CAR sebagai demonstrasi perintah PLAY/SOUND.",
-  "ringkas_en": "Cited in README.CAR as a demonstration of the PLAY/SOUND commands."
+  "ringkas_en": "Cited in README.CAR as a demonstration of the PLAY/SOUND commands.",
+  "dok": "germfolk.md"
  },
  {
   "id": "golf",
@@ -623,7 +650,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "A. Vanchura, 17 Jul 1982 - penulis dan tanggal yang sama dengan WILDCAT. Tiga lapangan yang sebenarnya SATU daftar 54 lubang dipotong tiga (baris 1290 melewati (C-1)*126 angka); ketiganya par 72 dengan susunan par identik, yang berbeda hanya panjangnya: 6.347 / 7.470 / 8.173 yard. Rumus jarak baris 530 memberi batas keras 311 yard bagi pemain terbaik - dan lapangan 3 punya par 3 sepanjang 312 yard, satu yard di luar jangkauan siapa pun. Bola masuk air dikenai TIGA pukulan (1390 dan 1420 saling memanggil) tapi diumumkan sebagai satu. Baris 1170 menyemai ulang RND selagi menunggu tombol, jadi benihnya dipilih oleh detik saat pemain menekan - obat yang bekerja, tidak seperti RANDOMIZE ganda di WILDCAT.",
   "ringkas": "Tiga lapangan golf yang sebenarnya satu daftar 54 lubang dipotong tiga. Salah satunya par 3 sepanjang 312 yard - satu yard di luar jangkauan pemain terbaik. Pelajaran: memeriksa batas rumus terhadap datanya.",
-  "ringkas_en": "Three golf courses that are really one 54-hole list cut in three. One is a par 3 of 312 yards - one yard beyond the best possible drive. Lesson: check a formula's limits against its data."
+  "ringkas_en": "Three golf courses that are really one 54-hole list cut in three. One is a par 3 of 312 yards - one yard beyond the best possible drive. Lesson: check a formula's limits against its data.",
+  "dok": "golf.md"
  },
  {
   "id": "hangman",
@@ -640,7 +668,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Menu #1 pilihan G. Diperbarui 1 Feb 1983.",
   "ringkas": "Menu #1 pilihan G. Diperbarui 1 Feb 1983.",
-  "ringkas_en": "Menu #1 option G. Updated 1 Feb 1983."
+  "ringkas_en": "Menu #1 option G. Updated 1 Feb 1983.",
+  "dok": "hangman.md"
  },
  {
   "id": "heareye",
@@ -657,7 +686,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Kartu Snellen dari aksara blok CGA (7 baris, 20/50 sampai 20/5) plus sapuan nada 100-30.000 Hz yang 92% waktunya dihabiskan di atas 14 kHz. Sembilan ON KEY dengan penangan kosong: itu cara mematikan makro tombol fungsi GW-BASIC, bukan tombol yang tidak jadi dibuat.",
   "ringkas": "Tes mata dan pendengaran: kartu Snellen dari aksara blok CGA plus sapuan nada 100-30.000 Hz. Pelajaran: sembilan ON KEY berpenangan kosong ternyata cara mematikan makro tombol fungsi.",
-  "ringkas_en": "An eye and hearing test: a Snellen chart in CGA block characters plus a 100-30,000 Hz tone sweep. Lesson: nine ON KEY handlers that do nothing are how you disable GW-BASIC's function-key macros."
+  "ringkas_en": "An eye and hearing test: a Snellen chart in CGA block characters plus a 100-30,000 Hz tone sweep. Lesson: nine ON KEY handlers that do nothing are how you disable GW-BASIC's function-key macros.",
+  "dok": "heareye.md"
  },
  {
   "id": "hints",
@@ -689,7 +719,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Wes Meier, CompuServe 70215,1017. Mendukung input light pen.",
   "ringkas": "Wes Meier, CompuServe 70215,1017. Mendukung input light pen.",
-  "ringkas_en": "Wes Meier, CompuServe 70215,1017. Supports light-pen input."
+  "ringkas_en": "Wes Meier, CompuServe 70215,1017. Supports light-pen input.",
+  "dok": "hique2.md"
  },
  {
   "id": "history",
@@ -706,7 +737,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Isi menu '1 Information' dari INTRO.BAS: 16 layar pelajaran komputer. Sejarah hanya 3 halaman pertama; sisanya CPU, ALU, bus I/O, memori, DOS, bahasa, perawatan disket. Judul lama di katalog ini adalah tebakan dari nama berkas, diperbaiki sesi 15. Tiga halaman menimpa halaman sebelumnya tanpa CLS.",
   "ringkas": "Enam belas layar pelajaran komputer 1982: CPU, ALU, bus I/O, memori, DOS, sampai perawatan disket. Pelajaran: mesin halaman sederhana - dan tiga halaman yang lupa CLS sehingga saling menimpa.",
-  "ringkas_en": "Sixteen screens of 1982 computer lessons: CPU, ALU, I/O bus, memory, DOS, diskette care. Lesson: a simple pager - and three pages that forget CLS and overwrite each other."
+  "ringkas_en": "Sixteen screens of 1982 computer lessons: CPU, ALU, I/O bus, memory, DOS, diskette care. Lesson: a simple pager - and three pages that forget CLS and overwrite each other.",
+  "dok": "history.md"
  },
  {
   "id": "integrat",
@@ -723,7 +755,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Phil Feldman & Tom Rugg. Fungsinya Anda tulis sendiri di baris 2000-2999.",
   "ringkas": "Phil Feldman & Tom Rugg. Fungsinya Anda tulis sendiri di baris 2000-2999.",
-  "ringkas_en": "Phil Feldman & Tom Rugg. You write the function yourself in lines 2000-2999."
+  "ringkas_en": "Phil Feldman & Tom Rugg. You write the function yourself in lines 2000-2999.",
+  "dok": "integrat.md"
  },
  {
   "id": "intro",
@@ -740,7 +773,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "23 baris, SATU layar, nol halaman: menu tiga pilihan yang mengganti dirinya sendiri lewat RUN ke HISTORY, ANATOMY, dan HINTS. Bukan bahan ajar - ia perute. Membantah premis reader.js yang menganggap semua program edukasi berhalaman.",
   "ringkas": "23 baris, SATU layar, nol halaman: menu tiga pilihan yang mengganti dirinya sendiri lewat RUN ke HISTORY, ANATOMY, dan HINTS. Bukan bahan ajar - ia perute. Membantah premis reader.js yang menganggap semua program edukasi berhalaman.",
-  "ringkas_en": "23 lines, ONE screen, zero pages: a three-choice menu that replaces itself by RUNning HISTORY, ANATOMY, or HINTS. Not teaching material - a router. It disproves the assumption that every education program is paged."
+  "ringkas_en": "23 lines, ONE screen, zero pages: a three-choice menu that replaces itself by RUNning HISTORY, ANATOMY, or HINTS. Not teaching material - a router. It disproves the assumption that every education program is paged.",
+  "dok": "intro.md"
  },
  {
   "id": "keno",
@@ -757,7 +791,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Steve Schlich, Sep 1984. Papan digambar dengan karakter kotak CP437.",
   "ringkas": "Steve Schlich, Sep 1984. Papan digambar dengan karakter kotak CP437.",
-  "ringkas_en": "Steve Schlich, Sep 1984. The board is drawn with CP437 box characters."
+  "ringkas_en": "Steve Schlich, Sep 1984. The board is drawn with CP437 box characters.",
+  "dok": "keno.md"
  },
  {
   "id": "lander",
@@ -774,7 +809,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Satu BLOAD mengisi 40 array sekaligus: LANDER.BIN adalah potret mentah tabel variabel BASIC, berisi 39 sprite pada 13 sudut yang tidak rata. Musik waltz-nya diam-diam menjadi jam permainannya.",
   "ringkas": "Satu BLOAD mengisi 40 array sekaligus: LANDER.BIN adalah potret mentah tabel variabel BASIC, berisi 39 sprite pada 13 sudut yang tidak rata. Musik waltz-nya diam-diam menjadi jam permainannya.",
-  "ringkas_en": "One BLOAD fills 40 arrays at once: LANDER.BIN is a raw snapshot of the BASIC variable table, holding 39 sprites at 13 unevenly spaced angles. Its waltz quietly doubles as the game clock."
+  "ringkas_en": "One BLOAD fills 40 arrays at once: LANDER.BIN is a raw snapshot of the BASIC variable table, holding 39 sprites at 13 unevenly spaced angles. Its waltz quietly doubles as the game clock.",
+  "dok": "lander.md"
  },
  {
   "id": "life2",
@@ -791,7 +827,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Versi ini oleh John Sigle, 21 Feb 1983. Bersekat rapi dengan spanduk komentar.",
   "ringkas": "Versi ini oleh John Sigle, 21 Feb 1983. Bersekat rapi dengan spanduk komentar.",
-  "ringkas_en": "This version by John Sigle, 21 Feb 1983. Neatly partitioned with comment banners."
+  "ringkas_en": "This version by John Sigle, 21 Feb 1983. Neatly partitioned with comment banners.",
+  "dok": "life2.md"
  },
  {
   "id": "master",
@@ -808,7 +845,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Menu #1 pilihan E. Tebak deret 3 sampai 6 angka.",
   "ringkas": "Menu #1 pilihan E. Tebak deret 3 sampai 6 angka.",
-  "ringkas_en": "Menu #1 option E. Guess a sequence of 3 to 6 digits."
+  "ringkas_en": "Menu #1 option E. Guess a sequence of 3 to 6 digits.",
+  "dok": "master.md"
  },
  {
   "id": "match",
@@ -825,7 +863,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Menu #1 pilihan K.",
   "ringkas": "Menu #1 pilihan K.",
-  "ringkas_en": "Menu #1 option K."
+  "ringkas_en": "Menu #1 option K.",
+  "dok": "match.md"
  },
  {
   "id": "maxit1",
@@ -842,7 +881,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Diport dari Commodore PET ke IBM PC oleh Patrick Leabo, Tucson, 20 Mar 1982.",
   "ringkas": "Diport dari Commodore PET ke IBM PC oleh Patrick Leabo, Tucson, 20 Mar 1982.",
-  "ringkas_en": "Ported from the Commodore PET to the IBM PC by Patrick Leabo, Tucson, 20 Mar 1982."
+  "ringkas_en": "Ported from the Commodore PET to the IBM PC by Patrick Leabo, Tucson, 20 Mar 1982.",
+  "dok": "maxit1.md"
  },
  {
   "id": "maze",
@@ -859,7 +899,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Menu #1 pilihan S. Labirin sudut-pandang-pertama, dikendalikan tombol panah.",
   "ringkas": "Menu #1 pilihan S. Labirin sudut-pandang-pertama, dikendalikan tombol panah.",
-  "ringkas_en": "Menu #1 option S. First-person maze, arrow-key controlled."
+  "ringkas_en": "Menu #1 option S. First-person maze, arrow-key controlled.",
+  "dok": "maze.md"
  },
  {
   "id": "menu",
@@ -906,7 +947,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Edward T. Ordman, Nov 1981; terbit di Creative Computing Vol. 8 No. 8, hlm. 178-185. Seluruh dunianya disimpan di layar teks 80x25 — nol larik sasaran — dan benih acaknya diaduk selama pemain berpikir: 32.003 nilai lawan 60 milik pola RIGHT$(TIME$,2) yang dipakai 27 program lain.",
   "ringkas": "Penembak meteor 80 baris dari Creative Computing 1981. Seluruh dunianya disimpan di layar teks, nol larik sasaran. Pelajaran: benihnya diaduk selama pemain berpikir - 32.003 kemungkinan, bukan 60.",
-  "ringkas_en": "An 80-line meteor shooter from Creative Computing 1981. Its whole world lives in the text screen, with zero target arrays. Lesson: the seed is stirred while the player thinks - 32,003 possibilities, not 60."
+  "ringkas_en": "An 80-line meteor shooter from Creative Computing 1981. Its whole world lives in the text screen, with zero target arrays. Lesson: the seed is stirred while the player thinks - 32,003 possibilities, not 60.",
+  "dok": "meteor.md"
  },
  {
   "id": "mortgage",
@@ -923,7 +965,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "(C) IBM 1981, 1982. Penulis Glenn Stuart Dardick; dimodifikasi Sep 1986 oleh Ayodele Isaac Anise.",
   "ringkas": "(C) IBM 1981, 1982. Penulis Glenn Stuart Dardick; dimodifikasi Sep 1986 oleh Ayodele Isaac Anise.",
-  "ringkas_en": "(C) IBM 1981, 1982. Written by Glenn Stuart Dardick; modified Sep 1986 by Ayodele Isaac Anise."
+  "ringkas_en": "(C) IBM 1981, 1982. Written by Glenn Stuart Dardick; modified Sep 1986 by Ayodele Isaac Anise.",
+  "dok": "mortgage.md"
  },
  {
   "id": "music",
@@ -940,7 +983,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "(C) IBM 1981, 1982. Memainkan dan menyunting lagu dengan perintah PLAY.",
   "ringkas": "(C) IBM 1981, 1982. Memainkan dan menyunting lagu dengan perintah PLAY.",
-  "ringkas_en": "(C) IBM 1981, 1982. Plays and edits tunes with the PLAY command."
+  "ringkas_en": "(C) IBM 1981, 1982. Plays and edits tunes with the PLAY command.",
+  "dok": "music.md"
  },
  {
   "id": "music1",
@@ -972,7 +1016,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Mencetak seluruh nada dan frekuensinya untuk dipakai dengan SOUND. Berbasis LPRINT.",
   "ringkas": "Mencetak seluruh nada dan frekuensinya untuk dipakai dengan SOUND. Berbasis LPRINT.",
-  "ringkas_en": "Prints every note and its frequency for use with SOUND. Built on LPRINT."
+  "ringkas_en": "Prints every note and its frequency for use with SOUND. Built on LPRINT.",
+  "dok": "notetabl.md"
  },
  {
   "id": "octave",
@@ -989,7 +1034,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Enam baris: memainkan satu oktaf memakai SOUND dan rumus frekuensi standar.",
   "ringkas": "Enam baris: memainkan satu oktaf memakai SOUND dan rumus frekuensi standar.",
-  "ringkas_en": "Six lines: plays one octave using SOUND and the standard frequency formula."
+  "ringkas_en": "Six lines: plays one octave using SOUND and the standard frequency formula.",
+  "dok": "octave.md"
  },
  {
   "id": "othello",
@@ -1006,7 +1052,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Versi PET yang dimodifikasi Patrick Leabo, Tucson, Mar 1982. Penulisnya mengaku AI-nya belum selesai.",
   "ringkas": "Versi PET yang dimodifikasi Patrick Leabo, Tucson, Mar 1982. Penulisnya mengaku AI-nya belum selesai.",
-  "ringkas_en": "A PET version modified by Patrick Leabo, Tucson, Mar 1982. The author admits the AI is unfinished."
+  "ringkas_en": "A PET version modified by Patrick Leabo, Tucson, Mar 1982. The author admits the AI is unfinished.",
+  "dok": "othello.md"
  },
  {
   "id": "pegleap",
@@ -1023,7 +1070,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Menu #1 pilihan C. Papan digambar dengan karakter garis CP437.",
   "ringkas": "Menu #1 pilihan C. Papan digambar dengan karakter garis CP437.",
-  "ringkas_en": "Menu #1 option C. The board is drawn with CP437 line characters."
+  "ringkas_en": "Menu #1 option C. The board is drawn with CP437 line characters.",
+  "dok": "pegleap.md"
  },
  {
   "id": "piechart",
@@ -1040,7 +1088,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "(C) IBM 1981, 1982.",
   "ringkas": "(C) IBM 1981, 1982.",
-  "ringkas_en": "(C) IBM 1981, 1982."
+  "ringkas_en": "(C) IBM 1981, 1982.",
+  "dok": "piechart.md"
  },
  {
   "id": "reading",
@@ -1057,7 +1106,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Tachistoscope: mengilatkan satu kata lalu meminta Anda mengetiknya. Datanya disisipkan lewat CHAIN MERGE - satu-satunya di koleksi ini - dan jumlah butirnya dihitung dengan sengaja menabrak galat Out of DATA. Satu dari enam pujiannya kosong: C(1..5) diisi, tapi RND(6)*6+1 bisa menghasilkan 6.",
   "ringkas": "Tachistoscope: mengilatkan satu kata lalu meminta Anda mengetiknya. Pelajaran: datanya disisipkan lewat CHAIN MERGE, dan jumlah butirnya dihitung dengan sengaja menabrak galat Out of DATA.",
-  "ringkas_en": "A tachistoscope: it flashes one word and asks you to type it. Lesson: the data is spliced in with CHAIN MERGE, and the item count is found by deliberately crashing into an Out of DATA error."
+  "ringkas_en": "A tachistoscope: it flashes one word and asks you to type it. Lesson: the data is spliced in with CHAIN MERGE, and the item count is found by deliberately crashing into an Out of DATA error.",
+  "dok": "reading.md"
  },
  {
   "id": "serpent",
@@ -1074,7 +1124,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Bertanggal 6 Okt 1982, kode build USR-5-5-K. Tubuh ularnya TIDAK disimpan di larik mana pun: glif gambar-garis di layar itulah senarai berantainya, dan penghapus ekor membaca glif sudut untuk tahu ke mana ular dulu berbelok. Satu-satunya larik di 64 barisnya berisi posisi dua musuh. Program ini juga menyalakan NumLock pemakainya lewat POKE 1047,32 supaya tuts angka 4/6/2/8 berfungsi sebagai arah.",
   "ringkas": "Ular sepanjang 64 baris yang tubuhnya TIDAK disimpan di larik mana pun - glif gambar-garis di layar itulah senarai berantainya. Pelajaran: penghapus ekor membaca glif sudut untuk tahu ke mana ular dulu berbelok.",
-  "ringkas_en": "A 64-line snake whose body is stored in NO array at all - the line-drawing glyphs on screen are its linked list. Lesson: the tail eraser reads corner glyphs to learn where the snake once turned."
+  "ringkas_en": "A 64-line snake whose body is stored in NO array at all - the line-drawing glyphs on screen are its linked list. Lesson: the tail eraser reads corner glyphs to learn where the snake once turned.",
+  "dok": "serpent.md"
  },
  {
   "id": "simeqn",
@@ -1091,7 +1142,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Phil Feldman & Tom Rugg. Eliminasi Gauss pada matriks augmented N x N+1.",
   "ringkas": "Phil Feldman & Tom Rugg. Eliminasi Gauss pada matriks augmented N x N+1.",
-  "ringkas_en": "Phil Feldman & Tom Rugg. Gaussian elimination on an N x N+1 augmented matrix."
+  "ringkas_en": "Phil Feldman & Tom Rugg. Gaussian elimination on an N x N+1 augmented matrix.",
+  "dok": "simeqn.md"
  },
  {
   "id": "solitair",
@@ -1108,7 +1160,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Jeff Littlefield; simbol suit ditambah Ken Handzik 27 Nov 1983; direvisi 2 Feb 1984. 'For public use, may not be sold.'",
   "ringkas": "Jeff Littlefield; simbol suit ditambah Ken Handzik 27 Nov 1983; direvisi 2 Feb 1984. 'For public use, may not be sold.'",
-  "ringkas_en": "Jeff Littlefield; suit symbols added by Ken Handzik 27 Nov 1983; revised 2 Feb 1984. 'For public use, may not be sold.'"
+  "ringkas_en": "Jeff Littlefield; suit symbols added by Ken Handzik 27 Nov 1983; revised 2 Feb 1984. 'For public use, may not be sold.'",
+  "dok": "solitair.md"
  },
  {
   "id": "space",
@@ -1125,7 +1178,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "(C) IBM 1981, 1982. Penulis R. Heiney & M. Hallerman.",
   "ringkas": "(C) IBM 1981, 1982. Penulis R. Heiney & M. Hallerman.",
-  "ringkas_en": "(C) IBM 1981, 1982. Written by R. Heiney & M. Hallerman."
+  "ringkas_en": "(C) IBM 1981, 1982. Written by R. Heiney & M. Hallerman.",
+  "dok": "space.md"
  },
  {
   "id": "startrek",
@@ -1142,7 +1196,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Dari 'BASIC Computer Games' karya Dave Ahl; diport ke IBM PC oleh Bob & Sharon Fritz, Okt-Nov 1981, lengkap dengan alamat dan nomor telepon San Diego di baris 610-620. Yang istimewa bukan kodenya melainkan MANUALNYA: docs/STARTREK.DOC ditutup 'This program is distributed AS IS. It certainly needs work, but at least we're started off' dan menyebut TIGA keraguan penulisnya sendiri. Dua yang mereka ragukan ternyata benar, dan yang keliru justru yang tidak mereka sebut. Keraguan '9 supposed to be synonymous with 1' - bekerja, dan IF C1=9 THEN C1=1 bukan kenyamanan melainkan PENJAGA, karena rumus 2080 membaca C(C1+1) dan untuk C1=9 itu C(10), satu di luar DIM C(9,2); penjaganya persis selebar yang dibutuhkan. Keraguan 'TOR DATA reliable only if direction is a whole number' - justru TEPAT SEMPURNA: disapu seluruh 4.032 pasangan posisi di kuadran 8x8, arah dari 4590-4730 diumpankan ke penggerak torpedo 2840 mengenai 4.032 dari 4.032, bahkan setelah dibulatkan ke TIGA angka berarti. Sebabnya 'arah' di sini bukan sudut melainkan parameter pemetaan linear sepotong-sepotong yang sama, dan C1+|A|/|X| adalah FUNGSI KEBALIKAN interpolasi di 2080 - diperiksa lewat perkalian silang, 4.032 sejajar sempurna. Yang justru keliru dan tidak mereka ragukan: JARAKNYA Euclid (SQR(X^2+A^2)) sementara geraknya Chebyshev, jadi memakai angka Distance apa adanya melewati sasaran pada 31,8% pasangan; diagonal murni tercetak 41% terlalu jauh. Temuan terbesar: baris 1930 memanggil GOSUB 4810, dan baris 4810 isinya HANYA RETURN - pintu keluar gelung 4800. Yang seharusnya dipanggil 3350 'klingons shooting', yang di seluruh program dipanggil dari empat tempat dan KEEMPATNYA sesudah PEMAIN menembak. Jadi KLINGON TIDAK PERNAH MENEMBAK LEBIH DULU: diuji 40 perintah NAV di kuadran berisi dua Klingon bertenaga penuh, perisai 500 tetap 500, nol ENTERPRISE HIT. Permainan bertahan-hidup jadi permainan pilihan karena satu nomor baris meleset. DUA string tak ditutup: 2580 mencetak ekornya sendiri ';  :;' tiap kali menembak, dan 3140 MENELAN SEBUAH PERINTAH - ':goto 1990' ada di dalam teks, jadi alurnya jatuh ke 3150 yang MENERAPKAN perubahan yang baru saja ditolak. Tapi itu jebakan, bukan celah: E jadi negatif dan tiap gerakan ditolak 1820, jadi kebal sekaligus terpaku. Baris 4400 kehilangan satu TITIK DUA sehingga X$='' jadi PERBANDINGAN yang ikut tercetak dan X$ tak pernah dikosongkan; karena 1750 menyetel X$='8' untuk batas warp, laporan status bisa berbunyi 'Klingon8 left: 1' - diverifikasi. Peta nama galaksi bocor di dua tempat: 5040 menguji Z5<+4 (tambah uner, kekeliruan ketik sejenis WHILE+ di BOWLING) alih-alih Z5<5 sehingga kolom 4 memakai keluarga nama kedua, dan 5140 menyebut 5180 DUA KALI dan 5190 nol kali sehingga 'Aldebaran' tak pernah muncul sementara Betelgeuse menutupi 10 kuadran. Pemetaan yang seharusnya satu-satu (8x4x2=64) cuma menghasilkan 52 nama untuk 64 kuadran, 22 kuadran berbagi nama, 12 salah nama. EMPAT hal yang programnya bisa katakan dan tak pernah bisa: Aldebaran (5190), pesan Spock soal tak ada starbase (4770-4780, dilompati GOTO tanpa syarat di 4760), hukuman CYGNUS 12 (3000-3020, syarat 2990 tak pernah salah karena 2180 menjamin T<=T0+T9 - tandanya terbalik), dan kata 'docked' (CC$ di 3770 muncul TEPAT SEKALI di seluruh program dan tak pernah dibaca, sementara 3900 mencetak C$ yang di jalur berlabuh tak pernah diperbarui). BAS NAV tanpa starbase tidak berhenti melainkan menghitung arah ke (W1,X) yang tak pernah diisi - keduanya variabel yang dipakai ulang sebagai FAKTOR WARP dan JUMLAH UNIT PHASER; diuji: warp 3 dan 250 unit memberi Direction 8.995918, Distance 245.002. PLAY 'mb' di baris 510 membuat SOUND mengantre, tapi antreannya 32 nada sementara keempat rutin bunyi mengantre 80-216, jadi RUTIN BUNYI ITULAH satu-satunya pengatur tempo: siaga 2,04 dtk, torpedo 1,42, phaser 0,72, alarm 2,16 - temuan yang sama dengan LANDER. Benihnya RANDOMIZE 120*(detik+menit): 3.600 kombinasi runtuh jadi 119 karena DIJUMLAHKAN, bukan disambung seperti DROIDS; dan penambalnya gagal dua kali - teks 'hit any key' ada di belakang tanda kutip tunggal jadi ia komentar, dan INP(1) membaca port I/O nomor 1 bukan papan ketik (&H60), jadi pengaduk entropinya berputar tepat sekali. Putaran perbaikan atas tinjauan user: versi pertama menggambar kuadrannya dengan glif CP437 asli, dan itu KESETIAAN YANG KELIRU - _fondasi.md 2.3 sudah menyatakan karakter kotak CGA adalah kompromi, bukan pilihan estetis, jadi menyalin glifnya berarti menyalin kendalanya bukan maksudnya. Sekarang ada armada.js: Enterprise kelas Constitution dari atas, Klingon D7 yang haluannya sengaja berlawanan arah supaya kawan dan lawan bisa dibedakan tanpa mengandalkan warna, starbase bertiang dok dengan panel surya, dan bintang tiga warna berkorona - semuanya <symbol> 100x100 yang dipakai lewat <use>, plus sinar phaser, jejak torpedo yang menelusuri persis sel-sel 'Torpedo track:', dan ledakan. Glif aslinya tetap ada di balik saklar.",
   "ringkas": "Star Trek dengan silsilah terpanjang di koleksi: Mayfield 1971 lewat Dave Ahl sampai port IBM PC 1981. Manualnya menyebut tiga keraguan penulisnya sendiri. Pelajaran: satu nomor baris yang meleset membuat Klingon tidak pernah menembak lebih dulu.",
-  "ringkas_en": "Star Trek with the longest lineage here: Mayfield 1971 through Dave Ahl to the 1981 IBM PC port. Its manual lists three of the authors' own doubts. Lesson: one mistyped line number means the Klingons never shoot first."
+  "ringkas_en": "Star Trek with the longest lineage here: Mayfield 1971 through Dave Ahl to the 1981 IBM PC port. Its manual lists three of the authors' own doubts. Lesson: one mistyped line number means the Klingons never shoot first.",
+  "dok": "startrek.md"
  },
  {
   "id": "stats",
@@ -1159,7 +1214,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Friendlyware 1982. Bukan permainan: penilai regu football berbasis biorhythm (daur 23/28/33). Baris 2830 memberi regu 0 tambahan 10 tanpa syarat dan tanpa keterangan - tepat 45,45 angka pada evaluasi yang ditampilkan, dan dari 300 benih, bonus itu SENDIRI yang menentukan pemenang pada 57 di antaranya (19%). Baris 2870-2910 membaca DUA lapis tabel kurva, 84 angka masing-masing, tapi 1630/1650/1670 menulis D(k,W,0) secara harfiah - lapis kedua mati, pengulangan persis DATA 3030 di FOOTBALL.BAS. Dan 2720-2740 mengurangi PEMBAGI tiap kali sebuah daur bernilai nol, jadi hari kritis - hari paling berbahaya menurut gagasan biorhythm - tidak menurunkan nilai sama sekali. Sebaliknya baris 1710-1770 adalah algoritma Julian Fliegel-Van Flandern yang sungguhan, ditulis tangan dan benar.",
   "ringkas": "Penilai regu football berbasis biorhythm. Sebuah bonus 10 angka tanpa syarat dan tanpa keterangan menentukan pemenangnya pada 19% percobaan. Pelajaran: angka ajaib yang tidak dijelaskan.",
-  "ringkas_en": "A biorhythm-based football team rater. An unconditional, unexplained 10-point bonus decides the winner in 19% of trials. Lesson: the magic number nobody documented."
+  "ringkas_en": "A biorhythm-based football team rater. An unconditional, unexplained 10-point bonus decides the winner in 19% of trials. Lesson: the magic number nobody documented.",
+  "dok": "stats.md"
  },
  {
   "id": "sub",
@@ -1176,7 +1232,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Perburuan kapal selam yang seluruh gambarnya ditulis LANGSUNG ke memori video: 374 pernyataan POKE dalam 317 baris, lebih banyak POKE daripada baris. Ia memilih segmen videonya DENGAN BENAR (PEEK(1040) AND 48 -> 0xB000 monokrom / 0xB800 CGA) sementara WHATMONF.BAS di disket yang sama memetakannya terbalik. SCREEN() dipakai sebagai penyangga SIMPAN-PULIHKAN supaya bom yang melintas tidak merusak peta - kemunculan keenam 'layar sebagai struktur data', dan keperluan yang baru lagi. Tabel balistik 24 entri di DATA, satu per kuadran. Kepala kapal selam hanya boleh di 8 dari 24 kuadran (H-K, N-Q) supaya ekornya tidak keluar kisi.",
   "ringkas": "Perburuan kapal selam dengan 374 POKE dalam 317 baris: seluruh gambarnya ditulis langsung ke memori video. Pelajaran: mendeteksi kartu grafis, dan memakai layar sebagai penyangga simpan-pulihkan.",
-  "ringkas_en": "A submarine hunt with 374 POKEs in 317 lines: every graphic is written straight into video memory. Lesson: detecting the graphics card, and using the screen as a save-restore buffer."
+  "ringkas_en": "A submarine hunt with 374 POKEs in 317 lines: every graphic is written straight into video memory. Lesson: detecting the graphics card, and using the screen as a save-restore buffer.",
+  "dok": "sub.md"
  },
  {
   "id": "temins",
@@ -1208,7 +1265,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "The Temple of Loth v4.2, John Belew ('Nurruc the Chaotic') of the Apple Eliminators. Layar judul bertanggal 25 Juli 1984, komentar kodenya 29 Juni 1984 - dan katalog lama menulis 1995, keliru. Terpanjang di koleksi, dan hampir dua pertiganya bukan tulisan Belew: program ini MENGAKU di baris 750, 'THANKS TO RECREATIONAL COMPUTING FOR THE ORIGINAL PROGRAM' - yaitu WIZARD.BAS karya Joseph R. Power, Jul/Agu 1980 - dan di 740, 'THANKS TO TSR FOR THE MONSTERS'. Diukur dengan menormalkan kedua listing: 706 pernyataan IDENTIK KATA DEMI KATA, 61,0% dari TEMPLE dan 77,2% dari WIZARD; kedua DIM dan kelima DEF FN sama AKSARA DEMI AKSARA; kedua blok DATA sama bentuknya persis (12 blok, 88 item). Karena itu port-nya juga satu mesin bersama (_shared/zot.js) dengan dua objek aturan, pola yang sama dengan _shared/blackjack.js. TEMUAN UTAMA: sebuah KOMENTAR yang berubah jadi KODE. WIZARD 4150 berbunyi 'IF Q > 99 THEN Q=Q-100 (kutip) LET Q=34 TO HIDE ROOMS'; TEMPLE 4570 berbunyi 'IF Q > 99 THEN Q=Q-100:LET Q=34:REM TO HIDE ROOMS'. Empat tahun kemudian Belew MEMBACA catatan Power dan melakukannya - instruksinya pindah dari balik tanda kutip ke dalam alur program - dan Q=Q-100 yang dibiarkan di depannya jadi fosil dari perbaikannya sendiri, karena penetapan kedua menimpa yang pertama. Satu pernyataan mengembalikan EMPAT mekanik yang mati di WIZARD: suar, lampu, kutukan Forgetting, dan Green Gem. TIGA CACAT, TIGA NASIB: peta (diperbaiki - terlihat saat bermain DAN dicatat penulis lama), tidak ada RANDOMIZE (diperbaiki - Belew menambahkan 15 N=VAL(MID$(TIME$,7,2)):20 RANDOMIZE N, jadi ruang benih naik dari 1 ke 60), dan OT=OT+4*(RC=1) yang menghukum Hobbit (DIWARISI UTUH, dan bernomor baris SAMA PERSIS 2150 di kedua program) - karena cacat yang hidup di dalam TANDA sebuah idiom tidak punya gejala. DUA RUMUS SKOR di satu program: 6450 menghitung skor penuh DI DALAM rutin papan status (jadi sudah terlihat tiap giliran) sementara perintah '#' di 11050 memakai rumus yang sama sekali berbeda; diukur pada tokoh yang sama, 3.210 lawan 45. Peubah skornya bernama JOHN! - nama depan penulisnya. Tangga peringkat 10020-10027 punya DUA kekeliruan: rentang 20.000-35.000 tidak disentuh satu pun IF, jadi RANK$ menyimpan peringkat permainan SEBELUMNYA (atau string kosong pada permainan pertama), dan seluruh tangganya bergeser satu anak terhadap manualnya. PAPAN SKORNYA adalah sebuah PRINT di kode sumber berkas lain: TEM-INS 2810 memuat 'Lord Nur(cc): 142,498' dan TEMPLE 12100 memuat angka yang sama, jadi mengalahkannya menuntut menyunting DUA berkas yang harus sinkron - dan permainannya sendiri yang memintanya. Baris 700 adalah titik masuk publik dengan DUA kunci: TEM-INS 3010 CHAIN 'Temple',700 dan kata sandi tak terdokumentasi ANS$='ARIOCH' di baris 55, dinamai pangeran iblis Michael Moorcock. Delapan dari dua belas monster diganti jadi monster TSR (Mind Flayer, Drow, Drider, Balor Demon) - termasuk Balrog jadi Balor, mengikuti penggantian TSR sendiri sesudah masalah hak cipta 1977 - tapi kedelapan HARTA dibiarkan Tolkien apa adanya: Palantir dan Silmaril tetap. Orb of Zot jadi Amulet of Chaos yang juga menyembuhkan kebutaan, melepas buku yang melekat, dan menaikkan DX ke 18.",
   "ringkas": "Program terpanjang di koleksi, 1.187 baris - dan dua pertiganya WIZARD yang disalin, yang diakuinya sendiri di baris 750. Pelajaran: membaca catatan penulis sebelumnya menghidupkan empat mekanik yang mati.",
-  "ringkas_en": "The longest program here at 1,187 lines - and two thirds of it is copied WIZARD, which it admits itself on line 750. Lesson: reading the previous author's notes revived four dead mechanics."
+  "ringkas_en": "The longest program here at 1,187 lines - and two thirds of it is copied WIZARD, which it admits itself on line 750. Lesson: reading the previous author's notes revived four dead mechanics.",
+  "dok": "temple.md"
  },
  {
   "id": "tictac",
@@ -1225,7 +1283,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Menu #1 pilihan N.",
   "ringkas": "Menu #1 pilihan N.",
-  "ringkas_en": "Menu #1 option N."
+  "ringkas_en": "Menu #1 option N.",
+  "dok": "tictac.md"
  },
  {
   "id": "towers",
@@ -1242,7 +1301,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Menu #1 pilihan P. Update terakhir 1 Sep 1982.",
   "ringkas": "Menu #1 pilihan P. Update terakhir 1 Sep 1982.",
-  "ringkas_en": "Menu #1 option P. Last updated 1 Sep 1982."
+  "ringkas_en": "Menu #1 option P. Last updated 1 Sep 1982.",
+  "dok": "towers.md"
  },
  {
   "id": "trucker",
@@ -1259,7 +1319,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Hughes Glantzberg, Carrollton TX. Los Angeles-New York lewat tiga rute Interstate sungguhan, 64 titik jalan. Tiap titik disimpan sebagai SATU bilangan pecahan yang memuat jenis kejadian di bagian bulatnya dan peluang kejadian itu tidak jadi di bagian pecahannya - kecuali jenis 2, di mana pecahannya besar tol dalam dolar. 55 MPH adalah puncak kurva irit, persis batas kecepatan nasional AS 1974. Pengukur bahan bakarnya sengaja berbohong: yang dicetak INT(WF-4+RND*10).",
   "ringkas": "Angkutan truk Los Angeles-New York lewat rute Interstate sungguhan, 64 titik jalan. Tiap titik satu bilangan pecahan: jenis kejadian di bagian bulat, peluangnya di bagian pecahan. Pelajaran: mengemas dua nilai dalam satu angka.",
-  "ringkas_en": "Trucking from Los Angeles to New York along real Interstate routes, 64 waypoints. Each waypoint is one fractional number: event type in the integer part, its probability in the fraction. Lesson: packing two values into one number."
+  "ringkas_en": "Trucking from Los Angeles to New York along real Interstate routes, 64 waypoints. Each waypoint is one fractional number: event type in the integer part, its probability in the fraction. Lesson: packing two values into one number.",
+  "dok": "trucker.md"
  },
  {
   "id": "whatmonf",
@@ -1274,7 +1335,10 @@ window.RETRO.CATALOG = [
   "phase": null,
   "merged": "dokumen saja, tanpa aplikasi",
   "ready": false,
-  "note": "Empat baris: mem-PEEK byte BIOS video di memori bawah untuk membedakan warna vs Hercules."
+  "note": "Empat baris: mem-PEEK byte BIOS video di memori bawah untuk membedakan warna vs Hercules.",
+  "dok": "whatmonf.md",
+  "ringkas": "Empat baris, 117 bita — program terpendek di koleksi, dan tidak mencetak apa pun. Pelajaran: terjemahannya dari mode video BIOS ke alamat layar TERTUKAR, jadi ia salah di kedua jenis mesin sekaligus — tanpa galat, cuma layar yang diam.",
+  "ringkas_en": "Four lines, 117 bytes — the shortest program here, and it prints nothing at all. Lesson: its mapping from BIOS video mode to screen address is SWAPPED, so it is wrong on both kinds of machine at once — no error, just a silent screen."
  },
  {
   "id": "wildcat",
@@ -1291,7 +1355,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Menu #1 pilihan A, A. Vanchura, 17 Jul 1982. Simulasi pengeboran yang PETUNJUKNYA MENGARAHKAN KE PILIHAN TERBURUK: zona dangkal berhasil 75% tapi laba harapannya $96 ribu, zona dalam kering 75% tapi laba harapannya $499 ribu, dan zona sedang lebih buruk daripada dangkal di kedua sisi. Peluangnya tidak pernah membaca kedalaman yang diketik pemain, jadi mengetik kedalaman yang SAMA memberi undian gratis (baris 850 memakai >=). Sepertiga tabel PAY tidak mungkin terbaca, dan keseratus nilainya nol. Dua kali RANDOMIZE tetap menghasilkan 60 permainan.",
   "ringkas": "Simulasi pengeboran minyak yang petunjuk di layarnya mengarahkan ke pilihan terburuk. Pelajaran: menghitung laba harapan sendiri, dan kenapa memanggil RANDOMIZE dua kali tetap sia-sia.",
-  "ringkas_en": "An oil-drilling sim whose on-screen advice points at the worst option. Lesson: working out expected value yourself, and why calling RANDOMIZE twice is still useless."
+  "ringkas_en": "An oil-drilling sim whose on-screen advice points at the worst option. Lesson: working out expected value yourself, and why calling RANDOMIZE twice is still useless.",
+  "dok": "wildcat.md"
  },
  {
   "id": "wizard",
@@ -1308,7 +1373,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Disk IPCO 2039-A. Joseph R. Power untuk Exidy Sorcerer, Recreational Computing Jul/Agu 1980; diport ke Heath Microsoft BASIC oleh J.F. Stetson. Roguelike lengkap sebelum kata itu ada: 8 lantai x 8 x 8 = 512 kamar, 12 jenis monster, 8 harta, pedagang, kutukan, kolam ajaib. SATU GAGASAN MENJALANKAN SELURUH PROGRAM: di BASIC sebuah perbandingan BUKAN benar/salah melainkan ANGKA (-1 atau 0), dan Power memakainya di mana-mana sehingga 944 baris ini hampir tidak pernah bercabang. Empat dari lima DEF FN-nya adalah gagasan itu dipadatkan: FNB(Q)=Q+8*((Q=9)-(Q=0)) adalah aritmetika TORUS dalam sebelas aksara (petak 8x8-nya melingkar), FNC(Q)=-Q*(Q<19)-18*(Q>18) adalah min(Q,18) tanpa IF, FND memetakan (lantai,baris,kolom) ke 1..512 tepat mengisi DIM L(512), FNE membuang penanda 'belum terlihat'. Dan 3900 X=X+(O$='N')-(O$='S') menggerakkan pemain tanpa satu pun IF; 3040 memakai PERKALIAN sebagai DAN tiga arah; 4860 ON (1-(ST<1)) GOTO menulis if/else sebagai tabel lompat. TEMUAN TERBESAR: baris 4150 'IF Q > 99 THEN Q=Q-100' MEMBUKA seluruh lantai di peta alih-alih menyembunyikannya, dan komentar di baris yang sama menyebutkan perbaikannya - LET Q=34 - sementara DATA 9550 sudah menyediakan entri ke-34 (X/?) khusus untuk itu. Kabutnya dipelihara dengan benar oleh enam baris lain dan tidak pernah dibaca. Yang ikut mati: suar, lampu, kutukan Forgetting, dan Green Gem penangkalnya - empat mekanik, satu barang berbayar, satu kutukan, satu harta, semuanya dinetralkan oleh satu baris yang tidak berbunyi. Port ini MENYALAKAN kabutnya sebagai bawaan - satu-satunya penyimpangan aturan main di sini, dinyatakan alih-alih disamarkan, karena dengan kabut mati keempat mekanik itu tidak berguna sama sekali dan yang tersisa bukan permainan yang lebih mudah melainkan permainan yang BERBEDA. Saklar LET Q=34 mengembalikan perilaku 1981 persis. KEDUA: ST+DX SELALU 16 untuk keempat ras (2+2Q dan 14-2Q saling meniadakan), jadi satu-satunya pembeda adalah jumlah titik bebas - dan baris 2150 OT=OT+4*(RC=1) memberi HOBBIT EMPAT TITIK LEBIH SEDIKIT, bukan lebih banyak, karena (RC=1) bernilai -1. Hobbit jadi didominasi ketat, dan idiom yang membuat program ini elegan adalah juga yang menyembunyikan cacatnya: sebuah tanda minus yang hilang tidak menghasilkan galat, cuma ketidakadilan yang diam. KETIGA: seluruh syarat kemenangan ada di SATU BARIS. Orb of Zot disimpan sebagai kamar warp biasa (kode 109, sama dengan 24 warp jebakan, dan layar bantuan menulisnya apa adanya: 'W = WARP/ORB'), dan 6090 ON (1-(O$='T')) GOTO 3900,9370 mengambil cabang kedua HANYA kalau perintah terakhir teleport - yang butuh Runestaff. Bola kristalnya berbohong 62,5% waktu: 5590 membuat tiga koordinat acak lebih dulu, lalu 3 dari 8 kemungkinan menimpanya dengan letak yang benar; disimulasikan 200.000 kali, benar 37,63%. W$ memuat DUA tabel dalam satu larik (empat senjata lalu empat baju zirah, jahitannya +5 di baris 5960) sementara E$ - daftar lelucon makanan - ikut terbaca di gelung READ yang sama, jadi satu DATA memuat tiga hal tak berhubungan. Monster tak punya tabel sama sekali: 7390 Q1=1+INT(A/2), Q2=A+2 menurunkan serangan dan darah dari URUTAN di DATA, dan akibatnya lawan terkuat di permainan ini adalah TOKO (pedagang slot 13, darah 15, lebih tinggi daripada naga). Tidak ada satu pun RANDOMIZE di 944 baris: kastel pertama tiap kali program dijalankan IDENTIK - ruang benih 1, lawan 60 di kebanyakan program, 119 di STARTREK, 3.600 di DROIDS, 32.003 di METEOR. Baris 1580 menulis tangga naik ke lantai atas TANPA memeriksa kamar itu kosong, aman hanya karena lantainya belum diisi - dan akibat sampingannya jadi aturan: tangga naik selalu tepat di atas tangga turun. Lubang memakai FNB sehingga jatuh di lantai 8 membawa ke lantai 1: kastelnya melingkar tegak juga, tapi hanya lewat lubang. Disimulasikan: 351 kamar terisi dari 512. Sisa listing: 4240-4250 tak terjangkau, 9960-9980 subrutin yang tak pernah dipanggil, dan 1010 titik masuk kedua untuk CHAIN 'SAMPLES',1000 - berkas yang TIDAK ADA di koleksi, separuh program yang hilang sesudah CHECK dan DRAW.EXE.",
   "ringkas": "Petualangan ruang bawah tanah 8x8x8 dari Recreational Computing 1980. Empat mekaniknya mati karena satu perintah tertinggal di balik tanda kutip. Pelajaran: batas antara komentar dan kode cuma satu karakter.",
-  "ringkas_en": "An 8x8x8 dungeon crawl from Recreational Computing 1980. Four of its mechanics are dead because one command was left behind a quotation mark. Lesson: the border between comment and code is a single character."
+  "ringkas_en": "An 8x8x8 dungeon crawl from Recreational Computing 1980. Four of its mechanics are dead because one command was left behind a quotation mark. Lesson: the border between comment and code is a single character.",
+  "dok": "wizard.md"
  },
  {
   "id": "words",
@@ -1355,7 +1421,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Disk IPCO 2060-A. George Blank, Leechburg PA, v4.0 25 Sep 1978; port IBM PC oleh Ernest Smith & Raymond Rogers, Houston, Des 1982 - jadi PROGRAM TERTUA di koleksi, dan 'v4.0' berarti ada tiga versi lagi sebelumnya. Baris 1020 adalah kalimat paling jujur di seluruh 83 program: 'REM * FOR PUBLIC DOMAIN UNLESS MOVIEMAKERS OBJECT *' - bukan lisensi, bukan sangkalan hukum, melainkan syarat yang penulisnya tulis sendiri di dalam kodenya. TEMUAN UTAMA: GAMBAR YANG DISIMPAN SEBAGAI BAHASA. Sprite yang benar-benar dilawan saat terbang tidak disimpan sebagai angka sama sekali - baris 1330/1530/1760/1770 melukis ketiga ukuran tiap musuh BERDAMPINGAN di layar judul dengan makro DRAW (gambar kecil di sebelah tulisan 'IMPERIAL FIGHTER:'), lalu baris 1340/1540/1780 memotongnya dengan GET (145,59)-(145,59), GET (155,58)-(157,60), GET (167,57)-(173,61). Layar judulnya sekaligus lembar sprite. Idiomnya sendiri layak dicatat: DRAW tidak punya perintah 'nyalakan satu titik', jadi Blank memakai 'M+0,0' - garis sepanjang nol. Menjalankan ulang keempat makro itu memulihkan kesepuluh gambarnya utuh; kesepuluhnya dipajang sebagai barang bukti. Sebesar-besarnya musuh cuma 7x5 piksel, dan DV3 BUKAN salinan IM3 - keempat sudutnya dipangkas, jadi pesawat Vader digambar berbeda di dalam kanvas tujuh kali lima. LARIK IM4-IM8 ternyata BUKAN sprite terbang melainkan animasi lintas lima bingkai (3320-3470), dan tiga dari lima tidak bisa dipercaya: IM4/IM5 terbaca sebagai TIE fighter tegak yang cocok dengan IM3, tapi IM7 keluar sebagai TRANSPOSE-nya (bilah mendatar), IM6 cuma terisi 22 dari 45 elemen, dan untuk IM8 ketiga angkanya tidak konsisten satu sama lain - kepala 50 bit x 29 baris menuntut 207 bita sementara DIM IM8(102) menyediakan 206, kurang satu. Karena itu ketiganya TIDAK DIPAKAI; IM7 dipajang sebagai barang bukti dan bingkai terdekat digambar tangan, disebut sebagai penyimpangan. TEMUAN KEDUA: TABRAKAN DIUJI DENGAN MEMBACA WARNA LAYAR. Baris 5840 'IF POINT(38,21)<>3 THEN 5880' tidak membandingkan koordinat apa pun - ia membaca warna piksel di titik bidik dan menganggap kena kalau warnanya 3. Gambarnya ADALAH keadaannya. Di dekatnya dua hal lain: 5820 mengurangi Z sebelum 5830 memeriksa jangkauan (menembak dari luar jangkauan tetap menghabiskan torpedo), dan 5850 memotong sebelum lemparan dadu sehingga di SKILL 0 torpedo yang tepat MENANG 100% - manualnya menulis 'best chance' dan tidak menyebut itu. ATURANNYA BUKAN 'hancurkan tiga sasaran' melainkan PERLOMBAAN: hanya torpedo ke Bintang Kematian yang menang, dan kedua pesawat tidak bisa dihabisi - ditembak pun jaraknya cuma ditambah 25.000 lalu diacak ulang (3550, 4730). G mulai di 25.000 TEPAT, bukan acak. SKILL 0-3 mengubah empat hal sekaligus: batas waktu 5:00/3:00/2:45/2:30, seberapa sering musuh mengelak (BYPASS), peluang selamat saat dilewati, dan peluang torpedo kena - dan BYPASS untuk SKILL 3 TIDAK PERNAH DITETAPKAN sehingga ia tetap 0, artinya tingkat tersulit didapat dengan TIDAK menulis sesuatu. FLAG2 dipakai dua kali dalam satu putaran, sekali untuk pesawat Imperial (2880) dan sekali untuk Vader (3950), jadi gerak mengelak keduanya saling mengunci; hanya Bintang Kematian punya pencacah sendiri. Batas waktunya JAM DINDING sungguhan (TIME$ di 2290/5200), satu-satunya di koleksi - sementara jaraknya tetap per putaran (S=S+Q*100 di 5170), dan yang menyambungkan keduanya cuma 'SOUND 37*Q,1' di 2440: deru mesin sepanjang satu centang yang nadanya kecepatan Anda sendiri. Kotak bidik MEMBESAR sendiri (1x1, 2x2, lalu 4x3) dan yang terakhir lebih lebar daripada tinggi - asimetri yang searah dengan batas kemudi -3..3 tegak lawan -5..5 mendatar; keduanya digambar di port ini alih-alih ditulis sebagai angka. Diperiksa: 18 uji aturan pasti, 1.800 percobaan peluang (10,0% / 41,0% / 20,5% / 51,5% terhadap harapan 10/40/20/50), jejak ambang tahap per putaran, kelima akhir permainan, pemeriksa id ganda sebelum halaman dibuka, dan luber mendatar di sepuluh lebar 1400-320 px. PENYIMPANGAN TERBESAR, diminta langsung dan dijelaskan di docs/xwing.md 13.1: ketiga musuh DIGAMBAR SEBAGAI SVG, bukan sebagai piksel yang dipulihkan - satu piksel bukan pesawat, ia titik. Yang tidak berubah: letak, ketiga tahap, dan uji kena, semuanya tetap dihitung pada petak BASIC yang sama; dan bentuknya tetap terikat temuan - TIE Imperial mengikuti IM3, TIE Advanced mengikuti DV3 yang keempat sudutnya dipangkas sehingga sayapnya menyempit ke arah lambung, yang justru bentuk TIE Advanced sebenarnya. Lebar gambarnya diambil dari KOTAK BIDIK (2*IMR1 petak, kotak yang diuji baris 5420) alih-alih dari lebar sprite, jadi lebar kapal di layar sama persis dengan daerah yang bisa dikenai meriam - tidak ada pemain yang menembak benda yang tampak di dalam kurung lalu diberitahu meleset. Cawan superlaser Bintang Kematian sengaja tidak di tengah, karena bola yang simetris sempurna terbaca sebagai lingkaran (pelajaran starbase sesi 28). PUTARAN PERBAIKAN KEDUA, juga atas permintaan langsung: pelurunya DIGAMBAR. Aslinya tidak ada peluru sama sekali - yang menandai tembakan cuma sapuan bunyi 5380-5400 ditambah PUT (2,2),LASAR, sebuah larik 382 bilangan yang dipasang di 5370 lalu DILEPAS LAGI di 5410 (PUT bawaannya XOR), yaitu satu kilatan di pojok kiri-atas layar. Seluruh umpan baliknya sebuah kilatan di sudut dan sebuah suara, dan itu tidak cukup untuk dipahami sekarang: tanpa peluru yang terbang, 'kena' dan 'meleset' cuma dua baris teks yang berbeda. Sekarang meriam menembakkan empat larik merah dari ujung sayap dan torpedo satu butir jingga dari bawah kanopi, dan keduanya digambar JUJUR - pelurunya menuju benda yang memang akan meledak kalau kena, dan lewat menembus titik bidik kalau tidak. Satu akibat sampingannya justru LEBIH SETIA daripada versi sebelumnya: dunianya BERHENTI selama peluru terbang, karena 5350 dan 5750 adalah subrutin yang dipanggil dari ON KEY sehingga gelung utamanya memang tertahan (dan 5360/5760 mematikan tombol yang lain), dan uji kenanya baru di 5420 SESUDAH bunyinya habis. Kaca kanopi juga PECAH saat pesawatnya hancur - aslinya cuma CLS:PRINT 'CRASH' di 6570 - dengan retak radial dan melingkar yang dibangkitkan dari BENIH permainan supaya tidak berkedip tiap penggambaran ulang, dan Bintang Kematian digambar memenuhi pandangan karena O-S<=0 memang berarti sudah sampai di permukaannya; muncul untuk CRASH, BLAM! dan BOOM! tapi TIDAK untuk TOO LATE! karena di situ tidak ada yang menghantam apa pun. DUA CACAT PORT SENDIRI yang ketahuan di sini, keduanya sesebab: sinar dan ledakan semula memakai ANIMASI CSS, padahal innerHTML kokpitnya diganti tiap 55 ms sehingga elemennya lahir baru tiap bingkai dan animasinya tak pernah lewat dari beberapa persen pertama garis waktunya - itulah kenapa halaman ini seolah tidak menembakkan apa pun. Keduanya sekarang dihitung dari keadaan permainan (S.tembak.t dan S.ledak.sisa); waktu simulasi harus dipegang simulasinya, bukan dititipkan ke CSS. Diperiksa ulang dengan 23 uji, termasuk bahwa pelurunya benar-benar diarahkan ke sasaran yang akan meledak, bahwa Z belum berkurang selama peluru masih terbang lalu berkurang tepat saat ia sampai, dan bahwa TOO LATE! meninggalkan kacanya utuh. PUTARAN PERBAIKAN KETIGA, arahnya ditetapkan Anda: PERMAINAN YANG ENAK DIMAINKAN didahulukan. Batasnya jelas dan tidak dilanggar - tidak ada satu pun aturan yang diubah, karena masalahnya memang bukan sulit melainkan GELAP: skill 0 sebenarnya sudah mudah (5 menit, 90% selamat saat dilewati, torpedo tepat menang 100%), tapi tidak ada satu pun hal di layar yang memberi tahu apa yang sedang terjadi. TAMBAHAN TERBESAR: JALUR PENDEKATAN. Aslinya ketiga jaraknya cuma tiga angka yang dicetak ulang tiap putaran (2380, 2400, 2420), padahal keterampilan sebenarnya adalah MENGATUR KECEPATAN dan hubungan antara jarak, kecepatan, dan waktu tidak pernah diperlihatkan di mana pun. Strip di bawah kokpit menaruh ketiganya di satu garis berskala pangkat, dengan pita untuk ambang 26.000 (meriam, 5420) dan 10.000 (torpedo, 5830), plus dua angka turunan: detik-menuju-tiba dan LEBAR JENDELA TEMBAK, keduanya dihitung dari S=S+Q*100 per putaran pada 18,2 putaran per detik. Pada Mach 50 jendelanya 1,1 detik; pada Mach 10, 5,5 detik - angka itu sendiri menerangkan seluruh permainannya, dan sebelumnya tidak ada di mana pun. KUNCI SASARAN diperlihatkan: TORPEDO LOCK dan GUNS LOCK memakai uji yang sama persis dengan 5420/5430 dan 5830+5840, hanya tanpa menembak - aslinya keadaan ini tidak pernah ditampilkan, Anda baru tahu sesudah menembak dan kehilangan satu dari tiga torpedo. KENDALI dirombak: tombol PUSATKAN (0) menolkan V dan W sekaligus, karena keduanya KECEPATAN GESER bukan posisi (2550: M=M-W) sehingga untuk berhenti melayang pemain harus menekan panah lawan sebanyak tekanan tadi - hasilnya sama persis, yang dihapus cuma pekerjaan tangannya; 0 dipilih karena 5160 berbunyi IF VAL(Z$)>0 AND VAL(Z$)<10 sehingga nol tidak pernah jadi kecepatan. Alias Spasi (meriam) dan Enter/T (torpedo) ditambahkan karena F1 adalah tombol bantuan peramban; F1 dan F2 tetap berfungsi. Tombol layar kemudi kini bisa DITAHAN. SATU CACAT PORT SENDIRI diperbaiki: penangkap papan ketik dipasang di document tanpa syarat, jadi panah tidak pernah bisa dipakai menggulir halaman padahal panelnya panjang; sekarang hanya disandera selama kokpitnya terlihat. Percobaan pertama memakai IntersectionObserver dan itu SALAH PILIH - pengamat itu menyampaikan hasilnya lewat pembaruan render, yang berhenti saat tabnya tidak terlihat, jadi kalau ia tidak menyala sekali pun benderanya macet dan panah tersandera selamanya; diganti pembacaan getBoundingClientRect saat tombol ditekan. Pemilih Skill juga tidak lagi merebut panah. Ditambah SATU KALIMAT POST-MORTEM di tiap akhir, dihitung dari keadaan akhir (ejekan aslinya 'DARTH VADER IS LAUGHING AT YOU' tetap di tempatnya), dan bip peringatan saat waktu-tiba di bawah 3 detik. Diperiksa dengan 17 uji aturan dan 16 uji kendali, semuanya lulus, termasuk bahwa panah BEBAS menggulir begitu kokpitnya keluar layar dan tersandera lagi begitu ia kembali. PUTARAN KEEMPAT — LIMA UTANG DIBAYAR. (1) TEMUAN YANG HAMPIR HILANG: kotak grafiknya (2160 LINE (1,1)-(76,42),3,B) saya perlakukan sebagai jendela kokpit — rangka kanopi, kaca, kaca pecah — padahal programnya menyebut benda itu EMPAT KALI dan tidak sekali pun menyebutnya jendela: 2230 'RADAR TARGETS', 7490 'ON THE RADAR SCREEN.', 7570 dan 7660 'THE CROSS HAIRS ON YOUR RADAR SCREEN'. Itu LAYAR RADAR, dan titik 1x1 sampai 7x5 piksel itu KONTAK RADAR, bukan pesawat yang terlihat mata — yang sekaligus menerangkan kenapa musuhnya sekecil itu, kenapa bidikannya garis putus-putus menyilang layar (2170-2180), dan kenapa menabrak Bintang Kematian tidak memerlukan gambar apa pun. Aslinya ternyata sudah memisahkan DUA LAPIS dengan rapi: instrumen (kotak radar + angka) tempat keputusan diambil, dan dunia yang dibayangkan (layar judul + animasi lintas IM4-IM8) tempat abstraksinya pecah — dan animasi lintas itu satu-satunya saat program membiarkan pemain melihat lawannya, jadi nilainya justru dari kelangkaannya. Kokpitnya TETAP dipertahankan karena arah proyek ini sudah ditetapkan 'permainan yang enak dimainkan lebih dulu', tapi penyimpangannya kini disebut di docs/xwing.md 12a dan di panelnya sendiri: ia menyatakan sesuatu yang DIBANTAH SUMBERNYA SENDIRI. Sebagian utangnya dibayar jalur pendekatan — itu instrumen, dan itu memang radar. (2) F1/F2 tidak bisa dipastikan lewat pengujian otomatis: harness-nya terbukti TIDAK KONSISTEN mengantarkan tombol (sebuah perekam di window fase tangkap kadang melihat keempat tombol sampai, kadang nol), jadi dua pengamatan 'F1 tidak jalan' tidak sahih. Ditutup dengan pengerasan alih-alih klaim: penangannya dipindah ke window FASE TANGKAP (simpul paling awal yang pasti dilewati apa pun jalurnya), pencarian tombol memakai e.key LALU e.code sebagai jaring pengaman, papan angka numpad ikut dikenali, dan alias Spasi/Enter/T tetap ada. Ditambah penjaga baru: Enter dan Spasi TIDAK menembak kalau fokus sedang di tombol atau tautan — kalau tidak, menekan Spasi saat fokus di 'Misi baru' akan menekan tombolnya DAN menembakkan meriam sekaligus — sementara panah tetap mengemudi. (3) Papan skor lokal yang tercemar 50-an skor sintetis dari suite uji saya dibersihkan, termasuk bendera pembuka yang saya sendiri yang menutupnya. (4) PEMBUKA TIGA KALIMAT yang semula cuma separuh dikerjakan kini jadi lapisan sekali-jalan di atas kokpit yang MENGHENTIKAN jamnya selama dibaca, tersimpan begitu ditutup, dan bisa dibuka lagi dari panel Cara memainkannya; isinya tiga hal yang benar-benar mengubah cara main - satu-satunya cara menang, musuh yang tidak bisa dihabisi, dan jendela tembak 1,1 detik di Mach 50 lawan 5,5 detik di Mach 10. (5) Keadaan mati S.torpedoTerpakai diganti S.torpedoJauh yang benar-benar dipakai: torpedo yang terbuang DI LUAR JANGKAUAN dihitung terpisah, dan kalau ada, post-mortem-nya mendahulukan sebab itu lengkap dengan nomor barisnya - cara kalah yang paling tidak kelihatan, dan sebabnya cuma urutan dua baris. Satu kesalahan dalam pengujiannya sendiri layak dicatat: uji 'panah tetap mengemudi walau fokus di tombol' GAGAL sekali, dan yang salah ternyata ujinya - tbl.focus() menggulirkan tombolnya ke dalam pandangan sehingga kokpitnya keluar layar dan panahnya memang SEHARUSNYA diabaikan; dengan focus({preventScroll:true}) keduanya lulus. Total 11 uji aturan dan 13 uji kendali lulus. PUTARAN KELIMA — DUA CACAT YANG DILAPORKAN PEMAIN SAAT BENAR-BENAR BERMAIN, dan keduanya penjaga yang saya pasang sendiri. Gejalanya: Spasi dan Enter tidak menembak, dan panah kiri-kanan seolah tidak berefek. SEBAB PERTAMA: penjaga melepas Enter/Spasi untuk SETIAP tombol yang sedang fokus — dan sesudah mengklik tombol mana pun dengan tetikus, fokus memang tinggal di situ, jadi menyentuh satu tombol saja sudah mematikan kedua senjata. Yang memperburuk: saya sempat MENULIS UJI 'Spasi saat fokus di tombol TIDAK menembak' dan menyatakannya LULUS - yang salah bukan kodenya melainkan syarat yang saya uji. Sekarang pelepasan itu hanya berlaku kalau fokusnya dititi dengan Tab, dibedakan lewat bendera yang diset Tab dan direset pointerdown. SEBAB KEDUA: penjaga kedua mengukur apakah #kokpit terlihat, padahal tombol-tombolnya ada JAUH DI BAWAH kokpit - di layar yang tidak terlalu tinggi pemain harus menggulir untuk mencapainya, kokpitnya keluar layar, dan sejak itu SELURUH papan ketik lepas dari permainan. Diperbaiki dengan mengukur seluruh panel .screen, dan diverifikasi pada keadaan yang persis dilaporkan (kokpit di -97 px, tombol terlihat: panah tetap mengemudi). TOMBOL SENJATA DIPINDAH ke Z dan X atas permintaan pemain: Spasi dan Enter punya tugas bawaan di peramban yaitu MENEKAN kontrol yang sedang fokus, jadi memilihnya sebagai tombol tembak adalah cari perkara sekuat apa pun penjaganya; Z dan X tidak punya arti apa pun, berdekatan di tangan kiri, dan itu pasangan arkade paling lazim. F1/F2/Spasi/Enter/T tetap sebagai alias, dan C ditambahkan sebagai alias tombol pusatkan. Ditambah TANGGA KEMUDI di tepi layar (sebelas takik mendatar, tujuh takik tegak, yang aktif lebih tinggi dan terang) karena separuh keluhan 'panah tidak ada efek' memang umpan balik: pergeseran medannya satu petak per putaran per satuan W, jadi satu tekan hampir tak terlihat di antara gerak mengelak musuhnya - tangganya berubah seketika dan sekaligus memperlihatkan batas tak simetrisnya. Satu lubang lain ditutup sekalian: menekan tombol senjata SELAGI pembuka masih terbuka bisa membuat S.tembak nyangkut selamanya karena jamnya berhenti sehingga pelurunya tidak pernah sampai - sekarang meriam, torpedo, dan penangan tombol semuanya diam selama pembuka terbuka. BATAS_V/BATAS_W juga dipindah ke atas berkas karena gambar() memakainya sementara const-nya berada di bawah tempat pakainya - jebakan zona-mati yang tidak perlu diambil risikonya. Diperiksa ulang: 17 uji aturan dan 9 uji kendali lulus, termasuk kelima jalur yang gagal di tangan pemain. PUTARAN KEENAM, juga dari laporan pemain: 'kanan dan kiri arahnya sama saja'. Diperiksa dan TIDAK BENAR sebagai bug arah - uji berpasangan dengan BENIH SAMA memberi 38->48 untuk kiri dan 38->28 untuk kanan, simetris sempurna, begitu pula tegaknya. Yang tidak terbaca bukan arahnya melainkan AKIBATNYA: baris 2560-2590 menjepit sasaran ke petak 2..69, jadi kemudi yang ditahan membuat semuanya menumpuk di satu tepi. Diukur: pada W=1 sasarannya mentok dalam 1,8 detik lalu menghabiskan 65% dari lima detik berikutnya terkurung di sana; pada W=3 cuma 0,6 detik dan 89%. Jadi yang terlihat di kedua arah memang sama - semuanya melesat ke salah satu tepi lalu nyangkut, dan transisinya terlalu cepat untuk dibaca. Aturannya TIDAK disentuh; tiga penanda ditambahkan: tangga kemudi yang berubah seketika, PANAH ARAH yang menyatakan ke mana medannya bergeser (berlawanan dengan tombol, karena M=M-W), dan SEGITIGA DI TEPI LAYAR untuk tiap sasaran yang sedang terjepit. Pembuka dan panel Cara memainkannya juga menyebutkan bahwa panah adalah KECEPATAN PUTAR, bukan penggerak pesawat. Satu cacat kecil dalam pengerjaannya: segitiganya semula ditutup dengan dua belokan siku dan yang keluar persegi panjang - penanda arah yang tidak menunjuk ke mana pun, hanya ketahuan dengan melihatnya. PUTARAN KETUJUH — SATU KOREKSI BESAR YANG DIPICU PENOLAKAN ANDA. Saya menyebut kemudi yang menyeret semua sasaran ke tepi dalam 1,8 detik sebagai 'perilaku aslinya'. Itu tidak jujur: yang asli adalah penjepit petak 2..69 di baris 2560-2590, sementara KECEPATAN menabraknya datang dari pilihan saya sendiri — LAJU GELUNG. Versi sebelumnya memakai 18,2 Hz dengan alasan SOUND 37*Q,1 di 2440 menahan satu centang; itu keliru, satu centang adalah LANTAI bukan lajunya. Satu putaran aslinya mengerjakan delapan pasang LOCATE+PRINT (2340-2430), dua PUT, dua GOSUB berisi enam KEY ON/STOP, tiga blok musuh dengan PUT masing-masing, INKEY$, dan dua pembacaan TIME$ — di BASICA yang ditafsirkan pada 4,77 MHz, kerja itu yang menentukan, bukan bunyinya. Lajunya tidak bisa DIUKUR tanpa menjalankan DOSBox (di luar batas proyek), jadi dicari laju yang membuat angka-angka programnya sendiri membentuk permainan utuh: pada 18,2 Hz jendela membidik di Mach 10 cuma 5,5 detik dan medan mentok dalam 1,9 detik; pada 6 Hz jadi 16,7 detik dan 5,7 detik, sementara mendekat dengan Mach 90 makan 14 detik. 6 Hz juga sekitar 100-170 ms per putaran, sesuai perkiraan kerja BASICA — dua alasan yang tidak bergantung satu sama lain menunjuk ke tempat yang sama. Diverifikasi ulang: W=1 kini mentok dalam 5,5 detik (dari 1,8) dan 47% waktu di tepi (dari 65%), jendela bidik Mach 10 16,7 detik, arah tetap berlawanan, dan enam putaran tetap sama dengan satu detik jam dinding. Angka 'jendela tembak' di pembuka kini DIHITUNG dari HZ, bukan ditulis tangan — begitu lajunya dikoreksi, angka yang ditulis di HTML langsung jadi bohong tanpa ada yang memberi tahu. Ini tetap penyimpangan, bukan pemulihan: aslinya memang tidak punya laju tetap. PUTARAN KEDELAPAN, permintaan baru: HALAMAN PELUNCUR JADI BILINGUAL Indonesia/English. Lingkupnya sengaja sempit - hanya index.html, si shell. Ke-66 halaman permainan tetap memakai teks Inggris aslinya (keputusan (b) di PLAN.md 9: teks antarmuka aplikasi dipertahankan apa adanya supaya bisa dibandingkan dengan sumbernya) dan dokumen pembelajaran tetap Bahasa Indonesia seluruhnya; yang bilingual cuma pintu masuknya. Ditambahkan _shared/i18n.js berisi kamus dua bahasa untuk seluruh teks antarmuka, nama ketiga belas kelompok, pemetaan frasa asal ('PD / majalah' jadi 'Public domain / magazine') dan frasa 'menyatu ke ...' - dua yang terakhir dipetakan sebagai frasa, bukan medan per program, karena keduanya berulang di banyak entri. Terjemahan program sendiri TIDAK di i18n.js melainkan di catalog.js sebagai medan ringkas_en berdampingan dengan ringkas: dua berkas yang harus tetap sejajar selalu melenceng diam-diam, satu entri dengan dua medan tidak bisa. 72 deskripsi Inggris ditulis mengikuti brief yang sama dengan versi Indonesianya - program apa, apa yang menarik, apa yang bisa dipelajari pemrogram pemula. Tanpa pustaka dan tanpa berkas terjemahan terpisah, alasannya sama dengan kenapa catalog.js berupa .js: halaman ini harus jalan dari file:// dan di sana fetch() diblokir CORS. Pilihan bahasa disimpan di localStorage berawalan retro: seperti pilihan tema, bawaannya Indonesia kecuali peramban berbahasa Inggris, dan pilihan yang pernah disimpan selalu menang atas tebakan itu. Mengganti bahasa MENGGAMBAR ULANG, bukan memuat ulang halaman - saringan kelompok dan kata pencarian yang sedang aktif tidak boleh hilang cuma karena bahasanya berganti (diverifikasi: 5 hasil sebelum dan sesudah). Pemisah ribuan ikut bahasa: 18.414 lawan 18,414. Satu perubahan kecil di _shared/ui.js: themeToggle() kini menerima opts opsional untuk menimpa labelnya, karena tombol tema berasal dari sana dan 'Tema: sistem' di sebelah teks Inggris terbaca rusak; bawaannya tetap Indonesia sehingga ke-66 halaman permainan yang memanggilnya tanpa argumen tidak berubah sedikit pun. Yang TIDAK berubah: kotak pencarian tetap menyisir medan note Bahasa Indonesia di kedua mode, jadi mengetik POINT atau RANDOMIZE tetap menemukan program yang catatannya menyebutnya - badan pengetahuan itu satu, bukan dua. Diperiksa dengan 20 uji: seluruh teks berganti, atribut lang ikut berganti, siklus tema masih jalan sesudah tombolnya dibangun ulang, pencarian bertahan, dan nihil luber mendatar di enam lebar untuk KEDUA bahasa. X-Wing pemainnya digambar tangan karena di seluruh 732 baris tidak ada satu pun spritenya - layarnya pandangan dari kokpit - dan itu memenuhi janji yang ditulis di svg-demo.html sejak fondasi dibangun.",
   "ringkas": "Simulator kokpit, dan program tertua di koleksi. Sprite musuhnya tidak disimpan sebagai angka melainkan dilukis makro DRAW di layar judulnya lalu dipotong GET. Pelajaran: gambar bisa disimpan sebagai kode, dan tabrakan bisa diuji dengan membaca warna piksel.",
-  "ringkas_en": "A cockpit simulator, and the oldest program in the collection. Its enemy sprites are not stored as numbers but painted by DRAW macros on the title screen and then cut out with GET. Lesson: pictures can be stored as code, and collisions can be tested by reading pixel colour."
+  "ringkas_en": "A cockpit simulator, and the oldest program in the collection. Its enemy sprites are not stored as numbers but painted by DRAW macros on the title screen and then cut out with GET. Lesson: pictures can be stored as code, and collisions can be tested by reading pixel colour.",
+  "dok": "xwing.md"
  },
  {
   "id": "yahtzee",
@@ -1372,7 +1439,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Asli oleh JL Helms & MF Pezok untuk CCII, Coronado CA; diadaptasi ke IBM PC oleh Patrick Leabo, Tucson.",
   "ringkas": "Asli oleh JL Helms & MF Pezok untuk CCII, Coronado CA; diadaptasi ke IBM PC oleh Patrick Leabo, Tucson.",
-  "ringkas_en": "Originally by JL Helms & MF Pezok for CCII, Coronado CA; adapted to the IBM PC by Patrick Leabo, Tucson."
+  "ringkas_en": "Originally by JL Helms & MF Pezok for CCII, Coronado CA; adapted to the IBM PC by Patrick Leabo, Tucson.",
+  "dok": "yahtzee.md"
  },
  {
   "id": "zapem",
@@ -1389,7 +1457,8 @@ window.RETRO.CATALOG = [
   "ready": true,
   "note": "Tertua di trio Attack/Serpent/Zap'em (3 Feb 1982, MAV-5-5-K), dan satu-satunya yang menyimpan papan skor ke disket. Pemainnya MENGETIK SENDIRI benih acaknya lewat pertanyaan \"YOUR LAST SCORE\" (baris 460+550). Papan skornya bernama METEOR.DAT padahal METEOR.BAS punya NOL pernyataan OPEN. \"Ghost ships\" di cerita latarnya ternyata dua cacat kode: B(LL)=0 memakai kolom sebagai indeks kapal, dan baris 1070-1090 cuma menguji kapal berindeks terkecil yang sebaris.",
   "ringkas": "Penembak yang benih acaknya DIKETIK pemain sendiri lewat pertanyaan 'your last score'. Pelajaran: dari mana keacakan datang kalau tidak ada jam yang bisa dibaca.",
-  "ringkas_en": "A shooter whose random seed is TYPED IN by the player, through a question asking for 'your last score'. Lesson: where randomness comes from when there is no clock to read."
+  "ringkas_en": "A shooter whose random seed is TYPED IN by the player, through a question asking for 'your last score'. Lesson: where randomness comes from when there is no clock to read.",
+  "dok": "zapem.md"
  }
 ];
 
@@ -1421,7 +1490,8 @@ window.RETRO.EXTRAS = [
   "extra": true,
   "note": "Bukan port. Melukis ASCII dengan tetikus: pensil, garis, kotak, elips, isi-ember, teks, pipet, penghapus, undo 60 langkah, 16 warna CGA, ekspor teks biasa. Satu kemampuannya berasal langsung dari temuan port setia DRAW.BAS: karena palet 1982-nya berpasangan, glifnya adalah potongan yang saling menyambung - jadi sudut dan sambungan dipilih program dari tetangga tiap sel lewat tabel 16 kemungkinan, bukan dipilih pemakai satu per satu. Port setianya berdiri sendiri utuh di games/draw/.",
   "ringkas": "Bukan port: pelukis ASCII dengan tetikus - pensil, garis, elips, isi-ember, undo, 16 warna CGA. Pelajaran datang dari port setianya: karena palet 1982 berpasangan, sudut dan sambungan bisa dipilih program dari tetangga tiap sel.",
-  "ringkas_en": "Not a port: an ASCII painter with a mouse - pencil, line, ellipse, flood fill, undo, 16 CGA colours. The lesson comes from its faithful sibling: because the 1982 palette is paired, corners and joins can be chosen by the program from each cell's neighbours."
+  "ringkas_en": "Not a port: an ASCII painter with a mouse - pencil, line, ellipse, flood fill, undo, 16 CGA colours. The lesson comes from its faithful sibling: because the 1982 palette is paired, corners and joins can be chosen by the program from each cell's neighbours.",
+  "dok": "draw-studio.md"
  },
  {
   "id": "freeplay",
@@ -1439,7 +1509,8 @@ window.RETRO.EXTRAS = [
   "extra": true,
   "note": "Papan tuts yang bisa dimainkan sendiri. Not balok bergulir dengan garis penanda di kanan, dan hasil permainan diterjemahkan kembali menjadi makro PLAY GW-BASIC yang sah.",
   "ringkas": "Papan tuts yang bisa dimainkan sendiri, dengan not balok bergulir. Pelajaran: hasil permainan diterjemahkan kembali jadi makro PLAY GW-BASIC yang sah - dua format dari era berbeda saling bicara.",
-  "ringkas_en": "A keyboard you can actually play, with scrolling staff notation. Lesson: what you play is translated back into valid GW-BASIC PLAY macros - two formats from different eras talking to each other."
+  "ringkas_en": "A keyboard you can actually play, with scrolling staff notation. Lesson: what you play is translated back into valid GW-BASIC PLAY macros - two formats from different eras talking to each other.",
+  "dok": "freeplay.md"
  },
  {
   "id": "pacgal",
@@ -1458,7 +1529,8 @@ window.RETRO.EXTRAS = [
   "dariExe": true,
   "note": "Pengejaran labirin. Labirinnya tidak disimpan di mana pun — program membangunnya saat startup dari CHR$/STRING$, lalu MEMBACA LAYAR untuk mendeteksi tabrakan. Kredit di dalam EXE: “Al J. Jiménez, May 1982”.",
   "ringkas": "Pengejaran labirin. Labirinnya tidak disimpan di mana pun — program membangunnya saat startup dari CHR$/STRING$, lalu MEMBACA LAYAR untuk mendeteksi tabrakan. Kredit di dalam EXE: “Al J. Jiménez, May 1982”.",
-  "ringkas_en": "A maze chase. The maze is stored nowhere - the program builds it at startup from CHR$/STRING$, then READS THE SCREEN to detect collisions. Credit inside the EXE: 'Al J. Jimenez, May 1982'."
+  "ringkas_en": "A maze chase. The maze is stored nowhere - the program builds it at startup from CHR$/STRING$, then READS THE SCREEN to detect collisions. Credit inside the EXE: 'Al J. Jimenez, May 1982'.",
+  "dok": "pacgal.md"
  },
  {
   "id": "3dttt",
@@ -1477,7 +1549,8 @@ window.RETRO.EXTRAS = [
   "dariExe": true,
   "note": "Tic-tac-toe 4×4×4: 64 sel, 76 garis kemenangan. Terbesar dari keempatnya, dan satu-satunya yang punya lawan komputer. Judulnya diambil dari layarnya sendiri: “LU's 3D Game”.",
   "ringkas": "Tic-tac-toe 4×4×4: 64 sel, 76 garis kemenangan. Terbesar dari keempatnya, dan satu-satunya yang punya lawan komputer. Judulnya diambil dari layarnya sendiri: “LU's 3D Game”.",
-  "ringkas_en": "4x4x4 tic-tac-toe: 64 cells, 76 winning lines. The largest of the four, and the only one with a computer opponent. Its title comes from its own screen: \"LU's 3D Game\"."
+  "ringkas_en": "4x4x4 tic-tac-toe: 64 cells, 76 winning lines. The largest of the four, and the only one with a computer opponent. Its title comes from its own screen: \"LU's 3D Game\".",
+  "dok": "3dttt.md"
  },
  {
   "id": "hopper",
@@ -1496,7 +1569,8 @@ window.RETRO.EXTRAS = [
   "dariExe": true,
   "note": "Menyeberang jalan dan sungai. Satu-satunya dari keempatnya yang menyimpan keadaan DI LUAR dirinya — papan skor HOPPER.SCO, dan berkas 1991 dari koleksi ini masih terbaca utuh.",
   "ringkas": "Menyeberang jalan dan sungai. Satu-satunya dari keempatnya yang menyimpan keadaan DI LUAR dirinya — papan skor HOPPER.SCO, dan berkas 1991 dari koleksi ini masih terbaca utuh.",
-  "ringkas_en": "Crossing roads and rivers. The only one of the four that keeps state OUTSIDE itself - a HOPPER.SCO scoreboard, and the 1991 file from this collection still reads intact."
+  "ringkas_en": "Crossing roads and rivers. The only one of the four that keeps state OUTSIDE itself - a HOPPER.SCO scoreboard, and the 1991 file from this collection still reads intact.",
+  "dok": "hopper.md"
  },
  {
   "id": "spacewar",
@@ -1515,7 +1589,8 @@ window.RETRO.EXTRAS = [
   "dariExe": true,
   "note": "Satu-satunya dari keempatnya yang TIDAK PERNAH BASIC — assembly murni, 5 relokasi lawan 786–2.357 milik yang lain, 0 string galat runtime lawan 22. Tidak ada .bas yang bisa jadi basis — tapi binernya menyimpan ATURAN MAINNYA sendiri dalam kalimat, jadi ongkos, kerusakan, dan laju isi ulang di port ini dikutip, bukan dikarang. Tata letak piksel sprite-nya masih belum terpecahkan.",
   "ringkas": "Satu-satunya dari keempat .EXE yang tidak pernah BASIC - assembly murni, lima relokasi lawan ribuan milik yang lain. Pelajaran: binernya menyimpan aturan mainnya sendiri dalam kalimat, jadi ongkos dan kerusakan bisa dipulihkan tanpa kode sumber.",
-  "ringkas_en": "The only one of the four EXEs that was never BASIC - pure assembly, five relocations against thousands for the others. Lesson: the binary stores its own rules in sentences, so costs and damage can be recovered without source."
+  "ringkas_en": "The only one of the four EXEs that was never BASIC - pure assembly, five relocations against thousands for the others. Lesson: the binary stores its own rules in sentences, so costs and damage can be recovered without source.",
+  "dok": "spacewar.md"
  },
  {
   "id": "blackjack-tutor",
@@ -1533,7 +1608,8 @@ window.RETRO.EXTRAS = [
   "extra": true,
   "ringkas": "Meja 21.BAS apa adanya, ditambah penasihat: tiap keputusan disertai saran, alasannya, dan nilai harapan tiap pilihan. Pelajaran: angkanya DIHITUNG dari kartu yang tersisa, bukan disalin dari tabel — karena meja ini membayar blackjack 2:1, bukan 3:2.",
   "ringkas_en": "The 21.BAS table exactly as it was, plus an advisor: every decision comes with a recommendation, the reasoning, and the expected value of each option. Lesson: the numbers are COMPUTED from the cards still left, not copied from a chart — because this table pays blackjack 2:1, not 3:2.",
-  "note": "Bukan port melainkan turunan bahan ajar dari 21.BAS; games/21/ tidak disentuh. Mejanya memakai mesin bersama _shared/blackjack.js dengan objek aturan yang menyalin 21.BAS, supaya aturannya tidak bisa melenceng dari port setianya. Penasihatnya menghitung, bukan menghafal: sebaran hasil akhir bandar, nilai harapan STAND, HIT (dengan kelanjutan optimal), dan DOUBLE dihitung EKSAK secara rekursif atas komposisi kartu yang MASIH TERSISA; SPLIT hampiran (dua tangan bebas tanpa pecah ulang) dan hampiran itu disebut di layar. Alasannya berlapis tiga: kalimat biasa, angka di baliknya (peluang bandar bangkrut), lalu tabel nilai harapan tiap pilihan. Saran tampil SEBELUM bertindak dan penilaian tampil SESUDAHNYA, keduanya sekaligus, plus catatan berjalan keputusan optimal dan ongkos kekeliruan dalam satuan taruhan. KENAPA DIHITUNG, BUKAN DISALIN: tabel basic strategy yang beredar disusun untuk meja kasino (blackjack 3:2, banyak dek), sementara 21.BAS membayar blackjack 2:1 (baris 860/1770), satu dek, tanpa asuransi, bandar berhenti di 17 lunak, dan dikocok ulang begitu 40 dari 52 kartu terpakai (baris 150: IF CD>40). Menempelkan tabel kanonik ke meja itu akan memberi saran yang SALAH dengan percaya diri. TIGA CACAT dalam pengerjaannya membuktikan betapa senyapnya mesin hitung yang keliru - tidak satu pun memberi galat, ketiganya memberi nasihat buruk dengan angka meyakinkan di belakangnya: (1) sebaran bandar semula tidak menyaring keadaan 'bandar blackjack', padahal baris 230-240 membuat bandar ber-blackjack menang SEKETIKA sebelum pemain sempat bertindak - akibatnya taruhan ganda dibebani kekalahan yang mustahil dan PECAH 8,8 lawan 10 keluar sebagai pilihan TERBURUK, padahal setiap tabel mengatakan selalu pecah; (2) komposisi sisa dihitung sampai kartu potong, bukan sampai akhir dek, sehingga hitungan Hi-Lo menunjukkan -2 pada dek yang masih utuh; (3) penasihatnya diberi seluruh kartu bandar termasuk KARTU TERTUTUP, jadi ia mengintip - gejalanya 'peluang bandar bangkrut 0%' dengan nilai harapan BERHENTI tepat -1,000. Sesudah ketiganya diperbaiki, keputusannya cocok dengan tabel satu dek S17 yang diterbitkan: 8,8 lawan 10 pecah, A,A pecah, 11 lawan 10 dan lawan As gandakan, 16 lawan 10 tambah, 10,10 lawan 6 berhenti, dan sebaran bangkrut bandar per kartu buka (2 sampai As: 35,3 / 37,6 / 40,3 / 42,9 / 42,1 / 26,0 / 23,9 / 23,3 / 21,4 / 11,7 persen) cocok dengan angka terbitan untuk satu dek. TEMUAN SAMPINGAN tentang port 21 yang sudah ada: 21.BAS mengocok ulang begitu 40 kartu terpakai, sementara games/21/ memakai potong: null yang berarti baru mengocok saat 52 kartu habis - dan docs/blackjack.md mencatat kartu potongnya sebagai tidak ada. Tutor ini memakai yang 40; port 21 sengaja TIDAK diubah."
+  "note": "Bukan port melainkan turunan bahan ajar dari 21.BAS; games/21/ tidak disentuh. Mejanya memakai mesin bersama _shared/blackjack.js dengan objek aturan yang menyalin 21.BAS, supaya aturannya tidak bisa melenceng dari port setianya. Penasihatnya menghitung, bukan menghafal: sebaran hasil akhir bandar, nilai harapan STAND, HIT (dengan kelanjutan optimal), dan DOUBLE dihitung EKSAK secara rekursif atas komposisi kartu yang MASIH TERSISA; SPLIT hampiran (dua tangan bebas tanpa pecah ulang) dan hampiran itu disebut di layar. Alasannya berlapis tiga: kalimat biasa, angka di baliknya (peluang bandar bangkrut), lalu tabel nilai harapan tiap pilihan. Saran tampil SEBELUM bertindak dan penilaian tampil SESUDAHNYA, keduanya sekaligus, plus catatan berjalan keputusan optimal dan ongkos kekeliruan dalam satuan taruhan. KENAPA DIHITUNG, BUKAN DISALIN: tabel basic strategy yang beredar disusun untuk meja kasino (blackjack 3:2, banyak dek), sementara 21.BAS membayar blackjack 2:1 (baris 860/1770), satu dek, tanpa asuransi, bandar berhenti di 17 lunak, dan dikocok ulang begitu 40 dari 52 kartu terpakai (baris 150: IF CD>40). Menempelkan tabel kanonik ke meja itu akan memberi saran yang SALAH dengan percaya diri. TIGA CACAT dalam pengerjaannya membuktikan betapa senyapnya mesin hitung yang keliru - tidak satu pun memberi galat, ketiganya memberi nasihat buruk dengan angka meyakinkan di belakangnya: (1) sebaran bandar semula tidak menyaring keadaan 'bandar blackjack', padahal baris 230-240 membuat bandar ber-blackjack menang SEKETIKA sebelum pemain sempat bertindak - akibatnya taruhan ganda dibebani kekalahan yang mustahil dan PECAH 8,8 lawan 10 keluar sebagai pilihan TERBURUK, padahal setiap tabel mengatakan selalu pecah; (2) komposisi sisa dihitung sampai kartu potong, bukan sampai akhir dek, sehingga hitungan Hi-Lo menunjukkan -2 pada dek yang masih utuh; (3) penasihatnya diberi seluruh kartu bandar termasuk KARTU TERTUTUP, jadi ia mengintip - gejalanya 'peluang bandar bangkrut 0%' dengan nilai harapan BERHENTI tepat -1,000. Sesudah ketiganya diperbaiki, keputusannya cocok dengan tabel satu dek S17 yang diterbitkan: 8,8 lawan 10 pecah, A,A pecah, 11 lawan 10 dan lawan As gandakan, 16 lawan 10 tambah, 10,10 lawan 6 berhenti, dan sebaran bangkrut bandar per kartu buka (2 sampai As: 35,3 / 37,6 / 40,3 / 42,9 / 42,1 / 26,0 / 23,9 / 23,3 / 21,4 / 11,7 persen) cocok dengan angka terbitan untuk satu dek. TEMUAN SAMPINGAN tentang port 21 yang sudah ada: 21.BAS mengocok ulang begitu 40 kartu terpakai, sementara games/21/ memakai potong: null yang berarti baru mengocok saat 52 kartu habis - dan docs/blackjack.md mencatat kartu potongnya sebagai tidak ada. Tutor ini memakai yang 40; port 21 sengaja TIDAK diubah.",
+  "dok": "blackjack-tutor.md"
  }
 ];
 

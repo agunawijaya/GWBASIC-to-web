@@ -48,6 +48,10 @@
            color: var(--ink-dim); font-size: var(--fs-sm); }
   footer a { color: var(--acc-blue); }
   .empty { padding: var(--s7) 0; text-align: center; color: var(--ink-dim); }
+  .launch-tile__dok { display: inline-block; margin-top: var(--s2);
+                      font-size: var(--fs-xs); font-weight: 600;
+                      color: var(--acc-blue); }
+  .launch-tile__dok:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
@@ -219,6 +223,20 @@
       el('div', { class: 'launch-tile__title', text: p.title }),
       el('div', { class: 'launch-tile__note', text: ringkas(p) })
     );
+
+    /* SILANG-RUJUK. Sampai sesi 32, kartu di peluncur hanya menaut ke
+       aplikasinya — dokumen arsitekturnya cuma bisa ditemukan dari dalam
+       halaman permainan. Sekarang tiap kartu yang punya dokumen menautnya
+       langsung, termasuk 16 entri yang TIDAK jadi aplikasi dan karena itu
+       tidak punya pintu masuk lain sama sekali. `dok` datang dari katalog,
+       bukan ditebak dari `id`: keempat varian blackjack berbagi satu dokumen
+       dan enam belas entri tidak punya. */
+    if (p.dok) {
+      const d = el('a', { class: 'launch-tile__dok', href: 'docs/' + p.dok,
+                          text: T('kartu.dok') });
+      d.addEventListener('click', e => e.stopPropagation());
+      node.append(d);
+    }
 
     const row = el('div', { class: 'launch-tile__row' });
     row.append(el('span', { class: 'badge badge--year', text: p.year }));
