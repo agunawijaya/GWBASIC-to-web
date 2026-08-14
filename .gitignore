@@ -40,10 +40,3 @@ run/tempory.tmp
 # --- berkas kerja ----------------------------------------------------------
 PROMPT-GIT.md
 
-# --- pekerjaan yang masih berjalan ----------------------------------------
-# Penelusur baris sedang dikerjakan agen lain SAAT INI. Dua alasan ia belum
-# ikut commit pertama: berkasnya bisa tertangkap di tengah penulisan, dan
-# repo yang dibuka dengan fitur setengah jadi memberi kesan pertama yang
-# salah. Begitu pekerjaan itu selesai, cukup hapus satu baris di bawah ini
-# lalu commit -- tidak ada yang hilang, semuanya tetap ada di disk.
-tracer/

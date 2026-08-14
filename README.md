@@ -144,11 +144,19 @@ For every program:
    interpretation → present form and why**. Nothing changes without a written
    reason. When something was changed on taste, it says so.
 
-**In progress:** a **line tracer** — the original source on one side, the
-program running on the other, the executing line highlighted as it runs, and a
-panel explaining what a beginner can learn from that particular program. Scope
-is the 24 programs reachable from `MENU.BAS` and `MENU2.BAS`. Design notes and
-the working brief are in [`TRACER-PROMPT.md`](TRACER-PROMPT.md).
+5. **A line tracer** in `tracer/` — the original source on one side, the
+   program running on the other, the executing line highlighted as it runs,
+   and a panel explaining what a beginner can learn from that particular
+   program. It covers **all 83 `.BAS` files in `run/`, 18,414 lines**, every
+   one at full line coverage.
+
+   The tracer executes a **line table**, not a rewritten function: highlight
+   and execution come from the same structure, so they cannot drift apart.
+   `GOTO` and `GOSUB` are line-number lookups, unwritten lines fail loudly,
+   and a coverage checker compares the table against the real `.BAS` and
+   prints the numbers on the page. Design notes and the working brief are in
+   [`TRACER-PROMPT.md`](TRACER-PROMPT.md); the architecture record is in
+   [`tracer/docs/_rancangan.md`](tracer/docs/_rancangan.md).
 
 ## Where to take it further
 

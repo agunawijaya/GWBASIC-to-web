@@ -1,0 +1,28 @@
+/* Dihasilkan oleh tracer/alat/bikin-sumber.py - jangan disunting tangan.
+   Sumber: run/INTRO.BAS (23 baris) */
+window.SUMBER = window.SUMBER || {};
+window.SUMBER["INTRO"] = [
+  "10 KEY OFF",
+  "20  SCREEN 0,0,0:WIDTH 80:CLS:DEF SEG:POKE 106,0",
+  "30  ON KEY(10) GOSUB 200",
+  "40  KEY(10) ON",
+  "41 ON ERROR GOTO 200",
+  "50  COLOR 11,0",
+  "60  LOCATE 1,19:PRINT \"\u250c\"STRING$(42,196)\"\u2510\"",
+  "70  LOCATE 3,19:PRINT \"\u2514\"STRING$(42,196)\"\u2518\"",
+  "80  LOCATE 2,19:PRINT \"\u2502\"SPC(42)\"\u2502\"",
+  "90  COLOR 0,7",
+  "100 LOCATE  2,29:PRINT CHR$(255) \"F R I E N D L Y W A R E\" CHR$(255)",
+  "110 LOCATE  7,26:COLOR 7,0:PRINT\"   Introduction To Computers\"",
+  "120 LOCATE 11,29:COLOR 0,7:PRINT \" 1 \";:COLOR 3,0:PRINT\"   Information\"",
+  "130 LOCATE 13,29:COLOR 0,7:PRINT \" 2 \";:COLOR 3,0:PRINT\"   Anatomy of a Program",
+  "135 LOCATE 15,29:COLOR 0,7:PRINT \" 3 \";:COLOR 3,0:PRINT\"   Helpful Commands\"",
+  "140 LOCATE 19,14:COLOR 15,0:PRINT\"*****\";:COLOR 3,0:PRINT\" Strike Key Corresponding To Program Desired \";:COLOR 15,0:PRINT\"*****\":COLOR 3,0",
+  "150 LOCATE 25,23:COLOR 0,7:PRINT \" Strike <F10> To Leave This Program \";:COLOR 3,0",
+  "160 RESP$=INKEY$:IF RESP$=\"\" THEN 160",
+  "170 IF RESP$=\"1\" THEN RUN\"HISTORY\"",
+  "180 IF RESP$=\"2\" THEN RUN\"anatomy\"",
+  "185 IF RESP$=\"3\" THEN RUN\"HINTS",
+  "190 GOTO 160",
+  "200 RUN\"menu",
+];

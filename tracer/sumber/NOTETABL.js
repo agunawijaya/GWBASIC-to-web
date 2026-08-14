@@ -1,0 +1,31 @@
+/* Dihasilkan oleh tracer/alat/bikin-sumber.py - jangan disunting tangan.
+   Sumber: run/NOTETABL.BAS (26 baris) */
+window.SUMBER = window.SUMBER || {};
+window.SUMBER["NOTETABL"] = [
+  "10 OPTION BASE 1",
+  "20 CLS",
+  "30 noteno = 1: DIM notename$(12)",
+  "40 FOR count = 1 TO 12",
+  "50\tREAD note$: notename$(count) = note$",
+  "60 NEXT count",
+  "70 FOR oct = -3 TO 4",
+  "80\tLPRINT : LPRINT",
+  "90\tLPRINT STRING$(79, \"-\");",
+  "100\tLPRINT : LPRINT TAB(30);",
+  "110\tLPRINT \"OCTAVE \"; oct; \"(\"; oct + 2; \")\"",
+  "120\tLPRINT STRING$(79, \"-\");",
+  "130\tLPRINT \"NOTE NUMBER       NOTE          \";",
+  "140\tLPRINT \"FREQUENCY IN Htz    PITCH NUMBER\"",
+  "150\tLPRINT",
+  "160\tFOR note = 1 TO 12",
+  "170\t\tfreq = 440 * (2 ^ (oct + (note - 10) / 12))",
+  "180\t\tpitch = CINT(125000 / freq)",
+  "190\t\tLPRINT TAB(3); : LPRINT noteno;",
+  "200\t\tLPRINT TAB(19); : LPRINT notename$(note); oct;",
+  "210\t\tLPRINT TAB(35); : LPRINT freq;",
+  "220\t\tLPRINT TAB(57); : LPRINT pitch",
+  "230\t\tnoteno = noteno + 1",
+  "240\tNEXT note",
+  "250 NEXT oct",
+  "260 DATA C,C#,D,D#,E,F,F#,G,G#,A,A#,B",
+];

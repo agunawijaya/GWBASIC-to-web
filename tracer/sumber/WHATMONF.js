@@ -1,0 +1,9 @@
+/* Dihasilkan oleh tracer/alat/bikin-sumber.py - jangan disunting tangan.
+   Sumber: run/WHATMONF.BAS (4 baris) */
+window.SUMBER = window.SUMBER || {};
+window.SUMBER["WHATMONF"] = [
+  "10 DEF SEG=&H0040",
+  "20 VALUE=PEEK(&H0049)",
+  "30 IF VALUE=2 OR VALUE=3 THEN SCRN=&HB000",
+  "40 IF VALUE=7 THEN SCRN=&HB800",
+];

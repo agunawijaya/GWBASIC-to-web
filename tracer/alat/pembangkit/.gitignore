@@ -1,0 +1,7 @@
+# Berkas antara yang dibangkitkan `bangun.py`; hasil akhirnya ada di
+# tracer/program/, jadi yang ini tidak perlu disimpan.
+__pycache__/
+*_mekanis.txt
+*_sisa.txt
+*_tabel.js
+temple_data.js

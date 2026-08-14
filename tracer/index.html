@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Penelusur Baris — Classic DOS BASIC Games</title>
+<meta name="description" content="Menelusuri program BASIC DOS lawas baris demi baris: layar CGA 80x25 di kiri, kode .BAS asli tersorot di kanan, dan apa yang bisa dipelajari dari program itu di bawah. Jalan offline.">
+<link rel="stylesheet" href="../web/_shared/tokens.css">
+<link rel="stylesheet" href="../web/_shared/base.css">
+<link rel="stylesheet" href="gaya.css">
+</head>
+<body>
+
+<div id="topbar-host"></div>
+
+<main class="t-wrap">
+
+  <div class="t-atas">
+
+    <!-- kiri: layar tempat porting minimalisnya berjalan -->
+    <section class="t-panel">
+      <div class="t-panel__kepala">
+        <span class="t-panel__judul">Layar</span>
+        <span class="t-panel__ket">teks CGA 80&times;25, atribut per sel</span>
+      </div>
+
+      <div class="t-layar"><div id="layar"></div></div>
+
+      <div class="t-kendali">
+        <button class="btn btn--primary" id="t-jalan" type="button">Jalan</button>
+        <button class="btn btn--ghost" id="t-langkah" type="button">Langkah</button>
+        <button class="btn btn--ghost" id="t-ulang" type="button">Ulang</button>
+        <label>Laju
+          <input type="range" id="laju" min="0" max="7" step="1" value="3">
+          <span class="mono" id="laju-teks">8 baris/dtk</span>
+        </label>
+        <label style="margin-left:auto">Program
+          <select id="pilih-program"></select>
+        </label>
+      </div>
+
+      <div class="t-status" id="status">
+        <span class="t-lencana t-lencana--diam" id="lencana">diam</span>
+        <span class="t-pesan" id="pesan"></span>
+      </div>
+
+      <!-- Pembanding. Yang di atas adalah porting minimalis; ini cara
+           menjalankan program yang sama di GW-BASIC sungguhan. -->
+      <details class="t-asli">
+        <summary>Bandingkan dengan GW-BASIC yang asli</summary>
+        <p>
+          Layar di atas digambar oleh porting minimalis, bukan oleh GW-BASIC.
+          Untuk melihat program yang sama berjalan di penafsir sungguhnya,
+          jalankan perintah ini di jendela DOSBox-X terpisah — GW-BASIC dan
+          berkas .BAS-nya sudah ada di <code>run/</code>:
+        </p>
+        <div class="t-perintah">
+          <code id="perintah-asli">run\MENU.bat</code>
+          <button class="btn btn--ghost btn--sm" id="t-salin" type="button">Salin</button>
+        </div>
+        <p id="catatan-asli"></p>
+      </details>
+    </section>
+
+    <!-- kanan: sumber .BAS asli, baris berjalan tersorot -->
+    <section class="t-panel">
+      <div class="t-panel__kepala">
+        <span class="t-panel__judul mono" id="judul-kode">run/MENU.BAS</span>
+        <span class="t-panel__ket">klik nomor baris untuk memasang titik henti</span>
+        <span class="t-cakupan" id="cakupan" tabindex="0">
+          <span id="cakupan-teks">—</span>
+          <span class="t-meter"><span class="t-meter__isi" id="meter-isi"></span></span>
+        </span>
+      </div>
+      <div class="t-sumber" id="sumber"></div>
+    </section>
+
+  </div>
+
+  <!-- bawah 1: bagaimana program ini disusun -->
+  <section class="t-panel t-bawah">
+    <div class="t-panel__kepala">
+      <span class="t-panel__judul">Bagaimana program ini disusun</span>
+      <span class="t-panel__ket">peta alur, pseudokode, dan penjelasannya</span>
+    </div>
+    <div class="t-isi">
+      <div class="t-susun">
+        <div class="t-susun__peta">
+          <p class="t-judul-kecil">Peta alur</p>
+          <div id="peta"></div>
+          <p class="t-kunci" id="peta-kunci"></p>
+        </div>
+        <div class="t-susun__kode">
+          <p class="t-judul-kecil">Pseudokode
+            <span class="t-panel__ket">klik nomor baris untuk menyorotnya di kode asli</span>
+          </p>
+          <ol class="t-pseudo" id="pseudokode"></ol>
+        </div>
+      </div>
+      <div id="penjelasan"></div>
+    </div>
+  </section>
+
+  <!-- bawah 2: kotak tetap, satu teks per program -->
+  <section class="t-panel t-bawah">
+    <div class="t-panel__kepala">
+      <span class="t-panel__judul">Dari program ini bisa dipelajari</span>
+      <span class="t-panel__ket">tetap — tidak berubah mengikuti baris yang disorot</span>
+    </div>
+    <div class="t-isi" id="pelajaran"></div>
+  </section>
+
+</main>
+
+<!-- Dibuka lewat file://, jadi tidak ada modul ES dan tidak ada fetch().
+     Data dimuat lewat <script> yang menugaskan ke window.SUMBER dan
+     window.PROGRAM. Berkas di sumber/ dihasilkan oleh alat/bikin-sumber.py. -->
+<script src="../web/_shared/ui.js"></script>
+<!-- Katalog 83 program, dipakai ulang apa adanya. Gunanya satu: menerjemahkan
+     nama berkas di dalam RUN "..." menjadi alamat port lengkapnya, supaya
+     tombol menu benar-benar membawa ke programnya. -->
+<script src="../web/_shared/catalog.js"></script>
+<!-- Pengacak bersama repositori. Dipakai untuk RND/RANDOMIZE, dengan benih
+     TETAP supaya tiap penelusuran bisa diulang persis. -->
+<script src="../web/_shared/rng.js"></script>
+
+<!-- Seluruh 83 berkas .BAS di run/, dihasilkan alat/bikin-sumber.py. -->
+<script src="sumber/15PUZZLE.js"></script>
+<script src="sumber/21.js"></script>
+<script src="sumber/ABM2A.js"></script>
+<script src="sumber/ANATOMY.js"></script>
+<script src="sumber/ATTACK.js"></script>
+<script src="sumber/BACKGAM.js"></script>
+<script src="sumber/BATSHIP.js"></script>
+<script src="sumber/BIO.js"></script>
+<script src="sumber/BJ.js"></script>
+<script src="sumber/BLACK.js"></script>
+<script src="sumber/BLACKJCK.js"></script>
+<script src="sumber/BOGGY.js"></script>
+<script src="sumber/BOWLING.js"></script>
+<script src="sumber/BREAKOUT.js"></script>
+<script src="sumber/BUSEIGHT.js"></script>
+<script src="sumber/BUSFIVE.js"></script>
+<script src="sumber/BUSFOUR.js"></script>
+<script src="sumber/BUSNINE.js"></script>
+<script src="sumber/BUSONE.js"></script>
+<script src="sumber/BUSSEVEN.js"></script>
+<script src="sumber/BUSSIX.js"></script>
+<script src="sumber/BUSTEN.js"></script>
+<script src="sumber/BUSTHREE.js"></script>
+<script src="sumber/BUSTWO.js"></script>
+<script src="sumber/CHECK.js"></script>
+<script src="sumber/CRAPS.js"></script>
+<script src="sumber/CRAZY8.js"></script>
+<script src="sumber/CURVE.js"></script>
+<script src="sumber/DOMINOES.js"></script>
+<script src="sumber/DRAW.js"></script>
+<script src="sumber/DREAM.js"></script>
+<script src="sumber/DROIDS.js"></script>
+<script src="sumber/ELIZA.js"></script>
+<script src="sumber/FLYS.js"></script>
+<script src="sumber/FOOTBALL.js"></script>
+<script src="sumber/GERMFOLK.js"></script>
+<script src="sumber/GOLF.js"></script>
+<script src="sumber/HANGMAN.js"></script>
+<script src="sumber/HEAREYE.js"></script>
+<script src="sumber/HINTS.js"></script>
+<script src="sumber/HIQUE2.js"></script>
+<script src="sumber/HISTORY.js"></script>
+<script src="sumber/INTEGRAT.js"></script>
+<script src="sumber/INTRO.js"></script>
+<script src="sumber/KENO.js"></script>
+<script src="sumber/LANDER.js"></script>
+<script src="sumber/LIFE2.js"></script>
+<script src="sumber/MASTER.js"></script>
+<script src="sumber/MATCH.js"></script>
+<script src="sumber/MAXIT1.js"></script>
+<script src="sumber/MAZE.js"></script>
+<script src="sumber/MENU.js"></script>
+<script src="sumber/MENU2.js"></script>
+<script src="sumber/METEOR.js"></script>
+<script src="sumber/MORTGAGE.js"></script>
+<script src="sumber/MUSIC.js"></script>
+<script src="sumber/MUSIC1.js"></script>
+<script src="sumber/NOTETABL.js"></script>
+<script src="sumber/OCTAVE.js"></script>
+<script src="sumber/OTHELLO.js"></script>
+<script src="sumber/PEGLEAP.js"></script>
+<script src="sumber/PIECHART.js"></script>
+<script src="sumber/READING.js"></script>
+<script src="sumber/SERPENT.js"></script>
+<script src="sumber/SIMEQN.js"></script>
+<script src="sumber/SOLITAIR.js"></script>
+<script src="sumber/SPACE.js"></script>
+<script src="sumber/STARTREK.js"></script>
+<script src="sumber/STATS.js"></script>
+<script src="sumber/SUB.js"></script>
+<script src="sumber/TEM-INS.js"></script>
+<script src="sumber/TEMPLE.js"></script>
+<script src="sumber/TICTAC.js"></script>
+<script src="sumber/TOWERS.js"></script>
+<script src="sumber/TRUCKER.js"></script>
+<script src="sumber/WHATMONF.js"></script>
+<script src="sumber/WILDCAT.js"></script>
+<script src="sumber/WIZARD.js"></script>
+<script src="sumber/WORDS.js"></script>
+<script src="sumber/WRTSTR.js"></script>
+<script src="sumber/XWING.js"></script>
+<script src="sumber/YAHTZEE.js"></script>
+<script src="sumber/ZAP'EM.js"></script>
+
+<script src="mesin/konsol.js"></script>
+<script src="mesin/grafik.js"></script>
+
+<script src="mesin/penjalan.js"></script>
+<script src="mesin/pemeriksa.js"></script>
+<script src="mesin/peta.js"></script>
+
+<script src="program/MENU.js"></script>
+<script src="program/INTRO.js"></script>
+<script src="program/CHECK.js"></script>
+<script src="program/TOWERS.js"></script>
+<script src="program/HEAREYE.js"></script>
+<script src="program/TICTAC.js"></script>
+<script src="program/MASTER.js"></script>
+<script src="program/BOGGY.js"></script>
+<script src="program/PEGLEAP.js"></script>
+<script src="program/BIO.js"></script>
+<script src="program/HANGMAN.js"></script>
+<script src="program/BUSONE.js"></script>
+<script src="program/OTHELLO.js"></script>
+<script src="program/CRAPS.js"></script>
+<script src="program/DRAW.js"></script>
+<script src="program/WILDCAT.js"></script>
+<script src="program/MAZE.js"></script>
+<script src="program/SUB.js"></script>
+<script src="program/21.js"></script>
+<script src="program/FOOTBALL.js"></script>
+<script src="program/GOLF.js"></script>
+<script src="program/MATCH.js"></script>
+<script src="program/DOMINOES.js"></script>
+<script src="program/STATS.js"></script>
+<script src="program/MENU2.js"></script>
+<!-- Di luar FriendlyWare: seluruh sisa koleksi run/. -->
+<script src="program/WHATMONF.js"></script>
+<script src="program/OCTAVE.js"></script>
+<script src="program/GERMFOLK.js"></script>
+<script src="program/DREAM.js"></script>
+<script src="program/NOTETABL.js"></script>
+<script src="program/WRTSTR.js"></script>
+<script src="program/WORDS.js"></script>
+<script src="program/READING.js"></script>
+<script src="program/INTEGRAT.js"></script>
+<script src="program/SIMEQN.js"></script>
+<script src="program/BUSTWO.js"></script>
+<script src="program/BUSFOUR.js"></script>
+<script src="program/BUSNINE.js"></script>
+<script src="program/BUSTEN.js"></script>
+<script src="program/SERPENT.js"></script>
+<script src="program/BUSTHREE.js"></script>
+<script src="program/BUSFIVE.js"></script>
+<script src="program/BUSSIX.js"></script>
+<script src="program/BUSSEVEN.js"></script>
+<script src="program/BUSEIGHT.js"></script>
+<script src="program/BOWLING.js"></script>
+<script src="program/METEOR.js"></script>
+<script src="program/CURVE.js"></script>
+<script src="program/HINTS.js"></script>
+<script src="program/KENO.js"></script>
+<script src="program/ZAP'EM.js"></script>
+<script src="program/HIQUE2.js"></script>
+<script src="program/MAXIT1.js"></script>
+<script src="program/ANATOMY.js"></script>
+<script src="program/MORTGAGE.js"></script>
+<script src="program/BACKGAM.js"></script>
+<script src="program/DROIDS.js"></script>
+<script src="program/MUSIC.js"></script>
+<script src="program/MUSIC1.js"></script>
+<script src="program/ATTACK.js"></script>
+<script src="program/BJ.js"></script>
+<script src="program/BLACKJCK.js"></script>
+<script src="program/TEM-INS.js"></script>
+<script src="program/CRAZY8.js"></script>
+<script src="program/HISTORY.js"></script>
+<script src="program/TRUCKER.js"></script>
+<script src="program/BLACK.js"></script>
+<script src="program/ELIZA.js"></script>
+<script src="program/STARTREK.js"></script>
+<script src="program/BATSHIP.js"></script>
+<script src="program/YAHTZEE.js"></script>
+<script src="program/WIZARD.js"></script>
+
+<script src="program/SPACE.js"></script>
+
+<script src="program/PIECHART.js"></script>
+
+<script src="program/15PUZZLE.js"></script>
+
+<script src="program/BREAKOUT.js"></script>
+
+<script src="program/FLYS.js"></script>
+
+<script src="program/LIFE2.js"></script>
+
+<script src="program/ABM2A.js"></script>
+
+<script src="program/SOLITAIR.js"></script>
+
+<script src="program/LANDER.js"></script>
+
+<script src="program/XWING.js"></script>
+<script src="program/TEMPLE.js"></script>
+
+<script src="mesin/antarmuka.js"></script>
+
+</body>
+</html>
