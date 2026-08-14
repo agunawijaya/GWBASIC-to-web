@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Boom County Petroleum — business analysis</title>
+<meta name="description" content="A business analysis of a 1982 speculative oil-drilling operation: site selection logic, depth logic, when to walk away, and field advice. Derived from the WILDCAT operation.">
+<link rel="stylesheet" href="../_shared/tokens.css">
+<link rel="stylesheet" href="../_shared/base.css">
+<link rel="stylesheet" href="trucker-bisnis.css">
+</head>
+<body>
+<div id="topbar-host"></div>
+<main class="wrap k-wrap">
+  <article class="k-isi">
+    <h1>Boom County Petroleum — business analysis</h1>
+    <blockquote><strong>Field interview</strong> · Boom County, 1982 Subject: <strong>Della Rourke</strong>, <em>wildcatter</em> — independent driller Prepared by: a business analyst, at the request of a prospective investor  This is not a technical document. No code, no variable names, no line numbers. It is about how this speculative oil-drilling business actually runs — and every number in it comes from a real operation.  <strong>For readers who are here to learn:</strong> each section ends with a box called <em>From business to mechanic</em>, showing how the business rule becomes a game mechanic — and what is <strong>lost</strong> in that translation.</blockquote>
+    <hr>
+    <h2>1 · The business in one paragraph</h2>
+    <p>Della has <strong>one million dollars</strong> and permission to drill at <strong>ten sites</strong>. Not ten sites of her own choosing anywhere in the world — ten chances, on a ten by ten grid in Boom County. Each time, she picks a site, pays for the drilling out of her own pocket, and learns the result only after the hole is finished.</p>
+    <p>If there is oil, she is paid. If there is not, the money is gone entirely and the hole is plugged.</p>
+    <p>After ten wells, what is judged is not how much cash is left but <strong>how much was added on top of that million</strong>. Coming home with $1,000,000 intact means a year of work for nothing.</p>
+    <figure class="n-gbr"><svg class="n-svg" viewBox="0 0 820 560" role="img"><defs><marker id="mata" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="n-mata"/></marker></defs><rect class="n-kotak" x="300" y="10" width="200" height="44" rx="6"/>
+<text class="n-teks" x="400" y="37.0">$1,000,000 in capital</text>
+<path class="n-belah" d="M400.0 80 L510 115.0 L400.0 150 L290 115.0 Z"/>
+<text class="n-teks" x="400.0" y="113.0">Pick a site</text>
+<text class="n-teks" x="400.0" y="127.0">on the 10 x 10 grid</text>
+<rect class="n-kotak" x="300" y="186" width="200" height="46" rx="6"/>
+<text class="n-teks" x="400" y="207.0">Geology report:</text>
+<text class="n-teks" x="400" y="221.0">zone depth</text>
+<path class="n-belah" d="M400.0 268 L510 305.0 L400.0 342 L290 305.0 Z"/>
+<text class="n-teks" x="400.0" y="310.0">Drill or pass?</text>
+<rect class="n-kotak n-aman" x="20" y="278" width="230" height="54" rx="6"/>
+<text class="n-teks" x="135" y="303.0">Pass - free,</text>
+<text class="n-teks" x="135" y="317.0">try another site</text>
+<rect class="n-kotak" x="300" y="380" width="200" height="46" rx="6"/>
+<text class="n-teks" x="400" y="401.0">Pay per foot</text>
+<text class="n-teks" x="400" y="415.0">up front</text>
+<path class="n-belah" d="M400.0 462 L510 499.0 L400.0 536 L290 499.0 Z"/>
+<text class="n-teks" x="400.0" y="504.0">Any oil?</text>
+<rect class="n-kotak n-buruk" x="20" y="472" width="230" height="54" rx="6"/>
+<text class="n-teks" x="135" y="497.0">Dry hole:</text>
+<text class="n-teks" x="135" y="511.0">the whole cost is gone</text>
+<rect class="n-kotak n-baik" x="560" y="472" width="240" height="54" rx="6"/>
+<text class="n-teks" x="680" y="497.0">Fracture, complete,</text>
+<text class="n-teks" x="680" y="511.0">collect payment</text>
+<path class="n-panah" marker-end="url(#mata)" d="M400.0 54.0 L400.0 67.0 L400.0 67.0 L400.0 80.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M400.0 150.0 L400.0 168.0 L400.0 168.0 L400.0 186.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M400.0 232.0 L400.0 250.0 L400.0 250.0 L400.0 268.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M290.0 305.0 L270.0 305.0 L270.0 305.0 L250.0 305.0"/>
+<text class="n-label" x="270.0" y="299.0">pass</text>
+<path class="n-panah" marker-end="url(#mata)" d="M400.0 342.0 L400.0 361.0 L400.0 361.0 L400.0 380.0"/>
+<text class="n-label" x="400.0" y="355.0">drill</text>
+<path class="n-panah" marker-end="url(#mata)" d="M400.0 426.0 L400.0 444.0 L400.0 444.0 L400.0 462.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M290.0 499.0 L270.0 499.0 L270.0 499.0 L250.0 499.0"/>
+<text class="n-label" x="270.0" y="493.0">no</text>
+<path class="n-panah" marker-end="url(#mata)" d="M510.0 499.0 L535.0 499.0 L535.0 499.0 L560.0 499.0"/>
+<text class="n-label" x="535.0" y="493.0">yes</text></svg></figure>
+    <hr>
+    <h2>2 · Cost structure — and the cost is what you learn first</h2>
+    <table class="k-tabel"><thead><tr><th>item</th><th>amount</th><th>nature</th></tr></thead><tbody><tr><td>Drilling</td><td><strong>$30 per foot</strong></td><td>proportional to zone depth</td></tr><tr><td>Fracturing</td><td><strong>$10 per foot</strong> of total depth</td><td>required to make it flow</td></tr><tr><td>Well completion</td><td><strong>$1,800 – $2,688</strong></td><td>fixed, slightly variable</td></tr></tbody></table>
+    <p>The hole is always drilled <strong>500 feet below the top of the zone</strong>. So for a zone topping out at 3,000 feet:</p>
+    <pre class="k-kode">drilling      3,000 ft × $30  = $ 90,000
+fracturing    3,500 ft × $10  = $ 35,000
+completion                     = $  2,200
+                                 ---------
+total                            $127,200</pre>
+    <p>In practice the cost is <strong>$40 per foot of zone plus about $7,200 fixed</strong>. A shallow 1,000-foot zone costs $47,200; a deep 6,000-foot zone costs $247,200 — <strong>five times as much</strong>. The full table is in section 5.</p>
+    <blockquote><strong>Della:</strong> <em>&quot;People think the gamble is in the oil. It isn&#x27;t. The gamble is settled before the bit touches dirt — the moment I sign, the money going out is fixed. The only thing still unknown is the money coming in.&quot;</em></blockquote>
+    <p><strong>This is the shape of decision that makes the business interesting:</strong> the cost is <strong>known exactly in advance</strong>, the outcome is completely dark. The geology report gives the zone depth before Della decides, so she can always compute what she will lose if it comes up dry — and can never compute what she will make if it comes in.</p>
+    <blockquote><strong>From business to mechanic.</strong> A certain cost against a random outcome is the cleanest wager structure there is. The player needs no understanding of geology; he needs only to understand that he is buying a ticket whose price is printed plainly and whose prize is not. What is <strong>lost</strong>: in the real world a wildcatter sells shares to investors to spread the risk, and that is the single most important business decision there is — and it is entirely absent here.</blockquote>
+    <hr>
+    <h2>3 · Revenue structure</h2>
+    <table class="k-tabel"><thead><tr><th>source</th><th>pays</th></tr></thead><tbody><tr><td>Oil</td><td><strong>$9,000 per barrel-per-day</strong> of well capacity</td></tr><tr><td>Gas</td><td><strong>$2.10 per thousand cubic feet</strong></td></tr></tbody></table>
+    <p>That $9,000 is not the price of one barrel — it is the value of <strong>daily capacity</strong>, roughly a year of production at about $24.66 a barrel. So a 240-barrel-per-day well pays <strong>$2,160,000</strong> immediately, more than twice Della&#x27;s entire capital.</p>
+    <p>After payment, the report also states the <strong>reserves still in the ground</strong> — five times the gross revenue. That figure <strong>never enters the cash account</strong>. It is good news that cannot be spent.</p>
+    <blockquote><strong>Della:</strong> <em>&quot;Reserves in the ground are for the banker, not for me. I can&#x27;t buy a bit with oil that&#x27;s still down there.&quot;</em></blockquote>
+    <hr>
+    <h2>4 · Site selection logic — and this is the biggest finding</h2>
+    <p>Boom County has three classes of land. Della recognizes them from experience; the geology report <strong>does not mention them</strong>.</p>
+    <table class="k-tabel"><thead><tr><th>class</th><th>dry-hole chance</th><th>chance of the richest pay sand</th></tr></thead><tbody><tr><td><strong>Type 1</strong></td><td><strong>25 %</strong></td><td>15 %</td></tr><tr><td><strong>Type 2</strong></td><td><strong>50 %</strong></td><td>15 %</td></tr><tr><td><strong>Type 3</strong></td><td><strong>75 %</strong></td><td><strong>20 %</strong></td></tr></tbody></table>
+    <figure class="g-gbr"><svg class="g-svg" viewBox="0 0 760 300" role="img" aria-label="Dry-hole chance by land class">
+<text class="g-judul" x="70" y="22">Dry-hole chance by land class</text>
+<text class="g-sub" x="70" y="38">Type 3 comes up dry three times in four.</text>
+<line class="g-kisi" x1="70" y1="244.0" x2="736.0" y2="244.0"/>
+<text class="g-sumbu g-kanan" x="62" y="248.0">0</text>
+<line class="g-kisi" x1="70" y1="196.0" x2="736.0" y2="196.0"/>
+<text class="g-sumbu g-kanan" x="62" y="200.0">20</text>
+<line class="g-kisi" x1="70" y1="148.0" x2="736.0" y2="148.0"/>
+<text class="g-sumbu g-kanan" x="62" y="152.0">40</text>
+<line class="g-kisi" x1="70" y1="100.0" x2="736.0" y2="100.0"/>
+<text class="g-sumbu g-kanan" x="62" y="104.0">60</text>
+<line class="g-kisi" x1="70" y1="52.0" x2="736.0" y2="52.0"/>
+<text class="g-sumbu g-kanan" x="62" y="56.0">80</text>
+<rect class="g-batang g-a" x="118.8" y="184.0" width="124.3" height="60.0" rx="4"/>
+<text class="g-legenda g-tengah" x="181.0" y="176.0">25 %</text>
+<text class="g-sumbu g-tengah" x="181.0" y="264">Type 1</text>
+<rect class="g-batang g-b" x="340.8" y="124.0" width="124.3" height="120.0" rx="4"/>
+<text class="g-legenda g-tengah" x="403.0" y="116.0">50 %</text>
+<text class="g-sumbu g-tengah" x="403.0" y="264">Type 2</text>
+<rect class="g-batang g-c" x="562.8" y="64.0" width="124.3" height="180.0" rx="4"/>
+<text class="g-legenda g-tengah" x="625.0" y="56.0">75 %</text>
+<text class="g-sumbu g-tengah" x="625.0" y="264">Type 3</text>
+</svg></figure>
+    <figure class="g-gbr"><svg class="g-svg" viewBox="0 0 760 300" role="img" aria-label="Chance of hitting the RICHEST pay sand">
+<text class="g-judul" x="70" y="22">Chance of hitting the RICHEST pay sand</text>
+<text class="g-sub" x="70" y="38">And type 3 is the one that lands there most often.</text>
+<line class="g-kisi" x1="70" y1="244.0" x2="736.0" y2="244.0"/>
+<text class="g-sumbu g-kanan" x="62" y="248.0">0</text>
+<line class="g-kisi" x1="70" y1="196.0" x2="736.0" y2="196.0"/>
+<text class="g-sumbu g-kanan" x="62" y="200.0">6</text>
+<line class="g-kisi" x1="70" y1="148.0" x2="736.0" y2="148.0"/>
+<text class="g-sumbu g-kanan" x="62" y="152.0">12</text>
+<line class="g-kisi" x1="70" y1="100.0" x2="736.0" y2="100.0"/>
+<text class="g-sumbu g-kanan" x="62" y="104.0">19</text>
+<line class="g-kisi" x1="70" y1="52.0" x2="736.0" y2="52.0"/>
+<text class="g-sumbu g-kanan" x="62" y="56.0">25</text>
+<rect class="g-batang g-a" x="118.8" y="128.8" width="124.3" height="115.2" rx="4"/>
+<text class="g-legenda g-tengah" x="181.0" y="120.8">15 %</text>
+<text class="g-sumbu g-tengah" x="181.0" y="264">Type 1</text>
+<rect class="g-batang g-b" x="340.8" y="128.8" width="124.3" height="115.2" rx="4"/>
+<text class="g-legenda g-tengah" x="403.0" y="120.8">15 %</text>
+<text class="g-sumbu g-tengah" x="403.0" y="264">Type 2</text>
+<rect class="g-batang g-c" x="562.8" y="90.4" width="124.3" height="153.6" rx="4"/>
+<text class="g-legenda g-tengah" x="625.0" y="82.4">20 %</text>
+<text class="g-sumbu g-tengah" x="625.0" y="264">Type 3</text>
+</svg></figure>
+    <p>Read those two charts side by side, then read the last row of the table above twice.</p>
+    <p>Type 3 is the worst land by every measure people normally use: <strong>three of every four wells come up dry.</strong> But when it does come in, it lands on the <strong>richest pay sand</strong> more often than type 1 does — 20 % against 15 %. Type 1 gives many medium wells; type 3 gives few large ones.</p>
+    <p>That is not &quot;worse&quot;. That is <strong>a different risk profile</strong>, and the choice between them turns on one thing: how many chances Della has left.</p>
+    <figure class="n-gbr"><svg class="n-svg" viewBox="0 0 830 320" role="img"><defs><marker id="mata" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="n-mata"/></marker></defs><path class="n-belah" d="M405.0 10 L520 48.0 L405.0 86 L290 48.0 Z"/>
+<text class="n-teks" x="405.0" y="46.0">Wells left</text>
+<text class="n-teks" x="405.0" y="60.0">and cash left?</text>
+<rect class="n-kotak n-baik" x="30" y="170" width="200" height="54" rx="6"/>
+<text class="n-teks" x="130" y="195.0">TYPE 1</text>
+<text class="n-teks" x="130" y="209.0">often, medium</text>
+<rect class="n-kotak n-hati" x="300" y="170" width="210" height="54" rx="6"/>
+<text class="n-teks" x="405" y="195.0">TYPE 3</text>
+<text class="n-teks" x="405" y="209.0">rarely, big</text>
+<rect class="n-kotak n-aman" x="580" y="170" width="220" height="54" rx="6"/>
+<text class="n-teks" x="690" y="195.0">TYPE 1 or 2</text>
+<text class="n-teks" x="690" y="209.0">protect the gain</text>
+<rect class="n-catatan" x="30" y="260" width="200" height="42" rx="6"/>
+<text class="n-teks" x="130" y="286.0">Building capital</text>
+<rect class="n-catatan" x="300" y="260" width="210" height="42" rx="6"/>
+<text class="n-teks" x="405" y="286.0">Catching up from behind</text>
+<rect class="n-catatan" x="580" y="260" width="220" height="42" rx="6"/>
+<text class="n-teks" x="690" y="286.0">Locking in profit</text>
+<path class="n-panah" marker-end="url(#mata)" d="M290.0 48.0 L260.0 48.0 L260.0 197.0 L230.0 197.0"/>
+<text class="n-label" x="260.0" y="191.0">plenty left</text>
+<path class="n-panah" marker-end="url(#mata)" d="M405.0 86.0 L405.0 128.0 L405.0 128.0 L405.0 170.0"/>
+<text class="n-label" x="405.0" y="122.0">few left, still down</text>
+<path class="n-panah" marker-end="url(#mata)" d="M520.0 48.0 L550.0 48.0 L550.0 197.0 L580.0 197.0"/>
+<text class="n-label" x="550.0" y="191.0">already ahead</text>
+<path class="n-panah" marker-end="url(#mata)" d="M130.0 224.0 L130.0 242.0 L130.0 242.0 L130.0 260.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M405.0 224.0 L405.0 242.0 L405.0 242.0 L405.0 260.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M690.0 224.0 L690.0 242.0 L690.0 242.0 L690.0 260.0"/></svg></figure>
+    <blockquote><strong>Della:</strong> <em>&quot;With eight holes left I want the safe ground. With two left and still in the red, safe is the surest way to lose. That&#x27;s when I go looking for the land everybody else laughs at.&quot;</em></blockquote>
+    <blockquote><strong>From business to mechanic.</strong> This is a valuable design pattern: <strong>the &quot;bad&quot; option must have a state in which it is right.</strong> If type 3 were worse in every state it would not be a choice, it would be a trap. Because its variance is higher it becomes a legitimate instrument for a player who is behind — and that makes the decision depend on <strong>position</strong>, not on a table.  What is <strong>lost</strong>: Della recognizes land classes from experience, but the game never tells the player which class he is facing. A designer who wants this decision to be genuinely available has to give a signal — seismic data, neighboring wells, something.</blockquote>
+    <hr>
+    <h2>5 · Depth logic</h2>
+    <p>Zone depth drives cost directly and linearly: <strong>$40 per foot</strong>. But it does <strong>not</strong> drive the outcome. Deep zones do not pay better than shallow ones.</p>
+    <p>The cost is exactly <strong>$40 per foot of zone plus $7,200</strong> — $5,000 of that from fracturing, which always runs 500 feet deeper, and the rest from completion.</p>
+    <table class="k-tabel"><thead><tr><th>zone depth</th><th>total cost</th><th>barrels/day to break even</th><th>wells $1 million buys</th></tr></thead><tbody><tr><td>1,000 ft</td><td>$47,200</td><td>5.2</td><td><strong>21</strong></td></tr><tr><td>2,000 ft</td><td>$87,200</td><td>9.7</td><td>11</td></tr><tr><td>3,000 ft</td><td>$127,200</td><td>14.1</td><td>7</td></tr><tr><td>4,000 ft</td><td>$167,200</td><td>18.6</td><td>5</td></tr><tr><td>5,000 ft</td><td>$207,200</td><td>23.0</td><td>4</td></tr><tr><td>6,000 ft</td><td>$247,200</td><td>27.5</td><td><strong>4</strong></td></tr></tbody></table>
+    <figure class="g-gbr"><svg class="g-svg" viewBox="0 0 760 320" role="img" aria-label="Cost of one well against zone depth">
+<text class="g-judul" x="62" y="20">Cost of one well against zone depth</text>
+<text class="g-sub" x="62" y="36">A straight line: no economies of scale, no optimum point.</text>
+<line class="g-kisi" x1="62" y1="268.0" x2="736.0" y2="268.0"/>
+<text class="g-sumbu g-kanan" x="54" y="272.0">0</text>
+<line class="g-kisi" x1="62" y1="212.5" x2="736.0" y2="212.5"/>
+<text class="g-sumbu g-kanan" x="54" y="216.5">65</text>
+<line class="g-kisi" x1="62" y1="157.0" x2="736.0" y2="157.0"/>
+<text class="g-sumbu g-kanan" x="54" y="161.0">130</text>
+<line class="g-kisi" x1="62" y1="101.5" x2="736.0" y2="101.5"/>
+<text class="g-sumbu g-kanan" x="54" y="105.5">195</text>
+<line class="g-kisi" x1="62" y1="46.0" x2="736.0" y2="46.0"/>
+<text class="g-sumbu g-kanan" x="54" y="50.0">260</text>
+<line class="g-kisiT" x1="62.0" y1="46" x2="62.0" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="62.0" y="286">1000</text>
+<line class="g-kisiT" x1="196.8" y1="46" x2="196.8" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="196.8" y="286">2000</text>
+<line class="g-kisiT" x1="331.6" y1="46" x2="331.6" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="331.6" y="286">3000</text>
+<line class="g-kisiT" x1="466.4" y1="46" x2="466.4" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="466.4" y="286">4000</text>
+<line class="g-kisiT" x1="601.2" y1="46" x2="601.2" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="601.2" y="286">5000</text>
+<line class="g-kisiT" x1="736.0" y1="46" x2="736.0" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="736.0" y="286">6000</text>
+<text class="g-sumbu g-tengah" x="399.0" y="312">zone depth (feet)</text>
+<text class="g-sumbu" x="4" y="36">thousand $</text>
+<path class="g-garis g-c" d="M62.0 227.7 L196.8 193.5 L331.6 159.4 L466.4 125.2 L601.2 91.1 L736.0 56.9"/>
+<circle class="g-titik g-c" cx="62.0" cy="227.7" r="3"/>
+<circle class="g-titik g-c" cx="196.8" cy="193.5" r="3"/>
+<circle class="g-titik g-c" cx="331.6" cy="159.4" r="3"/>
+<circle class="g-titik g-c" cx="466.4" cy="125.2" r="3"/>
+<circle class="g-titik g-c" cx="601.2" cy="91.1" r="3"/>
+<circle class="g-titik g-c" cx="736.0" cy="56.9" r="3"/>
+<rect class="g-kunci g-c" x="546" y="18" width="14" height="4"/>
+<text class="g-legenda" x="566" y="22">total cost</text>
+</svg></figure>
+    <p>The straight line is itself the explanation: no economies of scale, no optimum point. Every foot costs the same.</p>
+    <p>What is <strong>not</strong> straight is the effect on how many attempts you can afford:</p>
+    <figure class="g-gbr"><svg class="g-svg" viewBox="0 0 760 300" role="img" aria-label="How many wells one million dollars buys">
+<text class="g-judul" x="70" y="22">How many wells one million dollars buys</text>
+<text class="g-sub" x="70" y="38">The steepest fall is in the first two thousand feet, then it flattens.</text>
+<line class="g-kisi" x1="70" y1="244.0" x2="736.0" y2="244.0"/>
+<text class="g-sumbu g-kanan" x="62" y="248.0">0</text>
+<line class="g-kisi" x1="70" y1="196.0" x2="736.0" y2="196.0"/>
+<text class="g-sumbu g-kanan" x="62" y="200.0">6</text>
+<line class="g-kisi" x1="70" y1="148.0" x2="736.0" y2="148.0"/>
+<text class="g-sumbu g-kanan" x="62" y="152.0">12</text>
+<line class="g-kisi" x1="70" y1="100.0" x2="736.0" y2="100.0"/>
+<text class="g-sumbu g-kanan" x="62" y="104.0">18</text>
+<line class="g-kisi" x1="70" y1="52.0" x2="736.0" y2="52.0"/>
+<text class="g-sumbu g-kanan" x="62" y="56.0">24</text>
+<rect class="g-batang g-a" x="94.4" y="76.0" width="62.2" height="168.0" rx="4"/>
+<text class="g-legenda g-tengah" x="125.5" y="68.0">21</text>
+<text class="g-sumbu g-tengah" x="125.5" y="264">1000</text>
+<rect class="g-batang g-a" x="205.4" y="156.0" width="62.2" height="88.0" rx="4"/>
+<text class="g-legenda g-tengah" x="236.5" y="148.0">11</text>
+<text class="g-sumbu g-tengah" x="236.5" y="264">2000</text>
+<rect class="g-batang g-b" x="316.4" y="188.0" width="62.2" height="56.0" rx="4"/>
+<text class="g-legenda g-tengah" x="347.5" y="180.0">7</text>
+<text class="g-sumbu g-tengah" x="347.5" y="264">3000</text>
+<rect class="g-batang g-b" x="427.4" y="204.0" width="62.2" height="40.0" rx="4"/>
+<text class="g-legenda g-tengah" x="458.5" y="196.0">5</text>
+<text class="g-sumbu g-tengah" x="458.5" y="264">4000</text>
+<rect class="g-batang g-c" x="538.4" y="212.0" width="62.2" height="32.0" rx="4"/>
+<text class="g-legenda g-tengah" x="569.5" y="204.0">4</text>
+<text class="g-sumbu g-tengah" x="569.5" y="264">5000</text>
+<rect class="g-batang g-c" x="649.4" y="212.0" width="62.2" height="32.0" rx="4"/>
+<text class="g-legenda g-tengah" x="680.5" y="204.0">4</text>
+<text class="g-sumbu g-tengah" x="680.5" y="264">6000</text>
+</svg></figure>
+    <p>Because the outcome does not depend on depth, <strong>the rule of thumb is simple: on the same class of land, shallower is always better.</strong> A million dollars buys <strong>twenty-one</strong> shallow 1,000-foot wells, but only <strong>four</strong> deep 6,000-foot ones. Note the shape of the bars: the steepest fall is in the first two thousand feet, then it flattens. Below 4,000 feet, drilling deeper barely reduces the number of attempts any further &amp;mdash; the damage is already done.</p>
+    <p>And because the opportunity is capped at ten wells rather than capped by money, depth has a second meaning: <strong>deep wells consume cash without consuming chances.</strong> Della can run out of money before she runs out of holes.</p>
+    <blockquote><strong>From business to mechanic.</strong> Two resources draining at different rates — money per foot, chances per well — is how you make one decision press from two directions at once. What is <strong>lost</strong>: in the real world deep zones often genuinely are more productive, and that is why people drill deep. Here depth is pure burden.</blockquote>
+    <hr>
+    <h2>6 · The logic of walking away</h2>
+    <p>Every time a geology report comes back, Della may say <strong>no</strong>. Passing on a site costs nothing at all and <strong>does not consume</strong> one of her ten chances.</p>
+    <p>That means passing on a zone that is too deep is always correct as long as other sites remain. The only thing that eventually makes Della drill an expensive zone is <strong>running out of cheaper options</strong>.</p>
+    <figure class="n-gbr"><svg class="n-svg" viewBox="0 0 890 450" role="img"><defs><marker id="mata" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="n-mata"/></marker></defs><rect class="n-kotak" x="300" y="10" width="250" height="44" rx="6"/>
+<text class="n-teks" x="425" y="37.0">Geology report</text>
+<path class="n-belah" d="M425.0 80 L560 122.0 L425.0 164 L290 122.0 Z"/>
+<text class="n-teks" x="425.0" y="120.0">Does it cost more than</text>
+<text class="n-teks" x="425.0" y="134.0">a quarter of remaining cash?</text>
+<rect class="n-kotak n-aman" x="20" y="92" width="240" height="60" rx="6"/>
+<text class="n-teks" x="140" y="120.0">Pass - free,</text>
+<text class="n-teks" x="140" y="134.0">if sites remain</text>
+<path class="n-belah" d="M425.0 210 L560 252.0 L425.0 294 L290 252.0 Z"/>
+<text class="n-teks" x="425.0" y="250.0">Plenty of</text>
+<text class="n-teks" x="425.0" y="264.0">wells left?</text>
+<rect class="n-kotak n-baik" x="600" y="226" width="250" height="52" rx="6"/>
+<text class="n-teks" x="725" y="250.0">Drill - play safe,</text>
+<text class="n-teks" x="725" y="264.0">collect medium wells</text>
+<path class="n-belah" d="M425.0 340 L560 382.0 L425.0 424 L290 382.0 Z"/>
+<text class="n-teks" x="425.0" y="387.0">Already ahead?</text>
+<rect class="n-kotak n-baik" x="20" y="356" width="240" height="52" rx="6"/>
+<text class="n-teks" x="140" y="380.0">Drill only the cheap ones,</text>
+<text class="n-teks" x="140" y="394.0">lock the gain</text>
+<rect class="n-kotak n-hati" x="600" y="350" width="260" height="64" rx="6"/>
+<text class="n-teks" x="730" y="380.0">Drill whichever has the best</text>
+<text class="n-teks" x="730" y="394.0">shot at the richest pay sand</text>
+<path class="n-panah" marker-end="url(#mata)" d="M425.0 54.0 L425.0 67.0 L425.0 67.0 L425.0 80.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M290.0 122.0 L275.0 122.0 L275.0 122.0 L260.0 122.0"/>
+<text class="n-label" x="275.0" y="116.0">yes</text>
+<path class="n-panah" marker-end="url(#mata)" d="M425.0 164.0 L425.0 187.0 L425.0 187.0 L425.0 210.0"/>
+<text class="n-label" x="425.0" y="181.0">no</text>
+<path class="n-panah" marker-end="url(#mata)" d="M560.0 252.0 L580.0 252.0 L580.0 252.0 L600.0 252.0"/>
+<text class="n-label" x="580.0" y="246.0">yes</text>
+<path class="n-panah" marker-end="url(#mata)" d="M425.0 294.0 L425.0 317.0 L425.0 317.0 L425.0 340.0"/>
+<text class="n-label" x="425.0" y="311.0">only 1-2 left</text>
+<path class="n-panah" marker-end="url(#mata)" d="M290.0 382.0 L275.0 382.0 L275.0 382.0 L260.0 382.0"/>
+<text class="n-label" x="275.0" y="376.0">yes</text>
+<path class="n-panah" marker-end="url(#mata)" d="M560.0 382.0 L580.0 382.0 L580.0 382.0 L600.0 382.0"/>
+<text class="n-label" x="580.0" y="376.0">no</text></svg></figure>
+    <blockquote><strong>From business to mechanic.</strong> A &quot;pass&quot; option that is <strong>free and unlimited</strong> looks like an empty decision — why not always skip the expensive ones? — until you notice the grid is finite. The limit lives not in the pass rule but in the number of sites. A designer who wants to constrain something need not always forbid it; sometimes it is enough to limit the supply.</blockquote>
+    <hr>
+    <h2>7 · Risk register</h2>
+    <table class="k-tabel"><thead><tr><th>risk</th><th>trigger</th><th>impact</th><th>reducible?</th></tr></thead><tbody><tr><td>Dry hole</td><td>land class</td><td><strong>the whole cost is gone</strong></td><td>yes — pick type 1</td></tr><tr><td>Deep zone</td><td>geology</td><td>cost up to 6×</td><td>yes — pass, it is free</td></tr><tr><td>Running out of cash</td><td>too many deep wells</td><td>game ends before ten wells</td><td>yes — keep a reserve</td></tr><tr><td>Completion cost varies</td><td>random $1,800–$2,688</td><td>small</td><td>no</td></tr><tr><td>Thin pay sand</td><td>outcome draw</td><td>the well comes in but small</td><td>no</td></tr></tbody></table>
+    <p>Note the last column: <strong>every reducible risk is reduced before drilling, never after.</strong> Once the bit goes down, not one decision remains. That makes this business very different from, say, driving a truck — where decisions come every hour.</p>
+    <hr>
+    <h2>8 · Measures of success</h2>
+    <p>What is judged is <strong>profit above one million</strong>, not the closing cash. And if the cash runs out before the tenth well, the report closes with a line that teaches the entire cost structure in one sentence:</p>
+    <blockquote><em>&quot;You ran out of money at N feet.&quot;</em></blockquote>
+    <p>The remaining cash divided by thirty. Even the defeat is measured in feet.</p>
+    <hr>
+    <h2>9 · Field advice — for anyone who has never drilled</h2>
+    <p><strong>Before picking a site</strong></p>
+    <ul><li><strong>Do the arithmetic first, then answer.</strong> Cost = zone depth × $40, plus about $2,200. If that number is more than a quarter of your remaining cash, think twice.</li><li><strong>Passing is free.</strong> No penalty, no chance consumed. If the zone is deep and the grid is still wide open, pass.</li><li><strong>Shallow is always better on the same land.</strong> Depth raises cost without raising the outcome.</li></ul>
+    <p><strong>Reading your position</strong></p>
+    <ul><li><strong>Eight wells left and capital intact:</strong> play safe. Accumulate medium wells.</li><li><strong>Two wells left and still down:</strong> safe is now the surest way to lose. Look for land with a high dry-hole rate but the best shot at the richest sand — that is the only road back.</li><li><strong>Well ahead:</strong> stop taking risk. Cheap wells, shallow zones, protect the result through the tenth well.</li></ul>
+    <p><strong>What most often bankrupts a beginner</strong></p>
+    <p>Drilling three deep zones back to back at the start. Three 5,000-foot wells consume <strong>$621,600</strong> — nearly two-thirds of the capital — and if all three come up dry, the seven remaining chances have only $378,400 between them, enough for eight shallow wells but not for two more deep ones. Defeat in this business almost always happens at the third well, not the tenth.</p>
+    <hr>
+    <h2>10 · Summary for game designers</h2>
+    <p><strong>Already strong:</strong></p>
+    <ol><li><strong>Certain cost against random outcome</strong> — the cleanest wager structure there is, and it demands no understanding of geology from the player.</li><li><strong>A &quot;bad&quot; option with a state in which it is right</strong> — type 3 is drier <em>and</em> bigger, so it is an instrument for the player who is behind.</li><li><strong>Two resources draining at different rates</strong> — money per foot, chances per well.</li><li><strong>A free pass option</strong>, limited not by a rule but by the supply of sites.</li><li><strong>A number that teaches through defeat</strong> — &quot;ran out of money at N feet&quot;.</li></ol>
+    <p><strong>Missing, and worth adding:</strong></p>
+    <ol><li><strong>There are no investors.</strong> A real wildcatter sells shares to spread risk; that is his most important business decision, and it is absent here.</li><li><strong>Land class is never disclosed</strong> — so the most important decision in §4 cannot actually be made knowingly by the player.</li><li><strong>Depth is pure burden</strong>, where in the real world it is often the very reason people drill.</li><li><strong>There is no time.</strong> No moving oil price, no lease expiring, no competitor drilling first.</li></ol>
+    <p>That fourth absence defines its character most: this is a game of <strong>ten sequential wagers</strong>, not a game of running a company. Adding time would turn it into something else entirely — and that is a legitimate choice, as long as it is made knowingly.</p>
+    <hr>
+    <p><em>This document is derived from the <code>WILDCAT</code> operation as it actually runs. The numbers, thresholds, and consequences are real; only the voice was added. The technical and architectural notes are in</em> <a href="wildcat.md"><code>wildcat.md</code></a> — <em>a completely different document, for a different reader.</em></p>
+  </article>
+  <p class="k-kaki">This page is generated from <code>wildcat-business.md</code>. Its charts are <b>computed from the same cost formulas</b> written in the document itself, so the tables and the charts cannot disagree. Edit the document, then run <code>scripts/wildcat-bisnis-html.py --en</code>.</p>
+  <p class="k-kaki"><a href="../games/wildcat/index.html">&larr; Back to WILDCAT</a>
+     &middot; <a href="wildcat.md">Architecture notes</a>
+     &middot; <a href="wildcat-bisnis.html">Versi Indonesia</a></p>
+</main>
+<script src="../_shared/ui.js"></script>
+<script>
+  var tb = window.RETRO.ui.topbar({
+    title: 'Boom County Petroleum', source: 'Business analysis · WILDCAT', lang: 'en'
+  });
+  document.getElementById('topbar-host').append(tb);
+  /* Topbar bersama menganggap dirinya dipasang dari web/games/<id>/. Halaman
+     ini ada di web/docs/, satu tingkat lebih dangkal. */
+  var pulang = document.querySelector('#topbar-host a[href$="index.html"]');
+  if (pulang) pulang.setAttribute('href', '../index.html');
+</script>
+</body>
+</html>

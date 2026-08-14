@@ -28,9 +28,79 @@ kotak, belah, bagan = _ns['kotak'], _ns['belah'], _ns['bagan']
 turun, kanan, kiri, kiriAtas, kananAtas = (_ns['turun'], _ns['kanan'],
     _ns['kiri'], _ns['kiriAtas'], _ns['kananAtas'])
 _jalur, grafik = _ns['_jalur'], _ns['grafik']
+T = _ns['T']
 
 SUMBER = os.path.join(AKAR, 'web', 'docs', 'wildcat-bisnis.md')
 TUJUAN = os.path.join(AKAR, 'web', 'docs', 'wildcat-bisnis.html')
+
+# ==========================================================================
+#  Saklar bahasa — mekanismenya dipakai ulang dari trucker-bisnis-html.py.
+#
+#  Label khas WILDCAT DISUNTIKKAN ke kamus di namespace bersama, bukan
+#  disimpan di sini. Sebabnya: T() yang dipakai kotak(), belah(), dan
+#  grafik() hidup di dalam namespace hasil exec, jadi ia membaca EN dan
+#  BAHASA milik namespace ITU. Menyetel salinan lokal tidak akan terlihat
+#  olehnya -- diagramnya akan tetap berbahasa Indonesia tanpa satu pun galat.
+# ==========================================================================
+_ns['EN'].update({
+    # -- diagram 1: usaha dalam satu paragraf
+    'Modal $1.000.000': '$1,000,000 in capital',
+    'Pilih titik|di petak 10 x 10': 'Pick a site|on the 10 x 10 grid',
+    'Laporan geologi:|kedalaman zona': 'Geology report:|zone depth',
+    'Bor atau lewati?': 'Drill or pass?',
+    'Lewati - gratis,|coba titik lain': 'Pass - free,|try another site',
+    'Bayar per kaki|di muka': 'Pay per foot|up front',
+    'Ada minyak?': 'Any oil?',
+    'Lubang kering:|seluruh biaya hilang': 'Dry hole:|the whole cost is gone',
+    'Rekah, selesaikan,|terima bayaran': 'Fracture, complete,|collect payment',
+    'lewati': 'pass',
+    'bor': 'drill',
+    # -- diagram 2: pemilihan lokasi
+    'Sisa sumur|dan sisa kas?': 'Wells left|and cash left?',
+    'TIPE 1|sering, sedang': 'TYPE 1|often, medium',
+    'TIPE 3|jarang, besar': 'TYPE 3|rarely, big',
+    'TIPE 1 atau 2|jaga hasil': 'TYPE 1 or 2|protect the gain',
+    'Membangun modal': 'Building capital',
+    'Mengejar ketertinggalan': 'Catching up from behind',
+    'Mengunci laba': 'Locking in profit',
+    'banyak sisa': 'plenty left',
+    'tinggal sedikit, masih rugi': 'few left, still down',
+    'sudah untung': 'already ahead',
+    # -- diagram 3: logika berhenti
+    'Laporan geologi': 'Geology report',
+    'Biaya lebih dari|seperempat sisa kas?':
+        'Does it cost more than|a quarter of remaining cash?',
+    'Lewati - gratis,|kalau masih ada titik':
+        'Pass - free,|if sites remain',
+    'Sisa sumur|masih banyak?': 'Plenty of|wells left?',
+    'Bor - main aman,|kumpulkan yang sedang':
+        'Drill - play safe,|collect medium wells',
+    'Sudah untung?': 'Already ahead?',
+    'Bor yang murah saja,|kunci hasil': 'Drill only the cheap ones,|lock the gain',
+    'Bor yang peluang lapisan|terkayanya paling besar':
+        'Drill whichever has the best|shot at the richest pay sand',
+    'tinggal 1-2': 'only 1-2 left',
+    # -- grafik
+    'Peluang lubang kering per kelas lahan': 'Dry-hole chance by land class',
+    'Tipe 3 kering tiga dari empat kali.': 'Type 3 comes up dry three times in four.',
+    'Tipe 1': 'Type 1',
+    'Tipe 2': 'Type 2',
+    'Tipe 3': 'Type 3',
+    'Peluang mendarat di lapisan pembayaran TERTINGGI':
+        'Chance of hitting the RICHEST pay sand',
+    'Dan justru tipe 3 yang paling sering mendarat di sana.':
+        'And type 3 is the one that lands there most often.',
+    'Biaya satu sumur terhadap kedalaman zona': 'Cost of one well against zone depth',
+    'Garis lurus: tidak ada penghematan skala, tidak ada titik optimal.':
+        'A straight line: no economies of scale, no optimum point.',
+    'biaya total': 'total cost',
+    'kedalaman zona (kaki)': 'zone depth (feet)',
+    'ribu $': 'thousand $',
+    'Berapa sumur yang bisa dibiayai satu juta dolar':
+        'How many wells one million dollars buys',
+    'Penurunan tercuram di dua ribu kaki pertama, lalu mendatar.':
+        'The steepest fall is in the first two thousand feet, then it flattens.',
+})
 
 # ==========================================================================
 #  Rumus — sama dengan yang tertulis di dokumennya
@@ -49,6 +119,7 @@ TERKAYA = [15, 15, 20]       # peluang lapisan pembayaran tertinggi, %
 #  Grafik batang sederhana
 # ==========================================================================
 def batang(judul, sub, label, nilai, ymaks, satuan, kelas, lebar=760, tinggi=300):
+    judul, sub = T(judul), T(sub)
     L, R, A, B = 70, 24, 52, 56
     pw, ph = lebar - L - R, tinggi - A - B
     o = ['<svg class="g-svg" viewBox="0 0 %d %d" role="img" aria-label="%s">'
@@ -74,7 +145,7 @@ def batang(judul, sub, label, nilai, ymaks, satuan, kelas, lebar=760, tinggi=300
         o.append('<text class="g-legenda g-tengah" x="%.1f" y="%.1f">%s</text>'
                  % (x + w / 2, A + ph - h - 8, satuan % v))
         o.append('<text class="g-sumbu g-tengah" x="%.1f" y="%d">%s</text>'
-                 % (x + w / 2, A + ph + 20, label[i]))
+                 % (x + w / 2, A + ph + 20, T(label[i])))
     o.append('</svg>')
     return '\n'.join(o)
 
@@ -186,12 +257,12 @@ def diagram_3():
 DIAGRAM = [diagram_1, diagram_2, diagram_3]
 
 KERANGKA = """<!doctype html>
-<html lang="id">
+<html lang="%(lang)s">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Boom County Petroleum — dokumen analisis bisnis</title>
-<meta name="description" content="Dokumen analisis bisnis untuk usaha pengeboran minyak spekulatif 1982: logika pemilihan lokasi, logika kedalaman, kapan berhenti, dan tips lapangan. Diturunkan dari operasi WILDCAT.">
+<title>%(judul)s</title>
+<meta name="description" content="%(ringkas)s">
 <link rel="stylesheet" href="../_shared/tokens.css">
 <link rel="stylesheet" href="../_shared/base.css">
 <link rel="stylesheet" href="trucker-bisnis.css">
@@ -200,19 +271,17 @@ KERANGKA = """<!doctype html>
 <div id="topbar-host"></div>
 <main class="wrap k-wrap">
   <article class="k-isi">
-%s
+%(isi)s
   </article>
-  <p class="k-kaki">Halaman ini dihasilkan dari <code>wildcat-bisnis.md</code>.
-     Grafiknya <b>dihitung dari rumus biaya yang sama</b> dengan yang tertulis di
-     dokumennya, jadi tabel dan grafik tidak mungkin berbeda. Ubah dokumennya,
-     lalu jalankan <code>scripts/wildcat-bisnis-html.py</code>.</p>
-  <p class="k-kaki"><a href="../games/wildcat/index.html">&larr; Kembali ke WILDCAT</a>
-     &middot; <a href="wildcat.md">Dokumen arsitektur</a></p>
+  <p class="k-kaki">%(kaki)s</p>
+  <p class="k-kaki"><a href="../games/wildcat/index.html">&larr; %(balik)s</a>
+     &middot; <a href="%(arsitektur)s">%(arsitektur_teks)s</a>
+     &middot; <a href="%(lain)s">%(lain_teks)s</a></p>
 </main>
 <script src="../_shared/ui.js"></script>
 <script>
   var tb = window.RETRO.ui.topbar({
-    title: 'Boom County Petroleum', source: 'Dokumen analisis bisnis · WILDCAT'
+    title: 'Boom County Petroleum', source: '%(topbar)s', lang: '%(lang)s'
   });
   document.getElementById('topbar-host').append(tb);
   /* Topbar bersama menganggap dirinya dipasang dari web/games/<id>/. Halaman
@@ -224,7 +293,54 @@ KERANGKA = """<!doctype html>
 </html>
 """
 
+HALAMAN = {
+    'id': {
+        'lang': 'id',
+        'judul': 'Boom County Petroleum — dokumen analisis bisnis',
+        'ringkas': 'Dokumen analisis bisnis untuk usaha pengeboran minyak '
+                   'spekulatif 1982: logika pemilihan lokasi, logika kedalaman, '
+                   'kapan berhenti, dan tips lapangan. Diturunkan dari operasi '
+                   'WILDCAT.',
+        'topbar': 'Dokumen analisis bisnis · WILDCAT',
+        'balik': 'Kembali ke WILDCAT',
+        'arsitektur': 'wildcat.md',
+        'arsitektur_teks': 'Dokumen arsitektur',
+        'lain': 'wildcat-business.html',
+        'lain_teks': 'English version',
+        'kaki': 'Halaman ini dihasilkan dari <code>wildcat-bisnis.md</code>. '
+                'Grafiknya <b>dihitung dari rumus biaya yang sama</b> dengan yang '
+                'tertulis di dokumennya, jadi tabel dan grafik tidak mungkin '
+                'berbeda. Ubah dokumennya, lalu jalankan '
+                '<code>scripts/wildcat-bisnis-html.py</code>.',
+    },
+    'en': {
+        'lang': 'en',
+        'judul': 'Boom County Petroleum — business analysis',
+        'ringkas': 'A business analysis of a 1982 speculative oil-drilling '
+                   'operation: site selection logic, depth logic, when to walk '
+                   'away, and field advice. Derived from the WILDCAT operation.',
+        'topbar': 'Business analysis · WILDCAT',
+        'balik': 'Back to WILDCAT',
+        'arsitektur': 'wildcat.md',
+        'arsitektur_teks': 'Architecture notes',
+        'lain': 'wildcat-bisnis.html',
+        'lain_teks': 'Versi Indonesia',
+        'kaki': 'This page is generated from <code>wildcat-business.md</code>. '
+                'Its charts are <b>computed from the same cost formulas</b> '
+                'written in the document itself, so the tables and the charts '
+                'cannot disagree. Edit the document, then run '
+                '<code>scripts/wildcat-bisnis-html.py --en</code>.',
+    },
+}
+
 if __name__ == '__main__':
+    import sys
+    BAHASA = 'id'
+    if '--en' in sys.argv:
+        BAHASA = 'en'
+        _ns['BAHASA'] = 'en'          # yang dibaca T() di namespace bersama
+        SUMBER = os.path.join(AKAR, 'web', 'docs', 'wildcat-business.md')
+        TUJUAN = os.path.join(AKAR, 'web', 'docs', 'wildcat-business.html')
     blok = keHtml(io.open(SUMBER, encoding='utf-8').read())
     n = m = 0
     for i, b in enumerate(blok):
@@ -232,7 +348,9 @@ if __name__ == '__main__':
             blok[i] = '<figure class="n-gbr">%s</figure>' % DIAGRAM[n](); n += 1
         elif b.startswith('<pre class="k-kode">xychart-beta'):
             blok[i] = '<figure class="g-gbr">%s</figure>' % GRAFIK[m](); m += 1
-    doc = KERANGKA % '\n'.join('    ' + x for x in blok)
+    ctx = dict(HALAMAN[BAHASA])
+    ctx['isi'] = '\n'.join('    ' + x for x in blok)
+    doc = KERANGKA % ctx
     io.open(TUJUAN, 'w', encoding='utf-8').write(doc)
-    print('%s: %d bita, %d blok, %d diagram, %d grafik'
-          % (os.path.relpath(TUJUAN, AKAR), len(doc), len(blok), n, m))
+    print('%s [%s]: %d bita, %d blok, %d diagram, %d grafik'
+          % (os.path.relpath(TUJUAN, AKAR), BAHASA, len(doc), len(blok), n, m))

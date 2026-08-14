@@ -198,16 +198,33 @@
   /* --- bilah atas standar --------------------------------------------------
      Semua aplikasi memakai ini, jadi tombol kembali dan pengalih tema selalu
      ada di tempat yang sama — padanan disiplin "baris 25 selalu baris bantuan". */
+  /* opts.lang === 'en' menerjemahkan bilah atasnya seluruhnya. Dipakai kedua
+     dokumen analisis bisnis versi Inggris, satu-satunya halaman berbahasa
+     Inggris di proyek ini.
+
+     Diterjemahkan SELURUHNYA atau tidak sama sekali. Sempat terpikir menimpa
+     tombol kembalinya saja lewat DOM sesudah dipasang, tapi label tombol tema
+     ditulis ulang tiap kali diklik -- jadi tombol itu akan kembali berbahasa
+     Indonesia sesudah satu klik, dan bilah yang setengah diterjemahkan lebih
+     buruk daripada yang konsisten satu bahasa. */
+  const TOPBAR_EN = {
+    balik: '← All programs',
+    tema: { system: 'Theme: system', dark: 'Theme: dark', light: 'Theme: light' },
+    temaJudul: 'Change theme'
+  };
+
   function topbar(opts) {
+    const en = opts.lang === 'en';
     const right = el('div', { class: 'row' });
     (opts.actions || []).forEach(a => right.append(a));
-    if (opts.sound !== false) right.append(soundToggle());
-    right.append(themeToggle());
+    if (opts.sound !== false) right.append(soundToggle(en));
+    right.append(en ? themeToggle({ label: TOPBAR_EN.tema, title: TOPBAR_EN.temaJudul })
+                    : themeToggle());
 
     return el('header', { class: 'topbar' }, [
       el('div', { class: 'wrap topbar__inner' }, [
         el('a', { class: 'btn btn--ghost btn--sm', href: opts.backHref || '../../index.html',
-                  text: '← Semua program' }),
+                  text: en ? TOPBAR_EN.balik : '← Semua program' }),
         el('div', { class: 'topbar__title', html:
           opts.title + (opts.source ? '<small>' + opts.source + '</small>' : '') }),
         el('div', { class: 'topbar__spacer' }),
@@ -216,14 +233,21 @@
     ]);
   }
 
-  function soundToggle() {
+  /* `en` opsional; ke-66 halaman permainan memanggilnya tanpa argumen dan
+     tidak berubah sedikit pun. Label matinya ikut diterjemahkan karena tombol
+     ini juga menulis ulang dirinya sendiri tiap kali diklik. */
+  function soundToggle(en) {
     const A = global.RETRO && global.RETRO.audio;
     if (!A || !A.available) return el('span');
+    const nyala = en ? 'Sound: on' : 'Suara: nyala';
+    const mati = en ? 'Sound: off' : 'Suara: mati';
     const btn = el('button', { class: 'btn btn--ghost btn--sm', type: 'button',
-                               text: 'Suara: nyala', title: 'Nyalakan/matikan suara' });
+                               text: nyala,
+                               title: en ? 'Turn sound on/off'
+                                         : 'Nyalakan/matikan suara' });
     btn.addEventListener('click', () => {
       const m = A.setMuted(!A.muted);
-      btn.textContent = m ? 'Suara: mati' : 'Suara: nyala';
+      btn.textContent = m ? mati : nyala;
     });
     return btn;
   }

@@ -34,6 +34,118 @@ SUMBER = os.path.join(AKAR, 'web', 'docs', 'trucker-bisnis.md')
 TUJUAN = os.path.join(AKAR, 'web', 'docs', 'trucker-bisnis.html')
 
 # ==========================================================================
+#  Saklar bahasa
+#
+#  Dokumennya terbit dalam dua bahasa sebagai berkas TERPISAH, bukan
+#  dwibahasa berselang-seling. Prosanya diterjemahkan di berkas .md
+#  masing-masing; yang tidak bisa diterjemahkan di sana adalah label di
+#  dalam diagram dan grafik, karena label itu hidup di dalam Python ini.
+#
+#  Karena itu terjemahannya SATU KAMUS, bukan generator kedua. Menyalin
+#  generatornya berarti dua berkas yang perlahan menyimpang; kamus berarti
+#  label yang belum diterjemahkan lewat apa adanya dan langsung kelihatan
+#  waktu halamannya dibaca.
+#
+#  Kunci kamus HARUS sama persis dengan yang tertulis di pemanggilnya,
+#  termasuk tanda '|' pemisah barisnya.
+# ==========================================================================
+BAHASA = 'id'
+
+EN = {
+    # -- diagram 1: usaha dalam satu paragraf
+    'Terminal|Los Angeles': 'Los Angeles|terminal',
+    'Pilih muatan': 'Choose a load',
+    'Tentukan|berat': 'Set the|weight',
+    'Beli bahan|bakar &amp; ban': 'Buy fuel|&amp; tires',
+    'Pilih rute': 'Pick a route',
+    'Perjalanan:|keputusan tiap jam': 'The run:|hourly decisions',
+    'Gudang|New York': 'New York|warehouse',
+    'Laba?': 'Profit?',
+    'Bangkrut': 'Out of business',
+    'rugi': 'loss',
+    'laba, muat lagi': 'profit, load again',
+    # -- diagram 2: pemilihan muatan
+    'Truk prima?|Cuaca baik?': 'Truck sound?|Weather good?',
+    'JERUK': 'ORANGES',
+    'Punya|cadangan kas?': 'Any cash|in reserve?',
+    'ANGKUTAN UMUM': 'GENERAL FREIGHT',
+    'SURAT POS': 'MAIL',
+    '6,5 c/pon, bisa nihil': '6.5 c/lb, can pay nothing',
+    '5,0 c/pon, tenggat 95 jam': '5.0 c/lb, 95-hour deadline',
+    '4,75 c/pon, tanpa risiko': '4.75 c/lb, no risk',
+    'ya': 'yes',
+    'tidak': 'no',
+    # -- diagram 3: kecepatan
+    'Berapa cepat jam ini?': 'How fast this hour?',
+    'Terlambat dari|tenggat?': 'Behind the|deadline?',
+    '55 MPH|biaya minimum': '55 MPH|minimum cost',
+    'Muatan punya|denda telat?': 'Does the load|penalize lateness?',
+    'Denda 10 % lebih besar|dari tambahan biaya?':
+        'Is the 10 % penalty|bigger than the added cost?',
+    'Naikkan ke 65|masih aman tilang': 'Push to 65|still ticket-safe',
+    'Sudah 3 kali|ditilang?': 'Three tickets|already?',
+    'JANGAN.|Keempat = usaha tamat': 'DO NOT.|A fourth ends the business',
+    'Boleh, per jam': 'Allowed, hour by hour',
+    'surat pos': 'mail',
+    'jeruk': 'oranges',
+    'angkutan umum': 'general freight',
+    # -- diagram 4: rute
+    'Musim dan|cuaca?': 'Season and|weather?',
+    'SELATAN 3.120 mil|+$118, badai terendah':
+        'SOUTHERN 3,120 mi|+$118, lowest blizzard risk',
+    'Muatan?': 'Which load?',
+    'UTARA 2.710 mil|terpendek, tercepat': 'NORTHERN 2,710 mi|shortest, fastest',
+    'TENGAH 2.850 mil|seimbang': 'CENTRAL 2,850 mi|balanced',
+    'Jangan ngebut: denda tertinggi': 'Do not speed here: highest fines',
+    'musim dingin': 'winter',
+    'cuaca baik': 'fair weather',
+    'jeruk / ketat': 'oranges / tight',
+    # -- grafik
+    'Efisiensi bahan bakar terhadap kecepatan': 'Fuel efficiency against speed',
+    'Puncaknya tepat di 55 MPH. Terlalu pelan sama borosnya dengan terlalu cepat.':
+        'It peaks exactly at 55 MPH. Too slow wastes as much as too fast.',
+    'mil per galon': 'miles per gallon',
+    'kecepatan (MPH)': 'speed (MPH)',
+    'mpg': 'mpg',
+    'Biaya per mil terhadap kecepatan': 'Cost per mile against speed',
+    'Minimum di 55 MPH. Pada 70 MPH biayanya dua kali lipat, hemat waktu hanya 21 %.':
+        'Lowest at 55 MPH. At 70 MPH it doubles, and saves only 21 % of the time.',
+    'bahan bakar': 'fuel',
+    'waktu ($85/hari)': 'time ($85/day)',
+    'denda harapan': 'expected fines',
+    'TOTAL': 'TOTAL',
+    '$ / mil': '$ / mile',
+    'Peluang ditilang per jam': 'Chance of a ticket per hour',
+    'Nol sampai 10 MPH di atas batas, lalu naik kuadratik sampai kepastian di 90.':
+        'Zero up to 10 MPH over the limit, then quadratic to certainty at 90.',
+    'peluang / jam': 'chance / hour',
+    'kecepatan (MPH), batas 55': 'speed (MPH), limit 55',
+    # -- grafik rute (teks tertulis langsung)
+    'Rute: jarak melawan risiko cuaca': 'Routes: distance against weather risk',
+    'Yang terpendek justru paling sering kena badai salju. '
+    'Itu yang membuat pilihannya nyata.':
+        'The shortest one is the one blizzards hit most often. '
+        'That is what makes the choice real.',
+    'UTARA': 'NORTHERN',
+    'TENGAH': 'CENTRAL',
+    'SELATAN': 'SOUTHERN',
+    'risiko badai': 'blizzard risk',
+    'mil': 'miles',
+}
+
+
+def T(s):
+    """Terjemahkan label kalau BAHASA == 'en'; kalau tidak, kembalikan apa adanya.
+
+    Label yang belum ada di kamus sengaja LEWAT tanpa galat. Diagram yang
+    setengah diterjemahkan langsung terlihat waktu halamannya dibuka, dan itu
+    umpan balik yang lebih cepat daripada KeyError saat digenerate.
+    """
+    if BAHASA != 'en' or not isinstance(s, str):
+        return s
+    return EN.get(s, s)
+
+# ==========================================================================
 #  Rumus — sama persis dengan yang tertulis di dokumennya
 # ==========================================================================
 def mpg(sp):
@@ -70,6 +182,7 @@ def biaya_total_per_mil(sp):
 # ==========================================================================
 def grafik(judul, sub, deret, xr, yr, xlab, ylab, fmt='%.2f', lebar=760, tinggi=320):
     """deret = [(nama, kelas, [(x,y),...]), ...]"""
+    judul, sub, xlab, ylab = T(judul), T(sub), T(xlab), T(ylab)
     L, R, A, B = 62, 24, 46, 52
     pw, ph = lebar - L - R, tinggi - A - B
     x0, x1 = xr; y0, y1 = yr
@@ -143,14 +256,14 @@ def grafik(judul, sub, deret, xr, yr, xlab, ylab, fmt='%.2f', lebar=760, tinggi=
         o.append('<rect class="g-kunci %s" x="%d" y="%d" width="14" height="4"/>'
                  % (kelas, L + pw - 190, 18 + i * 16))
         o.append('<text class="g-legenda" x="%d" y="%d">%s</text>'
-                 % (L + pw - 170, 22 + i * 16, nama))
+                 % (L + pw - 170, 22 + i * 16, T(nama)))
     o.append('</svg>')
     return '\n'.join(o)
 
 def kotak(o, x, y, w, h, teks, kelas='n-kotak', rx=6):
     o.append('<rect class="%s" x="%d" y="%d" width="%d" height="%d" rx="%d"/>'
              % (kelas, x, y, w, h, rx))
-    baris = teks.split('|')
+    baris = T(teks).split('|')
     y0 = y + h / 2 - (len(baris) - 1) * 7 + 5
     for i, b in enumerate(baris):
         o.append('<text class="n-teks" x="%d" y="%.1f">%s</text>'
@@ -161,7 +274,7 @@ def belah(o, x, y, w, h, teks):
     cx, cy = x + w / 2.0, y + h / 2.0
     o.append('<path class="n-belah" d="M%.1f %d L%d %.1f L%.1f %d L%d %.1f Z"/>'
              % (cx, y, x + w, cy, cx, y + h, x, cy))
-    baris = teks.split('|')
+    baris = T(teks).split('|')
     y0 = cy - (len(baris) - 1) * 7 + 5
     for i, b in enumerate(baris):
         o.append('<text class="n-teks" x="%.1f" y="%.1f">%s</text>' % (cx, y0 + i * 14, b))
@@ -185,7 +298,7 @@ def sisi(n, arah):
 
 def _lbl(o, x, y, teks):
     if teks:
-        o.append('<text class="n-label" x="%.1f" y="%.1f">%s</text>' % (x, y - 6, teks))
+        o.append('<text class="n-label" x="%.1f" y="%.1f">%s</text>' % (x, y - 6, T(teks)))
 
 def _jalur(o, titik, label=''):
     d = ' '.join('%s%.1f %.1f' % ('M' if k == 0 else 'L', a, b)
@@ -362,9 +475,11 @@ def grafik_tilang():
 def grafik_rute():
     """Jarak vs risiko cuaca -- dua sumbu yang berlawanan arah."""
     o = ['<svg class="g-svg" viewBox="0 0 760 344" role="img">']  # 344, bukan 300: label "risiko badai" di y=302 terpotong
-    o.append('<text class="g-judul" x="62" y="20">Rute: jarak melawan risiko cuaca</text>')
-    o.append('<text class="g-sub" x="62" y="36">Yang terpendek justru paling '
-             'sering kena badai salju. Itu yang membuat pilihannya nyata.</text>')
+    o.append('<text class="g-judul" x="62" y="20">%s</text>'
+             % T('Rute: jarak melawan risiko cuaca'))
+    o.append('<text class="g-sub" x="62" y="36">%s</text>'
+             % T('Yang terpendek justru paling sering kena badai salju. '
+                 'Itu yang membuat pilihannya nyata.'))
     data = [('UTARA', 2710, 3, 'g-c'), ('TENGAH', 2850, 2, 'g-b'), ('SELATAN', 3120, 1, 'g-a')]
     L, A, pw, ph = 90, 60, 600, 170
     for i in range(4):
@@ -375,14 +490,21 @@ def grafik_rute():
         h = (mil - 2600) / 600.0 * ph
         o.append('<rect class="g-batang %s" x="%d" y="%.1f" width="52" height="%.1f" rx="4"/>'
                  % (kls, x, A + ph - h, h))
-        o.append('<text class="g-legenda g-tengah" x="%d" y="%.1f">%s mil</text>'
-                 % (x + 26, A + ph - h - 8, '{:,}'.format(mil).replace(',', '.')))
-        o.append('<text class="g-sumbu g-tengah" x="%d" y="%d">%s</text>' % (x + 26, A + ph + 20, nama))
+        # Pemisah ribuan ikut bahasa: 2.710 di Indonesia, 2,710 di Inggris.
+        # Kalau ini dilewatkan, angkanya terbaca sebagai 2,71 oleh pembaca
+        # Inggris -- salah seribu kali lipat, dan tidak terlihat sebagai galat.
+        angka = '{:,}'.format(mil)
+        if BAHASA != 'en':
+            angka = angka.replace(',', '.')
+        o.append('<text class="g-legenda g-tengah" x="%d" y="%.1f">%s %s</text>'
+                 % (x + 26, A + ph - h - 8, angka, T('mil')))
+        o.append('<text class="g-sumbu g-tengah" x="%d" y="%d">%s</text>'
+                 % (x + 26, A + ph + 20, T(nama)))
         for r in range(risiko):
             o.append('<circle class="g-risiko" cx="%d" cy="%d" r="7"/>' % (x + 12 + r * 18, A + ph + 52))
-        o.append('<text class="g-sumbu g-tengah" x="%d" y="%d">risiko badai</text>'
-                 % (x + 26, A + ph + 80))
-    o.append('<text class="g-sumbu" x="4" y="52">mil</text>')
+        o.append('<text class="g-sumbu g-tengah" x="%d" y="%d">%s</text>'
+                 % (x + 26, A + ph + 80, T('risiko badai')))
+    o.append('<text class="g-sumbu" x="4" y="52">%s</text>' % T('mil'))
     o.append('</svg>')
     return '\n'.join(o)
 
@@ -391,12 +513,12 @@ GRAFIK = {'efisiensi': grafik_efisiensi, 'biaya': grafik_biaya,
 
 # ==========================================================================
 KERANGKA = """<!doctype html>
-<html lang="id">
+<html lang="%(lang)s">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Delgado Freight Lines — dokumen analisis bisnis</title>
-<meta name="description" content="Dokumen analisis bisnis untuk usaha angkutan truk Los Angeles-New York 1982: logika kecepatan optimal, pemilihan rute, menghindari denda, dan tips lapangan. Diturunkan dari operasi TRUCKER.">
+<title>%(judul)s</title>
+<meta name="description" content="%(ringkas)s">
 <link rel="stylesheet" href="../_shared/tokens.css">
 <link rel="stylesheet" href="../_shared/base.css">
 <link rel="stylesheet" href="trucker-bisnis.css">
@@ -405,20 +527,17 @@ KERANGKA = """<!doctype html>
 <div id="topbar-host"></div>
 <main class="wrap k-wrap">
   <article class="k-isi">
-%s
+%(isi)s
   </article>
-  <p class="k-kaki">Halaman ini dihasilkan dari <code>trucker-bisnis.md</code>.
-     Kurva dan grafiknya <b>dihitung dari rumus yang sama</b> dengan yang tertulis
-     di dokumennya, bukan digambar terpisah &mdash; jadi tabel dan grafik tidak
-     mungkin berbeda. Ubah dokumennya, lalu jalankan
-     <code>scripts/trucker-bisnis-html.py</code>.</p>
-  <p class="k-kaki"><a href="../games/trucker/index.html">&larr; Kembali ke TRUCKER</a>
-     &middot; <a href="trucker.md">Dokumen arsitektur</a></p>
+  <p class="k-kaki">%(kaki)s</p>
+  <p class="k-kaki"><a href="../games/trucker/index.html">&larr; %(balik)s</a>
+     &middot; <a href="%(arsitektur)s">%(arsitektur_teks)s</a>
+     &middot; <a href="%(lain)s">%(lain_teks)s</a></p>
 </main>
 <script src="../_shared/ui.js"></script>
 <script>
   var tb = window.RETRO.ui.topbar({
-    title: 'Delgado Freight Lines', source: 'Dokumen analisis bisnis · TRUCKER'
+    title: 'Delgado Freight Lines', source: '%(topbar)s', lang: '%(lang)s'
   });
   document.getElementById('topbar-host').append(tb);
   /* Topbar bersama menganggap dirinya dipasang dari web/games/<id>/, jadi
@@ -431,7 +550,52 @@ KERANGKA = """<!doctype html>
 </html>
 """
 
+HALAMAN = {
+    'id': {
+        'lang': 'id',
+        'judul': 'Delgado Freight Lines — dokumen analisis bisnis',
+        'ringkas': 'Dokumen analisis bisnis untuk usaha angkutan truk Los '
+                   'Angeles-New York 1982: logika kecepatan optimal, pemilihan '
+                   'rute, menghindari denda, dan tips lapangan. Diturunkan dari '
+                   'operasi TRUCKER.',
+        'topbar': 'Dokumen analisis bisnis · TRUCKER',
+        'balik': 'Kembali ke TRUCKER',
+        'arsitektur': 'trucker.md',
+        'arsitektur_teks': 'Dokumen arsitektur',
+        'lain': 'trucker-business.html',
+        'lain_teks': 'English version',
+        'kaki': 'Halaman ini dihasilkan dari <code>trucker-bisnis.md</code>. '
+                'Kurva dan grafiknya <b>dihitung dari rumus yang sama</b> dengan '
+                'yang tertulis di dokumennya, bukan digambar terpisah &mdash; jadi '
+                'tabel dan grafik tidak mungkin berbeda. Ubah dokumennya, lalu '
+                'jalankan <code>scripts/trucker-bisnis-html.py</code>.',
+    },
+    'en': {
+        'lang': 'en',
+        'judul': 'Delgado Freight Lines — business analysis',
+        'ringkas': 'A business analysis of a 1982 Los Angeles-New York trucking '
+                   'operation: optimal speed logic, route selection, avoiding '
+                   'fines, and field advice. Derived from the TRUCKER operation.',
+        'topbar': 'Business analysis · TRUCKER',
+        'balik': 'Back to TRUCKER',
+        'arsitektur': 'trucker.md',
+        'arsitektur_teks': 'Architecture notes',
+        'lain': 'trucker-bisnis.html',
+        'lain_teks': 'Versi Indonesia',
+        'kaki': 'This page is generated from <code>trucker-business.md</code>. '
+                'Its curves and charts are <b>computed from the same formulas</b> '
+                'written in the document itself, not drawn separately &mdash; so '
+                'the tables and the charts cannot disagree. Edit the document, '
+                'then run <code>scripts/trucker-bisnis-html.py --en</code>.',
+    },
+}
+
 if __name__ == '__main__':
+    import sys as _sys
+    if '--en' in _sys.argv:
+        BAHASA = 'en'
+        SUMBER = os.path.join(AKAR, 'web', 'docs', 'trucker-business.md')
+        TUJUAN = os.path.join(AKAR, 'web', 'docs', 'trucker-business.html')
     src = io.open(SUMBER, encoding='utf-8').read()
     blok = keHtml(src)
     # ganti blok mermaid dengan SVG, urut
@@ -449,7 +613,9 @@ if __name__ == '__main__':
         if b.startswith('<pre class="k-kode">xychart-beta'):
             blok[i] = '<figure class="g-gbr">%s</figure>' % GRAFIK[urut[m]]()
             m += 1
-    doc = KERANGKA % '\n'.join('    ' + x for x in blok)
+    ctx = dict(HALAMAN[BAHASA])
+    ctx['isi'] = '\n'.join('    ' + x for x in blok)
+    doc = KERANGKA % ctx
     io.open(TUJUAN, 'w', encoding='utf-8').write(doc)
-    print('%s: %d bita, %d blok, %d diagram, %d grafik'
-          % (os.path.relpath(TUJUAN, AKAR), len(doc), len(blok), n, m))
+    print('%s [%s]: %d bita, %d blok, %d diagram, %d grafik'
+          % (os.path.relpath(TUJUAN, AKAR), BAHASA, len(doc), len(blok), n, m))

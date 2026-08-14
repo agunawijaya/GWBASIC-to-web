@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Delgado Freight Lines — business analysis</title>
+<meta name="description" content="A business analysis of a 1982 Los Angeles-New York trucking operation: optimal speed logic, route selection, avoiding fines, and field advice. Derived from the TRUCKER operation.">
+<link rel="stylesheet" href="../_shared/tokens.css">
+<link rel="stylesheet" href="../_shared/base.css">
+<link rel="stylesheet" href="trucker-bisnis.css">
+</head>
+<body>
+<div id="topbar-host"></div>
+<main class="wrap k-wrap">
+  <article class="k-isi">
+    <h1>Delgado Freight Lines — business analysis</h1>
+    <blockquote><strong>Field interview</strong> · Los Angeles, March 1982 Subject: <strong>Ray Delgado</strong>, owner-operator, one-truck fleet Prepared by: a business analyst, at the request of a prospective lender  This is not a technical document. No code, no variable names, no line numbers. It is about how this long-haul trucking business actually runs — and every number in it comes from a real operation, not from an estimate.  <strong>For readers who are here to learn:</strong> each section ends with a box called <em>From business to mechanic</em>. It shows how the business rule turns into a game mechanic — and, more importantly, <strong>what is lost</strong> in that translation. That last part is the most valuable thing here for a game designer.</blockquote>
+    <hr>
+    <h2>1 · The business in one paragraph</h2>
+    <p>Ray owns one tractor-trailer. He picks up a load at the Los Angeles terminal and delivers it to New York — roughly 2,700 to 3,100 miles, depending on the route. He is paid <strong>per pound of freight</strong>, and he covers every cost of the trip himself. The difference is his profit. One run takes three to five days.</p>
+    <p>He is not a salaried driver. Every decision on the road — speed, route, when to fuel, when to sleep — is a <strong>financial</strong> decision, and the consequence lands directly in his own pocket.</p>
+    <figure class="n-gbr"><svg class="n-svg" viewBox="0 0 1000 380" role="img"><defs><marker id="mata" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="n-mata"/></marker></defs><rect class="n-kotak" x="20" y="30" width="130" height="46" rx="6"/>
+<text class="n-teks" x="85" y="51.0">Los Angeles</text>
+<text class="n-teks" x="85" y="65.0">terminal</text>
+<path class="n-belah" d="M260.0 20 L330 53.0 L260.0 86 L190 53.0 Z"/>
+<text class="n-teks" x="260.0" y="58.0">Choose a load</text>
+<rect class="n-kotak" x="370" y="30" width="120" height="46" rx="6"/>
+<text class="n-teks" x="430" y="51.0">Set the</text>
+<text class="n-teks" x="430" y="65.0">weight</text>
+<rect class="n-kotak" x="530" y="30" width="140" height="46" rx="6"/>
+<text class="n-teks" x="600" y="51.0">Buy fuel</text>
+<text class="n-teks" x="600" y="65.0">&amp; tires</text>
+<path class="n-belah" d="M775.0 20 L840 53.0 L775.0 86 L710 53.0 Z"/>
+<text class="n-teks" x="775.0" y="58.0">Pick a route</text>
+<rect class="n-kotak" x="340" y="160" width="170" height="46" rx="6"/>
+<text class="n-teks" x="425" y="181.0">The run:</text>
+<text class="n-teks" x="425" y="195.0">hourly decisions</text>
+<rect class="n-kotak" x="560" y="160" width="140" height="46" rx="6"/>
+<text class="n-teks" x="630" y="181.0">New York</text>
+<text class="n-teks" x="630" y="195.0">warehouse</text>
+<path class="n-belah" d="M805.0 150 L870 183.0 L805.0 216 L740 183.0 Z"/>
+<text class="n-teks" x="805.0" y="188.0">Profit?</text>
+<rect class="n-kotak n-buruk" x="340" y="270" width="170" height="46" rx="6"/>
+<text class="n-teks" x="425" y="298.0">Out of business</text>
+<path class="n-panah" marker-end="url(#mata)" d="M150.0 53.0 L170.0 53.0 L170.0 53.0 L190.0 53.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M330.0 53.0 L350.0 53.0 L350.0 53.0 L370.0 53.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M490.0 53.0 L510.0 53.0 L510.0 53.0 L530.0 53.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M670.0 53.0 L690.0 53.0 L690.0 53.0 L710.0 53.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M775.0 86.0 L775.0 120.0 L425.0 120.0 L425.0 160.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M510.0 183.0 L535.0 183.0 L535.0 183.0 L560.0 183.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M700.0 183.0 L720.0 183.0 L720.0 183.0 L740.0 183.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M805.0 216.0 L805.0 293.0 L510.0 293.0"/>
+<text class="n-label" x="805.0" y="287.0">loss</text>
+<path class="n-panah" marker-end="url(#mata)" d="M870.0 183.0 L895.0 183.0 L895.0 350.0 L260.0 350.0 L260.0 86.0"/>
+<text class="n-label" x="895.0" y="344.0">profit, load again</text></svg></figure>
+    <hr>
+    <h2>2 · Revenue: three loads, three risk temperaments</h2>
+    <p>Ray can pick one of three loads. The rates differ, but <strong>what really separates them is not the rate — it is the risk.</strong></p>
+    <table class="k-tabel"><thead><tr><th>load</th><th>rate</th><th>deadline</th><th>characteristic risk</th></tr></thead><tbody><tr><td><strong>Fresh oranges</strong></td><td>6.50 ¢/lb</td><td>no late penalty</td><td><strong>spoilage.</strong> The refrigeration unit can fail; standing still too long ruins the load</td></tr><tr><td><strong>General freight</strong></td><td>5.00 ¢/lb</td><td><strong>95 hours</strong></td><td><strong>10 %</strong> penalty if late</td></tr><tr><td><strong>Mail</strong></td><td>4.75 ¢/lb</td><td>none</td><td><strong>none.</strong> Pays exactly what it says</td></tr></tbody></table>
+    <p>On a 40,000-pound load:</p>
+    <table class="k-tabel"><thead><tr><th>load</th><th>gross revenue</th></tr></thead><tbody><tr><td>Oranges (intact)</td><td>$2,600</td></tr><tr><td>General freight</td><td>$2,000</td></tr><tr><td>General freight (late)</td><td>$1,800</td></tr><tr><td>Mail</td><td>$1,900</td></tr></tbody></table>
+    <p>Oranges pay <strong>30 % more</strong> than general freight. But spoiled oranges pay nothing at all — they are dumped, and Ray <strong>pays $50</strong> to dump them. Partial spoilage is docked <strong>5 % per level of damage</strong>.</p>
+    <blockquote><strong>Ray:</strong> <em>&quot;Oranges are a bet. When it goes clean, it&#x27;s the best run of the month. Hit one problem in the desert with the reefer dead and I drive home owing money. Mail never made me rich, but mail never broke me either.&quot;</em></blockquote>
+    <p><strong>The decision rule</strong>, as Ray states it himself:</p>
+    <figure class="n-gbr"><svg class="n-svg" viewBox="0 0 840 440" role="img"><defs><marker id="mata" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="n-mata"/></marker></defs><path class="n-belah" d="M400.0 10 L500 46.0 L400.0 82 L300 46.0 Z"/>
+<text class="n-teks" x="400.0" y="44.0">Truck sound?</text>
+<text class="n-teks" x="400.0" y="58.0">Weather good?</text>
+<rect class="n-kotak n-baik" x="60" y="150" width="170" height="50" rx="6"/>
+<text class="n-teks" x="145" y="180.0">ORANGES</text>
+<path class="n-belah" d="M400.0 150 L500 186.0 L400.0 222 L300 186.0 Z"/>
+<text class="n-teks" x="400.0" y="184.0">Any cash</text>
+<text class="n-teks" x="400.0" y="198.0">in reserve?</text>
+<rect class="n-kotak" x="600" y="150" width="190" height="50" rx="6"/>
+<text class="n-teks" x="695" y="180.0">GENERAL FREIGHT</text>
+<rect class="n-kotak n-aman" x="600" y="300" width="190" height="50" rx="6"/>
+<text class="n-teks" x="695" y="330.0">MAIL</text>
+<rect class="n-catatan" x="45" y="260" width="200" height="42" rx="6"/>
+<text class="n-teks" x="145" y="286.0">6.5 c/lb, can pay nothing</text>
+<rect class="n-catatan" x="600" y="225" width="190" height="40" rx="6"/>
+<text class="n-teks" x="695" y="250.0">5.0 c/lb, 95-hour deadline</text>
+<rect class="n-catatan" x="600" y="375" width="190" height="40" rx="6"/>
+<text class="n-teks" x="695" y="400.0">4.75 c/lb, no risk</text>
+<path class="n-panah" marker-end="url(#mata)" d="M300.0 46.0 L265.0 46.0 L265.0 175.0 L230.0 175.0"/>
+<text class="n-label" x="265.0" y="169.0">yes</text>
+<path class="n-panah" marker-end="url(#mata)" d="M400.0 82.0 L400.0 116.0 L400.0 116.0 L400.0 150.0"/>
+<text class="n-label" x="400.0" y="110.0">no</text>
+<path class="n-panah" marker-end="url(#mata)" d="M500.0 186.0 L550.0 186.0 L550.0 175.0 L600.0 175.0"/>
+<text class="n-label" x="550.0" y="169.0">yes</text>
+<path class="n-panah" marker-end="url(#mata)" d="M400.0 222.0 L400.0 325.0 L600.0 325.0"/>
+<text class="n-label" x="400.0" y="319.0">no</text>
+<path class="n-panah" marker-end="url(#mata)" d="M145.0 200.0 L145.0 230.0 L145.0 230.0 L145.0 260.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M695.0 200.0 L695.0 212.5 L695.0 212.5 L695.0 225.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M695.0 350.0 L695.0 362.5 L695.0 362.5 L695.0 375.0"/></svg></figure>
+    <blockquote><strong>From business to mechanic.</strong> The three loads become <strong>three risk profiles</strong> the player picks at the start — the cheapest way to give a game a difficulty setting without changing a single other rule. What is <strong>lost</strong>: in the real world the price of oranges fluctuates, and there are contracts, repeat customers, and reputation. Here the rate is fixed forever, and no customer remembers you. A designer who wants this business to feel alive has to add that memory himself.</blockquote>
+    <hr>
+    <h2>3 · Weight: the only lever that raises revenue</h2>
+    <p>Revenue = rate × weight. The rate is not negotiable. So the only way to raise revenue is to <strong>carry more weight</strong> — and that is exactly where the trap is.</p>
+    <ul><li>Below <strong>25,000 pounds</strong> the business does not pay to run. <em>&quot;You can&#x27;t make a living on half a load.&quot;</em></li><li>The legal limit is <strong>40,000 pounds</strong>.</li><li>The trailer physically holds up to <strong>50,000 pounds</strong>.</li></ul>
+    <p>Between 40,000 and 50,000 lies the temptation: another 10,000 pounds is another <strong>$650</strong> on an orange load. But the weigh stations on the road weigh the truck <strong>together with its cargo, its fuel, and its driver</strong> — and that limit is <strong>60,000 pounds</strong>.</p>
+    <pre class="k-kode">scale weight = 19,000 (empty truck)
+             + cargo
+             + 7 × gallons of fuel remaining
+             + driver &amp; personal gear</pre>
+    <p>The fine is <strong>$200 plus 2–5 cents per pound over</strong>. At 50,000 pounds with full tanks the scale reads about 70,000 — 10,000 pounds over, a fine between <strong>$400 and $700</strong>. The extra $650 of revenue vanishes in a single weighing.</p>
+    <blockquote><strong>Note the subtle part:</strong> fuel is weighed too, at <strong>7 pounds per gallon</strong>. That means a truck that has just filled up is 1,300 pounds heavier than one running near empty. <em>When</em> you fuel helps decide whether you clear the scale.</blockquote>
+    <blockquote><strong>From business to mechanic.</strong> This is a good <strong>soft limit</strong>: the rule tells you the limit is 40,000, but does not stop you from exceeding it — it only punishes you if you are caught. A designer who closes that option off entirely deletes the most interesting decision in the whole game. What is <strong>lost</strong>: in the real world overloading wears tires, brakes, and axles cumulatively. Here it is only dangerous at the scale.</blockquote>
+    <hr>
+    <h2>4 · Cost structure</h2>
+    <table class="k-tabel"><thead><tr><th>item</th><th>amount</th><th>nature</th></tr></thead><tbody><tr><td>Starting fuel (tank ~190 gal)</td><td>$190</td><td>fixed, up front</td></tr><tr><td>New tire</td><td>$200 each</td><td>optional</td></tr><tr><td>Retread tire</td><td>$100 each</td><td>optional, wears faster</td></tr><tr><td>Truck payment, insurance, taxes</td><td><strong>$85 × days + $85</strong></td><td><strong>fixed per day</strong></td></tr><tr><td>Fuel on the road</td><td>pump price × gallons</td><td>variable</td></tr><tr><td>Tolls</td><td>$0 – $7.90 per point</td><td>fixed per route</td></tr><tr><td>Speeding fines</td><td>rises with each offense</td><td>risk</td></tr><tr><td>Overweight fine</td><td>$200 + 2–5 ¢/lb</td><td>risk</td></tr><tr><td>Blowout (spare available)</td><td>1–2 hours</td><td>risk</td></tr><tr><td>Blowout (no spare)</td><td><strong>$400 + 4 hours</strong></td><td>risk</td></tr><tr><td>Running out of fuel</td><td><strong>$200 + 0–4 hours</strong></td><td>negligence</td></tr><tr><td>Reefer failure (oranges)</td><td>$100 + 2 hours</td><td>risk</td></tr></tbody></table>
+    <p><strong>The most underestimated item is the <code>$85 per day</code>.</strong> It runs whether the truck moves or not. Eight hours of sleep at a rest area costs <strong>$28</strong> even though Ray spends nothing. Six hours waiting at a tunnel closed by a rockslide costs <strong>$21</strong> before anything else is counted.</p>
+    <blockquote><strong>Ray:</strong> <em>&quot;People think my enemy is the price of diesel. It isn&#x27;t. My enemy is the calendar. A parked truck still sends a bill.&quot;</em></blockquote>
+    <blockquote><strong>From business to mechanic.</strong> A fixed daily cost is an <strong>invisible hourglass</strong>. It creates time pressure without any deadline existing, and that is why even the mail load — which has no deadline at all — still feels urgent. A designer who wants tension without an on-screen timer can copy this.</blockquote>
+    <hr>
+    <h2>5 · Optimal speed logic — and the answer is surprising</h2>
+    <p>This is the decision Ray makes most often: <strong>every hour, how fast.</strong></p>
+    <h3>5.1 The fuel efficiency curve</h3>
+    <p>His truck&#x27;s consumption follows a very sharp pattern:</p>
+    <pre class="k-kode">miles per gallon = 4.5 − 0.2 × |55 − speed|      (floor 2.0)</pre>
+    <p>So efficiency peaks <strong>exactly at 55 MPH</strong> at <strong>4.5 mpg</strong>, and falls <strong>0.2 mpg for every MPH away from 55 — in either direction.</strong> Too slow wastes just as much as too fast.</p>
+    <table class="k-tabel"><thead><tr><th>speed</th><th>mpg</th><th>gal/hour</th><th>fuel cost per mile*</th></tr></thead><tbody><tr><td>35</td><td>2.00</td><td>17.5</td><td>$0.500</td></tr><tr><td>45</td><td>2.50</td><td>18.0</td><td>$0.400</td></tr><tr><td>50</td><td>3.50</td><td>14.3</td><td>$0.286</td></tr><tr><td><strong>55</strong></td><td><strong>4.50</strong></td><td><strong>12.2</strong></td><td><strong>$0.222</strong></td></tr><tr><td>60</td><td>3.50</td><td>17.1</td><td>$0.286</td></tr><tr><td>65</td><td>2.50</td><td>26.0</td><td>$0.400</td></tr><tr><td>70</td><td>2.00</td><td>35.0</td><td>$0.500</td></tr><tr><td>75</td><td>2.00</td><td>37.5</td><td>$0.500</td></tr></tbody></table>
+    <p>\* at $1.00 per gallon</p>
+    <figure class="g-gbr"><svg class="g-svg" viewBox="0 0 760 320" role="img" aria-label="Fuel efficiency against speed">
+<text class="g-judul" x="62" y="20">Fuel efficiency against speed</text>
+<text class="g-sub" x="62" y="36">It peaks exactly at 55 MPH. Too slow wastes as much as too fast.</text>
+<line class="g-kisi" x1="62" y1="268.0" x2="736.0" y2="268.0"/>
+<text class="g-sumbu g-kanan" x="54" y="272.0">0.0</text>
+<line class="g-kisi" x1="62" y1="212.5" x2="736.0" y2="212.5"/>
+<text class="g-sumbu g-kanan" x="54" y="216.5">1.2</text>
+<line class="g-kisi" x1="62" y1="157.0" x2="736.0" y2="157.0"/>
+<text class="g-sumbu g-kanan" x="54" y="161.0">2.5</text>
+<line class="g-kisi" x1="62" y1="101.5" x2="736.0" y2="101.5"/>
+<text class="g-sumbu g-kanan" x="54" y="105.5">3.8</text>
+<line class="g-kisi" x1="62" y1="46.0" x2="736.0" y2="46.0"/>
+<text class="g-sumbu g-kanan" x="54" y="50.0">5.0</text>
+<line class="g-kisiT" x1="136.9" y1="46" x2="136.9" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="136.9" y="286">40</text>
+<line class="g-kisiT" x1="286.7" y1="46" x2="286.7" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="286.7" y="286">50</text>
+<line class="g-kisiT" x1="436.4" y1="46" x2="436.4" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="436.4" y="286">60</text>
+<line class="g-kisiT" x1="586.2" y1="46" x2="586.2" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="586.2" y="286">70</text>
+<line class="g-kisiT" x1="736.0" y1="46" x2="736.0" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="736.0" y="286">80</text>
+<text class="g-sumbu g-tengah" x="399.0" y="312">speed (MPH)</text>
+<text class="g-sumbu" x="4" y="36">mpg</text>
+<path class="g-garis g-a" d="M62.0 179.2 L136.9 179.2 L211.8 157.0 L286.7 112.6 L361.6 68.2 L436.4 112.6 L511.3 157.0 L586.2 179.2 L661.1 179.2 L736.0 179.2"/>
+<circle class="g-titik g-a" cx="62.0" cy="179.2" r="3"/>
+<circle class="g-titik g-a" cx="136.9" cy="179.2" r="3"/>
+<circle class="g-titik g-a" cx="211.8" cy="157.0" r="3"/>
+<circle class="g-titik g-a" cx="286.7" cy="112.6" r="3"/>
+<circle class="g-titik g-a" cx="361.6" cy="68.2" r="3"/>
+<circle class="g-titik g-a" cx="436.4" cy="112.6" r="3"/>
+<circle class="g-titik g-a" cx="511.3" cy="157.0" r="3"/>
+<circle class="g-titik g-a" cx="586.2" cy="179.2" r="3"/>
+<circle class="g-titik g-a" cx="661.1" cy="179.2" r="3"/>
+<circle class="g-titik g-a" cx="736.0" cy="179.2" r="3"/>
+<rect class="g-kunci g-a" x="546" y="18" width="14" height="4"/>
+<text class="g-legenda" x="566" y="22">miles per gallon</text>
+</svg></figure>
+    <p>The curve is a <strong>symmetric tent</strong> — not the downward slope most people assume. Running at 45 MPH costs exactly as much as running at 65.</p>
+    <h3>5.2 Ticket risk</h3>
+    <p>Police only take an interest above <strong>10 MPH over the limit</strong>. Above that, the chance of being pulled over <strong>per hour</strong> rises quadratically:</p>
+    <pre class="k-kode">chance per hour = (excess − 5)² ÷ 900      (capped at 100 %)</pre>
+    <table class="k-tabel"><thead><tr><th>speed (limit 55)</th><th>excess</th><th>ticket chance / hour</th></tr></thead><tbody><tr><td>65</td><td>10</td><td>0 %</td></tr><tr><td>70</td><td>15</td><td>11 %</td></tr><tr><td>75</td><td>20</td><td>25 %</td></tr><tr><td>80</td><td>25</td><td>44 %</td></tr><tr><td>85</td><td>30</td><td>69 %</td></tr><tr><td>90</td><td>35</td><td><strong>100 %</strong></td></tr></tbody></table>
+    <figure class="g-gbr"><svg class="g-svg" viewBox="0 0 760 320" role="img" aria-label="Chance of a ticket per hour">
+<text class="g-judul" x="62" y="20">Chance of a ticket per hour</text>
+<text class="g-sub" x="62" y="36">Zero up to 10 MPH over the limit, then quadratic to certainty at 90.</text>
+<line class="g-kisi" x1="62" y1="268.0" x2="736.0" y2="268.0"/>
+<text class="g-sumbu g-kanan" x="54" y="272.0">0</text>
+<line class="g-kisi" x1="62" y1="212.5" x2="736.0" y2="212.5"/>
+<text class="g-sumbu g-kanan" x="54" y="216.5">25</text>
+<line class="g-kisi" x1="62" y1="157.0" x2="736.0" y2="157.0"/>
+<text class="g-sumbu g-kanan" x="54" y="161.0">50</text>
+<line class="g-kisi" x1="62" y1="101.5" x2="736.0" y2="101.5"/>
+<text class="g-sumbu g-kanan" x="54" y="105.5">75</text>
+<line class="g-kisi" x1="62" y1="46.0" x2="736.0" y2="46.0"/>
+<text class="g-sumbu g-kanan" x="54" y="50.0">100</text>
+<line class="g-kisiT" x1="146.2" y1="46" x2="146.2" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="146.2" y="286">60</text>
+<line class="g-kisiT" x1="314.8" y1="46" x2="314.8" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="314.8" y="286">70</text>
+<line class="g-kisiT" x1="483.2" y1="46" x2="483.2" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="483.2" y="286">80</text>
+<line class="g-kisiT" x1="651.8" y1="46" x2="651.8" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="651.8" y="286">90</text>
+<text class="g-sumbu g-tengah" x="399.0" y="312">speed (MPH), limit 55</text>
+<text class="g-sumbu" x="4" y="36">%</text>
+<path class="g-garis g-c" d="M62.0 268.0 L146.2 268.0 L230.5 268.0 L314.8 243.3 L399.0 212.5 L483.2 169.3 L567.5 113.8 L651.8 46.0 L736.0 46.0"/>
+<circle class="g-titik g-c" cx="62.0" cy="268.0" r="3"/>
+<circle class="g-titik g-c" cx="146.2" cy="268.0" r="3"/>
+<circle class="g-titik g-c" cx="230.5" cy="268.0" r="3"/>
+<circle class="g-titik g-c" cx="314.8" cy="243.3" r="3"/>
+<circle class="g-titik g-c" cx="399.0" cy="212.5" r="3"/>
+<circle class="g-titik g-c" cx="483.2" cy="169.3" r="3"/>
+<circle class="g-titik g-c" cx="567.5" cy="113.8" r="3"/>
+<circle class="g-titik g-c" cx="651.8" cy="46.0" r="3"/>
+<circle class="g-titik g-c" cx="736.0" cy="46.0" r="3"/>
+<rect class="g-kunci g-c" x="546" y="18" width="14" height="4"/>
+<text class="g-legenda" x="566" y="22">chance / hour</text>
+</svg></figure>
+    <p>And the fine <strong>escalates with each offense</strong>: the first is about $40 and an hour&#x27;s wait; the second about $87 and two hours; the third more again. <strong>The fourth offense means thirty days in jail and a revoked license — the business is finished.</strong></p>
+    <h3>5.3 Total cost per mile</h3>
+    <p>Combining fuel, the cost of time ($85/day = $3.54/hour), and expected fines:</p>
+    <table class="k-tabel"><thead><tr><th>speed</th><th>fuel</th><th>time</th><th>expected fine</th><th><strong>total/mile</strong></th></tr></thead><tbody><tr><td>45</td><td>$0.400</td><td>$0.079</td><td>—</td><td><strong>$0.479</strong></td></tr><tr><td>50</td><td>$0.286</td><td>$0.071</td><td>—</td><td><strong>$0.357</strong></td></tr><tr><td><strong>55</strong></td><td><strong>$0.222</strong></td><td><strong>$0.064</strong></td><td>—</td><td><strong>$0.286</strong></td></tr><tr><td>60</td><td>$0.286</td><td>$0.059</td><td>—</td><td><strong>$0.345</strong></td></tr><tr><td>65</td><td>$0.400</td><td>$0.054</td><td>—</td><td><strong>$0.454</strong></td></tr><tr><td>70</td><td>$0.500</td><td>$0.051</td><td>$0.069</td><td><strong>$0.620</strong></td></tr><tr><td>75</td><td>$0.500</td><td>$0.047</td><td>$0.190</td><td><strong>$0.737</strong></td></tr></tbody></table>
+    <figure class="g-gbr"><svg class="g-svg" viewBox="0 0 760 320" role="img" aria-label="Cost per mile against speed">
+<text class="g-judul" x="62" y="20">Cost per mile against speed</text>
+<text class="g-sub" x="62" y="36">Lowest at 55 MPH. At 70 MPH it doubles, and saves only 21 % of the time.</text>
+<line class="g-kisi" x1="62" y1="268.0" x2="736.0" y2="268.0"/>
+<text class="g-sumbu g-kanan" x="54" y="272.0">0.00</text>
+<line class="g-kisi" x1="62" y1="212.5" x2="736.0" y2="212.5"/>
+<text class="g-sumbu g-kanan" x="54" y="216.5">0.20</text>
+<line class="g-kisi" x1="62" y1="157.0" x2="736.0" y2="157.0"/>
+<text class="g-sumbu g-kanan" x="54" y="161.0">0.40</text>
+<line class="g-kisi" x1="62" y1="101.5" x2="736.0" y2="101.5"/>
+<text class="g-sumbu g-kanan" x="54" y="105.5">0.60</text>
+<line class="g-kisi" x1="62" y1="46.0" x2="736.0" y2="46.0"/>
+<text class="g-sumbu g-kanan" x="54" y="50.0">0.80</text>
+<line class="g-kisiT" x1="62.0" y1="46" x2="62.0" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="62.0" y="286">40</text>
+<line class="g-kisiT" x1="230.5" y1="46" x2="230.5" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="230.5" y="286">50</text>
+<line class="g-kisiT" x1="399.0" y1="46" x2="399.0" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="399.0" y="286">60</text>
+<line class="g-kisiT" x1="567.5" y1="46" x2="567.5" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="567.5" y="286">70</text>
+<line class="g-kisiT" x1="736.0" y1="46" x2="736.0" y2="268.0"/>
+<text class="g-sumbu g-tengah" x="736.0" y="286">80</text>
+<text class="g-sumbu g-tengah" x="399.0" y="312">speed (MPH)</text>
+<text class="g-sumbu" x="4" y="36">$ / mile</text>
+<path class="g-garis g-a" d="M62.0 129.2 L146.2 157.0 L230.5 188.7 L314.8 206.3 L399.0 188.7 L483.2 157.0 L567.5 129.2 L651.8 129.2 L736.0 129.2"/>
+<circle class="g-titik g-a" cx="62.0" cy="129.2" r="3"/>
+<circle class="g-titik g-a" cx="146.2" cy="157.0" r="3"/>
+<circle class="g-titik g-a" cx="230.5" cy="188.7" r="3"/>
+<circle class="g-titik g-a" cx="314.8" cy="206.3" r="3"/>
+<circle class="g-titik g-a" cx="399.0" cy="188.7" r="3"/>
+<circle class="g-titik g-a" cx="483.2" cy="157.0" r="3"/>
+<circle class="g-titik g-a" cx="567.5" cy="129.2" r="3"/>
+<circle class="g-titik g-a" cx="651.8" cy="129.2" r="3"/>
+<circle class="g-titik g-a" cx="736.0" cy="129.2" r="3"/>
+<rect class="g-kunci g-a" x="546" y="18" width="14" height="4"/>
+<text class="g-legenda" x="566" y="22">fuel</text>
+<path class="g-garis g-b" d="M62.0 243.4 L146.2 246.2 L230.5 248.3 L314.8 250.1 L399.0 251.6 L483.2 252.9 L567.5 254.0 L651.8 254.9 L736.0 255.7"/>
+<circle class="g-titik g-b" cx="62.0" cy="243.4" r="3"/>
+<circle class="g-titik g-b" cx="146.2" cy="246.2" r="3"/>
+<circle class="g-titik g-b" cx="230.5" cy="248.3" r="3"/>
+<circle class="g-titik g-b" cx="314.8" cy="250.1" r="3"/>
+<circle class="g-titik g-b" cx="399.0" cy="251.6" r="3"/>
+<circle class="g-titik g-b" cx="483.2" cy="252.9" r="3"/>
+<circle class="g-titik g-b" cx="567.5" cy="254.0" r="3"/>
+<circle class="g-titik g-b" cx="651.8" cy="254.9" r="3"/>
+<circle class="g-titik g-b" cx="736.0" cy="255.7" r="3"/>
+<rect class="g-kunci g-b" x="546" y="34" width="14" height="4"/>
+<text class="g-legenda" x="566" y="38">time ($85/day)</text>
+<path class="g-garis g-c" d="M62.0 268.0 L146.2 268.0 L230.5 268.0 L314.8 268.0 L399.0 268.0 L483.2 268.0 L567.5 249.0 L651.8 218.9 L736.0 170.8"/>
+<circle class="g-titik g-c" cx="62.0" cy="268.0" r="3"/>
+<circle class="g-titik g-c" cx="146.2" cy="268.0" r="3"/>
+<circle class="g-titik g-c" cx="230.5" cy="268.0" r="3"/>
+<circle class="g-titik g-c" cx="314.8" cy="268.0" r="3"/>
+<circle class="g-titik g-c" cx="399.0" cy="268.0" r="3"/>
+<circle class="g-titik g-c" cx="483.2" cy="268.0" r="3"/>
+<circle class="g-titik g-c" cx="567.5" cy="249.0" r="3"/>
+<circle class="g-titik g-c" cx="651.8" cy="218.9" r="3"/>
+<circle class="g-titik g-c" cx="736.0" cy="170.8" r="3"/>
+<rect class="g-kunci g-c" x="546" y="50" width="14" height="4"/>
+<text class="g-legenda" x="566" y="54">expected fines</text>
+<path class="g-garis g-d" d="M62.0 104.7 L146.2 135.2 L230.5 169.1 L314.8 188.5 L399.0 172.3 L483.2 141.9 L567.5 96.3 L651.8 67.1 L736.0 19.8"/>
+<circle class="g-titik g-d" cx="62.0" cy="104.7" r="3"/>
+<circle class="g-titik g-d" cx="146.2" cy="135.2" r="3"/>
+<circle class="g-titik g-d" cx="230.5" cy="169.1" r="3"/>
+<circle class="g-titik g-d" cx="314.8" cy="188.5" r="3"/>
+<circle class="g-titik g-d" cx="399.0" cy="172.3" r="3"/>
+<circle class="g-titik g-d" cx="483.2" cy="141.9" r="3"/>
+<circle class="g-titik g-d" cx="567.5" cy="96.3" r="3"/>
+<circle class="g-titik g-d" cx="651.8" cy="67.1" r="3"/>
+<circle class="g-titik g-d" cx="736.0" cy="19.8" r="3"/>
+<rect class="g-kunci g-d" x="546" y="66" width="14" height="4"/>
+<text class="g-legenda" x="566" y="70">TOTAL</text>
+</svg></figure>
+    <p><strong>The optimal speed is 55 MPH, and it wins outright.</strong> Running at 70 MPH costs <strong>twice as much</strong> per mile — and saves only 21 % of the time.</p>
+    <p>What makes this interesting as business history: <strong>55 MPH was the American national speed limit in 1982</strong>, imposed after the 1974 oil crisis for exactly this reason — fuel efficiency. So this operation&#x27;s cost structure <strong>makes obeying the law the most profitable strategy</strong> — not because of the fines, but because of the diesel.</p>
+    <figure class="n-gbr"><svg class="n-svg" viewBox="0 0 850 710" role="img"><defs><marker id="mata" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="n-mata"/></marker></defs><rect class="n-kotak" x="300" y="10" width="220" height="44" rx="6"/>
+<text class="n-teks" x="410" y="37.0">How fast this hour?</text>
+<path class="n-belah" d="M410.0 84 L520 120.0 L410.0 156 L300 120.0 Z"/>
+<text class="n-teks" x="410.0" y="118.0">Behind the</text>
+<text class="n-teks" x="410.0" y="132.0">deadline?</text>
+<rect class="n-kotak n-baik" x="40" y="240" width="200" height="54" rx="6"/>
+<text class="n-teks" x="140" y="265.0">55 MPH</text>
+<text class="n-teks" x="140" y="279.0">minimum cost</text>
+<path class="n-belah" d="M700.0 230 L810 268.0 L700.0 306 L590 268.0 Z"/>
+<text class="n-teks" x="700.0" y="266.0">Does the load</text>
+<text class="n-teks" x="700.0" y="280.0">penalize lateness?</text>
+<path class="n-belah" d="M700.0 370 L830 408.0 L700.0 446 L570 408.0 Z"/>
+<text class="n-teks" x="700.0" y="406.0">Is the 10 % penalty</text>
+<text class="n-teks" x="700.0" y="420.0">bigger than the added cost?</text>
+<rect class="n-kotak n-hati" x="600" y="500" width="200" height="54" rx="6"/>
+<text class="n-teks" x="700" y="525.0">Push to 65</text>
+<text class="n-teks" x="700" y="539.0">still ticket-safe</text>
+<path class="n-belah" d="M410.0 610 L520 648.0 L410.0 686 L300 648.0 Z"/>
+<text class="n-teks" x="410.0" y="646.0">Three tickets</text>
+<text class="n-teks" x="410.0" y="660.0">already?</text>
+<rect class="n-kotak n-buruk" x="40" y="622" width="220" height="54" rx="6"/>
+<text class="n-teks" x="150" y="647.0">DO NOT.</text>
+<text class="n-teks" x="150" y="661.0">A fourth ends the business</text>
+<rect class="n-kotak n-baik" x="600" y="626" width="200" height="46" rx="6"/>
+<text class="n-teks" x="700" y="654.0">Allowed, hour by hour</text>
+<path class="n-panah" marker-end="url(#mata)" d="M410.0 54.0 L410.0 69.0 L410.0 69.0 L410.0 84.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M300.0 120.0 L140.0 120.0 L140.0 240.0"/>
+<text class="n-label" x="140.0" y="114.0">no</text>
+<path class="n-panah" marker-end="url(#mata)" d="M520.0 120.0 L700.0 120.0 L700.0 230.0"/>
+<text class="n-label" x="700.0" y="114.0">yes</text>
+<path class="n-panah" marker-end="url(#mata)" d="M590.0 268.0 L415.0 268.0 L415.0 267.0 L240.0 267.0"/>
+<text class="n-label" x="415.0" y="261.0">mail</text>
+<path class="n-panah" marker-end="url(#mata)" d="M700.0 306.0 L700.0 338.0 L700.0 338.0 L700.0 370.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M700.0 446.0 L700.0 473.0 L700.0 473.0 L700.0 500.0"/>
+<text class="n-label" x="700.0" y="467.0">yes</text>
+<path class="n-panah" marker-end="url(#mata)" d="M570.0 408.0 L140.0 408.0 L140.0 294.0"/>
+<text class="n-label" x="140.0" y="402.0">no</text>
+<path class="n-panah" marker-end="url(#mata)" d="M700.0 554.0 L700.0 582.0 L410.0 582.0 L410.0 610.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M300.0 648.0 L280.0 648.0 L280.0 649.0 L260.0 649.0"/>
+<text class="n-label" x="280.0" y="643.0">yes</text>
+<path class="n-panah" marker-end="url(#mata)" d="M520.0 648.0 L560.0 648.0 L560.0 649.0 L600.0 649.0"/>
+<text class="n-label" x="560.0" y="643.0">no</text></svg></figure>
+    <blockquote><strong>From business to mechanic.</strong> This is how you make a decision that <strong>looks</strong> simple (&quot;how fast?&quot;) turn out rich: three opposing pressures, each with a different mathematical shape — a symmetric tent for fuel, a quadratic for risk, a linear term for time. The player never needs the formulas; he only needs to feel that 55 feels right and 75 feels reckless.  What is <strong>lost</strong>: in the real world wind, grade, and load reshape that curve constantly. Here the curve is fixed. A designer wanting more depth can shift the peak of the tent with the terrain — a small change with a large consequence.</blockquote>
+    <hr>
+    <h2>6 · Route selection logic</h2>
+    <p>Three routes from Los Angeles to New York:</p>
+    <table class="k-tabel"><thead><tr><th>route</th><th>distance</th><th>points</th><th>character</th></tr></thead><tbody><tr><td><strong>Northern</strong> — I-15 / I-80 via Denver and Omaha</td><td><strong>2,710 mi</strong></td><td>18</td><td>shortest</td></tr><tr><td><strong>Central</strong> — I-40 via Albuquerque and Oklahoma City</td><td><strong>2,850 mi</strong></td><td>21</td><td>middling</td></tr><tr><td><strong>Southern</strong> — I-10 / I-20 via El Paso, Dallas, Atlanta</td><td><strong>3,120 mi</strong></td><td>25</td><td>longest</td></tr></tbody></table>
+    <figure class="g-gbr"><svg class="g-svg" viewBox="0 0 760 344" role="img">
+<text class="g-judul" x="62" y="20">Routes: distance against weather risk</text>
+<text class="g-sub" x="62" y="36">The shortest one is the one blizzards hit most often. That is what makes the choice real.</text>
+<line class="g-kisi" x1="90" y1="230.0" x2="690" y2="230.0"/>
+<line class="g-kisi" x1="90" y1="173.3" x2="690" y2="173.3"/>
+<line class="g-kisi" x1="90" y1="116.7" x2="690" y2="116.7"/>
+<line class="g-kisi" x1="90" y1="60.0" x2="690" y2="60.0"/>
+<rect class="g-batang g-c" x="180" y="198.8" width="52" height="31.2" rx="4"/>
+<text class="g-legenda g-tengah" x="206" y="190.8">2,710 miles</text>
+<text class="g-sumbu g-tengah" x="206" y="250">NORTHERN</text>
+<circle class="g-risiko" cx="192" cy="282" r="7"/>
+<circle class="g-risiko" cx="210" cy="282" r="7"/>
+<circle class="g-risiko" cx="228" cy="282" r="7"/>
+<text class="g-sumbu g-tengah" x="206" y="310">blizzard risk</text>
+<rect class="g-batang g-b" x="360" y="159.2" width="52" height="70.8" rx="4"/>
+<text class="g-legenda g-tengah" x="386" y="151.2">2,850 miles</text>
+<text class="g-sumbu g-tengah" x="386" y="250">CENTRAL</text>
+<circle class="g-risiko" cx="372" cy="282" r="7"/>
+<circle class="g-risiko" cx="390" cy="282" r="7"/>
+<text class="g-sumbu g-tengah" x="386" y="310">blizzard risk</text>
+<rect class="g-batang g-a" x="540" y="82.7" width="52" height="147.3" rx="4"/>
+<text class="g-legenda g-tengah" x="566" y="74.7">3,120 miles</text>
+<text class="g-sumbu g-tengah" x="566" y="250">SOUTHERN</text>
+<circle class="g-risiko" cx="552" cy="282" r="7"/>
+<text class="g-sumbu g-tengah" x="566" y="310">blizzard risk</text>
+<text class="g-sumbu" x="4" y="52">miles</text>
+</svg></figure>
+    <p>Longest to shortest is a difference of <strong>410 miles</strong> — at 4.5 mpg and $1 a gallon, about <strong>$91</strong> of fuel, plus 7.5 hours of driving (<strong>$27</strong> of fixed cost). So the southern route costs roughly <strong>$118 more</strong> before anything else is counted.</p>
+    <p><strong>But the weather is not the same.</strong> Blizzard probability differs sharply by route, and the risk climbs with the distance already covered:</p>
+    <table class="k-tabel"><thead><tr><th>route</th><th>blizzard threshold</th></tr></thead><tbody><tr><td>Northern</td><td><strong>lowest — hit most often</strong></td></tr><tr><td>Central</td><td>middling</td></tr><tr><td>Southern</td><td><strong>highest — hit least often</strong></td></tr></tbody></table>
+    <p>A blizzard is not a minor inconvenience: in those conditions the truck can slide off into a ditch — and <strong>a crash means losing the truck and the entire profit.</strong></p>
+    <blockquote><strong>Ray:</strong> <em>&quot;The northern route is shortest on the map. In January, the map lies.&quot;</em></blockquote>
+    <p>There is one more thing the map does not show: <strong>the size of speeding fines differs by route.</strong> The southern route levies a higher base fine than the northern one. So the route that is safest from the weather is the most expensive one to speed on.</p>
+    <figure class="n-gbr"><svg class="n-svg" viewBox="0 0 920 400" role="img"><defs><marker id="mata" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="n-mata"/></marker></defs><path class="n-belah" d="M430.0 10 L530 46.0 L430.0 82 L330 46.0 Z"/>
+<text class="n-teks" x="430.0" y="44.0">Season and</text>
+<text class="n-teks" x="430.0" y="58.0">weather?</text>
+<rect class="n-kotak n-aman" x="40" y="150" width="240" height="60" rx="6"/>
+<text class="n-teks" x="160" y="178.0">SOUTHERN 3,120 mi</text>
+<text class="n-teks" x="160" y="192.0">+$118, lowest blizzard risk</text>
+<path class="n-belah" d="M690.0 150 L790 188.0 L690.0 226 L590 188.0 Z"/>
+<text class="n-teks" x="690.0" y="193.0">Which load?</text>
+<rect class="n-kotak n-hati" x="400" y="320" width="220" height="58" rx="6"/>
+<text class="n-teks" x="510" y="347.0">NORTHERN 2,710 mi</text>
+<text class="n-teks" x="510" y="361.0">shortest, fastest</text>
+<rect class="n-kotak" x="680" y="320" width="210" height="58" rx="6"/>
+<text class="n-teks" x="785" y="347.0">CENTRAL 2,850 mi</text>
+<text class="n-teks" x="785" y="361.0">balanced</text>
+<rect class="n-catatan" x="40" y="250" width="240" height="44" rx="6"/>
+<text class="n-teks" x="160" y="277.0">Do not speed here: highest fines</text>
+<path class="n-panah" marker-end="url(#mata)" d="M330.0 46.0 L305.0 46.0 L305.0 180.0 L280.0 180.0"/>
+<text class="n-label" x="305.0" y="174.0">winter</text>
+<path class="n-panah" marker-end="url(#mata)" d="M530.0 46.0 L560.0 46.0 L560.0 188.0 L590.0 188.0"/>
+<text class="n-label" x="560.0" y="182.0">fair weather</text>
+<path class="n-panah" marker-end="url(#mata)" d="M160.0 210.0 L160.0 230.0 L160.0 230.0 L160.0 250.0"/>
+<path class="n-panah" marker-end="url(#mata)" d="M690.0 226.0 L690.0 275.0 L510.0 275.0 L510.0 320.0"/>
+<text class="n-label" x="510.0" y="269.0">oranges / tight</text>
+<path class="n-panah" marker-end="url(#mata)" d="M790.0 188.0 L850.0 188.0 L850.0 290.0 L785.0 290.0 L785.0 320.0"/>
+<text class="n-label" x="850.0" y="284.0">mail</text></svg></figure>
+    <blockquote><strong>From business to mechanic.</strong> Three routes differing only in <strong>distance</strong> would be an empty choice — always take the shortest. What makes it a real decision is <strong>a second axis running the opposite way</strong>: the shortest is the most dangerous. This design pattern travels anywhere — if a choice feels empty, add an opposing axis rather than a fourth option.  What is <strong>lost</strong>: real routes differ in tolls, congestion, city rush hours, and rest-area availability. Here tolls do differ per point, but the rest is uniform.</blockquote>
+    <hr>
+    <h2>7 · Fuel logic</h2>
+    <p>A full tank is <strong>190 gallons</strong>. At 4.5 mpg that is <strong>855 miles</strong> — so a 2,710-mile run demands <strong>at least three fuel stops</strong>. At 2.0 mpg (if Ray runs hard) the range collapses to <strong>380 miles</strong>, and he needs <strong>seven</strong> stops.</p>
+    <p><strong>Speed does not only burn money — it burns stopping time.</strong></p>
+    <p>Running dry on the road costs <strong>$200 for a single delivered barrel</strong>, plus <strong>0–4 hours</strong> lost, plus spoilage on an orange load because the reefer dies with the engine. That is three penalties at once for a single lapse.</p>
+    <blockquote><strong>And here is what Ray finds hardest:</strong> his fuel gauge is not accurate. It gives only an <strong>estimate, off by as much as five gallons either way</strong>. Ray never knows exactly what is in the tank.  <em>&quot;I never fuel because it&#x27;s time. I fuel because the needle got low enough to keep me awake.&quot;</em></blockquote>
+    <p>The rule of thumb he uses: <strong>fill up any time it drops below 50 gallons</strong>, never wait below 20 — because a five-gallon gauge error on a 20-gallon remainder is the difference between arriving and not.</p>
+    <blockquote><strong>From business to mechanic.</strong> An inaccurate gauge is the <strong>cheapest way to make a resource feel tense</strong>. Exact numbers produce arithmetic; numbers that shimmer produce anxiety. A designer who wants the player to feel uncertainty need not change any rule at all — only blur the information.</blockquote>
+    <hr>
+    <h2>8 · Rest and fatigue logic</h2>
+    <p>Ray tracks two different things: <strong>how long since he last slept</strong>, and <strong>how long this run has been overall</strong>.</p>
+    <table class="k-tabel"><thead><tr><th>hours since rest</th><th>condition</th></tr></thead><tbody><tr><td>&lt; 4</td><td>fresh</td></tr><tr><td>&lt; 8</td><td>fine</td></tr><tr><td>&lt; 12</td><td>bored</td></tr><tr><td>&lt; 16</td><td>tired</td></tr><tr><td>&lt; 20</td><td>drowsy</td></tr><tr><td>≥ 20</td><td><strong>severely fatigued</strong></td></tr></tbody></table>
+    <p>Severe fatigue is not a small penalty — it is a <strong>direct cause of crashes</strong>, and a crash means losing the truck along with the entire profit. Falling asleep at the wheel is one of six recorded causes of crashes, alongside speeding above 65, wet roads, fog, blizzards, and a drunk driver coming the other way.</p>
+    <p>The rest calculation is purely economic: eight hours of sleep costs <strong>$28</strong> in fixed cost. One crash costs <strong>everything</strong>.</p>
+    <blockquote><strong>From business to mechanic.</strong> Fatigue is the <strong>fifth resource</strong> after money, fuel, time, and tires — and the only one restored by spending another resource (time). A structure like this, where one resource can only be traded for another, is the most compact way to create a dilemma without adding a rule.</blockquote>
+    <hr>
+    <h2>9 · Risk register</h2>
+    <table class="k-tabel"><thead><tr><th>risk</th><th>trigger</th><th>impact</th><th>reducible?</th></tr></thead><tbody><tr><td>Blowout</td><td>rises with miles covered</td><td>1–2 hours, or <strong>$400 + 4 hours</strong> without a spare</td><td>yes — buy <strong>three</strong> new tires, the third is the spare</td></tr><tr><td>Ticket</td><td>speed &gt; limit + 10</td><td>fine rises each time; <strong>fourth = finished</strong></td><td>yes — never exceed limit + 10</td></tr><tr><td>Overweight</td><td>&gt; 60,000 lb on the scale</td><td>$200 + 2–5 ¢/lb</td><td>yes — load ≤ 40,000, fuel after the scale</td></tr><tr><td>Out of fuel</td><td>negligence</td><td>$200 + 0–4 hours + orange spoilage</td><td>yes — fill below 50 gallons</td></tr><tr><td>Oranges spoil</td><td>time + reefer failure</td><td><strong>zero revenue, pay $50 to dump</strong></td><td>partly</td></tr><tr><td>Late (general freight)</td><td>&gt; 95 hours</td><td>10 % penalty</td><td>yes</td></tr><tr><td>Blizzard</td><td>route + distance covered</td><td>crash → <strong>lose everything</strong></td><td>yes — take the southern route</td></tr><tr><td>Fatigue</td><td>&gt; 20 hours without rest</td><td>crash → <strong>lose everything</strong></td><td>yes — sleep</td></tr><tr><td>Tunnel rockslide</td><td>random, one point</td><td>0–5 hours</td><td>no</td></tr><tr><td>Drunk driver</td><td>random</td><td>crash</td><td><strong>no</strong></td></tr></tbody></table>
+    <p><strong>The last four risks cannot be avoided entirely.</strong> That is deliberate: this business cannot be run without residual risk, and part of Ray&#x27;s skill is accepting that instead of fighting it.</p>
+    <p>Notice the pattern in the last column: <strong>almost everything reducible is reduced by spending money or time up front.</strong> A $200 third tire prevents a $400 loss. Eight hours of sleep at $28 prevents losing the truck. That is the entire philosophy of this business in one column.</p>
+    <hr>
+    <h2>10 · Measures of success</h2>
+    <p>Ray judges himself by <strong>net profit per run</strong> and the <strong>running average</strong> across all runs.</p>
+    <table class="k-tabel"><thead><tr><th>result</th><th>verdict</th></tr></thead><tbody><tr><td>Profit &gt; $100</td><td><em>&quot;Good work&quot;</em></td></tr><tr><td>Profit &lt; $200 <strong>or</strong> average &lt; $250</td><td><em>&quot;You&#x27;d do better washing dishes&quot;</em></td></tr><tr><td>Negative profit</td><td>a bad run</td></tr><tr><td>Negative average</td><td><strong>out of business</strong></td></tr></tbody></table>
+    <p>That <strong>$250 average</strong> threshold is worth dwelling on. On a perfect 40,000-pound orange load — $2,600 of revenue — a $250 profit means costs of $2,350. In other words, <strong>this business runs on roughly a 10 % margin</strong>, and a single second speeding ticket ($87) erases a third of one run&#x27;s margin.</p>
+    <blockquote><strong>Ray:</strong> <em>&quot;The difference between a good year and a bad one isn&#x27;t one big piece of luck. It&#x27;s a dozen small decisions made right, over and over.&quot;</em></blockquote>
+    <hr>
+    <h2>10b · Field advice — for anyone who has never run all three routes</h2>
+    <p>This section is not analysis. This is what Ray would tell a new driver the night before his first run.</p>
+    <h3>Before you leave</h3>
+    <ul><li><strong>Buy three new tires, not two.</strong> The third is your spare. It costs $200 up front; without it, one blowout costs $400 plus four hours waiting for a tow. A blowout <strong>will</strong> happen if the run is long enough — the odds climb with every mile covered.</li><li><strong>Load 40,000 pounds, no more.</strong> The extra 10,000 is worth $650, but one weigh station erases it. The trailer holds 50,000; the law does not.</li><li><strong>First run: take the mail.</strong> Lowest rate, but no deadline and nothing that can rot. Learn the road first, then gamble on oranges.</li></ul>
+    <h3>The three routes, from the driver&#x27;s seat</h3>
+    <p><strong>Northern</strong> (2,710 mi, I-15 then I-80) — Las Vegas, the Utah desert, then up to Denver and down onto the Nebraska plains. Shortest, emptiest road, and fastest when it goes clean. <strong>But it crosses the Rockies and the high plains</strong>, and it is the route blizzards hit most often. Take it when the weather is good and the deadline is tight.</p>
+    <p><strong>Central</strong> (2,850 mi, I-40) — Barstow, Flagstaff, Albuquerque, Amarillo, Oklahoma City, then St. Louis and the Pennsylvania Turnpike. The classic route. Tolls are heavy on the eastern half — the Oklahoma Turnpike and the Pennsylvania Turnpike both collect. Middling risk in everything. When in doubt, take this one.</p>
+    <p><strong>Southern</strong> (3,120 mi, I-10 then I-20) — Phoenix, Tucson, El Paso, Dallas, then Atlanta and up the east coast. Longest, about $118 dearer. But <strong>blizzards hit it least often</strong> — and the gap is wide, not narrow. In winter this is the right route even when the map says otherwise. Note: speeding fines are steepest here, so do not try to win back the distance with the accelerator.</p>
+    <blockquote>One trap on the southern route: there is a point at the Louisiana line that <strong>refuses heavy loads</strong>, and you are forced onto a 200-mile detour along Arkansas county roads posted at 45 MPH. That adds distance <em>and</em> forces you off your optimal speed.</blockquote>
+    <h3>On the road</h3>
+    <ul><li><strong>Hold 55 MPH.</strong> This is not moral advice, it is financial advice. Every MPH away from 55 — <strong>above or below</strong> — costs 0.2 miles per gallon.</li><li><strong>Fuel any time you are below 50 gallons.</strong> Never wait below 20. The gauge is off by as much as five gallons, and on a 20-gallon remainder a five-gallon error is the difference between arriving and not.</li><li><strong>Fuel <em>after</em> the weigh station, not before.</strong> Fuel weighs 7 pounds per gallon; a full tank adds 1,300 pounds on the scale.</li><li><strong>Sleep before hour 16, not after.</strong> Past 20 hours without rest you are severely fatigued, and that is a direct cause of crashes. Eight hours of sleep costs $28. One crash costs everything.</li><li><strong>After the second ticket, stop speeding entirely.</strong> The third is expensive; the fourth takes your license and ends the business. No load is worth that.</li><li><strong>If you are carrying oranges, do not stop for long.</strong> Every hour standing with the reefer dead damages the load, and damage cannot be undone.</li></ul>
+    <h3>Reading the weather</h3>
+    <p>Road conditions change over the course of the run, and the risk <strong>climbs with the distance already covered</strong> — the second half of a run is always more dangerous than the first, on any route. When the weather turns:</p>
+    <table class="k-tabel"><thead><tr><th>condition</th><th>what to do</th></tr></thead><tbody><tr><td>clear &amp; dry</td><td>55 MPH, keep rolling</td></tr><tr><td>wet road / rain</td><td>hold 55, no more</td></tr><tr><td>light snow</td><td>ease off, accept the fuel penalty</td></tr><tr><td>fog</td><td>slow down; this is where rear-end crashes happen</td></tr><tr><td><strong>blizzard</strong></td><td><strong>stop.</strong> No load is worth the truck</td></tr></tbody></table>
+    <hr>
+    <h2>11 · Summary for game designers</h2>
+    <p>What makes this business into a good game, and what you have to add yourself:</p>
+    <p><strong>Already strong:</strong></p>
+    <ol><li><strong>One repeated decision</strong> (how fast) that unites three pressures of different mathematical shape.</li><li><strong>An opposing axis</strong> on route selection — shortest = most dangerous.</li><li><strong>A fixed daily cost</strong> as an invisible hourglass.</li><li><strong>Deliberately blurred information</strong> (the fuel gauge) to turn arithmetic into anxiety.</li><li><strong>Escalating punishment</strong> (first, second, third ticket, then finished) that makes risk feel heavier without being told.</li><li><strong>Prevention paid up front</strong> — nearly every risk is reduced by paying first.</li></ol>
+    <p><strong>Missing, and worth adding:</strong></p>
+    <ol><li><strong>Customers have no memory.</strong> No reputation, no repeat contracts, no client lost to chronic lateness.</li><li><strong>Prices never move.</strong> No seasons, no competitors.</li><li><strong>The truck does not age</strong> except its tires. No deferred maintenance coming due later.</li><li><strong>There is no growth.</strong> You cannot buy a second rig, cannot hire a driver. Ray will always be a one-truck fleet.</li></ol>
+    <p>That fourth absence is what defines its character most: this is not a game about <strong>building an empire</strong>, it is a game about <strong>staying alive</strong>. Every run starts from zero, and the only things that accumulate are the profit average and the violation record. A designer who adds growth turns it into an entirely different game — and that is a legitimate choice, as long as it is made knowingly.</p>
+    <hr>
+    <p><em>This document is derived from the <code>TRUCKER</code> operation as it actually runs. The numbers, thresholds, and consequences are real; only the voice was added. The technical and architectural notes are in</em> <a href="trucker.md"><code>trucker.md</code></a> — <em>a completely different document, for a different reader.</em></p>
+  </article>
+  <p class="k-kaki">This page is generated from <code>trucker-business.md</code>. Its curves and charts are <b>computed from the same formulas</b> written in the document itself, not drawn separately &mdash; so the tables and the charts cannot disagree. Edit the document, then run <code>scripts/trucker-bisnis-html.py --en</code>.</p>
+  <p class="k-kaki"><a href="../games/trucker/index.html">&larr; Back to TRUCKER</a>
+     &middot; <a href="trucker.md">Architecture notes</a>
+     &middot; <a href="trucker-bisnis.html">Versi Indonesia</a></p>
+</main>
+<script src="../_shared/ui.js"></script>
+<script>
+  var tb = window.RETRO.ui.topbar({
+    title: 'Delgado Freight Lines', source: 'Business analysis · TRUCKER', lang: 'en'
+  });
+  document.getElementById('topbar-host').append(tb);
+  /* Topbar bersama menganggap dirinya dipasang dari web/games/<id>/, jadi
+     tautan pulangnya '../../index.html'. Halaman ini ada di web/docs/, satu
+     tingkat lebih dangkal -- tanpa koreksi ini tautannya 404. */
+  var pulang = document.querySelector('#topbar-host a[href$="index.html"]');
+  if (pulang) pulang.setAttribute('href', '../index.html');
+</script>
+</body>
+</html>

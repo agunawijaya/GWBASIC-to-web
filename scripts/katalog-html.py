@@ -28,7 +28,11 @@ def sisip(t):
     """Penanda sebaris: kode, tebal, miring, tautan."""
     t = html.escape(t)
     t = re.sub(r'`([^`]+)`', r'<code>\1</code>', t)
-    t = re.sub(r'\*\*([^*]+)\*\*', r'<strong>\1</strong>', t)
+    # Tidak memakai [^*]+ : pola itu menolak bintang di dalamnya, sehingga
+    # tebal yang MEMBUNGKUS miring -- '**awas *ini* penting**' -- tidak pernah
+    # cocok dan bintang luarnya tercetak apa adanya. Yang malas (.+?) berhenti
+    # di '**' berikutnya, dan miring di dalamnya diurus baris sesudah ini.
+    t = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', t)
     t = re.sub(r'(?<![\w*])\*([^*\n]+)\*(?!\w)', r'<em>\1</em>', t)
 
     def tautan(m):
@@ -81,11 +85,19 @@ def keHtml(src):
                 + '</tbody></table>')
 
         elif b.startswith('> '):
+            # Gabungkan barisnya DULU, baru tafsirkan penanda sebarisnya.
+            #
+            # Sebelumnya sisip() dipanggil per baris lalu hasilnya disambung.
+            # Akibatnya penanda yang MELINTASI pergantian baris tidak pernah
+            # cocok: '*"Kalimat panjang' di baris satu dan 'yang berlanjut."*'
+            # di baris dua terbaca sebagai dua potongan tanpa pasangan, dan
+            # bintangnya tercetak apa adanya. Paragraf biasa sudah benar sejak
+            # awal karena ia menggabung dulu; kutipan dan daftar tidak.
             kutip = []
             while i < len(baris) and baris[i].startswith('>'):
-                kutip.append(sisip(baris[i].lstrip('>').strip())); i += 1
+                kutip.append(baris[i].lstrip('>').strip()); i += 1
             i -= 1
-            keluar.append('<blockquote>' + ' '.join(kutip) + '</blockquote>')
+            keluar.append('<blockquote>' + sisip(' '.join(kutip)) + '</blockquote>')
 
         elif re.match(r'^[-*] ', b) or re.match(r'^\d+\. ', b):
             tag = 'ul' if re.match(r'^[-*] ', b) else 'ol'
@@ -94,14 +106,17 @@ def keHtml(src):
                                       or re.match(r'^\d+\. ', baris[i])
                                       or baris[i].startswith('  ')):
                 t = re.sub(r'^([-*]|\d+\.) ', '', baris[i].strip())
+                # Alasan yang sama dengan kutipan di atas: butirnya dikumpulkan
+                # MENTAH, dan sisip() baru dijalankan sekali sesudah seluruh
+                # baris lanjutannya tergabung.
                 if baris[i].startswith('  ') and butir:
-                    butir[-1] += ' ' + sisip(t)
+                    butir[-1] += ' ' + t
                 else:
-                    butir.append(sisip(t))
+                    butir.append(t)
                 i += 1
             i -= 1
             keluar.append('<%s>%s</%s>'
-                          % (tag, ''.join('<li>%s</li>' % x for x in butir), tag))
+                          % (tag, ''.join('<li>%s</li>' % sisip(x) for x in butir), tag))
 
         elif b.strip() in ('---', '***'):
             keluar.append('<hr>')
